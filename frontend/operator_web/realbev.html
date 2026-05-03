@@ -329,14 +329,15 @@
     </div>
     <div class="cam-picker">
       <span style="color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;">샘플 영상:</span>
-      <button class="vid-btn" data-vid="subway">지하철 내부 (도메인 핵심)</button>
-      <button class="vid-btn" data-vid="vtest">vtest 광장</button>
-      <button class="vid-btn" data-vid="intersection">교차로 CCTV</button>
-      <button class="vid-btn" data-vid="street_uk">런던 거리</button>
-      <button class="vid-btn" data-vid="dog_park">공원 (강아지)</button>
-      <button class="vid-btn" data-vid="eyelevel">eye-level 거리</button>
-      <button class="vid-btn" data-vid="aerial">드론 횡단보도</button>
-      <button class="vid-btn" data-vid="interior">버스 운전석</button>
+      <button class="vid-btn" data-vid="subway">🚇 지하철 차내</button>
+      <button class="vid-btn" data-vid="vtest">광장 군중</button>
+      <button class="vid-btn" data-vid="aerial">🛸 드론 횡단보도 (BEV)</button>
+      <button class="vid-btn" data-vid="dog_park">공원 (사람·반려동물)</button>
+      <span style="color: var(--muted); font-size: 11px; margin-left: 8px;">|</span>
+      <button class="vid-btn" data-vid="subway_platform" data-optional="1">🚇 지하철 승강장 CCTV</button>
+      <button class="vid-btn" data-vid="bus_stop" data-optional="1">🚌 버스 정류장 CCTV</button>
+      <button class="vid-btn" data-vid="transfer" data-optional="1">🚇 환승 통로</button>
+      <button class="vid-btn" data-vid="station_exit" data-optional="1">🚇 역사 출구 군중</button>
     </div>
     <div class="diag-log" id="diag">[준비] 페이지 로드됨\n</div>
   </section>
@@ -1207,9 +1208,11 @@ async function captureLoop() {
   }
 }
 
-// 영상 프리셋 — 호모그래피 4점 추정값 (image_size, image_points, bev_points)
-// y=0=BEV far, y=1=BEV near (관찰자 가까움)
+// 영상 프리셋 — 도시 교통 도메인 영상만 유지
+// 호모그래피 4점: image_size, image_points, bev_points
+// y=0=BEV far (화면 위쪽 = 멀리), y=1=BEV near (화면 아래쪽 = 가까움)
 const VIDEO_PRESETS = {
+  // === 보유 영상 (도메인 핵심) ===
   subway: {
     src: '../videos/subway_interior.mp4',
     image_size: [640, 360],
@@ -1222,61 +1225,87 @@ const VIDEO_PRESETS = {
   vtest: {
     src: '../videos/vtest.mp4',
     image_size: [768, 576],
-    // 광장 + 도로 통합 ground plane (좌상=도로 안쪽 → 우하=광장 앞)
     homography: {
       image_points: [[160, 175], [610, 175], [768, 576], [0, 576]],
       bev_points:   [[0.20, 0.05], [0.80, 0.05], [0.95, 0.95], [0.05, 0.95]],
     },
   },
-  intersection: {
-    src: '../videos/intersection.mp4',
-    image_size: [640, 360],
-    homography: {
-      image_points: [[60, 80], [580, 80], [630, 350], [10, 350]],
-      bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
-    },
-  },
-  street_uk: {
-    src: '../videos/street_uk.mp4',
-    image_size: [640, 360],
-    // 자전거 POV — 도로 ground plane
-    homography: {
-      image_points: [[100, 150], [540, 150], [620, 340], [20, 340]],
-      bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
-    },
-  },
-  dog_park: {
-    src: '../videos/dog_park.mp4',
-    image_size: [640, 360],
-    // 공원 약간 elevated — 사람/강아지 ground plane
-    homography: {
-      image_points: [[60, 200], [580, 200], [630, 350], [10, 350]],
-      bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
-    },
-  },
-  eyelevel: {
-    src: '../videos/eyelevel.mp4',
-    image_size: [640, 360],
-    homography: {
-      image_points: [[80, 240], [560, 240], [630, 350], [10, 350]],
-      bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
-    },
-  },
   aerial: {
     src: '../videos/aerial.mp4',
     image_size: [640, 360],
-    // drone 거의 진짜 BEV — 화면 전체가 ground plane
+    // 드론 거의 진짜 BEV — 화면 전체가 ground plane
     homography: {
       image_points: [[20, 20], [620, 20], [620, 340], [20, 340]],
       bev_points:   [[0.05, 0.05], [0.95, 0.05], [0.95, 0.95], [0.05, 0.95]],
     },
   },
-  interior: {
-    src: '../videos/interior.mp4',
-    image_size: [480, 360],
-    homography: null,
+  dog_park: {
+    src: '../videos/dog_park.mp4',
+    image_size: [640, 360],
+    homography: {
+      image_points: [[60, 200], [580, 200], [630, 350], [10, 350]],
+      bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
+    },
+  },
+  // === 추가 슬롯 (영상 다운로드 후 frontend/videos/ 에 넣으면 자동 활성화) ===
+  // 권장: Pexels.com / Pixabay / Mixkit 무료 영상
+  //   subway_platform.mp4  검색어: "subway platform crowd cctv" "metro station platform"
+  //   bus_stop.mp4          검색어: "bus stop crowd korea" "bus station passengers"
+  //   transfer.mp4          검색어: "subway transfer corridor" "metro corridor crowd"
+  //   station_exit.mp4      검색어: "subway station exit" "metro exit stairs crowd"
+  subway_platform: {
+    src: '../videos/subway_platform.mp4',
+    image_size: [640, 360],
+    // 승강장 위 카메라 — 승강장 바닥 ground plane
+    homography: {
+      image_points: [[100, 130], [540, 130], [620, 350], [20, 350]],
+      bev_points:   [[0.20, 0.05], [0.80, 0.05], [0.95, 0.95], [0.05, 0.95]],
+    },
+  },
+  bus_stop: {
+    src: '../videos/bus_stop.mp4',
+    image_size: [640, 360],
+    homography: {
+      image_points: [[80, 150], [560, 150], [620, 350], [20, 350]],
+      bev_points:   [[0.20, 0.05], [0.80, 0.05], [0.95, 0.95], [0.05, 0.95]],
+    },
+  },
+  transfer: {
+    src: '../videos/transfer.mp4',
+    image_size: [640, 360],
+    // 환승 통로 POV — 통로 바닥
+    homography: {
+      image_points: [[200, 120], [440, 120], [580, 360], [60, 360]],
+      bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
+    },
+  },
+  station_exit: {
+    src: '../videos/station_exit.mp4',
+    image_size: [640, 360],
+    homography: {
+      image_points: [[120, 140], [520, 140], [600, 350], [40, 350]],
+      bev_points:   [[0.25, 0.05], [0.75, 0.05], [0.95, 0.95], [0.05, 0.95]],
+    },
   },
 };
+
+// 영상 파일 존재 여부 사전 체크 — 없으면 버튼 비활성화 (회색 + disabled)
+async function probeVideoSlots() {
+  const btns = document.querySelectorAll('.vid-btn[data-optional="1"]');
+  for (const btn of btns) {
+    const preset = VIDEO_PRESETS[btn.dataset.vid];
+    if (!preset) continue;
+    try {
+      const r = await fetch(preset.src, { method: 'HEAD' });
+      if (!r.ok) throw new Error(r.status);
+    } catch {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      btn.title = '영상 파일 없음 — frontend/videos/' + preset.src.split('/').pop() + ' 다운로드 후 활성화';
+    }
+  }
+}
+probeVideoSlots();
 
 let currentVideoMode = null;   // 'webcam' | 'eyelevel' | ...
 
