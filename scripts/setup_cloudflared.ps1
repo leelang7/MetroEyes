@@ -11,7 +11,8 @@
 param(
     [Parameter(Mandatory)] [string]$Domain,
     [string]$TunnelName = "metroeyes",
-    [int]$Port = 8765
+    [int]$Port = 8765,
+    [switch]$NoPush          # frontend 자동 commit/push 건너뛰기
 )
 
 $ErrorActionPreference = "Stop"
@@ -84,5 +85,45 @@ Write-Host ""
 Write-Host "검증:" -ForegroundColor Yellow
 Write-Host "  curl https://$Domain"
 Write-Host ""
-Write-Host "다음:" -ForegroundColor Cyan
-Write-Host "  frontend의 wss URL을 wss://$Domain 으로 일괄 교체 + git push"
+# Step 6: frontend wss URL 일괄 교체 + commit + push
+if (-not $NoPush) {
+    Write-Host "[6/6] frontend wss URL 일괄 교체 → wss://$Domain ..." -ForegroundColor Cyan
+    $newWss = "wss://$Domain"
+    $files = @(
+        "frontend\operator_web\realbev.html",
+        "frontend\operator_web\index.html",
+        "frontend\operator_web\bus.html",
+        "frontend\passenger_app\index.html",
+        "frontend\passenger_app\onboard.html",
+        ".github\workflows\pages.yml"
+    )
+    foreach ($f in $files) {
+        $p = Join-Path $root $f
+        if (Test-Path $p) {
+            $c = Get-Content $p -Raw
+            # 기존 임시 URL 또는 ngrok 패턴 찾아 교체
+            $c2 = $c -replace 'wss://[a-z0-9\-]+\.trycloudflare\.com', $newWss
+            $c2 = $c2 -replace 'wss://[a-z0-9\-]+\.ngrok-free\.dev', $newWss
+            $c2 = $c2 -replace 'wss://[a-z0-9\-]+\.ngrok\.io', $newWss
+            if ($c -ne $c2) {
+                Set-Content -Path $p -Value $c2 -NoNewline -Encoding utf8
+                Write-Host "  patched $f" -ForegroundColor Gray
+            }
+        }
+    }
+    # git commit + push
+    Write-Host "  git commit + push..." -ForegroundColor Gray
+    & git -c "user.name=leelang7" -c "user.email=leescvsir@gmail.com" add frontend\ .github\workflows\pages.yml
+    & git -c "user.name=leelang7" -c "user.email=leescvsir@gmail.com" commit -m "feat: switch to permanent Cloudflare domain wss://$Domain"
+    & git push origin main
+    Write-Host "  → GitHub Pages 1~2분 후 자동 재배포" -ForegroundColor Green
+}
+
+Write-Host ""
+Write-Host "Setup 완료!" -ForegroundColor Green
+Write-Host "  외부 시연 URL: https://leelang7.github.io/MetroEyes/" -ForegroundColor Yellow
+Write-Host "  WS endpoint:   wss://$Domain" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "Tunnel 시작:" -ForegroundColor Cyan
+Write-Host "  cloudflared tunnel --config $configPath run"
+Write-Host "  또는 start_silent.vbs 더블클릭 (cloudflared-config.yml 자동 감지)"

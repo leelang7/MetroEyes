@@ -1,10 +1,10 @@
 # MetroEyes demo launcher
 #
 # Usage (PowerShell 5.1 or 7):
-#   .\scripts\start_demo.ps1                  # backend + publisher + ngrok (minimized in taskbar)
+#   .\scripts\start_demo.ps1                  # backend + publisher + cloudflared tunnel (minimized)
 #   .\scripts\start_demo.ps1 -IncludeStatic   # + static file server :5173
 #   .\scripts\start_demo.ps1 -Visible         # show consoles
-#   .\scripts\start_demo.ps1 -NoNgrok         # local/USB only
+#   .\scripts\start_demo.ps1 -NoTunnel        # local/USB only (no external)
 #   .\scripts\start_demo.ps1 -Stop            # kill all
 #
 # Each component runs in its own console window so stdout is visible to the user.
@@ -12,7 +12,7 @@
 
 param(
     [switch]$Stop,
-    [switch]$NoNgrok,
+    [switch]$NoTunnel,
     [switch]$Visible,
     [switch]$IncludeStatic,
     [string]$Model = "yolo11s.pt",
@@ -34,8 +34,8 @@ if ($Stop) {
         Write-Host "  kill PID=$($_.ProcessId)"
         Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
     }
-    Get-Process -Name "ngrok" -ErrorAction SilentlyContinue | ForEach-Object {
-        Write-Host "  kill ngrok PID=$($_.Id)"
+    Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue | ForEach-Object {
+        Write-Host "  kill cloudflared PID=$($_.Id)"
         Stop-Process -Id $_.Id -Force
     }
     Write-Host "[done]" -ForegroundColor Green
@@ -94,23 +94,21 @@ if (-not $skipPub) {
     Write-Host "  publisher PID=$($pb.Id)" -ForegroundColor Gray
 }
 
-# 3) ngrok
-if (-not $NoNgrok) {
-    Write-Host ""
-    Write-Host "[3] ngrok (new console, $WS)..." -ForegroundColor Cyan
-    $ng = Start-Process -FilePath "powershell.exe" -ArgumentList @(
-        "-NoExit", "-Command",
-        "ngrok http $Port"
-    ) -PassThru -WorkingDirectory $root -WindowStyle $WS
-    Write-Host "  ngrok PID=$($ng.Id)" -ForegroundColor Gray
-    Start-Sleep -Seconds 3
-    try {
-        $tunnels = Invoke-RestMethod 'http://127.0.0.1:4040/api/tunnels' -TimeoutSec 3
-        $url = $tunnels.tunnels[0].public_url
-        Write-Host "  public URL: $url" -ForegroundColor Green
-        Write-Host "  phone app -> wss://$($url -replace '^https?://','')" -ForegroundColor Green
-    } catch {
-        Write-Host "  ngrok 4040 not ready yet - check the ngrok window" -ForegroundColor Yellow
+# 3) Cloudflare named tunnel — cloudflared-config.yml 있을 때만
+if (-not $NoTunnel) {
+    $cfConfig = Join-Path $root "cloudflared-config.yml"
+    if (Test-Path $cfConfig) {
+        Write-Host ""
+        Write-Host "[3] cloudflared named tunnel (new console, $WS)..." -ForegroundColor Cyan
+        $cfp = Start-Process -FilePath "powershell.exe" -ArgumentList @(
+            "-NoExit", "-Command",
+            "cloudflared tunnel --config '$cfConfig' run"
+        ) -PassThru -WorkingDirectory $root -WindowStyle $WS
+        Write-Host "  cloudflared PID=$($cfp.Id) - permanent domain (config in $cfConfig)" -ForegroundColor Gray
+    } else {
+        Write-Host ""
+        Write-Host "[3] cloudflared SKIP - run setup_cloudflared.ps1 first to create config." -ForegroundColor Yellow
+        Write-Host "    .\scripts\setup_cloudflared.ps1 -Domain app.YOUR-DOMAIN" -ForegroundColor Yellow
     }
 }
 

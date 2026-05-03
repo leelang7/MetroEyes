@@ -1,0 +1,10 @@
+# ngrok Traffic Policy — browser warning 우회
+# WebSocket handshake 시 ngrok-skip-browser-warning 헤더 자동 부착 + abuse interstitial 우회
+
+on_http_request:
+  - actions:
+      - type: add-headers
+        config:
+          headers:
+            ngrok-skip-browser-warning: "true"
+            user-agent: "MetroEyes/1.0"
