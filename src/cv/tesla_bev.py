@@ -325,6 +325,9 @@ async def run_serve(args) -> None:
     busy = {"flag": False}
     last_print = {"t": 0.0}
     rx = {"n": 0}
+    # 단일 active source 정책 (최근 송신자 우선, 5초간 유지)
+    active_source = {"ws": None, "until": 0.0}
+    ACTIVE_SOURCE_TTL = 5.0
     clients: set = set()
     client_H: dict = {}   # ws → (H_matrix, (W, H))
     arrival_cache: dict = {}   # (station, line) → (ts, payload)
@@ -890,6 +893,18 @@ async def run_serve(args) -> None:
                 if not isinstance(msg, (bytes, bytearray)):
                     continue
                 rx["n"] += 1
+                # 단일 active source 정책 — 다중 송신자(publisher + 운영자 콘솔) 깜빡임 방지.
+                # 가장 최근에 frame 보낸 client가 active. 5초간 다른 client frame은 무시.
+                _now = time.time()
+                if active_source["ws"] is None or _now > active_source["until"]:
+                    if active_source["ws"] is not websocket:
+                        print(f"[src] active → {peer}", flush=True)
+                    active_source["ws"] = websocket
+                    active_source["until"] = _now + ACTIVE_SOURCE_TTL
+                elif active_source["ws"] is not websocket:
+                    continue   # 다른 source 무시
+                else:
+                    active_source["until"] = _now + ACTIVE_SOURCE_TTL
                 if busy["flag"]:
                     continue
                 busy["flag"] = True
@@ -915,6 +930,9 @@ async def run_serve(args) -> None:
                     busy["flag"] = False
         finally:
             clients.discard(websocket)
+            if active_source["ws"] is websocket:
+                active_source["ws"] = None
+                active_source["until"] = 0.0
             print(f"[ws] 끊김 {peer} (남은 {len(clients)})", flush=True)
 
     print(f"[i] BEV multi-class (YOLO {args.model}) ws://0.0.0.0:{args.port}", flush=True)

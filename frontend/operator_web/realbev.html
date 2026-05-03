@@ -1183,9 +1183,14 @@ captureCanvas.width = 480; captureCanvas.height = 360;
 const cctx = captureCanvas.getContext('2d');
 const TARGET_TX_FPS = 10;
 
+// 영상 전환 중 (vidCam.src 변경 → onloadedmetadata 직전) 일시 정지
+let captureSuspended = false;
 async function captureLoop() {
   while (captureLoopRunning) {
-    if (ws && ws.readyState === WebSocket.OPEN && vidCam.videoWidth > 0) {
+    if (!captureSuspended &&
+        ws && ws.readyState === WebSocket.OPEN &&
+        vidCam.videoWidth > 0 && !vidCam.paused && !vidCam.seeking &&
+        vidCam.readyState >= 2) {   // HAVE_CURRENT_DATA 이상
       cctx.drawImage(vidCam, 0, 0, 480, 360);
       const blob = await new Promise(r => captureCanvas.toBlob(r, 'image/jpeg', 0.7));
       if (blob) {
@@ -1294,16 +1299,24 @@ function setHomographyOnServer(preset) {
 function startVideoFile(vidId) {
   const preset = VIDEO_PRESETS[vidId];
   if (!preset) return;
+  // 전환 중 캡처 일시 정지 — 깜빡임 방지
+  captureSuspended = true;
   // 웹캠 정지
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; vidCam.srcObject = null; }
+  // 이전 frame 잔여 제거
+  vidCam.pause();
+  vidCam.removeAttribute('src');
+  try { vidCam.load(); } catch {}
+  // 새 영상
   vidCam.src = preset.src;
   vidCam.loop = true;
   vidCam.muted = true;
   vidCam.play().catch(e => diag('err', `재생 실패: ${e.message}`));
-  vidCam.onloadedmetadata = () => {
+  vidCam.onloadeddata = () => {   // canplay/loadeddata 시점이 첫 frame 디코드 완료
     camSize.textContent = `${vidCam.videoWidth}×${vidCam.videoHeight}`;
     diag('ok', `영상: ${vidId} (${vidCam.videoWidth}×${vidCam.videoHeight})`);
     setHomographyOnServer(preset);
+    captureSuspended = false;   // 전환 완료 → 캡처 재개
   };
   if (!captureLoopRunning) { captureLoopRunning = true; captureLoop(); }
   currentVideoMode = vidId;
