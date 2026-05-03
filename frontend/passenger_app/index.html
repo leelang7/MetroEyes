@@ -1,10 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#04060a">
-<title>MetroEyes ???쒕? ??/title>
+<title>MetroEyes — 시민 앱</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,121 +13,121 @@
   <header class="app-header">
     <div class="brand">
       <span class="dot"></span>MetroEyes<small>Citizen</small>
-      <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">?ㅽ봽?쇱씤</span></span>
+      <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">오프라인</span></span>
     </div>
-    <a class="back-btn" href="../operator_web/index.html">愿????/a>
+    <a class="back-btn" href="../operator_web/index.html">관제 →</a>
   </header>
 
   <div class="tabs" role="tablist">
-    <button class="tab active" data-mode="subway" role="tab">吏?섏쿋</button>
-    <button class="tab" data-mode="bus" role="tab">踰꾩뒪</button>
+    <button class="tab active" data-mode="subway" role="tab">지하철</button>
+    <button class="tab" data-mode="bus" role="tab">버스</button>
   </div>
 
   <div class="context">
     <div class="station">
-      <span id="ctx-name">?좎떎??/span>
-      <small id="ctx-meta">2?몄꽑 쨌 ?좎떎??/small>
+      <span id="ctx-name">잠실역</span>
+      <small id="ctx-meta">2호선 · 잠실행</small>
     </div>
     <div class="time" id="ctx-time">18:22</div>
   </div>
 
   <div class="ppltn-strip" id="ppltn-strip" hidden>
-    <span class="icon">??/span>
-    <span class="area" id="ppltn-area">?좎떎??/span>
-    <span class="num" id="ppltn-num">- 紐?/span>
+    <span class="icon">⚲</span>
+    <span class="area" id="ppltn-area">잠실역</span>
+    <span class="num" id="ppltn-num">- 명</span>
     <span class="lvl" id="ppltn-lvl">-</span>
-    <span class="source">?쒖슱 ?꾩떆?곗씠??/span>
+    <span class="source">서울 도시데이터</span>
   </div>
 
   <div class="context-chips" id="context-chips" hidden>
-    <!-- ?듭떖 3媛?(??긽 ?몄텧) -->
-    <span class="chip" id="chip-weather"><span class="ico">??/span><b id="chip-weather-v">?붋?/b><span id="chip-weather-sub" style="margin-left: 4px;"></span></span>
-    <span class="chip" id="chip-air" hidden><span class="ico">?샆</span>誘몄꽭 <b id="chip-air-v">??/b></span>
-    <span class="chip" id="chip-bike" hidden><span class="ico">?슩</span>?곕쫱??<b id="chip-bike-v">??/b>?</span>
-    <!-- 遺媛 (?쎌옄 紐⑤뱶 ?먮뒗 ?쇱튂湲? -->
-    <span class="chip more-chip" id="chip-uv" hidden><span class="ico">?</span>UV <b id="chip-uv-v">??/b></span>
-    <span class="chip more-chip" id="chip-parking" hidden><span class="ico">?끏</span>二쇱감 <b id="chip-parking-v">??/b></span>
-    <span class="chip more-chip" id="chip-road" hidden><span class="ico">?썵</span>?꾨줈 <b id="chip-road-v">??/b>km/h</span>
+    <!-- 핵심 3개 (항상 노출) -->
+    <span class="chip" id="chip-weather"><span class="ico">☁</span><b id="chip-weather-v">—°</b><span id="chip-weather-sub" style="margin-left: 4px;"></span></span>
+    <span class="chip" id="chip-air" hidden><span class="ico">😷</span>미세 <b id="chip-air-v">—</b></span>
+    <span class="chip" id="chip-bike" hidden><span class="ico">🚲</span>따릉이 <b id="chip-bike-v">—</b>대</span>
+    <!-- 부가 (약자 모드 또는 펼치기) -->
+    <span class="chip more-chip" id="chip-uv" hidden><span class="ico">☀</span>UV <b id="chip-uv-v">—</b></span>
+    <span class="chip more-chip" id="chip-parking" hidden><span class="ico">🅿</span>주차 <b id="chip-parking-v">—</b></span>
+    <span class="chip more-chip" id="chip-road" hidden><span class="ico">🛣</span>도로 <b id="chip-road-v">—</b>km/h</span>
   </div>
 
   <div id="impact-counter" hidden style="font-size: 11px; color: var(--accent); padding: 6px 12px; background: var(--accent-soft); border-radius: 999px; display: inline-block; margin: -2px 0 10px; font-feature-settings: 'tnum';"></div>
 
   <div class="rain-banner" id="rain-banner" hidden>
-    <span class="ico">?뙢</span>
-    <span id="rain-banner-text">??/span>
+    <span class="ico">🌧</span>
+    <span id="rain-banner-text">—</span>
   </div>
 
   <div class="safety-banner" id="safety-banner" hidden>
-    <span>??/span>
-    <span id="safety-banner-text">??/span>
+    <span>⚠</span>
+    <span id="safety-banner-text">—</span>
   </div>
 
   <section class="decision">
-    <div class="label" id="d-label">沅뚯옣 ?묒듅 移?/div>
+    <div class="label" id="d-label">권장 탑승 칸</div>
     <div class="pct">
-      <span class="car" id="d-car">5?몄감</span>
+      <span class="car" id="d-car">5호차</span>
       <span id="d-pct">32</span><span class="unit">%</span>
     </div>
-    <div class="why" id="d-why">?몄꽦 ?됯퇏 <b>78%</b>蹂대떎 ?쒖궛. <b>3?몄꽑 ?섏듅</b>??媛源뚯?.</div>
+    <div class="why" id="d-why">편성 평균 <b>78%</b>보다 한산. <b>3호선 환승</b>도 가까움.</div>
   </section>
 
   <section class="approach">
-    <div class="icon">??/div>
+    <div class="icon">↗</div>
     <div class="body">
-      <div class="head" id="ap-head">?밴컯??留덉빱濡??대룞</div>
-      <div class="text" id="ap-text"><b>留덉빱 5踰?/b>源뚯? ??35m 쨌 ?꾨낫 30珥?/div>
+      <div class="head" id="ap-head">승강장 마커로 이동</div>
+      <div class="text" id="ap-text"><b>마커 5번</b>까지 약 35m · 도보 30초</div>
     </div>
   </section>
 
   <section class="eta">
-    <div class="label">?꾩갑</div>
-    <div class="num" id="eta-num">1<span class="unit">遺?/span> 12<span class="unit">珥?/span></div>
+    <div class="label">도착</div>
+    <div class="num" id="eta-num">1<span class="unit">분</span> 12<span class="unit">초</span></div>
   </section>
 
   <section class="minibev">
     <div class="head">
-      <span>?ㅼ떆媛?BEV 쨌 <span id="mini-title">5?몄감</span></span>
+      <span>실시간 BEV · <span id="mini-title">5호차</span></span>
       <span class="live">LIVE</span>
     </div>
     <canvas id="bev"></canvas>
   </section>
 
   <section class="compare">
-    <div class="head">?ㅻⅨ ?좏깮吏</div>
+    <div class="head">다른 선택지</div>
     <div id="compare-rows"></div>
   </section>
 
   <section class="assist">
-    <div class="head">?먯뿰?대줈 臾산린 (STT ?뚯꽦 吏??</div>
+    <div class="head">자연어로 묻기 (STT 음성 지원)</div>
     <div class="input-row">
-      <button class="mic" id="aMic" aria-label="?뚯꽦 ?낅젰">?렎</button>
-      <input id="aInput" placeholder="?? 媛뺣궓??퉴吏 鍮좊Ⅴ寃? />
-      <button class="send" id="aSend">臾산린</button>
+      <button class="mic" id="aMic" aria-label="음성 입력">🎤</button>
+      <input id="aInput" placeholder="예: 강남역까지 빠르게" />
+      <button class="send" id="aSend">묻기</button>
     </div>
     <div class="chips">
-      <span class="c">媛뺣궓??퉴吏 鍮좊Ⅴ寃?/span>
-      <span class="c">吏湲?媛???쒖궛??李?/span>
-      <span class="c">?좎껜?대줈 媛????덉뼱?</span>
-      <span class="c">?띾?源뚯? 媛??踰?/span>
+      <span class="c">강남역까지 빠르게</span>
+      <span class="c">지금 가장 한산한 차</span>
+      <span class="c">휠체어로 갈 수 있어?</span>
+      <span class="c">홍대까지 가는 법</span>
     </div>
     <div class="answer" id="aAnswer"></div>
   </section>
 
-  <div class="alert" id="alert">?꾧퀎 諛吏????ㅼ쓬 李?+3遺??湲?沅뚭퀬</div>
+  <div class="alert" id="alert">임계 밀집 — 다음 차 +3분 대기 권고</div>
 
   <div class="a11y-toggle">
-    <span class="label">?쎌옄 紐⑤뱶 (??湲??쨌 ?뚯꽦 ?덈궡 쨌 ?좎껜???좎븘李??숈꽑)</span>
-    <button class="switch" id="a11ySwitch" aria-label="?쎌옄 紐⑤뱶 ?좉?"></button>
+    <span class="label">약자 모드 (큰 글씨 · 음성 안내 · 휠체어/유아차 동선)</span>
+    <button class="switch" id="a11ySwitch" aria-label="약자 모드 토글"></button>
   </div>
 
   <div class="demo-time">
-    <label>?곕え ?쒓컖</label>
+    <label>데모 시각</label>
     <input id="hour" type="range" min="5" max="23" value="18" step="1">
-    <output id="hourlabel">18??/output>
+    <output id="hourlabel">18시</output>
   </div>
 </div>
 
-<button class="cta" id="cta">?묒듅?섍린 <span class="arrow">??/span></button>
+<button class="cta" id="cta">탑승하기 <span class="arrow">→</span></button>
 
 <script src="../shared/bev_engine.js"></script>
 <script src="../shared/safety_features.js"></script>
@@ -143,10 +143,10 @@ const VEHICLES = {
     decorate: null,
     cycleDur: { arriving: 1.8, stopped: 5.5, departing: 1.8, running: 4.5 },
     bevCanvasClass: '',
-    label: { line: '2?몄꽑 쨌 ?좎떎??, station: '?좎떎??, cluster: 'hub', unitLabel: '?몄감' },
+    label: { line: '2호선 · 잠실행', station: '잠실역', cluster: 'hub', unitLabel: '호차' },
     count: 10,
-    approachHead: '?밴컯??留덉빱濡??대룞',
-    approachText: (idx) => `<b>留덉빱 ${idx + 1}踰?/b>源뚯? ??${20 + idx * 12}m 쨌 ?꾨낫 ${Math.max(15, 20 + idx * 6)}珥?,
+    approachHead: '승강장 마커로 이동',
+    approachText: (idx) => `<b>마커 ${idx + 1}번</b>까지 약 ${20 + idx * 12}m · 도보 ${Math.max(15, 20 + idx * 6)}초`,
   },
   bus: {
     capacity: 50,
@@ -154,12 +154,12 @@ const VEHICLES = {
     decorate: decorators.bus,
     cycleDur: { arriving: 1.2, stopped: 3.5, departing: 1.2, running: 3.0 },
     bevCanvasClass: 'bus',
-    label: { line: '媛꾩꽑 142', station: '?좎떎??7踰덉텧援?, cluster: 'hub', unitLabel: '?쒖쐞' },
+    label: { line: '간선 142', station: '잠실역.7번출구', cluster: 'hub', unitLabel: '순위' },
     count: 3,
-    approachHead: '?꾩갑 ?湲?,
+    approachHead: '도착 대기',
     approachText: (idx) => {
       const m = [3, 8, 14][idx] || 14;
-      return `<b>${idx + 1}?쒖쐞</b> 李⑤웾 쨌 ??<b>${m}遺???/b> ?꾩갑`;
+      return `<b>${idx + 1}순위</b> 차량 · 약 <b>${m}분 후</b> 도착`;
     },
   },
 };
@@ -172,7 +172,8 @@ const canvas = document.getElementById('bev');
 
 function makeSim() {
   if (sim) {
-    // canvas???숈씪?섎땲 invalidate ???덈줈 留뚮뱺??    sim = null;
+    // canvas는 동일하니 invalidate 후 새로 만든다
+    sim = null;
   }
   const cfg = VEHICLES[mode];
   canvas.className = cfg.bevCanvasClass;
@@ -191,7 +192,7 @@ function buildOptions(hour) {
   const avg = model.trainOccupancyAt(hour, cfg.label.cluster);
   if (mode === 'subway') {
     return model.carOccupancies(avg, cfg.count, hour * 13 + 7).map((occ, i) => ({
-      idx: i, label: `${i + 1}?몄감`, occ, eta: 70 + i * 1, // initial ETA in seconds (just 1踰덉㎏ 李?
+      idx: i, label: `${i + 1}호차`, occ, eta: 70 + i * 1, // initial ETA in seconds (just 1번째 차)
     }));
   } else {
     const r = ((seed) => { let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3);
@@ -199,14 +200,14 @@ function buildOptions(hour) {
       const noise = (r() - 0.5) * 0.20;
       const occ = Math.max(0.05, Math.min(1.05, avg * 0.92 + noise));
       const eta = i === 0 ? Math.max(1, Math.round(r() * 3)) : Math.round((i + 1) * 4 + r() * 2);
-      return { idx: i, label: `${i + 1}?쒖쐞`, occ, eta: eta * 60 };
+      return { idx: i, label: `${i + 1}순위`, occ, eta: eta * 60 };
     });
   }
 }
 
 let options = [];
 function pickRecommended() {
-  // ?먯쑀??媛????? ?듭뀡
+  // 점유율 가장 낮은 옵션
   let bi = 0; let bv = options[0].occ;
   for (let i = 1; i < options.length; i++) {
     if (options[i].occ < bv) { bv = options[i].occ; bi = i; }
@@ -215,10 +216,10 @@ function pickRecommended() {
 }
 
 function fmtETA(seconds) {
-  if (seconds < 60) return `${seconds}<span class="unit">珥?/span>`;
+  if (seconds < 60) return `${seconds}<span class="unit">초</span>`;
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
-  return `${m}<span class="unit">遺?/span>${s > 0 ? ' ' + s + '<span class="unit">珥?/span>' : ''}`;
+  return `${m}<span class="unit">분</span>${s > 0 ? ' ' + s + '<span class="unit">초</span>' : ''}`;
 }
 
 function renderCompare() {
@@ -229,10 +230,10 @@ function renderCompare() {
     if (i === selected) return;
     const cls = opt.occ > 0.85 ? 'crit' : opt.occ > 0.65 ? 'warn' : '';
     const verdictCls = opt.occ < options[selected].occ ? 'go' : (opt.occ > 0.85 ? 'no' : '');
-    const verdictText = opt.occ < options[selected].occ ? '???쒖궛' : (opt.occ > 0.85 ? '鍮꾩텛' : '鍮꾩듂');
+    const verdictText = opt.occ < options[selected].occ ? '더 한산' : (opt.occ > 0.85 ? '비추' : '비슷');
     const whenText = mode === 'subway'
-      ? (i === 0 ? '吏湲? : `${i}????)
-      : (`${Math.round(opt.eta / 60)}遺???);
+      ? (i === 0 ? '지금' : `${i}회 뒤`)
+      : (`${Math.round(opt.eta / 60)}분 후`);
     const row = document.createElement('div');
     row.className = 'compare-row';
     row.innerHTML = `
@@ -248,7 +249,7 @@ function renderCompare() {
 function applyAll() {
   const cfg = VEHICLES[mode];
   const hour = +document.getElementById('hour').value;
-  document.getElementById('hourlabel').textContent = hour + '??;
+  document.getElementById('hourlabel').textContent = hour + '시';
   const minute = String(22).padStart(2, '0');  // demo
   document.getElementById('ctx-time').textContent = `${String(hour).padStart(2, '0')}:${minute}`;
   document.getElementById('ctx-name').textContent = cfg.label.station;
@@ -259,13 +260,13 @@ function applyAll() {
   const opt = options[selected];
 
   // Decision card
-  document.getElementById('d-label').textContent = mode === 'subway' ? '沅뚯옣 ?묒듅 移? : '沅뚯옣 ?묒듅 李⑤웾';
+  document.getElementById('d-label').textContent = mode === 'subway' ? '권장 탑승 칸' : '권장 탑승 차량';
   document.getElementById('d-car').textContent = opt.label;
   document.getElementById('d-pct').textContent = Math.round(opt.occ * 100);
   const trainAvg = model.trainOccupancyAt(hour, cfg.label.cluster);
   document.getElementById('d-why').innerHTML = mode === 'subway'
-    ? `?몄꽦 ?됯퇏 <b>${Math.round(trainAvg * 100)}%</b>蹂대떎 ?쒖궛. ${cfg.label.station} ${cfg.label.line}.`
-    : `?몄꽑 ?됯퇏 <b>${Math.round(trainAvg * 100)}%</b>蹂대떎 ?쒖궛. ${opt.eta < 5 * 60 ? '諛붾줈 ?꾩갑 ?덉젙' : '?쎄컙 ?湲?媛移?}.`;
+    ? `편성 평균 <b>${Math.round(trainAvg * 100)}%</b>보다 한산. ${cfg.label.station} ${cfg.label.line}.`
+    : `노선 평균 <b>${Math.round(trainAvg * 100)}%</b>보다 한산. ${opt.eta < 5 * 60 ? '바로 도착 예정' : '약간 대기 가치'}.`;
 
   // Approach
   document.getElementById('ap-head').textContent = cfg.approachHead;
@@ -291,7 +292,7 @@ function applyAll() {
 
   // CTA destination
   document.getElementById('cta').onclick = () => {
-    // (I2) ?ы쉶???꾪뙥????沅뚯옣 移??됯퇏怨쇱쓽 李⑥씠瑜?"?덇컧"?쇰줈 ?꾩쟻
+    // (I2) 사회적 임팩트 — 권장 칸 평균과의 차이를 "절감"으로 누적
     try {
       const avg = options.reduce((a, b) => a + b.occ, 0) / options.length;
       const savedPct = Math.max(0, Math.round((avg - opt.occ) * 100));
@@ -299,7 +300,7 @@ function applyAll() {
       const my = JSON.parse(localStorage.getItem(myKey) || '{"n":0,"saved":0}');
       my.n += 1; my.saved += savedPct;
       localStorage.setItem(myKey, JSON.stringify(my));
-      // backend??broadcast (?덉쑝硫?
+      // backend에 broadcast (있으면)
       if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
         window.LIVE_WS.send(JSON.stringify({
           type: 'impact_log',
@@ -342,7 +343,7 @@ function tickLoop(now) {
 }
 requestAnimationFrame(tickLoop);
 
-// ?쎌옄 紐⑤뱶
+// 약자 모드
 const A11Y_KEY = 'subwaybev_a11y';
 let a11yOn = localStorage.getItem(A11Y_KEY) === '1';
 const a11ySwitch = document.getElementById('a11ySwitch');
@@ -353,7 +354,7 @@ function setA11y(on) {
   a11ySwitch.classList.toggle('on', on);
   SF.applyAccessibilityMode(appRoot, on);
   if (on) {
-    // 利됱떆 ?뚯꽦 ?덈궡
+    // 즉시 음성 안내
     const opt = options[selected];
     const carLabel = opt.label;
     SF.announce('arrival', 'ko', [carLabel, Math.round(opt.occ * 100)]);
@@ -362,7 +363,7 @@ function setA11y(on) {
 a11ySwitch.addEventListener('click', () => setA11y(!a11yOn));
 setA11y(a11yOn);
 
-// 寃곗젙??諛붾???(?쒓컙/紐⑤뱶 蹂寃??? ?쎌옄 紐⑤뱶硫??먮룞 ?뚯꽦
+// 결정이 바뀔 때 (시간/모드 변경 시) 약자 모드면 자동 음성
 const _origApplyAll = applyAll;
 applyAll = function () {
   _origApplyAll();
@@ -372,7 +373,7 @@ applyAll = function () {
   }
 };
 
-// ============== ?먯뿰???댁떆?ㅽ꽩??(LLM + STT) ==============
+// ============== 자연어 어시스턴트 (LLM + STT) ==============
 const aInput = document.getElementById('aInput');
 const aSend = document.getElementById('aSend');
 const aMic = document.getElementById('aMic');
@@ -389,12 +390,12 @@ async function askCitizen() {
   const q = aInput.value.trim();
   if (!q) return;
   aSend.disabled = true;
-  aAnswer.textContent = '?앷컖 以?..';
+  aAnswer.textContent = '생각 중...';
   const resp = await LLMAssistant.callLLM(q, 'citizen');
   await LLMAssistant.streamTo(aAnswer, resp);
   aSend.disabled = false;
   if (a11yOn) {
-    SF.speak(resp.replace(/[?쉯?쉶?썤?뫀쨌]/g, ''), 'ko-KR');
+    SF.speak(resp.replace(/[🚇🚌🛗👤·]/g, ''), 'ko-KR');
   }
 }
 aSend.addEventListener('click', askCitizen);
@@ -426,26 +427,26 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-// ============== ?쇱씠釉?諛깆뿏??(BEV + ?꾩갑 + ?멸뎄) ==============
-// PWA媛 ws/wss濡?MetroEyes 諛깆뿏?쒖뿉 遺숈뼱 ???깃낵 ?숈씪???쇱씠釉??좏샇 ?ъ슜.
-// URL ?곗꽑?쒖쐞:
-//   1) ?ws=... query param (?섎룞 override)
+// ============== 라이브 백엔드 (BEV + 도착 + 인구) ==============
+// PWA가 ws/wss로 MetroEyes 백엔드에 붙어 폰 앱과 동일한 라이브 신호 사용.
+// URL 우선순위:
+//   1) ?ws=... query param (수동 override)
 //   2) localStorage 'subwaybev_ws'
-//   3) 媛숈? ?몄뒪?멸? ngrok-free.dev硫?洹몃?濡?wss://host
-//   4) 湲곕낯媛? ws://localhost:8765 (USB adb reverse 媛??
+//   3) 같은 호스트가 ngrok-free.dev면 그대로 wss://host
+//   4) 기본값: ws://localhost:8765 (USB adb reverse 가정)
 const LIVE = (() => {
   const stations = [
-    { name: '?좎떎', line: 2, lat: 37.5133, lon: 127.1000, poi: '?좎떎?? },
-    { name: '媛뺣궓', line: 2, lat: 37.4980, lon: 127.0276, poi: '媛뺣궓?? },
-    { name: '?띾??낃뎄', line: 2, lat: 37.5572, lon: 126.9244, poi: '?띾? 愿愿묓듅援? },
-    { name: '?쒖껌', line: 2, lat: 37.5642, lon: 126.9778, poi: '愿묓솕臾맞룸뜒?섍턿' },
-    { name: '?쒖슱??, line: 1, lat: 37.5547, lon: 126.9707, poi: '?쒖슱?? },
-    { name: '愿묓솕臾?, line: 5, lat: 37.5717, lon: 126.9766, poi: '愿묓솕臾맞룸뜒?섍턿' },
-    { name: '醫낅줈3媛', line: 1, lat: 37.5717, lon: 126.9914, poi: '醫낅줈쨌泥?퀎 愿愿묓듅援? },
-    { name: '?좎큿', line: 2, lat: 37.5556, lon: 126.9362, poi: '?좎큿쨌?대??? },
-    { name: '?щ떦', line: 2, lat: 37.4766, lon: 126.9817, poi: '?щ떦?? },
-    { name: '嫄대??낃뎄', line: 2, lat: 37.5403, lon: 127.0703, poi: '嫄대??낃뎄?? },
-    { name: '源?ш났??, line: 5, lat: 37.5615, lon: 126.8014, poi: '源?ш났?? },
+    { name: '잠실', line: 2, lat: 37.5133, lon: 127.1000, poi: '잠실역' },
+    { name: '강남', line: 2, lat: 37.4980, lon: 127.0276, poi: '강남역' },
+    { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244, poi: '홍대 관광특구' },
+    { name: '시청', line: 2, lat: 37.5642, lon: 126.9778, poi: '광화문·덕수궁' },
+    { name: '서울역', line: 1, lat: 37.5547, lon: 126.9707, poi: '서울역' },
+    { name: '광화문', line: 5, lat: 37.5717, lon: 126.9766, poi: '광화문·덕수궁' },
+    { name: '종로3가', line: 1, lat: 37.5717, lon: 126.9914, poi: '종로·청계 관광특구' },
+    { name: '신촌', line: 2, lat: 37.5556, lon: 126.9362, poi: '신촌·이대역' },
+    { name: '사당', line: 2, lat: 37.4766, lon: 126.9817, poi: '사당역' },
+    { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703, poi: '건대입구역' },
+    { name: '김포공항', line: 5, lat: 37.5615, lon: 126.8014, poi: '김포공항' },
   ];
   function haversineKm(a, b) {
     const r = 6371, toRad = (d) => d * Math.PI / 180;
@@ -470,19 +471,19 @@ const LIVE = (() => {
     if (location.hostname.endsWith('ngrok-free.dev')) {
       return `wss://${location.host}`;
     }
-    // GitHub Pages ???몃? ?몄뒪????ngrok ?곴뎄 ?꾨찓?몄쑝濡?吏곸젒
+    // GitHub Pages 등 외부 호스팅 → ngrok 영구 도메인으로 직접
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') {
-      return 'wss://app.allthatai.kr';
+      return 'wss://hose-associate-boc-wonderful.trycloudflare.com';
     }
     return 'ws://localhost:8765';
   }
 
   let ws = null;
   let retryT = null;
-  let liveBev = null;       // 留덉?留?BEV ?섏씠濡쒕뱶
-  let liveArrival = null;   // 留덉?留?arrival ?묐떟
-  let livePpltn = null;     // 留덉?留??멸뎄 ?묐떟
-  let curStation = stations[0]; // 湲곕낯 ?좎떎
+  let liveBev = null;       // 마지막 BEV 페이로드
+  let liveArrival = null;   // 마지막 arrival 응답
+  let livePpltn = null;     // 마지막 인구 응답
+  let curStation = stations[0]; // 기본 잠실
   let arrivalPoll = null, ppltnPoll = null, cdPoll = null;
 
   const badge = document.getElementById('live-badge');
@@ -495,8 +496,9 @@ const LIVE = (() => {
 
   function applyOcc() {
     if (!liveBev || !options || options.length === 0) return;
-    if (mode !== 'subway') return; // bus???쒕? ?좎?
-    // bev_x quantile 10 遺꾪븷 ??移몃퀎 person 移댁슫?? ?뺤썝 20紐?媛??    const bins = new Array(VEHICLES.subway.count).fill(0);
+    if (mode !== 'subway') return; // bus는 시뮬 유지
+    // bev_x quantile 10 분할 → 칸별 person 카운트, 정원 20명 가정
+    const bins = new Array(VEHICLES.subway.count).fill(0);
     for (const t of (liveBev.tracks || [])) {
       if (t.class !== 'person') continue;
       const x = +t.bev_x;
@@ -508,7 +510,7 @@ const LIVE = (() => {
     const cap = 20;
     if (liveBev.tracks && liveBev.tracks.some(t => t.class === 'person')) {
       options = options.map((o, i) => ({ ...o, occ: Math.min(1.05, bins[i] / cap) }));
-      // ETA ?곸슜 (?쇱씠釉??꾩갑)
+      // ETA 적용 (라이브 도착)
       if (liveArrival && liveArrival.items && liveArrival.items.length) {
         let bestEta = null;
         for (const r of liveArrival.items) {
@@ -521,14 +523,14 @@ const LIVE = (() => {
         }
       }
       selected = pickRecommended();
-      // ?붾㈃ 媛깆떊 (applyAll ?쇰? ?ъ궗????DOM留??낅뜲?댄듃)
+      // 화면 갱신 (applyAll 일부 재사용 — DOM만 업데이트)
       const opt = options[selected];
       document.getElementById('d-car').textContent = opt.label;
       document.getElementById('d-pct').textContent = Math.round(opt.occ * 100);
       const liveAvg = options.reduce((a,b) => a + b.occ, 0) / options.length;
       const personN = liveBev.tracks.filter(t => t.class === 'person').length;
       document.getElementById('d-why').innerHTML =
-        `?ㅼ륫 ?됯퇏 <b>${Math.round(liveAvg * 100)}%</b>蹂대떎 ?쒖궛. ?쇱씠釉?移대찓??${personN}紐?寃異?`;
+        `실측 평균 <b>${Math.round(liveAvg * 100)}%</b>보다 한산. 라이브 카메라 ${personN}명 검출.`;
       document.getElementById('eta-num').innerHTML = fmtETA(opt.eta);
       document.getElementById('mini-title').textContent = opt.label;
       if (sim) { sim.setTargetOccupancy(opt.occ); sim.forceRebuild(opt.occ); }
@@ -541,16 +543,16 @@ const LIVE = (() => {
     if (!p || p.error || p.ppltn_max == null) { strip.hidden = true; return; }
     const mid = Math.round(((p.ppltn_min || 0) + (p.ppltn_max || 0)) / 2);
     document.getElementById('ppltn-area').textContent = p.area_nm || curStation.poi;
-    const numStr = mid >= 10000 ? `${(mid/10000).toFixed(1)}留뚮챸` :
-                   mid >= 1000 ? `${(mid/1000).toFixed(1)}K紐? : `${mid}紐?;
+    const numStr = mid >= 10000 ? `${(mid/10000).toFixed(1)}만명` :
+                   mid >= 1000 ? `${(mid/1000).toFixed(1)}K명` : `${mid}명`;
     document.getElementById('ppltn-num').textContent = numStr;
     const lvl = p.congest_lvl || '?';
     const lvlEl = document.getElementById('ppltn-lvl');
     lvlEl.textContent = lvl;
     lvlEl.className = 'lvl ' + (
-      lvl === '遺먮퉼' ? 'busy' :
-      lvl === '?쎄컙 遺먮퉼' ? 'bit-busy' :
-      lvl === '蹂댄넻' ? 'normal' : 'relax'
+      lvl === '붐빔' ? 'busy' :
+      lvl === '약간 붐빔' ? 'bit-busy' :
+      lvl === '보통' ? 'normal' : 'relax'
     );
     strip.hidden = false;
   }
@@ -564,31 +566,32 @@ const LIVE = (() => {
     if (j.error) return;
     const chips = document.getElementById('context-chips');
     let any = false;
-    // ?좎뵪 + 媛뺤닔 ?쒖떆 (?꾩옱)
+    // 날씨 + 강수 표시 (현재)
     if (j.temp != null) {
       const cl = j.temp >= 25 ? 'warm' : j.temp <= 5 ? 'cold' : '';
       const el = document.getElementById('chip-weather');
       el.className = 'chip ' + cl;
-      const rainNow = (j.precpt_type && j.precpt_type !== '?놁쓬' && j.precpt_type !== '-') ? ` ${j.precpt_type}` : '';
-      document.getElementById('chip-weather-v').textContent = `${j.temp.toFixed(1)}째${rainNow}`;
-      document.getElementById('chip-weather-sub').textContent = j.sensible_temp != null ? `泥닿컧 ${j.sensible_temp.toFixed(0)}째` : '';
+      const rainNow = (j.precpt_type && j.precpt_type !== '없음' && j.precpt_type !== '-') ? ` ${j.precpt_type}` : '';
+      document.getElementById('chip-weather-v').textContent = `${j.temp.toFixed(1)}°${rainNow}`;
+      document.getElementById('chip-weather-sub').textContent = j.sensible_temp != null ? `체감 ${j.sensible_temp.toFixed(0)}°` : '';
       el.hidden = false; any = true;
     }
-    // 怨듦린吏?    if (j.air_idx) {
+    // 공기질
+    if (j.air_idx) {
       const lvl = j.air_idx;
-      const cls = (lvl === '醫뗭쓬') ? 'air-good' : (lvl === '蹂댄넻') ? 'air-good'
-                : (lvl === '?섏겏') ? 'air-mid' : 'air-bad';
+      const cls = (lvl === '좋음') ? 'air-good' : (lvl === '보통') ? 'air-good'
+                : (lvl === '나쁨') ? 'air-mid' : 'air-bad';
       const el = document.getElementById('chip-air');
       el.className = 'chip ' + cls;
       document.getElementById('chip-air-v').textContent = lvl;
       const pm25 = j.pm25 != null ? `PM2.5 ${j.pm25}` : '';
       const pm10 = j.pm10 != null ? `PM10 ${j.pm10}` : '';
-      document.getElementById('chip-air-sub').textContent = [pm25, pm10].filter(Boolean).join(' 쨌 ');
+      document.getElementById('chip-air-sub').textContent = [pm25, pm10].filter(Boolean).join(' · ');
       el.hidden = false; any = true;
     }
-    // ?먯쇅??(?믪쓬/留ㅼ슦 ?믪쓬???뚮쭔)
-    if (j.uv_idx && (j.uv_idx === '?믪쓬' || j.uv_idx === '留ㅼ슦 ?믪쓬' || (j.uv_lvl ?? 0) >= 6)) {
-      const cls = j.uv_idx === '留ㅼ슦 ?믪쓬' || (j.uv_lvl ?? 0) >= 9 ? 'uv-veryhigh' : 'uv-high';
+    // 자외선 (높음/매우 높음일 때만)
+    if (j.uv_idx && (j.uv_idx === '높음' || j.uv_idx === '매우 높음' || (j.uv_lvl ?? 0) >= 6)) {
+      const cls = j.uv_idx === '매우 높음' || (j.uv_lvl ?? 0) >= 9 ? 'uv-veryhigh' : 'uv-high';
       const el = document.getElementById('chip-uv');
       el.className = 'chip ' + cls;
       document.getElementById('chip-uv-v').textContent = j.uv_idx;
@@ -612,25 +615,25 @@ const LIVE = (() => {
     }
     chips.hidden = !any;
 
-    // 媛뺤닔 ?덈낫 諛곕꼫
+    // 강수 예보 배너
     const rainEl = document.getElementById('rain-banner');
     const rainText = document.getElementById('rain-banner-text');
     if (j.rain_first && j.rain_first.dt) {
       const dt = j.rain_first.dt;  // YYYYMMDDHHMM
       const hh = dt.length >= 12 ? dt.substring(8, 10) : '?';
       const tp = j.rain_first.type;
-      rainText.innerHTML = `<b>${hh}??/b>遺??<b>${tp}</b> ?덈낫 ???곗궛 梨숆린?몄슂`;
+      rainText.innerHTML = `<b>${hh}시</b>부터 <b>${tp}</b> 예보 — 우산 챙기세요`;
       rainEl.hidden = false;
     } else {
       rainEl.hidden = true;
     }
 
-    // ?덉쟾 ?뚮┝ (?ш퀬/?듭젣)
+    // 안전 알림 (사고/통제)
     const safety = (j.events || []).concat(j.alerts || []).concat(j.accidents || []);
     const safetyEl = document.getElementById('safety-banner');
     if (safety.length > 0) {
       const first = safety[0];
-      const msg = (first.EVENT_NM || first.MESSAGE || first.ACDNT_TYPE || '?덉쟾 ?뚮┝').toString();
+      const msg = (first.EVENT_NM || first.MESSAGE || first.ACDNT_TYPE || '안전 알림').toString();
       document.getElementById('safety-banner-text').textContent = msg.substring(0, 80);
       safetyEl.hidden = false;
     } else {
@@ -640,9 +643,10 @@ const LIVE = (() => {
 
   function connect(url) {
     try { if (ws) ws.close(); } catch {}
-    setBadge('connecting', '?곌껐 以?);
+    setBadge('connecting', '연결 중');
     ws = new WebSocket(url);
-    window.LIVE_WS = ws;   // CTA?먯꽌 impact_log ?≪떊??    ws.onopen = () => {
+    window.LIVE_WS = ws;   // CTA에서 impact_log 송신용
+    ws.onopen = () => {
       setBadge('connected', 'LIVE');
       queryArrival(); queryPpltn(); queryCitydata();
       if (arrivalPoll) clearInterval(arrivalPoll);
@@ -661,30 +665,30 @@ const LIVE = (() => {
         else if (j.type === 'impact_summary') {
           const c = document.getElementById('impact-counter');
           if (c) {
-            c.textContent = `?렞 ?ㅻ뒛 ${j.total_count.toLocaleString()}紐?異붿쿇 ?섏슜 쨌 ?됯퇏 -${j.avg_saved_pct.toFixed(0)}% ?쒖궛`;
+            c.textContent = `🎯 오늘 ${j.total_count.toLocaleString()}명 추천 수용 · 평균 -${j.avg_saved_pct.toFixed(0)}% 한산`;
             c.hidden = false;
           }
         }
         else { liveBev = j;
           if (typeof j.fps === 'number') {
-            label.textContent = `LIVE 쨌 ${j.fps.toFixed(1)} fps 쨌 ${(j.tracks || []).length} ?몃옓`;
+            label.textContent = `LIVE · ${j.fps.toFixed(1)} fps · ${(j.tracks || []).length} 트랙`;
           }
           applyOcc();
         }
       } catch {}
     };
-    ws.onclose = () => { setBadge('', '?ㅽ봽?쇱씤'); clearTimeout(retryT); retryT = setTimeout(() => connect(url), 3000); };
-    ws.onerror = () => { setBadge('error', '?곌껐 ?ㅽ뙣'); };
+    ws.onclose = () => { setBadge('', '오프라인'); clearTimeout(retryT); retryT = setTimeout(() => connect(url), 3000); };
+    ws.onerror = () => { setBadge('error', '연결 실패'); };
   }
 
-  // GPS 留ㅼ묶 ?쒕룄 (HTTPS context ?먮뒗 localhost?먯꽌留?
+  // GPS 매칭 시도 (HTTPS context 또는 localhost에서만)
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const r = nearest(pos.coords.latitude, pos.coords.longitude);
         curStation = r.station;
-        document.getElementById('ctx-name').textContent = `${r.station.name}??;
-        document.getElementById('ctx-meta').textContent = `${r.station.line}?몄꽑 쨌 ${r.km.toFixed(1)}km`;
+        document.getElementById('ctx-name').textContent = `${r.station.name}역`;
+        document.getElementById('ctx-meta').textContent = `${r.station.line}호선 · ${r.km.toFixed(1)}km`;
         if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); }
       },
       () => {},
@@ -695,7 +699,7 @@ const LIVE = (() => {
   return { connect, pickWsUrl };
 })();
 
-// ?먮룞 ?곌껐
+// 자동 연결
 LIVE.connect(LIVE.pickWsUrl());
 </script>
 </body>

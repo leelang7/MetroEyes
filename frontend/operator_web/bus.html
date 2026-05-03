@@ -1,30 +1,30 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MetroEyes ???댁쁺??肄섏넄 쨌 踰꾩뒪</title>
+<title>MetroEyes — 운영자 콘솔 · 버스</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
 </head>
 <body>
 <header>
   <div class="brand">
     <span class="dot"></span>MetroEyes<small>Operator Console</small>
-    <span class="nav-sep">쨌</span>
-    <a href="index.html">吏?섏쿋</a>
-    <a href="bus.html" class="active">踰꾩뒪</a>
-    <a href="realbev.html">??移대찓??/a>
+    <span class="nav-sep">·</span>
+    <a href="index.html">지하철</a>
+    <a href="bus.html" class="active">버스</a>
+    <a href="realbev.html">실 카메라</a>
     <span class="nav-sep">|</span>
-    <a href="../passenger_app/index.html" style="color: var(--accent);">?쒕? ????/a>
+    <a href="../passenger_app/index.html" style="color: var(--accent);">시민 앱 →</a>
   </div>
   <div class="controls">
-    <span class="tag">?몄꽑<b id="t-line">媛꾩꽑 142</b></span>
-    <span class="tag">?뺣쪟??b id="t-stop">?좎떎??7踰덉텧援?/b></span>
-    <span class="tag">?꾪궎???b id="t-cluster">?섏듅 ?덈툕</b></span>
+    <span class="tag">노선<b id="t-line">간선 142</b></span>
+    <span class="tag">정류장<b id="t-stop">잠실역.7번출구</b></span>
+    <span class="tag">아키타입<b id="t-cluster">환승 허브</b></span>
     <div class="slider-wrap">
-      <label>?쒓컖</label>
+      <label>시각</label>
       <input id="hour" type="range" min="5" max="23" value="18" step="1">
-      <output id="hourlabel">18??/output>
+      <output id="hourlabel">18시</output>
     </div>
   </div>
 </header>
@@ -32,33 +32,33 @@
 <main>
   <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
     <div class="fusion-card dim" id="fc-cv" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">寃異??몄썝 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">?먯껜 CV</span></div>
-      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-cv-v">?붾챸</div>
-      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cv-sub">諛깆뿏??誘몄뿰寃?/div>
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">검출 인원 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">자체 CV</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-cv-v">—명</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cv-sub">백엔드 미연결</div>
     </div>
     <div class="fusion-card dim" id="fc-arr" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">李⑤웾 ?꾩갑 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">?쒖슱 BIS</span></div>
-      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-arr-v">?붾텇</div>
-      <div style="font-size: 11px; color: var(--muted-2);" id="fc-arr-sub">data.go.kr ???꾩슂</div>
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">차량 도착 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 BIS</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-arr-v">—분</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-arr-sub">data.go.kr 키 필요</div>
     </div>
     <div class="fusion-card dim" id="fc-pop" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">?뺣쪟???멸뎄 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">?쒖슱 ?꾩떆?곗씠??/span></div>
-      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-pop-v">?붾챸</div>
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">정류장 인구 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 도시데이터</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-pop-v">—명</div>
       <div style="font-size: 11px; color: var(--muted-2);" id="fc-pop-sub">citydata_ppltn</div>
     </div>
     <div class="fusion-card dim" id="fc-cong" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">?쇱옟 ?덈꺼 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">?듯빀</span></div>
-      <div style="font-size: 22px; color: var(--muted); font-weight: 300;" id="fc-cong-v">??/div>
-      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cong-sub">CV + ?멸뎄 寃고빀</div>
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">혼잡 레벨 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">융합</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300;" id="fc-cong-v">—</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cong-sub">CV + 인구 결합</div>
     </div>
   </section>
 
   <section class="train-strip">
     <div class="train-strip-head">
-      <h2><b>媛꾩꽑 142 쨌 ?꾨큺?겸넄?좎떎</b><span style="color: var(--muted)">?묎렐 以묒씤 3? ?먯쑀 BEV</span></h2>
+      <h2><b>간선 142 · 도봉산↔잠실</b><span style="color: var(--muted)">접근 중인 3대 점유 BEV</span></h2>
       <div class="train-meta">
-        <span class="pulse"></span>?ㅼ떆媛?異붾줎 쨌 60Hz 쨌 BIS ?꾩튂 ??0s
-        <span id="phase-tag" class="phase-tag">?댄뻾 以?/span>
+        <span class="pulse"></span>실시간 추론 · 60Hz · BIS 위치 ≤30s
+        <span id="phase-tag" class="phase-tag">운행 중</span>
       </div>
     </div>
     <canvas id="strip"></canvas>
@@ -66,50 +66,50 @@
 
   <section class="grid">
     <div class="panel">
-      <h2><b id="bus-title">?좏깮 踰꾩뒪</b><span style="color: var(--muted)">李⑤궡 4-移대찓??BEV ?듯빀 쨌 踰≫꽣 媛앹껜 ?몃옓</span></h2>
+      <h2><b id="bus-title">선택 버스</b><span style="color: var(--muted)">차내 4-카메라 BEV 융합 · 벡터 객체 트랙</span></h2>
       <canvas id="bev" class="bus"></canvas>
       <div class="legend">
-        <span><i style="background: var(--fg)"></i>?낆꽍 ?밴컼</span>
-        <span><i style="background: var(--muted-2)"></i>醫뚯꽍 ?밴컼</span>
-        <span><i style="background: var(--accent); border-radius: 1px; height: 2px; width: 14px"></i>?욌Ц (?뱀감)</span>
-        <span><i style="background: #f0aa82; border-radius: 1px; height: 2px; width: 14px"></i>?룸Ц (?섏감)</span>
+        <span><i style="background: var(--fg)"></i>입석 승객</span>
+        <span><i style="background: var(--muted-2)"></i>좌석 승객</span>
+        <span><i style="background: var(--accent); border-radius: 1px; height: 2px; width: 14px"></i>앞문 (승차)</span>
+        <span><i style="background: #f0aa82; border-radius: 1px; height: 2px; width: 14px"></i>뒷문 (하차)</span>
       </div>
       <div class="kpi">
-        <div><b id="kpi-pct">??/b><span class="unit">%</span><small>?먯쑀??/small></div>
-        <div><b id="kpi-cnt">??/b><span class="unit">紐?/span><small>?몄썝 쨌 ?뺤썝 50</small></div>
-        <div><b id="kpi-eta">??/b><span class="unit">遺?/span><small>?꾩갑 ETA</small></div>
+        <div><b id="kpi-pct">—</b><span class="unit">%</span><small>점유율</small></div>
+        <div><b id="kpi-cnt">—</b><span class="unit">명</span><small>인원 · 정원 50</small></div>
+        <div><b id="kpi-eta">—</b><span class="unit">분</span><small>도착 ETA</small></div>
       </div>
-      <div id="alert" class="alert"><span class="dot-warn"></span>?꾧퀎 諛吏????ㅼ쓬 李?遺꾩궛 ?덈궡 ?≪텧 沅뚭퀬</div>
+      <div id="alert" class="alert"><span class="dot-warn"></span>임계 밀집 — 다음 차 분산 안내 송출 권고</div>
     </div>
     <div class="panel">
-      <h2><b>?묎렐 以묒씤 踰꾩뒪</b><span style="color: var(--muted)">?뺤감 ?쒖꽌</span></h2>
+      <h2><b>접근 중인 버스</b><span style="color: var(--muted)">정차 순서</span></h2>
       <div id="busList" class="car-list"></div>
       <div id="recommend" class="recommend">
-        <div class="head">沅뚯옣 ?묒듅 李⑤웾</div>
-        <div><span class="num" id="rec-num">??/span> 쨌 <span id="rec-pct" style="color: var(--fg)">??</span> 쨌 <span id="rec-eta" style="color: var(--fg)">?붾텇 ??/span></div>
-        <div style="color: var(--muted); font-size: 11px; margin-top: 6px;" id="rec-meta">??/div>
+        <div class="head">권장 탑승 차량</div>
+        <div><span class="num" id="rec-num">—</span> · <span id="rec-pct" style="color: var(--fg)">—%</span> · <span id="rec-eta" style="color: var(--fg)">—분 후</span></div>
+        <div style="color: var(--muted); font-size: 11px; margin-top: 6px;" id="rec-meta">—</div>
       </div>
       <div id="priority-kpi" class="priority-kpi">
-        <span class="label">?쎌옄???좎껜??怨듦컙</span>
-        <span class="val" id="pri-val">??/ ??/span>
+        <span class="label">약자석/휠체어 공간</span>
+        <span class="val" id="pri-val">— / —</span>
       </div>
       <div class="safety-panel">
         <div class="safety-head">
-          <h2><b>?덉쟾 媛먯?</b><span style="color: var(--muted)">硫?고깭?ㅽ겕 BEV</span></h2>
+          <h2><b>안전 감지</b><span style="color: var(--muted)">멀티태스크 BEV</span></h2>
           <div class="badges">
-            <span class="b high" id="b-emer">?묎툒 0</span>
-            <span class="b med" id="b-susp">?댁긽 0</span>
-            <span class="b low" id="b-lost">遺꾩떎 0</span>
-            <span class="b" id="b-free">臾댁엫 0</span>
+            <span class="b high" id="b-emer">응급 0</span>
+            <span class="b med" id="b-susp">이상 0</span>
+            <span class="b low" id="b-lost">분실 0</span>
+            <span class="b" id="b-free">무임 0</span>
           </div>
         </div>
         <div class="incident-list" id="incidents"></div>
-        <button class="tts-btn" id="ttsBtn">?뵄 遺꾩궛 ?덈궡 ?뚯꽦 ?≪텧</button>
+        <button class="tts-btn" id="ttsBtn">🔊 분산 안내 음성 송출</button>
         <div class="tts-lang">
-          <button data-lang="ko" class="active">??/button>
+          <button data-lang="ko" class="active">한</button>
           <button data-lang="en">EN</button>
-          <button data-lang="zh">訝?/button>
-          <button data-lang="ja">??/button>
+          <button data-lang="zh">中</button>
+          <button data-lang="ja">日</button>
         </div>
       </div>
     </div>
@@ -117,25 +117,25 @@
 </main>
 <div class="toast-stack" id="toastStack"></div>
 
-<button class="llm-fab" id="llmFab" aria-label="AI ?댁떆?ㅽ꽩???닿린">??span class="badge">AI</span></button>
+<button class="llm-fab" id="llmFab" aria-label="AI 어시스턴트 열기">✨<span class="badge">AI</span></button>
 <div class="llm-panel" id="llmPanel" role="dialog">
   <div class="llm-head">
-    <div class="ttl"><span class="dot"></span>?댁쁺???댁떆?ㅽ꽩??small>?앹꽦??AI 쨌 ?쒓뎅??/small></div>
-    <button class="llm-close" id="llmClose">??/button>
+    <div class="ttl"><span class="dot"></span>운영자 어시스턴트<small>생성형 AI · 한국어</small></div>
+    <button class="llm-close" id="llmClose">✕</button>
   </div>
   <div class="llm-msgs" id="llmMsgs"></div>
   <div class="llm-suggest" id="llmSuggest">
-    <span class="chip">吏湲?媛???꾧툒??李⑤웾</span>
-    <span class="chip">?됱냼? ?ㅻⅨ ??/span>
-    <span class="chip">?ㅼ쓬 5遺??덉륫</span>
-    <span class="chip">遺꾩궛 ?덈궡 沅뚭퀬臾?/span>
-    <span class="chip">?쎌옄??泥섎━</span>
-    <span class="chip">?댄뻾 ?⑥쑉??/span>
+    <span class="chip">지금 가장 위급한 차량</span>
+    <span class="chip">평소와 다른 점</span>
+    <span class="chip">다음 5분 예측</span>
+    <span class="chip">분산 안내 권고문</span>
+    <span class="chip">약자석 처리</span>
+    <span class="chip">운행 효율화</span>
   </div>
   <div class="llm-input">
-    <button class="mic" id="llmMic" aria-label="?뚯꽦 ?낅젰">?렎</button>
-    <input type="text" id="llmInput" placeholder="吏덈Ц ?먮뒗 紐낅졊 (?뚯꽦 媛??..." />
-    <button id="llmSend">?꾩넚</button>
+    <button class="mic" id="llmMic" aria-label="음성 입력">🎤</button>
+    <input type="text" id="llmInput" placeholder="질문 또는 명령 (음성 가능)..." />
+    <button id="llmSend">전송</button>
   </div>
 </div>
 
@@ -143,7 +143,7 @@
 <script src="../shared/safety_features.js"></script>
 <script src="../shared/llm_assistant.js"></script>
 <script>
-const ROUTE = { name: '媛꾩꽑 142', stop: '?좎떎??7踰덉텧援?, cluster: 'hub' };
+const ROUTE = { name: '간선 142', stop: '잠실역.7번출구', cluster: 'hub' };
 const CAPACITY = 50;
 const BUS_COUNT = 3;
 const { layouts, decorators, model, occColor, rgba } = BEVEngine;
@@ -169,7 +169,7 @@ const sim = BEVEngine.createSim({
   },
 });
 
-// ============== ?묎렐 以?3? strip ==============
+// ============== 접근 중 3대 strip ==============
 let lastBuses = [];  // [{ occ, eta }]
 function drawStrip(buses, selectedIdx) {
   const cv = document.getElementById('strip');
@@ -205,11 +205,11 @@ function drawStrip(buses, selectedIdx) {
     }
     ctx.font = '500 11px Inter, "Malgun Gothic"';
     ctx.fillStyle = (i === selectedIdx) ? '#7dd3d3' : '#6b768a';
-    const order = ['1?쒖쐞', '2?쒖쐞', '3?쒖쐞'][i];
+    const order = ['1순위', '2순위', '3순위'][i];
     ctx.fillText(order, x + 8, yTop + carH + 14);
     ctx.font = '500 10px Inter, "Malgun Gothic"';
     ctx.fillStyle = (i === selectedIdx) ? '#e8edf5' : '#8e98ac';
-    const eta = `${buses[i].eta}遺???;
+    const eta = `${buses[i].eta}분 후`;
     ctx.fillText(eta, x + carW - ctx.measureText(eta).width - 8, yTop + carH + 14);
     const pct = `${Math.round(o * 100)}%`;
     ctx.fillText(pct, x + carW / 2 - ctx.measureText(pct).width / 2, yTop + carH + 26);
@@ -251,7 +251,7 @@ function generateBuses(hour) {
 
 function applyHour() {
   const hour = +hourEl.value;
-  hourLabel.textContent = hour + '??;
+  hourLabel.textContent = hour + '시';
   const buses = generateBuses(hour);
   lastBuses = buses;
   const myOcc = buses[selected].occ;
@@ -262,13 +262,13 @@ function applyHour() {
   }
   prevSelected = selected;
 
-  busTitle.textContent = `${ROUTE.name} 쨌 ${['1?쒖쐞 ?꾩갑李?, '2?쒖쐞 ?꾩갑李?, '3?쒖쐞 ?꾩갑李?][selected]}`;
+  busTitle.textContent = `${ROUTE.name} · ${['1순위 도착차', '2순위 도착차', '3순위 도착차'][selected]}`;
 
   const cnt = Math.round(CAPACITY * myOcc);
   kpiPct.textContent = Math.round(myOcc * 100);
   kpiCnt.textContent = cnt;
   kpiEta.textContent = buses[selected].eta;
-  // 踰꾩뒪 ?듬줈 硫댁쟻? ??12 m짼 (??곷쾭??湲곗?)
+  // 버스 통로 면적은 약 12 m² (저상버스 기준)
   alertEl.classList.toggle('show', myOcc >= 0.92);
 
   busList.innerHTML = '';
@@ -285,16 +285,17 @@ function applyHour() {
     busList.appendChild(row);
   });
 
-  // 沅뚯옣: ?먯쑀 媛????? 李?  let mi = 0, mv = buses[0].occ;
+  // 권장: 점유 가장 낮은 차
+  let mi = 0, mv = buses[0].occ;
   buses.forEach((b, i) => { if (b.occ < mv) { mv = b.occ; mi = i; } });
-  recNum.textContent = ['1?쒖쐞', '2?쒖쐞', '3?쒖쐞'][mi];
+  recNum.textContent = ['1순위', '2순위', '3순위'][mi];
   recPct.textContent = `${Math.round(mv * 100)}%`;
-  recEta.textContent = `${buses[mi].eta}遺???;
-  recMeta.textContent = `?몄꽑 ?됯퇏 ${Math.round(model.trainOccupancyAt(hour, ROUTE.cluster) * 100)}% 쨌 ${model.CLUSTERS[ROUTE.cluster].label} 쨌 ${hour}??;
+  recEta.textContent = `${buses[mi].eta}분 후`;
+  recMeta.textContent = `노선 평균 ${Math.round(model.trainOccupancyAt(hour, ROUTE.cluster) * 100)}% · ${model.CLUSTERS[ROUTE.cluster].label} · ${hour}시`;
 }
 
 function updatePhaseTag() {
-  const m = { arriving: ['?꾩갑 以?, ''], stopped: ['?뺤감', 'stopped'], departing: ['異쒕컻', ''], running: ['?댄뻾 以?, ''] };
+  const m = { arriving: ['도착 중', ''], stopped: ['정차', 'stopped'], departing: ['출발', ''], running: ['운행 중', ''] };
   const [text, cls] = m[sim.getPhase()];
   phaseTag.textContent = text;
   phaseTag.className = 'phase-tag ' + cls;
@@ -306,10 +307,11 @@ function updateLiveKpi() {
   const myOcc = cnt / CAPACITY;
   alertEl.classList.toggle('show', myOcc >= 0.92);
 
-  // ?쎌옄???좎껜??怨듦컙 紐⑤땲??  const pr = sim.priorityStats();
+  // 약자석/휠체어 공간 모니터
+  const pr = sim.priorityStats();
   const valEl = document.getElementById('pri-val');
   const kpiBox = document.getElementById('priority-kpi');
-  valEl.textContent = `${pr.occupied} / ${pr.total}` + (pr.blocked > 0 ? ` 쨌 李⑤떒 ${pr.blocked}` : '');
+  valEl.textContent = `${pr.occupied} / ${pr.total}` + (pr.blocked > 0 ? ` · 차단 ${pr.blocked}` : '');
   kpiBox.classList.toggle('warn', pr.blocked > 0);
 }
 
@@ -323,10 +325,10 @@ function renderIncidents() {
     else if (ev.type === 'lost') nL++;
     else if (ev.type === 'free_ride') nF++;
   }
-  document.getElementById('b-emer').textContent = '?묎툒 ' + nE;
-  document.getElementById('b-susp').textContent = '?댁긽 ' + nS;
-  document.getElementById('b-lost').textContent = '遺꾩떎 ' + nL;
-  document.getElementById('b-free').textContent = '臾댁엫 ' + nF;
+  document.getElementById('b-emer').textContent = '응급 ' + nE;
+  document.getElementById('b-susp').textContent = '이상 ' + nS;
+  document.getElementById('b-lost').textContent = '분실 ' + nL;
+  document.getElementById('b-free').textContent = '무임 ' + nF;
   for (const ev of incidentsLog.slice(0, 8)) {
     const row = document.createElement('div');
     row.className = `incident ${ev.severity}`;
@@ -352,8 +354,8 @@ document.getElementById('ttsBtn').addEventListener('click', () => {
   const myOcc = lastBuses[selected].occ;
   let mi = 0, mv = lastBuses[0].occ;
   lastBuses.forEach((b, i) => { if (b.occ < mv) { mv = b.occ; mi = i; } });
-  const carLabel = `${selected + 1}?쒖쐞 李⑤웾`;
-  const recCar = `${mi + 1}?쒖쐞 李⑤웾`;
+  const carLabel = `${selected + 1}순위 차량`;
+  const recCar = `${mi + 1}순위 차량`;
   const btn = document.getElementById('ttsBtn');
   btn.classList.add('speaking');
   setTimeout(() => btn.classList.remove('speaking'), 3000);
@@ -383,7 +385,7 @@ window.addEventListener('resize', () => {
 applyHour();
 requestAnimationFrame(tick);
 
-// ============== LLM ?댁떆?ㅽ꽩??==============
+// ============== LLM 어시스턴트 ==============
 const llmFab = document.getElementById('llmFab');
 const llmPanel = document.getElementById('llmPanel');
 const llmClose = document.getElementById('llmClose');
@@ -447,7 +449,7 @@ if (SR) {
   llmMic.style.display = 'none';
 }
 
-// ============== 4以??곗씠???듯빀 (BUS) ==============
+// ============== 4중 데이터 융합 (BUS) ==============
 (() => {
   const wsUrl = (() => {
     const p = new URLSearchParams(location.search).get('ws');
@@ -455,44 +457,44 @@ if (SR) {
     const saved = localStorage.getItem('subwaybev_ws');
     if (saved) return saved;
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
-    if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
+    if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://hose-associate-boc-wonderful.trycloudflare.com';
     return 'ws://localhost:8765';
   })();
   let ws = null, lastBev = null, lastPop = null, lastCd = null, popT = null, cdT = null;
-  // 踰꾩뒪 紐⑤뱶 ??POI???좎떎??7踰덉텧援??멸렐 ???좎떎??쑝濡?留ㅽ븨
-  const stop = { poi: '?좎떎?? };
-  function fmtN(n) { if (n == null) return '??; if (n >= 10000) return (n/10000).toFixed(1) + '留?; if (n >= 1000) return (n/1000).toFixed(1) + 'K'; return String(n); }
+  // 버스 모드 — POI는 잠실역.7번출구 인근 → 잠실역으로 매핑
+  const stop = { poi: '잠실역' };
+  function fmtN(n) { if (n == null) return '—'; if (n >= 10000) return (n/10000).toFixed(1) + '만'; if (n >= 1000) return (n/1000).toFixed(1) + 'K'; return String(n); }
   function setCard(id, cls) { const c = document.getElementById(id); if (!c) return; c.classList.remove('dim','ok','warn','crit'); c.classList.add(cls); const v = c.querySelector('div:nth-child(2)'); if (v) v.style.color = cls === 'ok' ? 'var(--accent)' : cls === 'warn' ? 'var(--warn)' : cls === 'crit' ? 'var(--crit)' : 'var(--muted)'; }
   function applyBev(p) {
     lastBev = p;
     const n = (p.tracks || []).filter(t => t.class === 'person').length;
     const v = (p.tracks || []).filter(t => ['bus','car','truck'].includes(t.class)).length;
-    document.getElementById('fc-cv-v').textContent = `${n}紐?;
-    document.getElementById('fc-cv-sub').textContent = `蹂댄뻾 ${n} 쨌 李⑤웾 ${v} 쨌 YOLO ${(p.fps ?? 0).toFixed(1)} fps`;
+    document.getElementById('fc-cv-v').textContent = `${n}명`;
+    document.getElementById('fc-cv-sub').textContent = `보행 ${n} · 차량 ${v} · YOLO ${(p.fps ?? 0).toFixed(1)} fps`;
     setCard('fc-cv', 'ok'); evalCong();
   }
   function applyPpltn(j) {
     lastPop = j;
-    if (j.error || j.ppltn_max == null) { document.getElementById('fc-pop-v').textContent = '?붾챸'; document.getElementById('fc-pop-sub').textContent = j.error || '?곗씠???놁쓬'; setCard('fc-pop', 'dim'); return; }
+    if (j.error || j.ppltn_max == null) { document.getElementById('fc-pop-v').textContent = '—명'; document.getElementById('fc-pop-sub').textContent = j.error || '데이터 없음'; setCard('fc-pop', 'dim'); return; }
     const mid = Math.round(((j.ppltn_min||0) + (j.ppltn_max||0))/2);
-    document.getElementById('fc-pop-v').textContent = `${fmtN(mid)}紐?;
-    document.getElementById('fc-pop-sub').textContent = `${j.area_nm} 쨌 ${j.congest_lvl} 쨌 ${j.ppltn_time||''}`;
-    const lvl = j.congest_lvl === '遺먮퉼' ? 'crit' : j.congest_lvl === '?쎄컙 遺먮퉼' ? 'warn' : 'ok';
+    document.getElementById('fc-pop-v').textContent = `${fmtN(mid)}명`;
+    document.getElementById('fc-pop-sub').textContent = `${j.area_nm} · ${j.congest_lvl} · ${j.ppltn_time||''}`;
+    const lvl = j.congest_lvl === '붐빔' ? 'crit' : j.congest_lvl === '약간 붐빔' ? 'warn' : 'ok';
     setCard('fc-pop', lvl); evalCong();
   }
   function evalCong() {
     const personN = lastBev ? (lastBev.tracks || []).filter(t => t.class === 'person').length : null;
     const popLvl = lastPop && !lastPop.error ? lastPop.congest_lvl : null;
-    if (personN == null && popLvl == null) { document.getElementById('fc-cong-v').textContent = '??; setCard('fc-cong', 'dim'); return; }
-    const popOrd = { '?ъ쑀': 0, '蹂댄넻': 0.4, '?쎄컙 遺먮퉼': 0.7, '遺먮퉼': 1 };
+    if (personN == null && popLvl == null) { document.getElementById('fc-cong-v').textContent = '—'; setCard('fc-cong', 'dim'); return; }
+    const popOrd = { '여유': 0, '보통': 0.4, '약간 붐빔': 0.7, '붐빔': 1 };
     let combined = 0, w = 0;
     if (personN != null) { combined += Math.min(1, personN/30) * 0.65; w += 0.65; }
     if (popLvl != null) { combined += (popOrd[popLvl] ?? 0) * 0.35; w += 0.35; }
     combined = w > 0 ? combined/w : 0;
-    const lvl = combined >= 0.75 ? '遺먮퉼' : combined >= 0.5 ? '?쎄컙 遺먮퉼' : combined >= 0.25 ? '蹂댄넻' : '?ъ쑀';
+    const lvl = combined >= 0.75 ? '붐빔' : combined >= 0.5 ? '약간 붐빔' : combined >= 0.25 ? '보통' : '여유';
     document.getElementById('fc-cong-v').textContent = lvl;
-    document.getElementById('fc-cong-sub').textContent = `CV ${personN ?? '??}紐?쨌 ?멸뎄 ${popLvl ?? '??} 쨌 ?먯닔 ${(combined*100).toFixed(0)}`;
-    setCard('fc-cong', lvl === '遺먮퉼' ? 'crit' : lvl === '?쎄컙 遺먮퉼' ? 'warn' : 'ok');
+    document.getElementById('fc-cong-sub').textContent = `CV ${personN ?? '—'}명 · 인구 ${popLvl ?? '—'} · 점수 ${(combined*100).toFixed(0)}`;
+    setCard('fc-cong', lvl === '붐빔' ? 'crit' : lvl === '약간 붐빔' ? 'warn' : 'ok');
   }
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryPop() { send({ type: 'population_query', poi: stop.poi }); }
@@ -500,13 +502,13 @@ if (SR) {
   function applyCitydata(j) {
     lastCd = j;
     if (j.error) return;
-    // 李⑤웾 ?꾩갑 移대뱶: LIVE_BUS_PPLTN 30遺??꾩쟻 ?뱀감 max濡??꾩갑 ?쒕룞 吏???쒖떆
+    // 차량 도착 카드: LIVE_BUS_PPLTN 30분 누적 승차 max로 도착 활동 지표 표시
     const card = document.getElementById('fc-arr');
     if (j.bus_30wthn_gton_max != null) {
       const n = j.bus_30wthn_gton_max;
       card.classList.remove('dim','crit'); card.classList.add(n > 200 ? 'warn' : 'ok');
-      document.getElementById('fc-arr-v').innerHTML = `${n.toLocaleString()}<span class="unit">/30遺?/span>`;
-      document.getElementById('fc-arr-sub').textContent = `?뺣쪟??30遺??꾩쟻 ?뱀감 (citydata LIVE_BUS_PPLTN)`;
+      document.getElementById('fc-arr-v').innerHTML = `${n.toLocaleString()}<span class="unit">/30분</span>`;
+      document.getElementById('fc-arr-sub').textContent = `정류장 30분 누적 승차 (citydata LIVE_BUS_PPLTN)`;
     }
     evalCong();
   }

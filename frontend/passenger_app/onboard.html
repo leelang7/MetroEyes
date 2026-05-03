@@ -1,34 +1,34 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#04060a">
-<title>MetroEyes ???묒듅 以?/title>
+<title>MetroEyes — 탑승 중</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="app">
   <header class="app-header">
-    <button class="back-btn" onclick="history.back()">???ㅻ줈</button>
+    <button class="back-btn" onclick="history.back()">← 뒤로</button>
     <div class="brand">
       <span class="dot"></span>MetroEyes<small>Onboard</small>
-      <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">?ㅽ봽?쇱씤</span></span>
+      <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">오프라인</span></span>
     </div>
     <span style="width: 50px"></span>
   </header>
 
   <div class="topbar">
     <div class="title">
-      <span id="t-car">5?몄감</span>
-      <small id="t-line">2?몄꽑 ?좎떎??/small>
+      <span id="t-car">5호차</span>
+      <small id="t-line">2호선 잠실행</small>
     </div>
   </div>
 
   <section class="minibev" style="position: relative;">
     <div class="head">
-      <span>李⑤궡 BEV 쨌 蹂몄씤 ?꾩튂 ?쒖떆</span>
+      <span>차내 BEV · 본인 위치 표시</span>
       <span class="live">LIVE</span>
     </div>
     <div class="you-here-tag">YOU</div>
@@ -36,30 +36,30 @@
   </section>
 
   <section class="predict">
-    <div class="head">?ㅼ쓬 ?뺢굅???덉륫</div>
+    <div class="head">다음 정거장 예측</div>
     <div class="flow">
-      <span class="now"><span id="now-pct">??/span>%</span>
-      <span class="arrow">??/span>
-      <span class="next"><span id="next-pct">??/span>%</span>
-      <span class="delta" id="delta-meta">??/span>
+      <span class="now"><span id="now-pct">—</span>%</span>
+      <span class="arrow">→</span>
+      <span class="next"><span id="next-pct">—</span>%</span>
+      <span class="delta" id="delta-meta">—</span>
     </div>
-    <div class="station" id="next-station">?ㅼ쓬: ?좎떎?섎（??쨌 <span id="next-eta">??/span> ??/div>
+    <div class="station" id="next-station">다음: 잠실나루역 · <span id="next-eta">—</span> 후</div>
   </section>
 
   <section class="transfer" id="transfer">
-    <div class="icon">??/div>
+    <div class="icon">⇄</div>
     <div class="body">
-      <div class="head">?섏듅/?섏감 ?덈궡</div>
-      <div class="text" id="transfer-text">???뺢굅???뺣낫 濡쒕뵫 以???/div>
+      <div class="head">환승/하차 안내</div>
+      <div class="text" id="transfer-text">— 정거장 정보 로딩 중 —</div>
     </div>
   </section>
 
-  <div class="alert" id="alert">?꾧퀎 諛吏????ㅼ쓬 ?뺢굅???뚮씪?댄똿 ??遺꾩궛 沅뚭퀬</div>
+  <div class="alert" id="alert">임계 밀집 — 다음 정거장 알라이팅 시 분산 권고</div>
 
   <div class="demo-time">
-    <label>?곕え ?쒓컖</label>
+    <label>데모 시각</label>
     <input id="hour" type="range" min="5" max="23" value="18" step="1">
-    <output id="hourlabel">18??/output>
+    <output id="hourlabel">18시</output>
   </div>
 </div>
 
@@ -79,13 +79,13 @@ const VEHICLES = {
     decorate: null,
     cycleDur: { arriving: 1.8, stopped: 5.5, departing: 1.8, running: 4.5 },
     bevCanvasClass: 'large',
-    label: (i) => `${i + 1}?몄감`,
-    line: '2?몄꽑 ?좎떎??,
+    label: (i) => `${i + 1}호차`,
+    line: '2호선 잠실행',
     cluster: 'hub',
-    nextStop: (h) => ['?좎떎?섎（??, '媛뺣???, '援ъ쓽??][h % 3] || '?좎떎?섎（??,
+    nextStop: (h) => ['잠실나루역', '강변역', '구의역'][h % 3] || '잠실나루역',
     transfer: () => ({
-      head: '3?몄꽑 ?섏듅 (?좎떎?섎（???꾩갑 ??',
-      text: '<b>醫뚯륫 ??踰덉㎏ 臾?/b>?쇰줈 ?대━硫??섏듅 ?듬줈 媛源뚯? 쨌 ??1遺?30珥?,
+      head: '3호선 환승 (잠실나루역 도착 시)',
+      text: '<b>좌측 두 번째 문</b>으로 내리면 환승 통로 가까움 · 약 1분 30초',
     }),
   },
   bus: {
@@ -94,13 +94,13 @@ const VEHICLES = {
     decorate: decorators.bus,
     cycleDur: { arriving: 1.2, stopped: 3.5, departing: 1.2, running: 3.0 },
     bevCanvasClass: 'large',
-    label: (i) => `${i + 1}?쒖쐞 李⑤웾`,
-    line: '媛꾩꽑 142',
+    label: (i) => `${i + 1}순위 차량`,
+    line: '간선 142',
     cluster: 'hub',
-    nextStop: (h) => ['?щ┝?쎄났?먯뿭', '紐쎌큿?좎꽦??, '?좎떎?섎（??][h % 3] || '?щ┝?쎄났?먯뿭',
+    nextStop: (h) => ['올림픽공원역', '몽촌토성역', '잠실나루역'][h % 3] || '올림픽공원역',
     transfer: () => ({
-      head: '?섏감 ?덈궡',
-      text: '?섏감 ??<b>?룸Ц ?ъ슜</b>. ?ㅼ쓬 ?뺣쪟?μ뿉 25紐??섏감 ?덉젙 ???쒖궛?댁쭏 ?덉젙',
+      head: '하차 안내',
+      text: '하차 시 <b>뒷문 사용</b>. 다음 정류장에 25명 하차 예정 → 한산해질 예정',
     }),
   },
 };
@@ -112,14 +112,15 @@ canvas.className = cfg.bevCanvasClass;
 document.getElementById('t-car').textContent = cfg.label(idx);
 document.getElementById('t-line').textContent = cfg.line;
 
-// ?ъ슜???꾩튂 ??李⑤웾 ???대뵖媛 (?쒕뜡?섏?留??쇨??섍쾶)
+// 사용자 위치 — 차량 안 어딘가 (랜덤하지만 일관되게)
 const userPos = { x: 0.4, y: 0.5 };  // 0~1 of car interior
 
 function drawUserOverlay(ctx, L, sim) {
-  // ?ъ슜???꾩튂 ?쒖떆 (李⑤웾 醫뚰몴怨꾨줈 蹂??
+  // 사용자 위치 표시 (차량 좌표계로 변환)
   const ux = L.pad + userPos.x * L.cw;
   const uy = L.pad + userPos.y * L.ch;
-  // ?멸낸 ?꾩뒪 留?  const t = (performance.now() / 1000) % 1;
+  // 외곽 펄스 링
+  const t = (performance.now() / 1000) % 1;
   ctx.save();
   for (let i = 0; i < 2; i++) {
     const phase = (t + i * 0.5) % 1;
@@ -131,7 +132,8 @@ function drawUserOverlay(ctx, L, sim) {
     ctx.arc(ux, uy, radius, 0, Math.PI * 2);
     ctx.stroke();
   }
-  // 肄붿뼱 ??  ctx.fillStyle = '#7dd3d3';
+  // 코어 점
+  ctx.fillStyle = '#7dd3d3';
   ctx.shadowColor = '#7dd3d3';
   ctx.shadowBlur = 12;
   ctx.beginPath();
@@ -153,7 +155,7 @@ const sim = BEVEngine.createSim({
 let currentOcc = 0.5;
 function applyHour() {
   const hour = +document.getElementById('hour').value;
-  document.getElementById('hourlabel').textContent = hour + '??;
+  document.getElementById('hourlabel').textContent = hour + '시';
 
   let occ;
   if (mode === 'subway') {
@@ -168,16 +170,16 @@ function applyHour() {
   }
   currentOcc = occ;
   sim.setTargetOccupancy(occ);
-  // ?ㅼ쓬 ?뺢굅???덉륫: 25% ?뚮씪?댄똿 媛??????-15~25%
+  // 다음 정거장 예측: 25% 알라이팅 가정 → 약 -15~25%
   const nextOcc = Math.max(0.1, occ - 0.18 + (Math.random() - 0.5) * 0.06);
 
   document.getElementById('now-pct').textContent = Math.round(occ * 100);
   document.getElementById('next-pct').textContent = Math.round(nextOcc * 100);
   const delta = Math.round((nextOcc - occ) * 100);
   document.getElementById('delta-meta').textContent =
-    delta < 0 ? `${delta}%p 쨌 ??${Math.round(Math.abs(delta) * 0.4)}紐??섏감` : `+${delta}%p`;
+    delta < 0 ? `${delta}%p · 약 ${Math.round(Math.abs(delta) * 0.4)}명 하차` : `+${delta}%p`;
   document.getElementById('next-station').innerHTML =
-    `?ㅼ쓬: <b style="color: var(--fg)">${cfg.nextStop(hour)}</b> 쨌 <span id="next-eta">2遺?30珥?/span> ??;
+    `다음: <b style="color: var(--fg)">${cfg.nextStop(hour)}</b> · <span id="next-eta">2분 30초</span> 후`;
 
   const tr = cfg.transfer();
   document.getElementById('transfer').querySelector('.head').textContent = tr.head;
@@ -204,7 +206,7 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-// ============== ?쇱씠釉?諛깆뿏??(?묒듅 ????李⑤궡 ?먯쑀??媛깆떊) ==============
+// ============== 라이브 백엔드 (탑승 후 — 차내 점유율 갱신) ==============
 (() => {
   const wsUrl = (() => {
     const p = new URLSearchParams(location.search).get('ws');
@@ -212,7 +214,7 @@ if ('serviceWorker' in navigator) {
     const saved = localStorage.getItem('subwaybev_ws');
     if (saved) return saved;
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
-    if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
+    if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://hose-associate-boc-wonderful.trycloudflare.com';
     return 'ws://localhost:8765';
   })();
   const badge = document.getElementById('live-badge');
@@ -220,7 +222,7 @@ if ('serviceWorker' in navigator) {
   function setBadge(state, text) { badge.classList.remove('connected','connecting','error'); if (state) badge.classList.add(state); label.textContent = text; }
   let ws = null, retryT = null;
   function connect() {
-    setBadge('connecting', '?곌껐 以?);
+    setBadge('connecting', '연결 중');
     try { if (ws) ws.close(); } catch {}
     ws = new WebSocket(wsUrl);
     ws.onopen = () => setBadge('connected', 'LIVE');
@@ -228,19 +230,20 @@ if ('serviceWorker' in navigator) {
       try {
         const j = JSON.parse(ev.data);
         if (j.type === 'arrival' || j.type === 'population' || j.type === 'occupancy_predict') return;
-        // BEV ?섏씠濡쒕뱶 ???쇱씠釉??먯쑀??媛깆떊
+        // BEV 페이로드 — 라이브 점유율 갱신
         const personN = (j.tracks || []).filter(t => t.class === 'person').length;
-        const live = Math.min(1.05, personN / 20); // ?뺤썝 20 媛??        if (typeof sim !== 'undefined' && sim) { sim.setTargetOccupancy(live); }
-        // ?ㅼ쓬 ?뺢굅???덉륫 (媛꾨떒 ?대━?ㅽ떛: ?쇱씠釉?+ 5%)
+        const live = Math.min(1.05, personN / 20); // 정원 20 가정
+        if (typeof sim !== 'undefined' && sim) { sim.setTargetOccupancy(live); }
+        // 다음 정거장 예측 (간단 휴리스틱: 라이브 + 5%)
         const nowPctEl = document.getElementById('now-pct');
         const nextPctEl = document.getElementById('next-pct');
         if (nowPctEl) nowPctEl.textContent = Math.round(live * 100);
         if (nextPctEl) nextPctEl.textContent = Math.round(Math.min(1, live + 0.05) * 100);
-        if (typeof j.fps === 'number') label.textContent = `LIVE 쨌 ${j.fps.toFixed(1)} fps 쨌 ${personN}紐?;
+        if (typeof j.fps === 'number') label.textContent = `LIVE · ${j.fps.toFixed(1)} fps · ${personN}명`;
       } catch {}
     };
-    ws.onclose = () => { setBadge('', '?ㅽ봽?쇱씤'); clearTimeout(retryT); retryT = setTimeout(connect, 3000); };
-    ws.onerror = () => setBadge('error', '?곌껐 ?ㅽ뙣');
+    ws.onclose = () => { setBadge('', '오프라인'); clearTimeout(retryT); retryT = setTimeout(connect, 3000); };
+    ws.onerror = () => setBadge('error', '연결 실패');
   }
   connect();
 })();
