@@ -331,7 +331,6 @@
       <span style="color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;">샘플 영상:</span>
       <button class="vid-btn" data-vid="subway">🚇 지하철 차내</button>
       <button class="vid-btn" data-vid="vtest">광장 군중</button>
-      <button class="vid-btn" data-vid="aerial">🛸 드론 횡단보도 (BEV)</button>
       <button class="vid-btn" data-vid="dog_park">공원 (사람·반려동물)</button>
       <span style="color: var(--muted); font-size: 11px; margin-left: 8px;">|</span>
       <button class="vid-btn" data-vid="subway_platform" data-optional="1">🚇 지하철 승강장 CCTV</button>
@@ -1228,15 +1227,6 @@ const VIDEO_PRESETS = {
     homography: {
       image_points: [[160, 175], [610, 175], [768, 576], [0, 576]],
       bev_points:   [[0.20, 0.05], [0.80, 0.05], [0.95, 0.95], [0.05, 0.95]],
-    },
-  },
-  aerial: {
-    src: '../videos/aerial.mp4',
-    image_size: [640, 360],
-    // 드론 거의 진짜 BEV — 화면 전체가 ground plane
-    homography: {
-      image_points: [[20, 20], [620, 20], [620, 340], [20, 340]],
-      bev_points:   [[0.05, 0.05], [0.95, 0.05], [0.95, 0.95], [0.05, 0.95]],
     },
   },
   dog_park: {
