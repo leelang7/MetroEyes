@@ -1,0 +1,9 @@
+tunnel: 30f3e4a4-e310-4677-8b4d-c0f718e10076
+credentials-file: C:\Users\leesc\.cloudflared\30f3e4a4-e310-4677-8b4d-c0f718e10076.json
+
+ingress:
+  - hostname: app.allthatai.kr
+    service: http://localhost:8765
+    originRequest:
+      noTLSVerify: true
+  - service: http_status:404

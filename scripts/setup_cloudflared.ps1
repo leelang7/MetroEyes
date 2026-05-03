@@ -1,93 +1,80 @@
-# Cloudflare named tunnel 자동 setup
+# MetroEyes - Cloudflare named tunnel automated setup
 #
-# 사전 조건:
-#   1. Cloudflare 계정 + 도메인 등록 완료 (DNS Cloudflare 사용 중)
-#   2. cloudflared 설치 (winget install Cloudflare.cloudflared)
-#   3. PowerShell 새 세션에서 실행 (PATH 갱신 후)
+# Pre-requisites:
+#   1. Cloudflare account + zone (DNS via Cloudflare)
+#   2. cloudflared installed (winget install Cloudflare.cloudflared)
+#   3. Run from a fresh PowerShell session
 #
-# 사용:
-#   .\scripts\setup_cloudflared.ps1 -Domain app.metroeyes.app
+# Usage:
+#   .\scripts\setup_cloudflared.ps1 -Domain app.allthatai.kr
+#   .\scripts\setup_cloudflared.ps1 -Domain app.example.com -NoPush
 
 param(
     [Parameter(Mandatory)] [string]$Domain,
     [string]$TunnelName = "metroeyes",
     [int]$Port = 8765,
-    [switch]$NoPush          # frontend 자동 commit/push 건너뛰기
+    [switch]$NoPush
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 
-# cloudflared 경로
+# Locate cloudflared
 $cf = (Get-Command cloudflared -ErrorAction SilentlyContinue).Source
 if (-not $cf) {
     $cf = "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\Cloudflare.cloudflared_Microsoft.Winget.Source_8wekyb3d8bbwe\cloudflared.exe"
 }
-if (-not (Test-Path $cf)) { Write-Error "cloudflared not found. winget install Cloudflare.cloudflared"; exit 1 }
+if (-not (Test-Path $cf)) { Write-Error "cloudflared not found. Run: winget install Cloudflare.cloudflared"; exit 1 }
 Write-Host "cloudflared: $cf"
 
-# Step 1: 인증 (한 번만)
+# Step 1: Auth (one-time)
 $cred = "$env:USERPROFILE\.cloudflared"
 if (-not (Test-Path "$cred\cert.pem")) {
-    Write-Host "[1/5] Cloudflare 인증 — 브라우저 자동 열림. 도메인 선택해 인증 완료." -ForegroundColor Cyan
+    Write-Host "[1/6] Cloudflare auth - browser opens. Pick zone and approve." -ForegroundColor Cyan
     & $cf tunnel login
 }
 
-# Step 2: tunnel 생성 (또는 기존 가져오기)
-$existing = & $cf tunnel list 2>$null | Select-String $TunnelName
-if (-not $existing) {
-    Write-Host "[2/5] tunnel 생성: $TunnelName" -ForegroundColor Cyan
-    & $cf tunnel create $TunnelName
+# Step 2: Create or reuse tunnel
+$listOut = & $cf tunnel list 2>$null | Out-String
+if ($listOut -notmatch [regex]::Escape($TunnelName)) {
+    Write-Host "[2/6] Creating tunnel: $TunnelName" -ForegroundColor Cyan
+    & $cf tunnel create $TunnelName | Out-Host
 } else {
-    Write-Host "[2/5] tunnel '$TunnelName' 이미 존재 — 재사용" -ForegroundColor Gray
+    Write-Host "[2/6] Tunnel '$TunnelName' already exists - reusing" -ForegroundColor Gray
 }
 
-# tunnel UUID 추출
-$tunnelInfo = & $cf tunnel list 2>$null | Select-String $TunnelName | Select-Object -First 1
-$uuid = ($tunnelInfo -split '\s+')[1]
-if (-not $uuid) { Write-Error "tunnel UUID 추출 실패"; exit 1 }
+# Extract UUID
+$listOut = & $cf tunnel list 2>$null | Out-String
+$uuidLine = ($listOut -split "`n") | Where-Object { $_ -match $TunnelName } | Select-Object -First 1
+$uuid = ($uuidLine -split '\s+' | Where-Object { $_ -match '^[a-f0-9]{8}-[a-f0-9]{4}-' } | Select-Object -First 1)
+if (-not $uuid) { Write-Error "Failed to extract tunnel UUID"; exit 1 }
 Write-Host "  UUID: $uuid"
 
-# Step 3: DNS 라우팅
-Write-Host "[3/5] DNS 라우팅: $Domain → $TunnelName" -ForegroundColor Cyan
-try {
-    & $cf tunnel route dns $TunnelName $Domain
-} catch {
-    Write-Warning "DNS 라우팅 이미 존재 또는 실패. Cloudflare DNS에서 수동 확인."
-}
+# Step 3: DNS routing
+Write-Host "[3/6] DNS route: $Domain -> $TunnelName" -ForegroundColor Cyan
+& $cf tunnel route dns $TunnelName $Domain 2>$null | Out-Host
 
-# Step 4: config 생성
-$configPath = "$root\cloudflared-config.yml"
-@"
-tunnel: $uuid
-credentials-file: $cred\$uuid.json
+# Step 4: Write config (ASCII-safe lines, no here-string)
+$configPath = Join-Path $root "cloudflared-config.yml"
+$cfgLines = @(
+    "tunnel: $uuid",
+    "credentials-file: $cred\$uuid.json",
+    "",
+    "ingress:",
+    "  - hostname: $Domain",
+    "    service: http://localhost:$Port",
+    "    originRequest:",
+    "      noTLSVerify: true",
+    "  - service: http_status:404"
+)
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllLines($configPath, $cfgLines, $utf8NoBom)
+Write-Host "[4/6] Config written: $configPath" -ForegroundColor Cyan
 
-ingress:
-  - hostname: $Domain
-    service: http://localhost:$Port
-    originRequest:
-      noTLSVerify: true
-  - service: http_status:404
-"@ | Out-File -FilePath $configPath -Encoding utf8
-Write-Host "[4/5] config 작성: $configPath" -ForegroundColor Cyan
-
-# Step 5: tunnel 시작 안내
-Write-Host ""
-Write-Host "[5/5] Setup 완료!" -ForegroundColor Green
-Write-Host ""
-Write-Host "Tunnel 시작 (한 번):" -ForegroundColor Yellow
-Write-Host "  cloudflared tunnel --config $configPath run $TunnelName"
-Write-Host ""
-Write-Host "또는 silent 백그라운드:" -ForegroundColor Yellow
-Write-Host "  start_silent.vbs 안에 cloudflared 라인 추가됨 (다음 commit)"
-Write-Host ""
-Write-Host "검증:" -ForegroundColor Yellow
-Write-Host "  curl https://$Domain"
-Write-Host ""
-# Step 6: frontend wss URL 일괄 교체 + commit + push
+# Step 5: Patch frontend wss URLs (UTF-8 explicit)
 if (-not $NoPush) {
-    Write-Host "[6/6] frontend wss URL 일괄 교체 → wss://$Domain ..." -ForegroundColor Cyan
+    Write-Host "[5/6] Patching frontend wss URLs to wss://$Domain" -ForegroundColor Cyan
     $newWss = "wss://$Domain"
     $files = @(
         "frontend\operator_web\realbev.html",
@@ -100,30 +87,28 @@ if (-not $NoPush) {
     foreach ($f in $files) {
         $p = Join-Path $root $f
         if (Test-Path $p) {
-            $c = Get-Content $p -Raw
-            # 기존 임시 URL 또는 ngrok 패턴 찾아 교체
+            $c = [System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8)
             $c2 = $c -replace 'wss://[a-z0-9\-]+\.trycloudflare\.com', $newWss
             $c2 = $c2 -replace 'wss://[a-z0-9\-]+\.ngrok-free\.dev', $newWss
             $c2 = $c2 -replace 'wss://[a-z0-9\-]+\.ngrok\.io', $newWss
             if ($c -ne $c2) {
-                Set-Content -Path $p -Value $c2 -NoNewline -Encoding utf8
-                Write-Host "  patched $f" -ForegroundColor Gray
+                [System.IO.File]::WriteAllText($p, $c2, $utf8NoBom)
+                Write-Host "  patched: $f" -ForegroundColor Gray
             }
         }
     }
-    # git commit + push
-    Write-Host "  git commit + push..." -ForegroundColor Gray
-    & git -c "user.name=leelang7" -c "user.email=leescvsir@gmail.com" add frontend\ .github\workflows\pages.yml
-    & git -c "user.name=leelang7" -c "user.email=leescvsir@gmail.com" commit -m "feat: switch to permanent Cloudflare domain wss://$Domain"
-    & git push origin main
-    Write-Host "  → GitHub Pages 1~2분 후 자동 재배포" -ForegroundColor Green
+    Write-Host "[6/6] git commit + push" -ForegroundColor Cyan
+    & git -c "user.name=leelang7" -c "user.email=leescvsir@gmail.com" add frontend\ .github\workflows\pages.yml | Out-Host
+    & git -c "user.name=leelang7" -c "user.email=leescvsir@gmail.com" commit -m "feat: switch to permanent Cloudflare domain wss://$Domain" | Out-Host
+    & git push origin main | Out-Host
+    Write-Host "  GitHub Pages will redeploy in 1-2 minutes." -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "Setup 완료!" -ForegroundColor Green
-Write-Host "  외부 시연 URL: https://leelang7.github.io/MetroEyes/" -ForegroundColor Yellow
-Write-Host "  WS endpoint:   wss://$Domain" -ForegroundColor Yellow
+Write-Host "Setup complete!" -ForegroundColor Green
+Write-Host "  External demo URL : https://leelang7.github.io/MetroEyes/" -ForegroundColor Yellow
+Write-Host "  WS endpoint       : wss://$Domain" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "Tunnel 시작:" -ForegroundColor Cyan
+Write-Host "Start tunnel (foreground):" -ForegroundColor Cyan
 Write-Host "  cloudflared tunnel --config $configPath run"
-Write-Host "  또는 start_silent.vbs 더블클릭 (cloudflared-config.yml 자동 감지)"
+Write-Host "Or double-click start_silent.vbs (auto-detects cloudflared-config.yml)"

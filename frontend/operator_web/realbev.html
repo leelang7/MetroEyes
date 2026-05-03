@@ -1299,6 +1299,8 @@ function setHomographyOnServer(preset) {
 function startVideoFile(vidId) {
   const preset = VIDEO_PRESETS[vidId];
   if (!preset) return;
+  // backend에 active source claim — publisher 양보하고 이 콘솔 frame만 처리
+  try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'claim_active' })); } catch {}
   // 전환 중 캡처 일시 정지 — 깜빡임 방지
   captureSuspended = true;
   // 웹캠 정지
@@ -1328,11 +1330,19 @@ document.getElementById('ws-disconnect').addEventListener('click', () => { if (w
 document.getElementById('cam-start').addEventListener('click', () => {
   document.querySelectorAll('.vid-btn').forEach(b => b.classList.remove('active'));
   vidCam.removeAttribute('src'); vidCam.load();
+  try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'claim_active' })); } catch {}
   startCam();
-  setHomographyOnServer({ homography: null });   // 웹캠은 호모그래피 없음
+  setHomographyOnServer({ homography: null });
   currentVideoMode = 'webcam';
 });
-document.getElementById('cam-stop').addEventListener('click', stopCam);
+document.getElementById('cam-stop').addEventListener('click', () => {
+  try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'release_active' })); } catch {}
+  stopCam();
+});
+// 페이지 떠날 때 release
+window.addEventListener('beforeunload', () => {
+  try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'release_active' })); } catch {}
+});
 camSelect.addEventListener('change', () => { if (stream) startCam(); });
 document.querySelectorAll('.vid-btn').forEach(b => {
   b.addEventListener('click', () => startVideoFile(b.dataset.vid));
