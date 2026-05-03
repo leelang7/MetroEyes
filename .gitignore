@@ -80,6 +80,7 @@ secrets/
 
 # 런타임 로그 (sandbox 환경에서 생기는 임시 .log)
 *.log
+logs/
 
 # test/ 안 큰 영상 (vtest.avi는 .avi 패턴으로 이미 차단됨)
 test/extra/

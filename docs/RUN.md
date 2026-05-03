@@ -4,37 +4,38 @@
 
 ---
 
-## 1. 라이브 데모 한 번에 띄우기 (가장 자주)
+## 1. 라이브 데모 한 번에 띄우기 (콘솔 안 뜸 — 권장)
 
-```powershell
-cd C:\Users\leesc\Documents\Seoul
-.\start_demo.bat
-```
+**`start_silent.vbs` 더블클릭** — cmd/PowerShell 창 한 개도 안 뜨고 4개 detached process가 hidden으로 시작:
+- backend (`pythonw.exe` YOLO + WebSocket :8765)
+- publisher (`pythonw.exe` vtest.avi 송출)
+- ngrok :4040 (외부 wss 노출)
+- 정적 파일 서버 :5173
 
-또는 PowerShell에서 직접:
-```powershell
-cd C:\Users\leesc\Documents\Seoul
-.\scripts\start_demo.ps1 -IncludeStatic
-```
+로그는 `logs/backend.log` / `logs/publisher.log` / `logs/ngrok.log` / `logs/static.log`에 기록.
 
-**동작**:
-- backend (YOLO + WebSocket :8765) — minimize 콘솔
-- publisher (vtest.avi 송출) — minimize 콘솔
-- ngrok (외부 wss 노출 :4040) — minimize 콘솔
-- 정적 파일 서버 :5173 — minimize 콘솔
-
-**검증**: `http://localhost:5173/frontend/operator_web/realbev.html` 열면 라이브 화면.
+**검증**: `http://localhost:5173/frontend/operator_web/realbev.html` 열면 LIVE.
 
 ---
 
-## 2. 종료
+## 2. 종료 (콘솔 안 뜸)
+
+**`stop_silent.vbs` 더블클릭** — 모든 pythonw + ngrok 즉시 종료.
+
+---
+
+## 1-옵션. 콘솔 minimize로 띄우기 (디버깅 시)
 
 ```powershell
-.\stop_demo.bat
+cd C:\Users\leesc\Documents\Seoul
+.\start_demo.bat                # 4개 콘솔 minimize (작업표시줄)
+.\stop_demo.bat                 # 종료
 ```
 
-또는:
+또는 PowerShell:
 ```powershell
+.\scripts\start_demo.ps1 -IncludeStatic        # minimize
+.\scripts\start_demo.ps1 -IncludeStatic -Visible  # 콘솔 보이게 (yolo 로딩 진행 직접 봐야 할 때)
 .\scripts\start_demo.ps1 -Stop
 ```
 

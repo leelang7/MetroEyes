@@ -11,6 +11,17 @@
 """
 from __future__ import annotations
 
+import os
+import sys
+
+# pythonw.exe (콘솔 없음) 환경에서 stdout이 None이면 file로 자동 redirect.
+if sys.stdout is None:
+    _root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    _log = os.path.join(_root, "logs")
+    os.makedirs(_log, exist_ok=True)
+    sys.stdout = open(os.path.join(_log, "backend.log"), "a", encoding="utf-8", buffering=1)
+    sys.stderr = sys.stdout
+
 import argparse
 import asyncio
 import base64

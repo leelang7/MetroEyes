@@ -11,12 +11,20 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import os
 import sys
 from pathlib import Path
 
 import cv2
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# pythonw.exe (hidden) 환경에서 sys.stdout None이면 file로 redirect
+if sys.stdout is None:
+    _log = ROOT / "logs"
+    _log.mkdir(exist_ok=True)
+    sys.stdout = open(_log / "publisher.log", "a", encoding="utf-8", buffering=1)
+    sys.stderr = sys.stdout
 
 
 async def main() -> None:
