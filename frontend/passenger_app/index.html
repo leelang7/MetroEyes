@@ -62,6 +62,25 @@
     <span id="safety-banner-text">—</span>
   </div>
 
+  <!-- IDEA-5 분산 운임 인센티브 — citydata 분 단위 인구 분산 시 활성 -->
+  <div class="incentive-banner" id="incentive-banner" hidden>
+    <div class="ic-head">
+      <span class="ic-tag">분산 인센티브 활성</span>
+      <span class="ic-saved" id="ic-saved-amt">-100원</span>
+    </div>
+    <div class="ic-body">
+      <span id="ic-window">08:30~08:45</span>
+      <span class="ic-sep">·</span>
+      <span id="ic-msg">한 정거장 일찍 환승 시 -100원 즉시 차감</span>
+    </div>
+    <div class="ic-foot">
+      <span id="ic-progress" class="ic-bar">
+        <span class="ic-fill" id="ic-fill" style="width: 0%"></span>
+      </span>
+      <span id="ic-remain">남은 시간 — 분</span>
+    </div>
+  </div>
+
   <section class="events-strip" id="events-strip" hidden>
     <div class="events-head">
       <span class="ico">🎫</span>
@@ -665,6 +684,43 @@ const LIVE = (() => {
     } else {
       safetyEl.hidden = true;
     }
+
+    // IDEA-5 분산 운임 인센티브 — 인구 붐빔 + 출퇴근 인근 시 활성
+    applyIncentive(j);
+  }
+
+  /// 분산 운임 인센티브 정책 — citydata 인구 + 시각 기준으로 활성/비활성.
+  /// 발동 조건: 출퇴근 시간(8:00~9:30, 17:30~19:00) 중 혼잡 레벨 이상.
+  function applyIncentive(j) {
+    const banner = document.getElementById('incentive-banner');
+    const now = new Date();
+    const hh = now.getHours(), mm = now.getMinutes();
+    const minutesNow = hh * 60 + mm;
+    // 두 개 인센티브 윈도우
+    const windows = [
+      { start: 8 * 60 + 30, end: 8 * 60 + 45, label: '08:30~08:45' },
+      { start: 18 * 60 + 0, end: 18 * 60 + 15, label: '18:00~18:15' },
+    ];
+    const lvl = j.congest_lvl || '';
+    const congested = lvl === '붐빔' || lvl === '약간 붐빔';
+
+    for (const w of windows) {
+      if (minutesNow >= w.start && minutesNow < w.end && congested) {
+        const remain = w.end - minutesNow;
+        const elapsed = minutesNow - w.start;
+        const total = w.end - w.start;
+        document.getElementById('ic-window').textContent = w.label;
+        document.getElementById('ic-saved-amt').textContent = lvl === '붐빔' ? '-200원' : '-100원';
+        document.getElementById('ic-msg').textContent =
+          lvl === '붐빔' ? '한 정거장 일찍 환승 시 -200원 즉시 차감 (붐빔 등급)'
+                       : '한 정거장 일찍 환승 시 -100원 즉시 차감';
+        document.getElementById('ic-fill').style.width = (elapsed / total * 100) + '%';
+        document.getElementById('ic-remain').textContent = `남은 시간 ${remain}분`;
+        banner.hidden = false;
+        return;
+      }
+    }
+    banner.hidden = true;
   }
 
   function connect(url) {

@@ -529,6 +529,31 @@ a { color: inherit; text-decoration: none; }
 }
 .events-strip .events-summary b { color: var(--warn); font-weight: 500; }
 
+/* IDEA-5 분산 운임 인센티브 배너 */
+.incentive-banner {
+  background: linear-gradient(135deg, rgba(125,211,211,0.10), rgba(240,180,106,0.08));
+  border: 1px solid rgba(125,211,211,0.30);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 0 0 10px;
+}
+.incentive-banner .ic-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.incentive-banner .ic-tag {
+  font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
+  color: var(--accent); padding: 3px 8px; border: 1px solid rgba(125,211,211,0.4);
+  border-radius: 999px; font-weight: 500;
+}
+.incentive-banner .ic-saved {
+  margin-left: auto; font-size: 18px; font-weight: 300; color: var(--accent);
+  font-feature-settings: 'tnum';
+}
+.incentive-banner .ic-body { font-size: 13px; color: var(--fg); display: flex; gap: 8px; align-items: baseline; }
+.incentive-banner .ic-body #ic-window { font-feature-settings: 'tnum'; color: var(--accent); font-weight: 500; }
+.incentive-banner .ic-sep { color: var(--muted); }
+.incentive-banner .ic-foot { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 10px; color: var(--muted); }
+.incentive-banner .ic-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; }
+.incentive-banner .ic-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--warn)); transition: width 0.5s; }
+
 /* 안전 알림 배너 — 사고/통제 등 */
 .safety-banner {
   display: flex; align-items: center; gap: 10px;

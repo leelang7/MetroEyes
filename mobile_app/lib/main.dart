@@ -185,6 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _populationPoll;
   Timer? _citydataPoll;
   Timer? _eventsPoll;
+  Timer? _telemetryTimer;       // IDEA-1 phone-as-sensor 5초 주기
+  int _telemetrySent = 0;        // 송신 누적 카운트 (헤더 표시용)
   StreamSubscription? _stateSub;
   StreamSubscription? _payloadSub;
   StreamSubscription? _arrivalSub;
@@ -229,6 +231,25 @@ class _HomeScreenState extends State<HomeScreen> {
         _eventsPoll = Timer.periodic(const Duration(minutes: 10), (_) {
           if (_stationPoi != null) _bev.queryEvents(_stationPoi!);
         });
+        // IDEA-1 Phone-as-Sensor: 5초 주기 익명 텔레메트리 송신.
+        // 진짜 sensors_plus 통합 전 stub — 가속도/BLE 시뮬값.
+        // 발표 메시지: "사용자가 늘수록 칸 추정 정확도 ↑" 의 채널만 입증.
+        _telemetryTimer?.cancel();
+        _telemetryTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+          // 가속도 norm: 출퇴근 시간 0.3~1.5 (활동), 야간 0.0~0.2 (정지)
+          final h = DateTime.now().hour;
+          final isPeak = (h >= 7 && h <= 10) || (h >= 17 && h <= 20);
+          final base = isPeak ? 0.6 : 0.05;
+          final noise = (math.Random().nextDouble() - 0.5) * 0.4;
+          final accel = math.max(0.0, base + noise);
+          final ble = isPeak ? (8 + math.Random().nextInt(15)) : math.Random().nextInt(4);
+          _bev.sendPhoneTelemetry(
+            station: _stationName,
+            accelMagnitude: accel,
+            bleNearbyCount: ble,
+          );
+          if (mounted) setState(() => _telemetrySent++);
+        });
       } else {
         _arrivalPoll?.cancel();
         _arrivalPoll = null;
@@ -238,6 +259,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _citydataPoll = null;
         _eventsPoll?.cancel();
         _eventsPoll = null;
+        _telemetryTimer?.cancel();
+        _telemetryTimer = null;
       }
     });
     _payloadSub = _bev.payloads.listen((p) {
@@ -417,6 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _populationPoll?.cancel();
     _citydataPoll?.cancel();
     _eventsPoll?.cancel();
+    _telemetryTimer?.cancel();
     _bev.dispose();
     super.dispose();
   }
@@ -569,6 +593,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       wsState: _wsState,
                       payload: _livePayload,
                       impact: _impact,
+                      telemetrySent: _telemetrySent,
                       onSettings: _showSettings),
                   const SizedBox(height: 10),
                   _ModeToggle(
@@ -699,11 +724,13 @@ class _Header extends StatelessWidget {
   final SocketState wsState;
   final BevPayload? payload;
   final ImpactSummary? impact;
+  final int telemetrySent;
   final VoidCallback onSettings;
   const _Header({
     required this.wsState,
     required this.payload,
     required this.impact,
+    required this.telemetrySent,
     required this.onSettings,
   });
 
@@ -756,6 +783,32 @@ class _Header extends StatelessWidget {
                 fontFeatures: const [FontFeature.tabularFigures()],
               )),
           ),
+          if (telemetrySent > 0 && wsState == SocketState.connected) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              decoration: BoxDecoration(
+                color: const Color(0x14F0B46A),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: _warn.withOpacity(0.3)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.sensors_rounded, color: _warn, size: 11),
+                  const SizedBox(width: 3),
+                  Text(
+                    '$telemetrySent',
+                    style: const TextStyle(
+                        color: _warn,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        fontFeatures: [FontFeature.tabularFigures()]),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 5),
+          ],
           if (impact != null && impact!.totalCount > 0) ...[
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

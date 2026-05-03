@@ -356,6 +356,34 @@ class BevSocket {
     } catch (_) {}
   }
 
+  /// IDEA-1 Phone-as-Sensor — 익명 폰 텔레메트리 송신.
+  ///
+  /// 진동 강도(ax/ay/az 가속도 norm)·움직임 빈도·근접 BLE 핑 카운트를
+  /// 익명 집계로 백엔드에 전송. 백엔드는 동일 station 의 다수 폰 신호를
+  /// 합산해 칸별 점유 추정의 weak signal 로 사용.
+  ///
+  /// 진짜 sensors_plus + flutter_blue_plus 통합은 후속. 현 stub 은 송신 채널만.
+  /// 프라이버시: 개인 ID 없음, 가속도 raw 값 자체도 안 보내고 norm 만.
+  void sendPhoneTelemetry({
+    required String station,
+    required double accelMagnitude, // sqrt(ax^2+ay^2+az^2) - 9.8 (정지 시 0)
+    int? bleNearbyCount,
+    int? wifiProbeRssiMean,
+  }) {
+    final ws = _ws;
+    if (ws == null) return;
+    try {
+      ws.add(jsonEncode({
+        'type': 'phone_telemetry',
+        'station': station,
+        'accel_mag': accelMagnitude,
+        if (bleNearbyCount != null) 'ble_count': bleNearbyCount,
+        if (wifiProbeRssiMean != null) 'wifi_rssi_mean': wifiProbeRssiMean,
+        'ts_ms': DateTime.now().millisecondsSinceEpoch,
+      }));
+    } catch (_) {}
+  }
+
   void _emit(SocketState s) {
     _current = s;
     _stateCtrl.add(s);
