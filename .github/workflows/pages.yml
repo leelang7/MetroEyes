@@ -1,4 +1,4 @@
-name: Deploy frontend to GitHub Pages
+﻿name: Deploy frontend to GitHub Pages
 
 on:
   push:
@@ -23,18 +23,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 정적 파일만 모아서 site/ 디렉토리에 배치
+      # ?뺤쟻 ?뚯씪留?紐⑥븘??site/ ?붾젆?좊━??諛곗튂
       - name: Stage site
         run: |
           mkdir -p site
           cp -r frontend site/frontend
-          # 루트 진입은 시민 PWA 또는 운영자 콘솔 — 간단 index.html 추가
+          # 猷⑦듃 吏꾩엯? ?쒕? PWA ?먮뒗 ?댁쁺??肄섏넄 ??媛꾨떒 index.html 異붽?
           cat > site/index.html << 'HTML'
           <!doctype html>
           <html lang="ko">
           <head>
           <meta charset="utf-8">
-          <title>MetroEyes — 라이브 데모</title>
+          <title>MetroEyes ???쇱씠釉??곕え</title>
           <meta name="theme-color" content="#04060a">
           <style>
             html,body { margin:0; height:100%; background:#04060a; color:#e8edf5;
@@ -58,29 +58,29 @@ jobs:
           </head>
           <body>
           <div class="wrap">
-            <h1>MetroEyes <b>·</b></h1>
-            <p class="sub">테슬라가 도로를 BEV로 보듯, 도시 교통 전체를 본다.<br>
-              자체 CV + 4중 데이터 융합 라이브 데모.</p>
+            <h1>MetroEyes <b>쨌</b></h1>
+            <p class="sub">?뚯뒳?쇨? ?꾨줈瑜?BEV濡?蹂대벏, ?꾩떆 援먰넻 ?꾩껜瑜?蹂몃떎.<br>
+              ?먯껜 CV + 4以??곗씠???듯빀 ?쇱씠釉??곕え.</p>
             <a class="card" href="frontend/operator_web/realbev.html">
-              <div class="label">Operator · 3D BEV</div>
-              <div class="name">실시간 카메라 BEV (Three.js)</div>
-              <div class="desc">11카드 풀 융합 + ML 24h 예측 + 정확도</div>
+              <div class="label">Operator 쨌 3D BEV</div>
+              <div class="name">?ㅼ떆媛?移대찓??BEV (Three.js)</div>
+              <div class="desc">11移대뱶 ? ?듯빀 + ML 24h ?덉륫 + ?뺥솗??/div>
             </a>
             <a class="card" href="frontend/operator_web/index.html">
-              <div class="label">Operator · 지하철</div>
-              <div class="name">10량 편성 BEV</div>
-              <div class="desc">4중 fusion-strip + 임계 분산 안내</div>
+              <div class="label">Operator 쨌 吏?섏쿋</div>
+              <div class="name">10???몄꽦 BEV</div>
+              <div class="desc">4以?fusion-strip + ?꾧퀎 遺꾩궛 ?덈궡</div>
             </a>
             <a class="card" href="frontend/operator_web/bus.html">
-              <div class="label">Operator · 버스</div>
-              <div class="name">정류장 BEV</div>
+              <div class="label">Operator 쨌 踰꾩뒪</div>
+              <div class="name">?뺣쪟??BEV</div>
             </a>
             <a class="card" href="frontend/passenger_app/index.html">
               <div class="label">Citizen PWA</div>
-              <div class="name">시민 앱 (모바일)</div>
-              <div class="desc">GPS · 칸별 점유율 · 인구 chip · 강수 예보</div>
+              <div class="name">?쒕? ??(紐⑤컮??</div>
+              <div class="desc">GPS 쨌 移몃퀎 ?먯쑀??쨌 ?멸뎄 chip 쨌 媛뺤닔 ?덈낫</div>
             </a>
-            <footer>BACKEND wss://hose-associate-boc-wonderful.trycloudflare.com</footer>
+            <footer>BACKEND wss://app.allthatai.kr</footer>
           </div>
           </body>
           </html>

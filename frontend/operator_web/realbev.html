@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MetroEyes — 3D Tesla-style HUD</title>
+<title>MetroEyes ??3D Tesla-style HUD</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
 <style>
 .realbev-status { display: flex; gap: 14px; align-items: center; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -68,7 +68,7 @@
 .ml-sparkline .accuracy .acc-pct.crit { color: var(--crit); }
 .ml-sparkline .accuracy .acc-detail { font-size: 10px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
 
-/* 5/10/30분 단위 막대 그래프 — 지하철·버스 단기 활동 */
+/* 5/10/30遺??⑥쐞 留됰? 洹몃옒????吏?섏쿋쨌踰꾩뒪 ?④린 ?쒕룞 */
 .short-term-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 14px; }
 .short-bar { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
 .short-bar .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
@@ -87,7 +87,7 @@
 }
 .safety-strip.show { display: flex; }
 
-/* 막힌 도로 list — 운영자 컨텍스트 */
+/* 留됲엺 ?꾨줈 list ???댁쁺??而⑦뀓?ㅽ듃 */
 .roads-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
 .roads-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .roads-card .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
@@ -101,7 +101,7 @@
 .roads-card h4.slow { color: var(--crit); }
 .roads-card h4.fast { color: var(--accent); }
 
-/* (I2) 사회적 임팩트 카드 */
+/* (I2) ?ы쉶???꾪뙥??移대뱶 */
 .impact-card {
   background: linear-gradient(135deg, rgba(125,211,211,0.10), rgba(125,211,211,0.02));
   border: 1px solid rgba(125,211,211,0.3); border-radius: 14px;
@@ -118,7 +118,7 @@
 .impact-card .ic-bar .ic-bar-fill { height: 6px; background: rgba(125,211,211,0.15); border-radius: 999px; overflow: hidden; }
 .impact-card .ic-bar .ic-bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), rgba(125,211,211,0.4)); border-radius: 999px; transition: width 0.6s ease; }
 
-/* 주변 행사 카드 — 인구 영향 신호 */
+/* 二쇰? ?됱궗 移대뱶 ???멸뎄 ?곹뼢 ?좏샇 */
 .events-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
 .events-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .events-card .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
@@ -131,7 +131,7 @@
 .events-card .ev-summary { font-size: 11px; color: var(--muted-2); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
 .events-card .ev-summary b { color: var(--warn); font-weight: 500; }
 
-/* ML 모델 검증 메트릭 카드 */
+/* ML 紐⑤뜽 寃利?硫뷀듃由?移대뱶 */
 .metrics-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; display: flex; align-items: center; gap: 18px; }
 .metrics-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); min-width: 140px; }
 .metrics-card .lbl .src { display: block; color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-top: 4px; width: fit-content; }
@@ -158,108 +158,108 @@
 <header>
   <div class="brand">
     <span class="dot"></span>MetroEyes<small>Real-time 3D Tesla HUD</small>
-    <span class="nav-sep">·</span>
-    <a href="index.html">지하철</a>
-    <a href="bus.html">버스</a>
-    <a href="realbev.html" class="active">실 카메라</a>
+    <span class="nav-sep">쨌</span>
+    <a href="index.html">吏?섏쿋</a>
+    <a href="bus.html">踰꾩뒪</a>
+    <a href="realbev.html" class="active">??移대찓??/a>
     <span class="nav-sep">|</span>
-    <a href="../passenger_app/index.html" style="color: var(--accent);">시민 앱 →</a>
+    <a href="../passenger_app/index.html" style="color: var(--accent);">?쒕? ????/a>
   </div>
   <div class="controls">
-    <span class="tag">파이프라인<b>Browser Cam → BG-sub → Three.js 3D BEV</b></span>
-    <div class="realbev-status" id="status"><span class="led"></span><span id="status-text">대기</span></div>
+    <span class="tag">?뚯씠?꾨씪??b>Browser Cam ??BG-sub ??Three.js 3D BEV</b></span>
+    <div class="realbev-status" id="status"><span class="led"></span><span id="status-text">?湲?/span></div>
   </div>
 </header>
 
 <main>
   <section class="train-strip">
     <div class="train-strip-head">
-      <h2><b>3D BEV — 실시간 사람 트래킹</b><span style="color: var(--muted)">검출된 사람을 실제 3D 메시로 ground plane 위에 배치</span></h2>
+      <h2><b>3D BEV ???ㅼ떆媛??щ엺 ?몃옒??/b><span style="color: var(--muted)">寃異쒕맂 ?щ엺???ㅼ젣 3D 硫붿떆濡?ground plane ?꾩뿉 諛곗튂</span></h2>
       <div class="train-meta">
-        <span class="pulse"></span><span id="m-fps">— FPS</span> · <span id="m-tracks">— 트랙</span> · <span id="m-tx">송신 — fps</span>
+        <span class="pulse"></span><span id="m-fps">??FPS</span> 쨌 <span id="m-tracks">???몃옓</span> 쨌 <span id="m-tx">?≪떊 ??fps</span>
       </div>
     </div>
     <div class="safety-strip" id="safety-strip-top">
-      <span>⚠</span><span id="safety-strip-text-top">—</span>
+      <span>??/span><span id="safety-strip-text-top">??/span>
     </div>
     <div class="fusion-strip" id="fusion-strip">
       <div class="fusion-card dim" id="fc-cv">
-        <div class="fc-label">검출 인원<span class="src">자체 CV</span></div>
-        <div class="fc-value" id="fc-cv-v">—<span class="unit">명</span></div>
+        <div class="fc-label">寃異??몄썝<span class="src">?먯껜 CV</span></div>
+        <div class="fc-value" id="fc-cv-v">??span class="unit">紐?/span></div>
         <div class="fc-sub" id="fc-cv-sub">YOLO11 + BoT-SORT</div>
       </div>
       <div class="fusion-card dim" id="fc-arr">
-        <div class="fc-label">다음 도착<span class="src">서울 TOPIS</span></div>
-        <div class="fc-value" id="fc-arr-v">—<span class="unit">분</span></div>
+        <div class="fc-label">?ㅼ쓬 ?꾩갑<span class="src">?쒖슱 TOPIS</span></div>
+        <div class="fc-value" id="fc-arr-v">??span class="unit">遺?/span></div>
         <div class="fc-sub" id="fc-arr-sub">realtimeStationArrival</div>
       </div>
       <div class="fusion-card dim" id="fc-pop">
-        <div class="fc-label">역세권 인구<span class="src">서울 도시데이터</span></div>
-        <div class="fc-value" id="fc-pop-v">—<span class="unit">명</span></div>
+        <div class="fc-label">??꽭沅??멸뎄<span class="src">?쒖슱 ?꾩떆?곗씠??/span></div>
+        <div class="fc-value" id="fc-pop-v">??span class="unit">紐?/span></div>
         <div class="fc-sub" id="fc-pop-sub">citydata_ppltn</div>
       </div>
       <div class="fusion-card dim" id="fc-cong">
-        <div class="fc-label">혼잡 레벨<span class="src">융합</span></div>
-        <div class="fc-value" id="fc-cong-v">—</div>
-        <div class="fc-sub" id="fc-cong-sub">CV + 인구 결합 평가</div>
+        <div class="fc-label">?쇱옟 ?덈꺼<span class="src">?듯빀</span></div>
+        <div class="fc-value" id="fc-cong-v">??/div>
+        <div class="fc-sub" id="fc-cong-sub">CV + ?멸뎄 寃고빀 ?됯?</div>
       </div>
     </div>
 
-    <!-- 통합 도시데이터 row 2: 도로 / 환승(따릉이+주차) / 날씨 / 상권 -->
+    <!-- ?듯빀 ?꾩떆?곗씠??row 2: ?꾨줈 / ?섏듅(?곕쫱??二쇱감) / ?좎뵪 / ?곴텒 -->
     <div class="fusion-strip" id="fusion-strip-2" style="margin-top: -4px;">
       <div class="fusion-card dim" id="fc-road">
-        <div class="fc-label">도로 평균<span class="src">citydata</span></div>
-        <div class="fc-value" id="fc-road-v">—<span class="unit">km/h</span></div>
+        <div class="fc-label">?꾨줈 ?됯퇏<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-road-v">??span class="unit">km/h</span></div>
         <div class="fc-sub" id="fc-road-sub">ROAD_TRAFFIC_STTS</div>
       </div>
       <div class="fusion-card dim" id="fc-trans">
-        <div class="fc-label">환승 옵션<span class="src">citydata</span></div>
-        <div class="fc-value" id="fc-trans-v">—<span class="unit">대</span></div>
-        <div class="fc-sub" id="fc-trans-sub">따릉이 / 주차장</div>
+        <div class="fc-label">?섏듅 ?듭뀡<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-trans-v">??span class="unit">?</span></div>
+        <div class="fc-sub" id="fc-trans-sub">?곕쫱??/ 二쇱감??/div>
       </div>
       <div class="fusion-card dim" id="fc-wx">
-        <div class="fc-label">날씨<span class="src">citydata</span></div>
-        <div class="fc-value" id="fc-wx-v">—<span class="unit">°C</span></div>
-        <div class="fc-sub" id="fc-wx-sub">기온 · 체감 · 습도</div>
+        <div class="fc-label">?좎뵪<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-wx-v">??span class="unit">째C</span></div>
+        <div class="fc-sub" id="fc-wx-sub">湲곗삩 쨌 泥닿컧 쨌 ?듬룄</div>
       </div>
       <div class="fusion-card dim" id="fc-cmrcl">
-        <div class="fc-label">상권 결제<span class="src">citydata</span></div>
-        <div class="fc-value" id="fc-cmrcl-v">—</div>
+        <div class="fc-label">?곴텒 寃곗젣<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-cmrcl-v">??/div>
         <div class="fc-sub" id="fc-cmrcl-sub">LIVE_CMRCL_STTS</div>
       </div>
     </div>
     <div class="impact-card" id="impact-card" hidden>
-      <div class="ic-num"><span id="ic-count">0</span><small>회</small></div>
+      <div class="ic-num"><span id="ic-count">0</span><small>??/small></div>
       <div class="ic-meta">
-        <span class="ic-label">사회적 임팩트 · 오늘 누적</span>
-        <span class="ic-detail">시민 권장 칸 탑승 수용</span>
+        <span class="ic-label">?ы쉶???꾪뙥??쨌 ?ㅻ뒛 ?꾩쟻</span>
+        <span class="ic-detail">?쒕? 沅뚯옣 移??묒듅 ?섏슜</span>
       </div>
       <div class="ic-bar">
-        <div class="ic-bar-label"><span>평균 한산도 절감</span><span><b id="ic-saved">0</b>%</span></div>
+        <div class="ic-bar-label"><span>?됯퇏 ?쒖궛???덇컧</span><span><b id="ic-saved">0</b>%</span></div>
         <div class="ic-bar-fill"><div class="ic-bar-inner" id="ic-bar" style="width:0%"></div></div>
-        <div class="ic-bar-label" style="margin-top: 4px; color: var(--muted-2);"><span id="ic-recent">최근 5건: —</span></div>
+        <div class="ic-bar-label" style="margin-top: 4px; color: var(--muted-2);"><span id="ic-recent">理쒓렐 5嫄? ??/span></div>
       </div>
     </div>
 
     <div class="safety-strip" id="safety-strip">
-      <span>⚠</span><span id="safety-strip-text">—</span>
+      <span>??/span><span id="safety-strip-text">??/span>
     </div>
 
     <div class="events-card" id="events-card" hidden>
-      <div class="lbl">반경 1.5km 진행 행사 — 인구 영향 신호<span class="src">ListPublicReservationCulture</span></div>
+      <div class="lbl">諛섍꼍 1.5km 吏꾪뻾 ?됱궗 ???멸뎄 ?곹뼢 ?좏샇<span class="src">ListPublicReservationCulture</span></div>
       <div id="events-rows"></div>
       <div class="ev-summary" id="events-summary"></div>
     </div>
 
     <div class="roads-card" id="roads-card" hidden>
-      <div class="lbl">주변 도로 통행 — 65개 링크<span class="src">ROAD_TRAFFIC_STTS</span></div>
+      <div class="lbl">二쇰? ?꾨줈 ?듯뻾 ??65媛?留곹겕<span class="src">ROAD_TRAFFIC_STTS</span></div>
       <div class="roads-grid">
         <div>
-          <h4 class="slow">⚠ 가장 느린 5</h4>
+          <h4 class="slow">??媛???먮┛ 5</h4>
           <div id="roads-slow"></div>
         </div>
         <div>
-          <h4 class="fast">↑ 가장 빠른 5</h4>
+          <h4 class="fast">??媛??鍮좊Ⅸ 5</h4>
           <div id="roads-fast"></div>
         </div>
       </div>
@@ -267,105 +267,105 @@
 
     <div class="short-term-row">
       <div class="short-bar">
-        <div class="lbl">지하철 5/10/30분 누적<span class="src">LIVE_SUB_PPLTN</span></div>
+        <div class="lbl">吏?섏쿋 5/10/30遺??꾩쟻<span class="src">LIVE_SUB_PPLTN</span></div>
         <div class="bars">
-          <div class="bar"><div class="fill" id="sub-5"></div><span class="val" id="sub-5-v">—</span><span class="tag">5분</span></div>
-          <div class="bar"><div class="fill" id="sub-10"></div><span class="val" id="sub-10-v">—</span><span class="tag">10분</span></div>
-          <div class="bar"><div class="fill" id="sub-30"></div><span class="val" id="sub-30-v">—</span><span class="tag">30분</span></div>
+          <div class="bar"><div class="fill" id="sub-5"></div><span class="val" id="sub-5-v">??/span><span class="tag">5遺?/span></div>
+          <div class="bar"><div class="fill" id="sub-10"></div><span class="val" id="sub-10-v">??/span><span class="tag">10遺?/span></div>
+          <div class="bar"><div class="fill" id="sub-30"></div><span class="val" id="sub-30-v">??/span><span class="tag">30遺?/span></div>
         </div>
       </div>
       <div class="short-bar">
-        <div class="lbl">버스 5/10/30분 누적<span class="src">LIVE_BUS_PPLTN</span></div>
+        <div class="lbl">踰꾩뒪 5/10/30遺??꾩쟻<span class="src">LIVE_BUS_PPLTN</span></div>
         <div class="bars">
-          <div class="bar"><div class="fill" id="bus-5"></div><span class="val" id="bus-5-v">—</span><span class="tag">5분</span></div>
-          <div class="bar"><div class="fill" id="bus-10"></div><span class="val" id="bus-10-v">—</span><span class="tag">10분</span></div>
-          <div class="bar"><div class="fill" id="bus-30"></div><span class="val" id="bus-30-v">—</span><span class="tag">30분</span></div>
+          <div class="bar"><div class="fill" id="bus-5"></div><span class="val" id="bus-5-v">??/span><span class="tag">5遺?/span></div>
+          <div class="bar"><div class="fill" id="bus-10"></div><span class="val" id="bus-10-v">??/span><span class="tag">10遺?/span></div>
+          <div class="bar"><div class="fill" id="bus-30"></div><span class="val" id="bus-30-v">??/span><span class="tag">30遺?/span></div>
         </div>
       </div>
     </div>
 
     <div class="metrics-card" id="metrics-card" hidden>
-      <div class="lbl">ML 모델 검증<span class="src">GBR · CV5</span></div>
-      <div class="m"><span class="v ok" id="mt-mae">—</span><span class="k">MAE</span></div>
-      <div class="m"><span class="v" id="mt-rmse">—</span><span class="k">RMSE</span></div>
-      <div class="m"><span class="v" id="mt-r2">—</span><span class="k">R²</span></div>
-      <div class="m"><span class="v" id="mt-cv">—</span><span class="k">5-fold MAE</span></div>
-      <div class="m"><span class="v" id="mt-n">—</span><span class="k">표본</span></div>
+      <div class="lbl">ML 紐⑤뜽 寃利?span class="src">GBR 쨌 CV5</span></div>
+      <div class="m"><span class="v ok" id="mt-mae">??/span><span class="k">MAE</span></div>
+      <div class="m"><span class="v" id="mt-rmse">??/span><span class="k">RMSE</span></div>
+      <div class="m"><span class="v" id="mt-r2">??/span><span class="k">R짼</span></div>
+      <div class="m"><span class="v" id="mt-cv">??/span><span class="k">5-fold MAE</span></div>
+      <div class="m"><span class="v" id="mt-n">??/span><span class="k">?쒕낯</span></div>
     </div>
 
     <div class="ml-sparkline" id="ml-sparkline">
       <div class="ml-meta">
-        <div class="ml-label">24h 점유율 예측<span class="src">ML · GBR</span></div>
-        <div class="ml-now"><b id="ml-now-pct">—</b><span style="color: var(--muted); font-size: 14px;">% @ 현재</span></div>
-        <div class="ml-sub" id="ml-sub">학습 모델 미발견 — 시뮬 곡선</div>
+        <div class="ml-label">24h ?먯쑀???덉륫<span class="src">ML 쨌 GBR</span></div>
+        <div class="ml-now"><b id="ml-now-pct">??/b><span style="color: var(--muted); font-size: 14px;">% @ ?꾩옱</span></div>
+        <div class="ml-sub" id="ml-sub">?숈뒿 紐⑤뜽 誘몃컻寃????쒕? 怨≪꽑</div>
       </div>
       <canvas id="ml-canvas"></canvas>
       <div class="accuracy">
-        <span class="acc-label">예측 정확도</span>
-        <span class="acc-pct" id="acc-pct">—<span style="font-size:13px;color:var(--muted);">%</span></span>
-        <span class="acc-detail" id="acc-detail">예측 — / 실측 —</span>
+        <span class="acc-label">?덉륫 ?뺥솗??/span>
+        <span class="acc-pct" id="acc-pct">??span style="font-size:13px;color:var(--muted);">%</span></span>
+        <span class="acc-detail" id="acc-detail">?덉륫 ??/ ?ㅼ륫 ??/span>
       </div>
     </div>
     <div class="ws-controls">
       <input id="ws-url" type="text" value="" placeholder="ws://localhost:8765" />
-      <button id="ws-connect">연결</button>
-      <button id="ws-disconnect" class="secondary">해제</button>
+      <button id="ws-connect">?곌껐</button>
+      <button id="ws-disconnect" class="secondary">?댁젣</button>
       <select id="fc-station-sel" style="background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-size: 12px;">
-        <option value="잠실|2|잠실역" selected>잠실 (2호선)</option>
-        <option value="강남|2|강남역">강남 (2호선)</option>
-        <option value="홍대입구|2|홍대 관광특구">홍대입구 (2호선)</option>
-        <option value="서울역|1|서울역">서울역 (1호선)</option>
-        <option value="광화문|5|광화문·덕수궁">광화문 (5호선)</option>
-        <option value="신촌|2|신촌·이대역">신촌 (2호선)</option>
-        <option value="사당|2|사당역">사당 (2호선)</option>
-        <option value="건대입구|2|건대입구역">건대입구 (2호선)</option>
-        <option value="김포공항|5|김포공항">김포공항 (5호선)</option>
+        <option value="?좎떎|2|?좎떎?? selected>?좎떎 (2?몄꽑)</option>
+        <option value="媛뺣궓|2|媛뺣궓??>媛뺣궓 (2?몄꽑)</option>
+        <option value="?띾??낃뎄|2|?띾? 愿愿묓듅援?>?띾??낃뎄 (2?몄꽑)</option>
+        <option value="?쒖슱??1|?쒖슱??>?쒖슱??(1?몄꽑)</option>
+        <option value="愿묓솕臾?5|愿묓솕臾맞룸뜒?섍턿">愿묓솕臾?(5?몄꽑)</option>
+        <option value="?좎큿|2|?좎큿쨌?대???>?좎큿 (2?몄꽑)</option>
+        <option value="?щ떦|2|?щ떦??>?щ떦 (2?몄꽑)</option>
+        <option value="嫄대??낃뎄|2|嫄대??낃뎄??>嫄대??낃뎄 (2?몄꽑)</option>
+        <option value="源?ш났??5|源?ш났??>源?ш났??(5?몄꽑)</option>
       </select>
     </div>
     <div class="cam-picker">
-      <button id="cam-start">📷 웹캠 시작</button>
-      <select id="cam-select"><option>기본 카메라</option></select>
-      <button id="cam-stop" class="secondary">정지</button>
+      <button id="cam-start">?벜 ?뱀틺 ?쒖옉</button>
+      <select id="cam-select"><option>湲곕낯 移대찓??/option></select>
+      <button id="cam-stop" class="secondary">?뺤?</button>
     </div>
     <div class="cam-picker">
-      <span style="color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;">샘플 영상:</span>
-      <button class="vid-btn" data-vid="subway">지하철 내부 (도메인 핵심)</button>
-      <button class="vid-btn" data-vid="vtest">vtest 광장</button>
-      <button class="vid-btn" data-vid="intersection">교차로 CCTV</button>
-      <button class="vid-btn" data-vid="street_uk">런던 거리</button>
-      <button class="vid-btn" data-vid="dog_park">공원 (강아지)</button>
-      <button class="vid-btn" data-vid="eyelevel">eye-level 거리</button>
-      <button class="vid-btn" data-vid="aerial">드론 횡단보도</button>
-      <button class="vid-btn" data-vid="interior">버스 운전석</button>
+      <span style="color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;">?섑뵆 ?곸긽:</span>
+      <button class="vid-btn" data-vid="subway">吏?섏쿋 ?대? (?꾨찓???듭떖)</button>
+      <button class="vid-btn" data-vid="vtest">vtest 愿묒옣</button>
+      <button class="vid-btn" data-vid="intersection">援먯감濡?CCTV</button>
+      <button class="vid-btn" data-vid="street_uk">?곕뜕 嫄곕━</button>
+      <button class="vid-btn" data-vid="dog_park">怨듭썝 (媛뺤븘吏)</button>
+      <button class="vid-btn" data-vid="eyelevel">eye-level 嫄곕━</button>
+      <button class="vid-btn" data-vid="aerial">?쒕줎 ?〓떒蹂대룄</button>
+      <button class="vid-btn" data-vid="interior">踰꾩뒪 ?댁쟾??/button>
     </div>
-    <div class="diag-log" id="diag">[준비] 페이지 로드됨\n</div>
+    <div class="diag-log" id="diag">[以鍮? ?섏씠吏 濡쒕뱶??n</div>
   </section>
 
   <section class="split">
     <div class="tile">
-      <h3><b>① Camera</b>입력 + 검출 박스 (디버그)</h3>
+      <h3><b>??Camera</b>?낅젰 + 寃異?諛뺤뒪 (?붾쾭洹?</h3>
       <div class="stage" style="position:relative;">
-        <span class="badge live" id="cam-badge">RGB · LIVE</span>
-        <span class="corner-meta" id="frame-idx">frame —</span>
+        <span class="badge live" id="cam-badge">RGB 쨌 LIVE</span>
+        <span class="corner-meta" id="frame-idx">frame ??/span>
         <video id="vid-cam" autoplay playsinline muted></video>
         <img id="img-input" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0;" />
         <canvas id="overlay-cam" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></canvas>
       </div>
       <div class="meta">
-        <span id="cam-mode">로컬 비디오 → JPEG → 백엔드</span>
-        <span id="cam-size">—</span>
+        <span id="cam-mode">濡쒖뺄 鍮꾨뵒????JPEG ??諛깆뿏??/span>
+        <span id="cam-size">??/span>
       </div>
     </div>
     <div class="tile bev">
-      <h3><b>② BEV 3D</b>Three.js · OrbitControls (드래그/휠 회전)</h3>
+      <h3><b>??BEV 3D</b>Three.js 쨌 OrbitControls (?쒕옒洹????뚯쟾)</h3>
       <div class="stage">
-        <span class="badge">BEV · 3D</span>
-        <span class="corner-meta" id="corner-meta">0 명</span>
+        <span class="badge">BEV 쨌 3D</span>
+        <span class="corner-meta" id="corner-meta">0 紐?/span>
         <div id="bev-3d"></div>
       </div>
       <div class="meta">
-        <span>3D 메시 · 점광원 · 그림자 · 시안 글로우</span>
-        <span>마우스 드래그=회전 / 휠=줌</span>
+        <span>3D 硫붿떆 쨌 ?먭킅??쨌 洹몃┝??쨌 ?쒖븞 湲濡쒖슦</span>
+        <span>留덉슦???쒕옒洹??뚯쟾 / ??以?/span>
       </div>
     </div>
   </section>
@@ -375,7 +375,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// =================== UI 헬퍼 ===================
+// =================== UI ?ы띁 ===================
 const statusEl = document.getElementById('status');
 const statusText = document.getElementById('status-text');
 const vidCam = document.getElementById('vid-cam');
@@ -415,7 +415,7 @@ scene.fog = new THREE.Fog(0x05080f, 12, 28);
 const W0 = container.clientWidth || 800;
 const H0 = container.clientHeight || 500;
 const camera = new THREE.PerspectiveCamera(46, W0 / H0, 0.1, 200);
-camera.position.set(0, 4.0, 5.5);    // 더 가까이 (figure 잘 보임)
+camera.position.set(0, 4.0, 5.5);    // ??媛源뚯씠 (figure ??蹂댁엫)
 camera.lookAt(0, 0.5, -1.2);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -434,7 +434,7 @@ controls.minDistance = 3;
 controls.maxDistance = 16;
 controls.maxPolarAngle = Math.PI / 2.05;
 
-// 조명
+// 議곕챸
 scene.add(new THREE.AmbientLight(0x6080a0, 0.5));
 const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
 keyLight.position.set(4, 10, 5);
@@ -458,13 +458,13 @@ ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-// 격자
+// 寃⑹옄
 const grid = new THREE.GridHelper(16, 32, 0x7dd3d3, 0x12283c);
 grid.material.transparent = true;
 grid.material.opacity = 0.55;
 scene.add(grid);
 
-// ego 카메라 마커 (작은 콘)
+// ego 移대찓??留덉빱 (?묒? 肄?
 {
   const egoGeom = new THREE.ConeGeometry(0.18, 0.4, 4);
   const egoMat = new THREE.MeshStandardMaterial({
@@ -472,11 +472,10 @@ scene.add(grid);
     metalness: 0.4, roughness: 0.3,
   });
   const ego = new THREE.Mesh(egoGeom, egoMat);
-  ego.position.set(0, 0.2, 4.0);    // 카메라 위치 = z+ 쪽
-  ego.rotation.x = Math.PI / 2;     // 진행방향 = -z
+  ego.position.set(0, 0.2, 4.0);    // 移대찓???꾩튂 = z+ 履?  ego.rotation.x = Math.PI / 2;     // 吏꾪뻾諛⑺뼢 = -z
   ego.castShadow = true;
   scene.add(ego);
-  // 시야 콘 (반투명)
+  // ?쒖빞 肄?(諛섑닾紐?
   const fovGeom = new THREE.ConeGeometry(4.5, 9, 32, 1, true);
   const fovMat = new THREE.MeshBasicMaterial({
     color: 0x7dd3d3, transparent: true, opacity: 0.05,
@@ -486,8 +485,7 @@ scene.add(grid);
   fov.position.set(0, 0.05, -0.5);
   fov.rotation.x = -Math.PI / 2;
   scene.add(fov);
-  // 시야 외곽선
-  const fovEdge = new THREE.LineSegments(
+  // ?쒖빞 ?멸낸??  const fovEdge = new THREE.LineSegments(
     new THREE.EdgesGeometry(fovGeom),
     new THREE.LineBasicMaterial({ color: 0x7dd3d3, transparent: true, opacity: 0.18 })
   );
@@ -496,7 +494,7 @@ scene.add(grid);
   scene.add(fovEdge);
 }
 
-// 글로우 텍스처 (radial)
+// 湲濡쒖슦 ?띿뒪泥?(radial)
 const glowTexture = (() => {
   const c = document.createElement('canvas');
   c.width = c.height = 128;
@@ -510,7 +508,7 @@ const glowTexture = (() => {
   return new THREE.CanvasTexture(c);
 })();
 
-// 클래스별 색상 (Tesla 스타일)
+// ?대옒?ㅻ퀎 ?됱긽 (Tesla ?ㅽ???
 const CLASS_COLOR = {
   person:     { main: 0xe8f0ff, glow: 0x7dd3d3, light: 0x7dd3d3 },
   bicycle:    { main: 0x88e0a8, glow: 0x66ff99, light: 0x66ff99 },
@@ -523,7 +521,7 @@ const CLASS_COLOR = {
 };
 function colorFor(klass) { return CLASS_COLOR[klass] || CLASS_COLOR.person; }
 
-// 발 밑 글로우 + 점 광원 (공통)
+// 諛?諛?湲濡쒖슦 + ??愿묒썝 (怨듯넻)
 function addGroundGlow(group, klass) {
   const c = colorFor(klass);
   const glowMat = new THREE.SpriteMaterial({
@@ -540,7 +538,7 @@ function addGroundGlow(group, klass) {
   group.add(pl);
 }
 
-// Slim humanoid (capsule) — 인체 비율, 청회색 + 약한 cyan glow
+// Slim humanoid (capsule) ???몄껜 鍮꾩쑉, 泥?쉶??+ ?쏀븳 cyan glow
 function createPersonMesh() {
   const group = new THREE.Group();
   group.userData.role = 'person';
@@ -560,26 +558,25 @@ function createPersonMesh() {
     emissiveIntensity: 0.25,
   });
 
-  // 머리
+  // 癒몃━
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.11, 24, 24), headMat);
   head.position.y = 1.68;
   head.castShadow = true;
   group.add(head);
   group.userData.head = head;
 
-  // 목
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.10, 14), bodyMat);
+  // 紐?  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.10, 14), bodyMat);
   neck.position.y = 1.55;
   group.add(neck);
 
-  // 상체 capsule (slim)
+  // ?곸껜 capsule (slim)
   const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.16, 0.42, 8, 16), bodyMat);
   torso.position.y = 1.24;
   torso.castShadow = true;
   group.add(torso);
   group.userData.torso = torso;
 
-  // 팔 — shoulder pivot
+  // ????shoulder pivot
   const armGeom = new THREE.CapsuleGeometry(0.045, 0.55, 5, 10);
   function makeArmPivot(side) {
     const pivot = new THREE.Group();
@@ -596,14 +593,14 @@ function createPersonMesh() {
   group.userData.armL = armL;
   group.userData.armR = armR;
 
-  // 엉덩이 — 작은 elliptical
+  // ?됰뜦?????묒? elliptical
   const hip = new THREE.Mesh(new THREE.SphereGeometry(0.16, 18, 12), bodyMat);
   hip.scale.set(1.0, 0.45, 0.85);
   hip.position.y = 0.93;
   hip.castShadow = true;
   group.add(hip);
 
-  // 다리 — hip pivot
+  // ?ㅻ━ ??hip pivot
   const legGeom = new THREE.CapsuleGeometry(0.07, 0.72, 5, 10);
   const footGeom = new THREE.BoxGeometry(0.10, 0.045, 0.20);
   function makeLegPivot(side) {
@@ -631,8 +628,7 @@ function createPersonMesh() {
   return group;
 }
 
-// Walking + idle 호흡 애니메이션
-function animatePersonWalking(personGroup, dt, speed) {
+// Walking + idle ?명씉 ?좊땲硫붿씠??function animatePersonWalking(personGroup, dt, speed) {
   const u = personGroup.userData;
   if (!u.legL) return;
   u.smoothedSpeed = (u.smoothedSpeed || 0) * 0.85 + speed * 0.15;
@@ -647,12 +643,12 @@ function animatePersonWalking(personGroup, dt, speed) {
   u.legR.rotation.x = -swing;
   u.armL.rotation.x = -swing * 0.7;
   u.armR.rotation.x = swing * 0.7;
-  // bob (걸을 때만)
+  // bob (嫄몄쓣 ?뚮쭔)
   const bob = Math.abs(Math.sin((u.walkPhase || 0) * 2)) * u.swingAmp * 0.045;
 
-  // Idle (정지 시 호흡/머리 미세 sway 살아있는 느낌)
+  // Idle (?뺤? ???명씉/癒몃━ 誘몄꽭 sway ?댁븘?덈뒗 ?먮굦)
   u.idlePhase = (u.idlePhase || 0) + dt;
-  const idleStrength = Math.max(0, 1 - u.swingAmp / 0.20);   // 정지에 가까울수록 idle 강함
+  const idleStrength = Math.max(0, 1 - u.swingAmp / 0.20);   // ?뺤???媛源뚯슱?섎줉 idle 媛뺥븿
   if (u.torso) {
     const breath = Math.sin(u.idlePhase * 1.6) * 0.012 * idleStrength;
     u.torso.scale.set(1, 1 + breath, 1);
@@ -661,11 +657,10 @@ function animatePersonWalking(personGroup, dt, speed) {
     u.head.rotation.y = Math.sin(u.idlePhase * 0.4) * 0.06 * idleStrength;
     u.head.rotation.z = Math.sin(u.idlePhase * 0.55) * 0.025 * idleStrength;
   }
-  // y position = bob + 미세 호흡 흔들림
-  personGroup.position.y = bob + Math.sin(u.idlePhase * 1.6) * 0.004 * idleStrength;
+  // y position = bob + 誘몄꽭 ?명씉 ?붾뱾由?  personGroup.position.y = bob + Math.sin(u.idlePhase * 1.6) * 0.004 * idleStrength;
 }
 
-// 자전거/오토바이 메시 — 두 휠 + 프레임 + 안장 + 핸들 + (오토바이는 빨간 위험 글로우)
+// ?먯쟾嫄??ㅽ넗諛붿씠 硫붿떆 ??????+ ?꾨젅??+ ?덉옣 + ?몃뱾 + (?ㅽ넗諛붿씠??鍮④컙 ?꾪뿕 湲濡쒖슦)
 function createBikeMesh(klass) {
   const group = new THREE.Group();
   const c = colorFor(klass);
@@ -675,8 +670,7 @@ function createBikeMesh(klass) {
   });
   const wheelMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7, metalness: 0.2 });
 
-  // 휠 두 개
-  const wheelGeom = new THREE.TorusGeometry(0.30, 0.05, 14, 36);
+  // ????媛?  const wheelGeom = new THREE.TorusGeometry(0.30, 0.05, 14, 36);
   const wF = new THREE.Mesh(wheelGeom, wheelMat);
   wF.position.set(0.55, 0.30, 0);
   wF.rotation.y = Math.PI / 2;
@@ -688,36 +682,35 @@ function createBikeMesh(klass) {
   wR.castShadow = true;
   group.add(wR);
 
-  // 프레임
-  const frameGeom = new THREE.BoxGeometry(1.10, 0.07, 0.07);
+  // ?꾨젅??  const frameGeom = new THREE.BoxGeometry(1.10, 0.07, 0.07);
   const frame = new THREE.Mesh(frameGeom, frameMat);
   frame.position.y = 0.55;
   frame.castShadow = true;
   group.add(frame);
-  // 다이아몬드 프레임 (위쪽 빔)
+  // ?ㅼ씠?꾨が???꾨젅??(?꾩そ 鍮?
   const upper = new THREE.BoxGeometry(0.65, 0.06, 0.06);
   const up = new THREE.Mesh(upper, frameMat);
   up.position.set(0, 0.78, 0);
   up.rotation.z = -0.20;
   group.add(up);
 
-  // 안장
+  // ?덉옣
   const seat = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.06, 0.13), frameMat);
   seat.position.set(-0.30, 0.92, 0);
   group.add(seat);
 
-  // 핸들
+  // ?몃뱾
   const hb = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.05, 0.05), frameMat);
   hb.position.set(0.45, 1.00, 0);
   group.add(hb);
 
-  // 오토바이는 더 크고 위협적: 엔진 박스
+  // ?ㅽ넗諛붿씠?????ш퀬 ?꾪삊?? ?붿쭊 諛뺤뒪
   if (klass === 'motorcycle') {
     const eng = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.30, 0.20),
       new THREE.MeshStandardMaterial({ color: 0x444, roughness: 0.6, metalness: 0.6 }));
     eng.position.y = 0.46;
     group.add(eng);
-    // 위험 표시 콘 (위)
+    // ?꾪뿕 ?쒖떆 肄?(??
     const warnGeom = new THREE.ConeGeometry(0.12, 0.20, 4);
     const warnMat = new THREE.MeshStandardMaterial({
       color: 0xff5e57, emissive: 0xff5e57, emissiveIntensity: 0.6,
@@ -731,7 +724,7 @@ function createBikeMesh(klass) {
   return group;
 }
 
-// 휠체어 메시 — 큰 휠 + 시트 + 등받이 + 앉은 사람
+// ?좎껜??硫붿떆 ??????+ ?쒗듃 + ?깅컺??+ ?됱? ?щ엺
 function createWheelchairMesh() {
   const group = new THREE.Group();
   const chairMat = new THREE.MeshStandardMaterial({
@@ -740,7 +733,7 @@ function createWheelchairMesh() {
   });
   const wheelMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 });
 
-  // 큰 휠 (양옆)
+  // ????(?묒쁿)
   const bigWheel = new THREE.TorusGeometry(0.34, 0.04, 8, 32);
   const wL = new THREE.Mesh(bigWheel, wheelMat);
   wL.position.set(0, 0.34, -0.36);
@@ -749,8 +742,7 @@ function createWheelchairMesh() {
   wR.position.set(0, 0.34, 0.36);
   group.add(wR);
 
-  // 작은 앞 휠
-  const smallWheel = new THREE.TorusGeometry(0.12, 0.03, 8, 18);
+  // ?묒? ????  const smallWheel = new THREE.TorusGeometry(0.12, 0.03, 8, 18);
   const swL = new THREE.Mesh(smallWheel, wheelMat);
   swL.position.set(0.40, 0.12, -0.30);
   group.add(swL);
@@ -758,8 +750,7 @@ function createWheelchairMesh() {
   swR.position.set(0.40, 0.12, 0.30);
   group.add(swR);
 
-  // 시트 + 등받이
-  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.08, 0.55), chairMat);
+  // ?쒗듃 + ?깅컺??  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.08, 0.55), chairMat);
   seat.position.y = 0.55;
   seat.castShadow = true;
   group.add(seat);
@@ -768,7 +759,7 @@ function createWheelchairMesh() {
   back.castShadow = true;
   group.add(back);
 
-  // 앉은 사람
+  // ?됱? ?щ엺
   const skinMat = new THREE.MeshStandardMaterial({ color: 0xe8f0ff, roughness: 0.35 });
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), skinMat);
   head.position.set(-0.10, 1.18, 0);
@@ -783,8 +774,7 @@ function createWheelchairMesh() {
   return group;
 }
 
-// 차량 메시 — 박스 + 휠 4개
-function createVehicleMesh(klass) {
+// 李⑤웾 硫붿떆 ??諛뺤뒪 + ??4媛?function createVehicleMesh(klass) {
   const group = new THREE.Group();
   const c = colorFor(klass);
   const dims = klass === 'bus'   ? { l: 4.2, w: 1.4, h: 1.6 }
@@ -800,7 +790,7 @@ function createVehicleMesh(klass) {
   body.castShadow = true;
   group.add(body);
 
-  // 캐빈 (위쪽 작은 박스 — 차량 디테일)
+  // 罹먮퉰 (?꾩そ ?묒? 諛뺤뒪 ??李⑤웾 ?뷀뀒??
   if (klass === 'car') {
     const cabin = new THREE.Mesh(
       new THREE.BoxGeometry(dims.l * 0.55, 0.35, dims.w * 0.85),
@@ -817,8 +807,7 @@ function createVehicleMesh(klass) {
     group.add(cab);
   }
 
-  // 휠 4개
-  const wheelGeom = new THREE.CylinderGeometry(0.20, 0.20, 0.10, 16);
+  // ??4媛?  const wheelGeom = new THREE.CylinderGeometry(0.20, 0.20, 0.10, 16);
   const wMat = new THREE.MeshStandardMaterial({ color: 0x111, roughness: 0.7 });
   const wheelPositions = [
     [ dims.l * 0.35,  0.20,  dims.w * 0.50],
@@ -837,7 +826,7 @@ function createVehicleMesh(klass) {
   return group;
 }
 
-// 4족 동물 (dog/cat) 메시 — body + 4 legs + head + tail
+// 4議??숇Ъ (dog/cat) 硫붿떆 ??body + 4 legs + head + tail
 function createAnimalMesh(klass) {
   const group = new THREE.Group();
   group.userData.role = 'animal';
@@ -848,22 +837,21 @@ function createAnimalMesh(klass) {
     color: c.main, roughness: 0.55, metalness: 0.10,
     emissive: c.main, emissiveIntensity: 0.15,
   });
-  // 몸통 — 옆으로 누운 capsule (X축 길이)
+  // 紐명넻 ???놁쑝濡??꾩슫 capsule (X異?湲몄씠)
   const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.13 * sizeScale, 0.45 * sizeScale, 6, 14), mat);
   body.rotation.z = Math.PI / 2;
   body.position.y = 0.32 * sizeScale;
   body.castShadow = true;
   group.add(body);
-  // 머리
+  // 癒몃━
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.12 * sizeScale, 18, 14), mat);
   head.position.set(0.36 * sizeScale, 0.42 * sizeScale, 0);
   head.castShadow = true;
   group.add(head);
-  // 주둥이
-  const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.13 * sizeScale, 0.07 * sizeScale, 0.10 * sizeScale), mat);
+  // 二쇰뫁??  const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.13 * sizeScale, 0.07 * sizeScale, 0.10 * sizeScale), mat);
   muzzle.position.set(0.46 * sizeScale, 0.38 * sizeScale, 0);
   group.add(muzzle);
-  // 귀 (작은 cone 두 개)
+  // 洹 (?묒? cone ??媛?
   const earGeom = new THREE.ConeGeometry(0.04 * sizeScale, 0.10 * sizeScale, 4);
   const earL = new THREE.Mesh(earGeom, mat);
   earL.position.set(0.32 * sizeScale, 0.55 * sizeScale, -0.07 * sizeScale);
@@ -871,8 +859,7 @@ function createAnimalMesh(klass) {
   const earR = earL.clone();
   earR.position.z = 0.07 * sizeScale;
   group.add(earR);
-  // 다리 4개
-  const legGeom = new THREE.CapsuleGeometry(0.045 * sizeScale, 0.20 * sizeScale, 4, 8);
+  // ?ㅻ━ 4媛?  const legGeom = new THREE.CapsuleGeometry(0.045 * sizeScale, 0.20 * sizeScale, 4, 8);
   const positions = [
     [0.18 * sizeScale, -0.10 * sizeScale],
     [0.18 * sizeScale, 0.10 * sizeScale],
@@ -885,7 +872,7 @@ function createAnimalMesh(klass) {
     leg.castShadow = true;
     group.add(leg);
   }
-  // 꼬리
+  // 瑗щ━
   const tail = new THREE.Mesh(new THREE.CapsuleGeometry(0.025 * sizeScale, 0.22 * sizeScale, 4, 8), mat);
   tail.position.set(-0.32 * sizeScale, 0.45 * sizeScale, 0);
   tail.rotation.z = -Math.PI / 4;
@@ -895,7 +882,7 @@ function createAnimalMesh(klass) {
   return group;
 }
 
-// 메인 ensure: 클래스에 따라 다른 메시 생성
+// 硫붿씤 ensure: ?대옒?ㅼ뿉 ?곕씪 ?ㅻⅨ 硫붿떆 ?앹꽦
 function createClassMesh(klass) {
   if (klass === 'person')                       return createPersonMesh();
   if (klass === 'bicycle' || klass === 'motorcycle') return createBikeMesh(klass);
@@ -905,20 +892,19 @@ function createClassMesh(klass) {
   return createPersonMesh();   // fallback
 }
 
-// =================== 트랙 → 3D 메시 ===================
-const tracks = new Map();   // id → { x, y, lastUpdate, mesh, targetX, targetZ, currentX, currentZ, heading_target, heading }
+// =================== ?몃옓 ??3D 硫붿떆 ===================
+const tracks = new Map();   // id ??{ x, y, lastUpdate, mesh, targetX, targetZ, currentX, currentZ, heading_target, heading }
 
 function bevToWorld(bx, by) {
-  // bx 0~1: 좌→우, by 0~1: 0=image top=먼곳, 1=image bottom=가까움
-  const worldX = (bx - 0.5) * 8;        // ±4
-  const worldZ = -(by * 7 - 1.5);       // by=1(near) → z=-(7-1.5)=-5.5; by=0(far) → z=1.5
-  // ...아니 더 직관적으로:
-  // by=1(가까움) → 카메라 ego (z=4) 근처 → z=2 정도
-  // by=0(원거리) → 멀리 → z=-7
-  const z = 2 - by * 9;                  // by=0 → 2, 어..반대네
-  // 다시: by=1은 발이 image 하단 = ego 가까움. by=0은 image 상단 = 멀리.
-  // ego는 z=+4. 그래서 by=1 → z 약 +1, by=0 → z 약 -7
-  const z2 = (1 - by) * (-8) + by * (1);  // by 0→-8, 1→1
+  // bx 0~1: 醫뚢넂?? by 0~1: 0=image top=癒쇨납, 1=image bottom=媛源뚯?
+  const worldX = (bx - 0.5) * 8;        // 짹4
+  const worldZ = -(by * 7 - 1.5);       // by=1(near) ??z=-(7-1.5)=-5.5; by=0(far) ??z=1.5
+  // ...?꾨땲 ??吏곴??곸쑝濡?
+  // by=1(媛源뚯?) ??移대찓??ego (z=4) 洹쇱쿂 ??z=2 ?뺣룄
+  // by=0(?먭굅由? ??硫由???z=-7
+  const z = 2 - by * 9;                  // by=0 ??2, ??.諛섎???  // ?ㅼ떆: by=1? 諛쒖씠 image ?섎떒 = ego 媛源뚯?. by=0? image ?곷떒 = 硫由?
+  // ego??z=+4. 洹몃옒??by=1 ??z ??+1, by=0 ??z ??-7
+  const z2 = (1 - by) * (-8) + by * (1);  // by 0??8, 1??
   return { x: worldX, z: z2 };
 }
 
@@ -931,7 +917,7 @@ function onTracksUpdate(list) {
     if (!h) {
       const mesh = createClassMesh(klass);
       mesh.position.set(w.x, 0, w.z);
-      // 사람 figure는 살짝 크게 (BEV에서 잘 보이게)
+      // ?щ엺 figure???댁쭩 ?ш쾶 (BEV?먯꽌 ??蹂댁씠寃?
       if (klass === 'person') mesh.scale.setScalar(1.18);
       scene.add(mesh);
       h = {
@@ -946,7 +932,7 @@ function onTracksUpdate(list) {
       };
       tracks.set(trk.id, h);
     } else {
-      // 클래스 변경 (드물지만 가능) — 메시 교체
+      // ?대옒??蹂寃?(?쒕Ъ吏留?媛?? ??硫붿떆 援먯껜
       if (h.klass !== klass) {
         scene.remove(h.mesh);
         h.mesh = createClassMesh(klass);
@@ -961,19 +947,19 @@ function onTracksUpdate(list) {
       h.lastUpdate = now;
     }
   }
-  // stale 제거
+  // stale ?쒓굅
   for (const [id, h] of [...tracks.entries()]) {
     if (now - h.lastUpdate > 1500) {
       scene.remove(h.mesh);
       tracks.delete(id);
     }
   }
-  // 클래스별 카운트 라벨
+  // ?대옒?ㅻ퀎 移댁슫???쇰꺼
   const counts = {};
   for (const h of tracks.values()) counts[h.klass] = (counts[h.klass] || 0) + 1;
-  const labels = { person: '사람', bicycle: '자전거', motorcycle: '오토바이', car: '차', bus: '버스', truck: '트럭', wheelchair: '휠체어', dog: '개', cat: '고양이' };
+  const labels = { person: '?щ엺', bicycle: '?먯쟾嫄?, motorcycle: '?ㅽ넗諛붿씠', car: '李?, bus: '踰꾩뒪', truck: '?몃윮', wheelchair: '?좎껜??, dog: '媛?, cat: '怨좎뼇?? };
   const parts = Object.entries(counts).map(([k, v]) => `${labels[k] || k} ${v}`);
-  cornerMeta.textContent = parts.length ? `${tracks.size} · ${parts.join(' · ')}` : '0';
+  cornerMeta.textContent = parts.length ? `${tracks.size} 쨌 ${parts.join(' 쨌 ')}` : '0';
 }
 window.onTracksUpdate = onTracksUpdate;   // for headless test injection
 
@@ -983,8 +969,7 @@ function animate() {
   const dt = Math.min(0.1, (now - lastFrameTs) / 1000);
   lastFrameTs = now;
 
-  // 사람 위치 lerp + heading + walking 애니메이션
-  for (const h of tracks.values()) {
+  // ?щ엺 ?꾩튂 lerp + heading + walking ?좊땲硫붿씠??  for (const h of tracks.values()) {
     const k = Math.min(1, dt * 7);
     const newX = h.currentX + (h.targetX - h.currentX) * k;
     const newZ = h.currentZ + (h.targetZ - h.currentZ) * k;
@@ -999,11 +984,11 @@ function animate() {
     h.currentX = newX; h.currentZ = newZ;
     h.mesh.position.set(newX, 0, newZ);
     h.mesh.rotation.y = h.heading;
-    // walking 애니메이션 (사람만)
+    // walking ?좊땲硫붿씠??(?щ엺留?
     if (h.klass === 'person' && h.mesh.userData.role === 'person') {
       animatePersonWalking(h.mesh, dt, speed);
     } else {
-      // 차량/바이크: 약간의 위아래 호흡
+      // 李⑤웾/諛붿씠?? ?쎄컙???꾩븘???명씉
       h.mesh.position.y = Math.sin(now / 400 + (h.mesh.id % 9)) * 0.02;
     }
   }
@@ -1014,7 +999,7 @@ function animate() {
 }
 animate();
 
-// 리사이즈
+// 由ъ궗?댁쫰
 window.addEventListener('resize', () => {
   const w = container.clientWidth, h = container.clientHeight;
   if (w > 0 && h > 0) {
@@ -1024,23 +1009,22 @@ window.addEventListener('resize', () => {
   }
 });
 
-// =================== 카메라 / WebSocket ===================
+// =================== 移대찓??/ WebSocket ===================
 function connect(url) {
   if (ws) { try { ws.close(); } catch {} ws = null; }
-  setStatus('', '연결 중...');
-  diag('info', `WS 연결: ${url}`);
+  setStatus('', '?곌껐 以?..');
+  diag('info', `WS ?곌껐: ${url}`);
   ws = new WebSocket(url);
   ws.binaryType = 'arraybuffer';
-  window.ws = ws;   // module 외부 (MLChart 등)에서 ws 상태 접근 가능하게
-  ws.onopen = () => {
-    setStatus('connected', '연결됨'); diag('ok', 'WebSocket OPEN');
-    // 4중 데이터 융합 — 도착정보 + 역세권 인구 즉시 + 폴링
+  window.ws = ws;   // module ?몃? (MLChart ???먯꽌 ws ?곹깭 ?묎렐 媛?ν븯寃?  ws.onopen = () => {
+    setStatus('connected', '?곌껐??); diag('ok', 'WebSocket OPEN');
+    // 4以??곗씠???듯빀 ???꾩갑?뺣낫 + ??꽭沅??멸뎄 利됱떆 + ?대쭅
     Fusion.startPolling();
-    // ML 모델 메트릭 1회 조회
+    // ML 紐⑤뜽 硫뷀듃由?1??議고쉶
     try { ws.send(JSON.stringify({ type: 'model_metrics_query' })); } catch {}
   };
-  ws.onclose = (e) => { setStatus('error', '연결 끊김'); ws = null; diag('warn', `CLOSE code=${e.code}`); Fusion.stopPolling(); };
-  ws.onerror = () => { setStatus('error', '연결 오류'); diag('err', 'WS ERROR'); };
+  ws.onclose = (e) => { setStatus('error', '?곌껐 ?딄?'); ws = null; diag('warn', `CLOSE code=${e.code}`); Fusion.stopPolling(); };
+  ws.onerror = () => { setStatus('error', '?곌껐 ?ㅻ쪟'); diag('err', 'WS ERROR'); };
   ws.onmessage = (ev) => {
     let p; try { p = JSON.parse(ev.data); } catch { return; }
     if (p.type === 'arrival') { Fusion.applyArrival(p); return; }
@@ -1051,7 +1035,7 @@ function connect(url) {
       const card = document.getElementById('metrics-card');
       if (!p.available) { card.hidden = true; return; }
       card.hidden = false;
-      const fmt = (v, d = 3) => v != null ? Number(v).toFixed(d) : '—';
+      const fmt = (v, d = 3) => v != null ? Number(v).toFixed(d) : '??;
       document.getElementById('mt-mae').textContent = fmt(p.mae_val);
       document.getElementById('mt-rmse').textContent = fmt(p.rmse_val);
       document.getElementById('mt-r2').textContent = fmt(p.r2_val, 2);
@@ -1066,12 +1050,12 @@ function connect(url) {
       const saved = +p.avg_saved_pct || 0;
       document.getElementById('ic-saved').textContent = saved.toFixed(0);
       document.getElementById('ic-bar').style.width = Math.min(100, saved * 4) + '%';
-      const recent = (p.recent || []).slice(-5).map(e => `${e.station}/${e.car}(-${e.saved_pct.toFixed(0)}%)`).join(' · ');
-      document.getElementById('ic-recent').textContent = recent ? `최근 5건: ${recent}` : '';
+      const recent = (p.recent || []).slice(-5).map(e => `${e.station}/${e.car}(-${e.saved_pct.toFixed(0)}%)`).join(' 쨌 ');
+      document.getElementById('ic-recent').textContent = recent ? `理쒓렐 5嫄? ${recent}` : '';
       return;
     }
-    fpsEl.textContent = `${(p.fps ?? 0).toFixed(1)} FPS (백엔드)`;
-    tracksEl.textContent = `${(p.tracks || []).length} 트랙`;
+    fpsEl.textContent = `${(p.fps ?? 0).toFixed(1)} FPS (諛깆뿏??`;
+    tracksEl.textContent = `${(p.tracks || []).length} ?몃옓`;
     document.getElementById('frame-idx').textContent = `frame ${p.frame_idx ?? 0}`;
     onTracksUpdate(p.tracks || []);
     Fusion.applyBev(p);
@@ -1084,9 +1068,9 @@ function connect(url) {
       img.style.display = 'block';
       vid.style.display = 'none';
       img.src = 'data:image/jpeg;base64,' + p.input_b64;
-      badge.textContent = 'INPUT · FROM BACKEND';
-      camModeEl.textContent = '백엔드가 처리한 입력 프레임 (영상 피더 모드)';
-      if (p.input_size) camSizeEl.textContent = `${p.input_size[0]}×${p.input_size[1]}`;
+      badge.textContent = 'INPUT 쨌 FROM BACKEND';
+      camModeEl.textContent = '諛깆뿏?쒓? 泥섎━???낅젰 ?꾨젅??(?곸긽 ?쇰뜑 紐⑤뱶)';
+      if (p.input_size) camSizeEl.textContent = `${p.input_size[0]}횞${p.input_size[1]}`;
       drawCamOverlay(p.debug_boxes || [], p.input_size);
     }
   };
@@ -1095,7 +1079,7 @@ function connect(url) {
 function drawCamOverlay(boxes, inputSize) {
   const cv = document.getElementById('overlay-cam');
   const img = document.getElementById('img-input');
-  // 캔버스를 img 표시 영역에 맞춤
+  // 罹붾쾭?ㅻ? img ?쒖떆 ?곸뿭??留욎땄
   const r = img.getBoundingClientRect();
   if (r.width === 0 || r.height === 0) return;
   cv.width = Math.round(r.width * devicePixelRatio);
@@ -1106,7 +1090,7 @@ function drawCamOverlay(boxes, inputSize) {
   ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   ctx.clearRect(0, 0, r.width, r.height);
 
-  // object-fit: contain 보정 — 입력 비율과 캔버스 비율 비교
+  // object-fit: contain 蹂댁젙 ???낅젰 鍮꾩쑉怨?罹붾쾭??鍮꾩쑉 鍮꾧탳
   const [iw, ih] = inputSize || [r.width, r.height];
   const scale = Math.min(r.width / iw, r.height / ih);
   const drawW = iw * scale;
@@ -1142,15 +1126,15 @@ async function listCameras() {
   cams.forEach((c, i) => {
     const o = document.createElement('option');
     o.value = c.deviceId;
-    o.textContent = c.label || `카메라 ${i + 1}`;
+    o.textContent = c.label || `移대찓??${i + 1}`;
     camSelect.appendChild(o);
   });
-  diag('info', `카메라 ${cams.length}개: ${cams.map(c => c.label || '(라벨 가림)').join(' | ')}`);
+  diag('info', `移대찓??${cams.length}媛? ${cams.map(c => c.label || '(?쇰꺼 媛由?').join(' | ')}`);
 }
 
 async function startCam() {
   try {
-    if (!navigator.mediaDevices?.getUserMedia) { diag('err', 'getUserMedia 미지원'); return; }
+    if (!navigator.mediaDevices?.getUserMedia) { diag('err', 'getUserMedia 誘몄???); return; }
     const deviceId = camSelect.value;
     const constraints = {
       video: deviceId ? { deviceId: { exact: deviceId }, width: { ideal: 640 }, height: { ideal: 480 } }
@@ -1158,18 +1142,18 @@ async function startCam() {
       audio: false,
     };
     stream = await navigator.mediaDevices.getUserMedia(constraints);
-    diag('ok', '권한 허용 + 스트림');
+    diag('ok', '沅뚰븳 ?덉슜 + ?ㅽ듃由?);
     vidCam.srcObject = stream;
     await new Promise(r => vidCam.onloadedmetadata = r);
-    camSize.textContent = `${vidCam.videoWidth}×${vidCam.videoHeight}`;
-    diag('ok', `트랙: ${stream.getVideoTracks().map(t => t.label || '(라벨 없음)').join(', ')}`);
+    camSize.textContent = `${vidCam.videoWidth}횞${vidCam.videoHeight}`;
+    diag('ok', `?몃옓: ${stream.getVideoTracks().map(t => t.label || '(?쇰꺼 ?놁쓬)').join(', ')}`);
     listCameras();
-    if (!captureLoopRunning) { captureLoopRunning = true; captureLoop(); diag('info', '캡처 루프 시작'); }
+    if (!captureLoopRunning) { captureLoopRunning = true; captureLoop(); diag('info', '罹≪쿂 猷⑦봽 ?쒖옉'); }
   } catch (e) {
-    setStatus('error', `카메라 실패: ${e.name}`);
-    diag('err', `getUserMedia 실패: ${e.name} — ${e.message}`);
-    if (e.name === 'NotAllowedError') diag('warn', '권한 거부 → 자물쇠→카메라→허용');
-    if (e.name === 'NotReadableError') diag('warn', '다른 앱 점유 중 (Camo/Teams/Zoom 등)');
+    setStatus('error', `移대찓???ㅽ뙣: ${e.name}`);
+    diag('err', `getUserMedia ?ㅽ뙣: ${e.name} ??${e.message}`);
+    if (e.name === 'NotAllowedError') diag('warn', '沅뚰븳 嫄곕? ???먮Ъ?졻넂移대찓?쇄넂?덉슜');
+    if (e.name === 'NotReadableError') diag('warn', '?ㅻⅨ ???먯쑀 以?(Camo/Teams/Zoom ??');
   }
 }
 function stopCam() {
@@ -1183,14 +1167,14 @@ captureCanvas.width = 480; captureCanvas.height = 360;
 const cctx = captureCanvas.getContext('2d');
 const TARGET_TX_FPS = 10;
 
-// 영상 전환 중 (vidCam.src 변경 → onloadedmetadata 직전) 일시 정지
+// ?곸긽 ?꾪솚 以?(vidCam.src 蹂寃???onloadedmetadata 吏곸쟾) ?쇱떆 ?뺤?
 let captureSuspended = false;
 async function captureLoop() {
   while (captureLoopRunning) {
     if (!captureSuspended &&
         ws && ws.readyState === WebSocket.OPEN &&
         vidCam.videoWidth > 0 && !vidCam.paused && !vidCam.seeking &&
-        vidCam.readyState >= 2) {   // HAVE_CURRENT_DATA 이상
+        vidCam.readyState >= 2) {   // HAVE_CURRENT_DATA ?댁긽
       cctx.drawImage(vidCam, 0, 0, 480, 360);
       const blob = await new Promise(r => captureCanvas.toBlob(r, 'image/jpeg', 0.7));
       if (blob) {
@@ -1200,21 +1184,20 @@ async function captureLoop() {
     }
     const now = performance.now();
     if (now - txWindowStart > 1000) {
-      txEl.textContent = `송신 ${txFrames} fps`;
+      txEl.textContent = `?≪떊 ${txFrames} fps`;
       txFrames = 0; txWindowStart = now;
     }
     await new Promise(r => setTimeout(r, 1000 / TARGET_TX_FPS));
   }
 }
 
-// 영상 프리셋 — 호모그래피 4점 추정값 (image_size, image_points, bev_points)
-// y=0=BEV far, y=1=BEV near (관찰자 가까움)
+// ?곸긽 ?꾨━?????몃え洹몃옒??4??異붿젙媛?(image_size, image_points, bev_points)
+// y=0=BEV far, y=1=BEV near (愿李곗옄 媛源뚯?)
 const VIDEO_PRESETS = {
   subway: {
     src: '../videos/subway_interior.mp4',
     image_size: [640, 360],
-    // 지하철 차량 통로 POV — 통로 바닥(ground plane) 4점
-    homography: {
+    // 吏?섏쿋 李⑤웾 ?듬줈 POV ???듬줈 諛붾떏(ground plane) 4??    homography: {
       image_points: [[240, 130], [400, 130], [560, 360], [80, 360]],
       bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
     },
@@ -1222,7 +1205,7 @@ const VIDEO_PRESETS = {
   vtest: {
     src: '../videos/vtest.mp4',
     image_size: [768, 576],
-    // 광장 + 도로 통합 ground plane (좌상=도로 안쪽 → 우하=광장 앞)
+    // 愿묒옣 + ?꾨줈 ?듯빀 ground plane (醫뚯긽=?꾨줈 ?덉そ ???고븯=愿묒옣 ??
     homography: {
       image_points: [[160, 175], [610, 175], [768, 576], [0, 576]],
       bev_points:   [[0.20, 0.05], [0.80, 0.05], [0.95, 0.95], [0.05, 0.95]],
@@ -1239,7 +1222,7 @@ const VIDEO_PRESETS = {
   street_uk: {
     src: '../videos/street_uk.mp4',
     image_size: [640, 360],
-    // 자전거 POV — 도로 ground plane
+    // ?먯쟾嫄?POV ???꾨줈 ground plane
     homography: {
       image_points: [[100, 150], [540, 150], [620, 340], [20, 340]],
       bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
@@ -1248,7 +1231,7 @@ const VIDEO_PRESETS = {
   dog_park: {
     src: '../videos/dog_park.mp4',
     image_size: [640, 360],
-    // 공원 약간 elevated — 사람/강아지 ground plane
+    // 怨듭썝 ?쎄컙 elevated ???щ엺/媛뺤븘吏 ground plane
     homography: {
       image_points: [[60, 200], [580, 200], [630, 350], [10, 350]],
       bev_points:   [[0.30, 0.05], [0.70, 0.05], [0.95, 0.95], [0.05, 0.95]],
@@ -1265,7 +1248,7 @@ const VIDEO_PRESETS = {
   aerial: {
     src: '../videos/aerial.mp4',
     image_size: [640, 360],
-    // drone 거의 진짜 BEV — 화면 전체가 ground plane
+    // drone 嫄곗쓽 吏꾩쭨 BEV ???붾㈃ ?꾩껜媛 ground plane
     homography: {
       image_points: [[20, 20], [620, 20], [620, 340], [20, 340]],
       bev_points:   [[0.05, 0.05], [0.95, 0.05], [0.95, 0.95], [0.05, 0.95]],
@@ -1284,7 +1267,7 @@ function setHomographyOnServer(preset) {
   if (!ws || ws.readyState !== WebSocket.OPEN) return;
   if (!preset || !preset.homography) {
     ws.send(JSON.stringify({ type: 'set_homography', clear: true }));
-    diag('info', '호모그래피 해제 (단순 정규화)');
+    diag('info', '?몃え洹몃옒???댁젣 (?⑥닚 ?뺢퇋??');
   } else {
     ws.send(JSON.stringify({
       type: 'set_homography',
@@ -1292,31 +1275,31 @@ function setHomographyOnServer(preset) {
       image_points: preset.homography.image_points,
       bev_points: preset.homography.bev_points,
     }));
-    diag('ok', `호모그래피 적용 (${preset.image_size.join('×')})`);
+    diag('ok', `?몃え洹몃옒???곸슜 (${preset.image_size.join('횞')})`);
   }
 }
 
 function startVideoFile(vidId) {
   const preset = VIDEO_PRESETS[vidId];
   if (!preset) return;
-  // 전환 중 캡처 일시 정지 — 깜빡임 방지
+  // ?꾪솚 以?罹≪쿂 ?쇱떆 ?뺤? ??源쒕묀??諛⑹?
   captureSuspended = true;
-  // 웹캠 정지
+  // ?뱀틺 ?뺤?
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; vidCam.srcObject = null; }
-  // 이전 frame 잔여 제거
+  // ?댁쟾 frame ?붿뿬 ?쒓굅
   vidCam.pause();
   vidCam.removeAttribute('src');
   try { vidCam.load(); } catch {}
-  // 새 영상
+  // ???곸긽
   vidCam.src = preset.src;
   vidCam.loop = true;
   vidCam.muted = true;
-  vidCam.play().catch(e => diag('err', `재생 실패: ${e.message}`));
-  vidCam.onloadeddata = () => {   // canplay/loadeddata 시점이 첫 frame 디코드 완료
-    camSize.textContent = `${vidCam.videoWidth}×${vidCam.videoHeight}`;
-    diag('ok', `영상: ${vidId} (${vidCam.videoWidth}×${vidCam.videoHeight})`);
+  vidCam.play().catch(e => diag('err', `?ъ깮 ?ㅽ뙣: ${e.message}`));
+  vidCam.onloadeddata = () => {   // canplay/loadeddata ?쒖젏??泥?frame ?붿퐫???꾨즺
+    camSize.textContent = `${vidCam.videoWidth}횞${vidCam.videoHeight}`;
+    diag('ok', `?곸긽: ${vidId} (${vidCam.videoWidth}횞${vidCam.videoHeight})`);
     setHomographyOnServer(preset);
-    captureSuspended = false;   // 전환 완료 → 캡처 재개
+    captureSuspended = false;   // ?꾪솚 ?꾨즺 ??罹≪쿂 ?ш컻
   };
   if (!captureLoopRunning) { captureLoopRunning = true; captureLoop(); }
   currentVideoMode = vidId;
@@ -1329,7 +1312,7 @@ document.getElementById('cam-start').addEventListener('click', () => {
   document.querySelectorAll('.vid-btn').forEach(b => b.classList.remove('active'));
   vidCam.removeAttribute('src'); vidCam.load();
   startCam();
-  setHomographyOnServer({ homography: null });   // 웹캠은 호모그래피 없음
+  setHomographyOnServer({ homography: null });   // ?뱀틺? ?몃え洹몃옒???놁쓬
   currentVideoMode = 'webcam';
 });
 document.getElementById('cam-stop').addEventListener('click', stopCam);
@@ -1340,13 +1323,13 @@ document.querySelectorAll('.vid-btn').forEach(b => {
 
 listCameras();
 
-// =================== 4중 데이터 융합 (CV + 도착 + 인구 + 평가) ===================
+// =================== 4以??곗씠???듯빀 (CV + ?꾩갑 + ?멸뎄 + ?됯?) ===================
 const Fusion = (() => {
   let arrivalT = null, popT = null;
   let lastBev = null, lastArr = null, lastPop = null;
   const stationSel = document.getElementById('fc-station-sel');
   function station() {
-    const [name, line, poi] = (stationSel.value || '잠실|2|잠실역').split('|');
+    const [name, line, poi] = (stationSel.value || '?좎떎|2|?좎떎??).split('|');
     return { name, line: parseInt(line, 10), poi };
   }
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
@@ -1364,8 +1347,7 @@ const Fusion = (() => {
     if (cdT) clearInterval(cdT);
     cdT = setInterval(queryCitydata, 90000);
     if (evT) clearInterval(evT);
-    evT = setInterval(queryEvents, 600000);   // 10분
-  }
+    evT = setInterval(queryEvents, 600000);   // 10遺?  }
   function stopPolling() {
     if (arrivalT) { clearInterval(arrivalT); arrivalT = null; }
     if (popT) { clearInterval(popT); popT = null; }
@@ -1381,49 +1363,49 @@ const Fusion = (() => {
       <div class="ev-row">
         <span class="ev-place">${(e.place || '-').substring(0, 14)}</span>
         <span class="ev-name">${(e.name || '-').substring(0, 50)}</span>
-        <span class="ev-cap">${e.v_max ? e.v_max.toLocaleString() + '명' : '—'}</span>
-        <span class="ev-dist">${e.dist_km != null ? e.dist_km.toFixed(1) + 'km' : '—'}</span>
+        <span class="ev-cap">${e.v_max ? e.v_max.toLocaleString() + '紐? : '??}</span>
+        <span class="ev-dist">${e.dist_km != null ? e.dist_km.toFixed(1) + 'km' : '??}</span>
       </div>`).join('');
     const totalCap = j.total_capacity || 0;
     document.getElementById('events-summary').innerHTML =
-      `반경 내 <b>${j.total_count}건</b> · 누적 수용 <b>${totalCap.toLocaleString()}명</b> — 운행 분배에 반영 권장`;
+      `諛섍꼍 ??<b>${j.total_count}嫄?/b> 쨌 ?꾩쟻 ?섏슜 <b>${totalCap.toLocaleString()}紐?/b> ???댄뻾 遺꾨같??諛섏쁺 沅뚯옣`;
   }
   function applyCitydata(j) {
     if (j.error) return;
-    // 도로
+    // ?꾨줈
     if (j.road_avg_speed != null) {
       const card = document.getElementById('fc-road');
       card.classList.remove('dim','crit'); card.classList.add(j.road_avg_speed < 15 ? 'crit' : j.road_avg_speed < 25 ? 'warn' : 'ok');
       document.getElementById('fc-road-v').innerHTML = `${j.road_avg_speed.toFixed(0)}<span class="unit">km/h</span>`;
-      document.getElementById('fc-road-sub').textContent = `${j.road_avg_idx || '—'} · 통행 평균`;
+      document.getElementById('fc-road-sub').textContent = `${j.road_avg_idx || '??} 쨌 ?듯뻾 ?됯퇏`;
     }
-    // 환승
+    // ?섏듅
     const bikeShared = (j.sbike || []).reduce((a, b) => a + (b.shared || 0), 0);
     const prkAvail = (j.parking || []).reduce((a, b) => a + Math.max(0, (b.cap || 0) - (b.cur || 0)), 0);
     if (bikeShared || prkAvail) {
       const card = document.getElementById('fc-trans');
       card.classList.remove('dim'); card.classList.add('ok');
-      document.getElementById('fc-trans-v').innerHTML = `${bikeShared}<span class="unit">대</span>`;
-      document.getElementById('fc-trans-sub').textContent = `따릉이 ${(j.sbike||[]).length}곳 ${bikeShared}대 · 주차 ${prkAvail}자리`;
+      document.getElementById('fc-trans-v').innerHTML = `${bikeShared}<span class="unit">?</span>`;
+      document.getElementById('fc-trans-sub').textContent = `?곕쫱??${(j.sbike||[]).length}怨?${bikeShared}? 쨌 二쇱감 ${prkAvail}?먮━`;
     }
-    // 날씨
+    // ?좎뵪
     if (j.temp != null) {
       const card = document.getElementById('fc-wx');
       card.classList.remove('dim'); card.classList.add('ok');
-      document.getElementById('fc-wx-v').innerHTML = `${j.temp.toFixed(1)}<span class="unit">°C</span>`;
-      const sens = j.sensible_temp != null ? `체감 ${j.sensible_temp.toFixed(0)}°` : '';
-      const hum = j.humidity != null ? `습도 ${j.humidity.toFixed(0)}%` : '';
-      document.getElementById('fc-wx-sub').textContent = [sens, hum].filter(Boolean).join(' · ');
+      document.getElementById('fc-wx-v').innerHTML = `${j.temp.toFixed(1)}<span class="unit">째C</span>`;
+      const sens = j.sensible_temp != null ? `泥닿컧 ${j.sensible_temp.toFixed(0)}째` : '';
+      const hum = j.humidity != null ? `?듬룄 ${j.humidity.toFixed(0)}%` : '';
+      document.getElementById('fc-wx-sub').textContent = [sens, hum].filter(Boolean).join(' 쨌 ');
     }
-    // 상권
+    // ?곴텒
     if (j.cmrcl_lvl) {
       const card = document.getElementById('fc-cmrcl');
       card.classList.remove('dim'); card.classList.add('ok');
       document.getElementById('fc-cmrcl-v').textContent = j.cmrcl_lvl;
-      const topRsb = (j.cmrcl_rsb || []).slice(0, 2).map(r => `${r.ctgr} ${r.lvl}`).join(' · ');
-      document.getElementById('fc-cmrcl-sub').textContent = topRsb || `결제 ${j.cmrcl_payment_cnt ?? '—'}건/시간`;
+      const topRsb = (j.cmrcl_rsb || []).slice(0, 2).map(r => `${r.ctgr} ${r.lvl}`).join(' 쨌 ');
+      document.getElementById('fc-cmrcl-sub').textContent = topRsb || `寃곗젣 ${j.cmrcl_payment_cnt ?? '??}嫄??쒓컙`;
     }
-    // 도로 list (가장 느린/빠른 5개)
+    // ?꾨줈 list (媛???먮┛/鍮좊Ⅸ 5媛?
     const roadsCard = document.getElementById('roads-card');
     const slow = j.roads_slow || [], fast = j.roads_fast || [];
     if (slow.length || fast.length) {
@@ -1431,17 +1413,17 @@ const Fusion = (() => {
       const fastEl = document.getElementById('roads-fast');
       slowEl.innerHTML = slow.map(r => `
         <div class="road-row">
-          <span class="name">${r.name || '-'}<br><span class="from-to">${r.from || ''} → ${r.to || ''}</span></span>
-          <span class="spd">${r.spd != null ? r.spd.toFixed(0) : '—'} km/h</span>
+          <span class="name">${r.name || '-'}<br><span class="from-to">${r.from || ''} ??${r.to || ''}</span></span>
+          <span class="spd">${r.spd != null ? r.spd.toFixed(0) : '??} km/h</span>
         </div>`).join('');
       fastEl.innerHTML = fast.map(r => `
         <div class="road-row">
-          <span class="name">${r.name || '-'}<br><span class="from-to">${r.from || ''} → ${r.to || ''}</span></span>
-          <span class="spd fast">${r.spd != null ? r.spd.toFixed(0) : '—'} km/h</span>
+          <span class="name">${r.name || '-'}<br><span class="from-to">${r.from || ''} ??${r.to || ''}</span></span>
+          <span class="spd fast">${r.spd != null ? r.spd.toFixed(0) : '??} km/h</span>
         </div>`).join('');
       roadsCard.hidden = false;
     }
-    // 5/10/30분 단기 추세 막대
+    // 5/10/30遺??④린 異붿꽭 留됰?
     const subVals = [j.sub_5wthn_gton_max, j.sub_10wthn_gton_max, j.sub_30wthn_gton_max];
     const busVals = [j.bus_5wthn_gton_max, j.bus_10wthn_gton_max, j.bus_30wthn_gton_max];
     const subMax = Math.max(1, ...subVals.filter(v => v != null));
@@ -1456,21 +1438,20 @@ const Fusion = (() => {
         document.getElementById(`bus-${tag}-v`).textContent = busVals[i].toLocaleString();
       }
     });
-    // 안전 배너 (위/아래 둘 다)
+    // ?덉쟾 諛곕꼫 (???꾨옒 ????
     const safety = (j.events || []).concat(j.alerts || []).concat(j.accidents || []);
     const sStrip = document.getElementById('safety-strip');
     const sStripTop = document.getElementById('safety-strip-top');
     if (safety.length > 0) {
       const f = safety[0];
-      const msg = (f.EVENT_NM || f.MESSAGE || f.ACDNT_TYPE || '안전 알림').toString().substring(0, 100);
+      const msg = (f.EVENT_NM || f.MESSAGE || f.ACDNT_TYPE || '?덉쟾 ?뚮┝').toString().substring(0, 100);
       document.getElementById('safety-strip-text').textContent = msg;
       document.getElementById('safety-strip-text-top').textContent = msg;
       sStrip.classList.add('show'); sStripTop.classList.add('show');
     } else {
       sStrip.classList.remove('show'); sStripTop.classList.remove('show');
     }
-    // (I1) 예측 vs 실측 정확도 — POI별 peak 누적 정규화
-    if (j.ppltn_max != null && window.MLChart) {
+    // (I1) ?덉륫 vs ?ㅼ륫 ?뺥솗????POI蹂?peak ?꾩쟻 ?뺢퇋??    if (j.ppltn_max != null && window.MLChart) {
       const peakKey = 'metroeyes_poi_peak';
       const peaks = JSON.parse(localStorage.getItem(peakKey) || '{}');
       peaks[j.poi] = Math.max(peaks[j.poi] || 0, j.ppltn_max);
@@ -1485,13 +1466,13 @@ const Fusion = (() => {
         el.innerHTML = `${acc}<span style="font-size:13px;color:var(--muted);">%</span>`;
         el.className = 'acc-pct ' + (acc >= 85 ? '' : acc >= 70 ? 'warn' : 'crit');
         document.getElementById('acc-detail').textContent =
-          `예측 ${(pred * 100).toFixed(0)}% / 실측 ${(actual * 100).toFixed(0)}%${MLChart.isMlAvailable() ? ' · ML' : ' · sim'}`;
+          `?덉륫 ${(pred * 100).toFixed(0)}% / ?ㅼ륫 ${(actual * 100).toFixed(0)}%${MLChart.isMlAvailable() ? ' 쨌 ML' : ' 쨌 sim'}`;
       }
     }
   }
   function fmtNum(n) {
-    if (n == null) return '—';
-    if (n >= 10000) return (n/10000).toFixed(1) + '만';
+    if (n == null) return '??;
+    if (n >= 10000) return (n/10000).toFixed(1) + '留?;
     if (n >= 1000) return (n/1000).toFixed(1) + 'K';
     return String(n);
   }
@@ -1500,9 +1481,9 @@ const Fusion = (() => {
     const personN = (p.tracks || []).filter(t => t.class === 'person').length;
     const card = document.getElementById('fc-cv');
     card.classList.remove('dim'); card.classList.add('ok');
-    document.getElementById('fc-cv-v').innerHTML = `${personN}<span class="unit">명</span>`;
+    document.getElementById('fc-cv-v').innerHTML = `${personN}<span class="unit">紐?/span>`;
     document.getElementById('fc-cv-sub').textContent =
-      `YOLO ${(p.fps ?? 0).toFixed(1)} fps · ${(p.tracks || []).length} 트랙`;
+      `YOLO ${(p.fps ?? 0).toFixed(1)} fps 쨌 ${(p.tracks || []).length} ?몃옓`;
     evalCongest();
   }
   function applyArrival(j) {
@@ -1517,67 +1498,67 @@ const Fusion = (() => {
     }
     if (bestSec == null) {
       card.classList.remove('ok','warn','crit'); card.classList.add('dim');
-      document.getElementById('fc-arr-v').innerHTML = `—<span class="unit">분</span>`;
-      document.getElementById('fc-arr-sub').textContent = `${j.station} ${j.line}호선 · 운행 정보 없음`;
+      document.getElementById('fc-arr-v').innerHTML = `??span class="unit">遺?/span>`;
+      document.getElementById('fc-arr-sub').textContent = `${j.station} ${j.line}?몄꽑 쨌 ?댄뻾 ?뺣낫 ?놁쓬`;
       return;
     }
     card.classList.remove('dim','crit'); card.classList.toggle('warn', !!j.simulated); card.classList.toggle('ok', !j.simulated);
     const m = Math.floor(bestSec / 60), s = bestSec % 60;
     document.getElementById('fc-arr-v').innerHTML = bestSec === 0
-      ? `당역<span class="unit">접근</span>`
-      : (m > 0 ? `${m}<span class="unit">분</span>` + (s > 0 ? ` ${s}<span class="unit">초</span>` : '')
-               : `${s}<span class="unit">초</span>`);
+      ? `?뱀뿭<span class="unit">?묎렐</span>`
+      : (m > 0 ? `${m}<span class="unit">遺?/span>` + (s > 0 ? ` ${s}<span class="unit">珥?/span>` : '')
+               : `${s}<span class="unit">珥?/span>`);
     const tag = j.simulated ? '<span style="color: var(--warn); font-weight: 500; margin-right: 6px;">SIM</span>' : '';
     document.getElementById('fc-arr-sub').innerHTML =
-      `${tag}${j.station} · 차편 ${items.length}개 (${(items[0] || {}).bstatnNm || '—'}행)`;
+      `${tag}${j.station} 쨌 李⑦렪 ${items.length}媛?(${(items[0] || {}).bstatnNm || '??}??`;
   }
   function applyPopulation(j) {
     lastPop = j;
     const card = document.getElementById('fc-pop');
     if (j.error || j.ppltn_max == null) {
       card.classList.remove('ok','warn','crit'); card.classList.add('dim');
-      document.getElementById('fc-pop-v').innerHTML = `—<span class="unit">명</span>`;
-      document.getElementById('fc-pop-sub').textContent = j.error ? `오류` : `데이터 없음`;
+      document.getElementById('fc-pop-v').innerHTML = `??span class="unit">紐?/span>`;
+      document.getElementById('fc-pop-sub').textContent = j.error ? `?ㅻ쪟` : `?곗씠???놁쓬`;
       return;
     }
     const mid = Math.round(((j.ppltn_min || 0) + (j.ppltn_max || 0)) / 2);
     card.classList.remove('dim','crit','warn'); card.classList.add('ok');
-    if (j.congest_lvl === '약간 붐빔') { card.classList.remove('ok'); card.classList.add('warn'); }
-    if (j.congest_lvl === '붐빔') { card.classList.remove('ok','warn'); card.classList.add('crit'); }
-    document.getElementById('fc-pop-v').innerHTML = `${fmtNum(mid)}<span class="unit">명</span>`;
+    if (j.congest_lvl === '?쎄컙 遺먮퉼') { card.classList.remove('ok'); card.classList.add('warn'); }
+    if (j.congest_lvl === '遺먮퉼') { card.classList.remove('ok','warn'); card.classList.add('crit'); }
+    document.getElementById('fc-pop-v').innerHTML = `${fmtNum(mid)}<span class="unit">紐?/span>`;
     document.getElementById('fc-pop-sub').textContent =
-      `${j.area_nm || j.poi} · ${j.congest_lvl || '?'} · ${j.ppltn_time || ''}`;
+      `${j.area_nm || j.poi} 쨌 ${j.congest_lvl || '?'} 쨌 ${j.ppltn_time || ''}`;
     evalCongest();
   }
-  /** CV 검출 + 인구 결합 → 종합 혼잡 레벨 */
+  /** CV 寃異?+ ?멸뎄 寃고빀 ??醫낇빀 ?쇱옟 ?덈꺼 */
   function evalCongest() {
     const personN = lastBev ? (lastBev.tracks || []).filter(t => t.class === 'person').length : null;
     const popLvl = lastPop && !lastPop.error ? lastPop.congest_lvl : null;
     const card = document.getElementById('fc-cong');
     if (personN == null && popLvl == null) {
       card.classList.remove('ok','warn','crit'); card.classList.add('dim');
-      document.getElementById('fc-cong-v').textContent = '—';
+      document.getElementById('fc-cong-v').textContent = '??;
       return;
     }
-    // 가중 결합: CV 비중이 높을수록 라이브 우선, 인구는 컨텍스트
-    let level = '여유';
+    // 媛以?寃고빀: CV 鍮꾩쨷???믪쓣?섎줉 ?쇱씠釉??곗꽑, ?멸뎄??而⑦뀓?ㅽ듃
+    let level = '?ъ쑀';
     let cvNorm = personN != null ? Math.min(1, personN / 30) : null;
-    const popOrd = { '여유': 0, '보통': 0.4, '약간 붐빔': 0.7, '붐빔': 1 };
+    const popOrd = { '?ъ쑀': 0, '蹂댄넻': 0.4, '?쎄컙 遺먮퉼': 0.7, '遺먮퉼': 1 };
     let popNorm = popLvl != null ? popOrd[popLvl] ?? 0 : null;
     let combined = 0, w = 0;
     if (cvNorm != null) { combined += cvNorm * 0.65; w += 0.65; }
     if (popNorm != null) { combined += popNorm * 0.35; w += 0.35; }
     combined = w > 0 ? combined / w : 0;
-    if (combined >= 0.75) level = '붐빔';
-    else if (combined >= 0.5) level = '약간 붐빔';
-    else if (combined >= 0.25) level = '보통';
+    if (combined >= 0.75) level = '遺먮퉼';
+    else if (combined >= 0.5) level = '?쎄컙 遺먮퉼';
+    else if (combined >= 0.25) level = '蹂댄넻';
     card.classList.remove('dim','ok','warn','crit');
-    if (level === '붐빔') card.classList.add('crit');
-    else if (level === '약간 붐빔') card.classList.add('warn');
+    if (level === '遺먮퉼') card.classList.add('crit');
+    else if (level === '?쎄컙 遺먮퉼') card.classList.add('warn');
     else card.classList.add('ok');
     document.getElementById('fc-cong-v').textContent = level;
     document.getElementById('fc-cong-sub').textContent =
-      `CV ${personN ?? '—'}명 · 인구 ${popLvl ?? '—'} · 융합점수 ${(combined * 100).toFixed(0)}`;
+      `CV ${personN ?? '??}紐?쨌 ?멸뎄 ${popLvl ?? '??} 쨌 ?듯빀?먯닔 ${(combined * 100).toFixed(0)}`;
   }
   stationSel.addEventListener('change', () => {
     if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); }
@@ -1585,16 +1566,15 @@ const Fusion = (() => {
   return { startPolling, stopPolling, applyBev, applyArrival, applyPopulation, applyCitydata, applyEvents };
 })();
 
-// =================== 24h 점유율 예측 sparkline ===================
+// =================== 24h ?먯쑀???덉륫 sparkline ===================
 const MLChart = (() => {
   const canvas = document.getElementById('ml-canvas');
   const ctx2d = canvas.getContext('2d');
-  const series = new Array(24).fill(null);  // null=미수집
-  let mlAvailable = false;
+  const series = new Array(24).fill(null);  // null=誘몄닔吏?  let mlAvailable = false;
   let pendingHour = null;
 
   function simOccAt(hour, cluster = 'hub') {
-    // BEVEngine.model.trainOccupancyAt이 있으면 사용, 없으면 가우시안 직접
+    // BEVEngine.model.trainOccupancyAt???덉쑝硫??ъ슜, ?놁쑝硫?媛?곗떆??吏곸젒
     if (window.BEVEngine?.model?.trainOccupancyAt) {
       return BEVEngine.model.trainOccupancyAt(hour, cluster);
     }
@@ -1609,10 +1589,10 @@ const MLChart = (() => {
     ctx2d.clearRect(0, 0, W, H);
     const padX = 6, padY = 6;
     const innerW = W - padX * 2, innerH = H - padY * 2;
-    // 데이터 결정: ML 응답 우선, 없으면 시뮬
+    // ?곗씠??寃곗젙: ML ?묐떟 ?곗꽑, ?놁쑝硫??쒕?
     const data = series.map((v, h) => v != null ? v : simOccAt(h, 'hub'));
     const usingMl = mlAvailable && series.some(v => v != null);
-    // 채움 영역
+    // 梨꾩? ?곸뿭
     ctx2d.beginPath();
     data.forEach((v, i) => {
       const x = padX + (i / 23) * innerW;
@@ -1627,7 +1607,7 @@ const MLChart = (() => {
     grad.addColorStop(1, 'rgba(125,211,211,0.02)');
     ctx2d.fillStyle = grad;
     ctx2d.fill();
-    // 라인
+    // ?쇱씤
     ctx2d.beginPath();
     data.forEach((v, i) => {
       const x = padX + (i / 23) * innerW;
@@ -1637,7 +1617,7 @@ const MLChart = (() => {
     ctx2d.strokeStyle = usingMl ? '#7DD3D3' : '#6B768A';
     ctx2d.lineWidth = 2;
     ctx2d.stroke();
-    // 현재 시각 dot
+    // ?꾩옱 ?쒓컖 dot
     const nowH = new Date().getHours();
     const x = padX + (nowH / 23) * innerW;
     const y = padY + (1 - Math.min(1, data[nowH])) * innerH;
@@ -1648,24 +1628,24 @@ const MLChart = (() => {
     ctx2d.strokeStyle = 'rgba(255,255,255,0.6)';
     ctx2d.lineWidth = 1.5;
     ctx2d.stroke();
-    // 시간 눈금 (6/12/18)
+    // ?쒓컙 ?덇툑 (6/12/18)
     ctx2d.fillStyle = 'rgba(139,152,172,0.5)';
     ctx2d.font = '9px ui-monospace, monospace';
     [0, 6, 12, 18, 23].forEach(h => {
       const px = padX + (h / 23) * innerW;
-      ctx2d.fillText(h + '시', px - 8, H - 1);
+      ctx2d.fillText(h + '??, px - 8, H - 1);
     });
-    // 현재 점유율 표시
+    // ?꾩옱 ?먯쑀???쒖떆
     document.getElementById('ml-now-pct').textContent = Math.round(data[nowH] * 100);
     document.getElementById('ml-sub').textContent = usingMl
-      ? `ML 모델 적용 · 적색=현재(${nowH}시) · ${24 - series.filter(v => v == null).length}/24h 수신`
-      : `학습 모델 미발견 — 시뮬 곡선 (현재 ${nowH}시)`;
+      ? `ML 紐⑤뜽 ?곸슜 쨌 ?곸깋=?꾩옱(${nowH}?? 쨌 ${24 - series.filter(v => v == null).length}/24h ?섏떊`
+      : `?숈뒿 紐⑤뜽 誘몃컻寃????쒕? 怨≪꽑 (?꾩옱 ${nowH}??`;
   }
 
-  /** ws 연결되면 24시간 예측 요청. backend가 모델 없으면 available:false 답. */
+  /** ws ?곌껐?섎㈃ 24?쒓컙 ?덉륫 ?붿껌. backend媛 紐⑤뜽 ?놁쑝硫?available:false ?? */
   function fetch24h(ws, station) {
     if (!ws || ws.readyState !== 1) return;
-    const stationName = (station && station.name) || '잠실';
+    const stationName = (station && station.name) || '?좎떎';
     const line = (station && station.line) || 2;
     series.fill(null); mlAvailable = false;
     for (let h = 0; h < 24; h++) {
@@ -1686,40 +1666,40 @@ const MLChart = (() => {
     series[j.hour] = +j.predicted;
     draw();
   }
-  // 첫 그리기 (시뮬 fallback)
+  // 泥?洹몃━湲?(?쒕? fallback)
   setTimeout(draw, 100);
   window.addEventListener('resize', draw);
   function predictAt(hour) {
     const s = series[hour];
-    if (s != null) return s;          // ML 응답 있으면 그걸
-    return simOccAt(hour, 'hub');     // 없으면 시뮬 곡선
+    if (s != null) return s;          // ML ?묐떟 ?덉쑝硫?洹멸구
+    return simOccAt(hour, 'hub');     // ?놁쑝硫??쒕? 怨≪꽑
   }
   function isMlAvailable() { return mlAvailable; }
   return { fetch24h, applyPredict, predictAt, isMlAvailable };
 })();
 window.MLChart = MLChart;
 
-// ws 메시지 핸들러에 occupancy_predict 분기 — Fusion 객체 안에 넣기 위해 patch
+// ws 硫붿떆吏 ?몃뱾?ъ뿉 occupancy_predict 遺꾧린 ??Fusion 媛앹껜 ?덉뿉 ?ｊ린 ?꾪빐 patch
 (() => {
-  // ws.onopen 시 24h 예측 요청
+  // ws.onopen ??24h ?덉륫 ?붿껌
   const origConnect = window.connect;
-  // realbev.html의 connect 함수가 module이라 직접 접근 X — 대신 ws onmessage 후크
-  // 가장 단순하게: 1초 polling으로 ws 상태 체크해서 처음 connected될 때 fetch
+  // realbev.html??connect ?⑥닔媛 module?대씪 吏곸젒 ?묎렐 X ?????ws onmessage ?꾪겕
+  // 媛???⑥닚?섍쾶: 1珥?polling?쇰줈 ws ?곹깭 泥댄겕?댁꽌 泥섏쓬 connected????fetch
   let triggered = false;
   setInterval(() => {
     if (window.ws && window.ws.readyState === 1 && !triggered) {
       triggered = true;
-      MLChart.fetch24h(window.ws, { name: '잠실', line: 2 });
+      MLChart.fetch24h(window.ws, { name: '?좎떎', line: 2 });
     } else if (window.ws && window.ws.readyState !== 1 && triggered) {
       triggered = false;
     }
   }, 1500);
 })();
 
-// connect 함수 안 ws.onmessage에 occupancy_predict 분기 — 위 ws.onmessage 코드는 module scope이라 직접 추가 못함.
-// 우회: realbev.html의 ws onmessage가 Fusion.applyArrival/applyPopulation을 위해 호출되는 점에 추가.
+// connect ?⑥닔 ??ws.onmessage??occupancy_predict 遺꾧린 ????ws.onmessage 肄붾뱶??module scope?대씪 吏곸젒 異붽? 紐삵븿.
+// ?고쉶: realbev.html??ws onmessage媛 Fusion.applyArrival/applyPopulation???꾪빐 ?몄텧?섎뒗 ?먯뿉 異붽?.
 
-// 자동 WS URL: host 기반 분기
+// ?먮룞 WS URL: host 湲곕컲 遺꾧린
 (function () {
   const p = new URLSearchParams(location.search).get('ws');
   const saved = localStorage.getItem('subwaybev_ws');
@@ -1728,7 +1708,7 @@ window.MLChart = MLChart;
   else if (saved) url = saved;
   else if (location.hostname.endsWith('ngrok-free.dev')) url = `wss://${location.host}`;
   else if (location.hostname.endsWith('github.io') || location.protocol === 'https:')
-    url = 'wss://hose-associate-boc-wonderful.trycloudflare.com';
+    url = 'wss://app.allthatai.kr';
   wsUrlEl.value = url;
 })();
 setTimeout(() => connect(wsUrlEl.value), 400);
