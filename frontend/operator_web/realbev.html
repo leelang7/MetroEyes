@@ -338,6 +338,10 @@
       <button class="vid-btn" data-vid="transfer" data-optional="1">🚇 환승 통로</button>
       <button class="vid-btn" data-vid="station_exit" data-optional="1">🚇 역사 출구 군중</button>
     </div>
+    <div class="cam-picker" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+      <button id="evac-btn" style="background: linear-gradient(135deg, #ff5e57, #ff8a4c); color: #fff; font-weight: 600;">🚨 비상 동선 추론</button>
+      <span id="evac-result" style="color: var(--muted); font-size: 12px; margin-left: 6px;">— 클릭 시 현재 점유 분포로 최적 대피 출구 추천 (IDEA-6)</span>
+    </div>
     <div class="diag-log" id="diag">[준비] 페이지 로드됨\n</div>
   </section>
 
@@ -1761,6 +1765,59 @@ window.MLChart = MLChart;
   wsUrlEl.value = url;
 })();
 setTimeout(() => connect(wsUrlEl.value), 400);
+
+// ============== IDEA-6 비상 동선 추론 (BEV → 안전) ==============
+// 현재 점유 분포에서 가장 한산한 4분면 출구 추천. 발표용 30초 데모.
+let _lastTracksForEvac = [];
+const _origOnTracks = onTracksUpdate;
+onTracksUpdate = function (trks) {
+  _lastTracksForEvac = (trks || []).filter(t => t.class === 'person' && Number.isFinite(t.bev_x));
+  return _origOnTracks(trks);
+};
+
+document.getElementById('evac-btn').addEventListener('click', () => {
+  const persons = _lastTracksForEvac;
+  const result = document.getElementById('evac-result');
+  if (persons.length < 2) {
+    result.innerHTML = `<span style="color:#f0b46a">⚠ 트랙 ${persons.length}명 — 최소 2명 이상 검출 시 추천 가능</span>`;
+    return;
+  }
+  // 4분면 인구 밀도 (NW/NE/SW/SE — BEV 평면 분할)
+  // BEV: x=0 좌, x=1 우 / y=0 위(원거리), y=1 아래(근거리)
+  const Q = { NW: 0, NE: 0, SW: 0, SE: 0 };
+  for (const p of persons) {
+    const w = p.bev_x < 0.5, n = p.bev_y < 0.5;
+    if (n && w) Q.NW++; else if (n && !w) Q.NE++;
+    else if (!n && w) Q.SW++; else Q.SE++;
+  }
+  const total = persons.length;
+  const exits = [
+    { id: 'NW', label: '북서 출구', tx: 0.15, ty: 0.15, occ: Q.NW },
+    { id: 'NE', label: '북동 출구', tx: 0.85, ty: 0.15, occ: Q.NE },
+    { id: 'SW', label: '남서 출구', tx: 0.15, ty: 0.85, occ: Q.SW },
+    { id: 'SE', label: '남동 출구', tx: 0.85, ty: 0.85, occ: Q.SE },
+  ];
+  // 가장 비어있는 출구 + 가장 막힌 출구
+  exits.sort((a, b) => a.occ - b.occ);
+  const best = exits[0], worst = exits[exits.length - 1];
+  const safePct = ((1 - best.occ / total) * 100).toFixed(0);
+  const congestPct = ((worst.occ / total) * 100).toFixed(0);
+  // 평균 거리 절감 가정 (사람-출구 유클리드 거리 평균)
+  const dist = (p, ex) => Math.hypot(p.bev_x - ex.tx, p.bev_y - ex.ty);
+  const avgBest = persons.reduce((s, p) => s + dist(p, best), 0) / total;
+  const avgWorst = persons.reduce((s, p) => s + dist(p, worst), 0) / total;
+  const distSavedPct = (((avgWorst - avgBest) / avgWorst) * 100).toFixed(0);
+
+  result.innerHTML = `
+    <span style="color:#7dd3d3; font-weight:600;">▶ ${best.label}</span>
+    <span style="color:#fff;"> (${total}명 중 ${best.occ}명 / 안전도 ${safePct}%)</span>
+    &nbsp;|&nbsp;
+    <span style="color:#ff5e57">▼ ${worst.label} 회피</span>
+    <span style="color:var(--muted)">(${worst.occ}명 ${congestPct}% — 거리 -${distSavedPct}% 절감 예상)</span>
+  `;
+  // 결과를 diag 로그에도 박음
+  diagEl.append(`[EVAC] ${best.label} 추천 / ${worst.label} 회피 / ${total}명 분포 NW=${Q.NW} NE=${Q.NE} SW=${Q.SW} SE=${Q.SE}\n`);
+});
 </script>
 </body>
 </html>
