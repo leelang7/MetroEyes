@@ -67,6 +67,8 @@ outputs/
 *.avi
 *.mov
 *.mkv
+# frontend/videos/ 는 데모 자산이라 커밋 (개별 파일 ≤ 10MB)
+!frontend/videos/*.mp4
 
 # 비밀
 .env

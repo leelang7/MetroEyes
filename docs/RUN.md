@@ -1,0 +1,169 @@
+# MetroEyes — 실행 명령어 (운영 + 시연)
+
+> 이 문서 한 번 읽고 그대로 복붙하면 끝. 모든 명령은 PowerShell 기준.
+
+---
+
+## 1. 라이브 데모 한 번에 띄우기 (가장 자주)
+
+```powershell
+cd C:\Users\leesc\Documents\Seoul
+.\start_demo.bat
+```
+
+또는 PowerShell에서 직접:
+```powershell
+cd C:\Users\leesc\Documents\Seoul
+.\scripts\start_demo.ps1 -IncludeStatic
+```
+
+**동작**:
+- backend (YOLO + WebSocket :8765) — minimize 콘솔
+- publisher (vtest.avi 송출) — minimize 콘솔
+- ngrok (외부 wss 노출 :4040) — minimize 콘솔
+- 정적 파일 서버 :5173 — minimize 콘솔
+
+**검증**: `http://localhost:5173/frontend/operator_web/realbev.html` 열면 라이브 화면.
+
+---
+
+## 2. 종료
+
+```powershell
+.\stop_demo.bat
+```
+
+또는:
+```powershell
+.\scripts\start_demo.ps1 -Stop
+```
+
+---
+
+## 3. 외부 시연 (영구 고정 URL)
+
+backend + ngrok만 살아있으면 누구든 접속 가능:
+
+| URL | 화면 |
+|---|---|
+| **https://leelang7.github.io/MetroEyes/** | 메인 진입 (4 화면 카드) |
+| https://leelang7.github.io/MetroEyes/frontend/operator_web/realbev.html | 운영자 3D BEV (메인 wow) |
+| https://leelang7.github.io/MetroEyes/frontend/operator_web/index.html | 운영자 지하철 |
+| https://leelang7.github.io/MetroEyes/frontend/operator_web/bus.html | 운영자 버스 |
+| https://leelang7.github.io/MetroEyes/frontend/passenger_app/index.html | 시민 PWA |
+
+GitHub Pages → `wss://rebekah-derisible-tanisha.ngrok-free.dev` 자동 연결. 너 PC 켜놓는 한 LIVE.
+
+---
+
+## 4. 개별 컴포넌트 직접 띄우기
+
+### 4.1 백엔드만
+
+```powershell
+cd C:\Users\leesc\Documents\Seoul
+.\.venv\Scripts\python.exe -u -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --imgsz 1280 --conf 0.18
+```
+
+콘솔에 `[i] BEV multi-class ... ws://0.0.0.0:8765` 떠야 정상.
+
+### 4.2 영상 publisher (vtest.avi 송출)
+
+```powershell
+cd C:\Users\leesc\Documents\Seoul
+.\.venv\Scripts\python.exe scripts\feed_video.py
+```
+
+다른 영상으로:
+```powershell
+.\.venv\Scripts\python.exe scripts\feed_video.py path\to\clip.mp4
+```
+
+### 4.3 ngrok (외부 노출)
+
+```powershell
+ngrok http 8765
+```
+
+reserved domain (영구 고정) 사용 — 너 ngrok 무료 계정에 이미 등록된 `rebekah-derisible-tanisha.ngrok-free.dev` 자동.
+
+### 4.4 정적 파일 서버
+
+```powershell
+cd C:\Users\leesc\Documents\Seoul
+.\.venv\Scripts\python.exe -m http.server 5173
+```
+
+→ `http://localhost:5173/frontend/...` 접근.
+
+---
+
+## 5. ML 점유율 모델 학습 (한 번)
+
+```powershell
+cd C:\Users\leesc\Documents\Seoul
+.\.venv\Scripts\python.exe scripts\cluster_stations.py        # 역 클러스터 (먼저 1회)
+.\.venv\Scripts\python.exe scripts\train_occupancy.py --month 202602
+```
+
+**산출**:
+- `outputs/models/occupancy_lgbm.joblib` — 학습 모델
+- `outputs/occupancy_metrics.json` — MAE/RMSE/R²
+- `outputs/figs/20_occupancy_pred_vs_true.png` — 검증 산점도
+- `outputs/figs/21_occupancy_feature_importance.png`
+
+backend 다음 재시작부터 lazy load → 운영자 콘솔 metrics 카드 자동 점등.
+
+---
+
+## 6. 데모 자동 캡처 (PNG / WebM)
+
+```powershell
+cd C:\Users\leesc\Documents\Seoul
+.\.venv\Scripts\python.exe scripts\capture_demo.py            # PNG 4장
+.\.venv\Scripts\python.exe scripts\capture_demo.py --record   # + 운영자 30초 webm
+```
+
+**산출**: `outputs/demo/operator_realbev.png`, `operator_index.png`, `operator_bus.png`, `citizen_pwa.png` + (옵션) `operator_realbev.webm`
+
+---
+
+## 7. Flutter 폰 앱 빌드 + 설치
+
+```powershell
+cd C:\Users\leesc\Documents\Seoul\mobile_app
+flutter build apk --debug
+adb install -r build\app\outputs\flutter-apk\app-debug.apk
+```
+
+USB 연결된 안드로이드 폰에 설치 + 자동 LIVE 연결 (ngrok 영구 도메인).
+
+---
+
+## 8. 트러블슈팅
+
+| 증상 | 원인 | 해결 |
+|---|---|---|
+| 운영자 콘솔 "연결 실패" | backend 죽음 | 4.1 다시 / `.\start_demo.bat` |
+| 폰 앱 "SubwayBEV" 헤더 | 옛 빌드 | 7번 다시 빌드/설치 |
+| 영상 변경 시 "재생 실패" | `frontend/videos/*.mp4` 누락 | git pull 또는 `frontend/videos/` 디렉토리 확인 |
+| ngrok ERR_NGROK_6030 | tunnel hang | ngrok 프로세스 kill 후 재기동 |
+| ML 메트릭 카드 안 보임 | 모델 미학습 | 5번 학습 후 backend 재시작 |
+| 정적 페이지 외부에서 안 보임 | GitHub Pages 미설정 | repo Settings → Pages → Source = GitHub Actions |
+
+---
+
+## 9. 환경 변수 (`.env`)
+
+```bash
+# 일반 데이터 (citydata, CardSubway, 행사 등)
+SEOUL_OPENDATA_API_KEY=...
+
+# 도시철도 실시간 도착 (TOPIS swopenapi) — 별도 신청 키
+SEOUL_SUBWAY_ARRIVAL_KEY=...
+
+# 버스 도착 (있으면) — 공공데이터포털
+SEOUL_BUS_ARRIVAL_KEY=...
+```
+
+키 발급: https://data.seoul.go.kr 마이페이지 → 인증키 관리.
