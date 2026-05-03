@@ -80,7 +80,7 @@ jobs:
               <div class="name">시민 앱 (모바일)</div>
               <div class="desc">GPS · 칸별 점유율 · 인구 chip · 강수 예보</div>
             </a>
-            <footer>BACKEND wss://hose-associate-boc-wonderful.trycloudflare.com</footer>
+            <footer>BACKEND wss://app.allthatai.kr</footer>
           </div>
           </body>
           </html>
