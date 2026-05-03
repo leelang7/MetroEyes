@@ -12,31 +12,76 @@
   --warn: #f0b46a;
   --crit: #ff5e57;
   --crit-glow: rgba(255, 94, 87, 0.4);
+
+  /* === 도메인별 액센트 컬러 (페이지 식별용) === */
+  --domain-subway: #7dd3d3;   /* 청록 — 지하철 (기본 accent) */
+  --domain-bus: #f97316;       /* 오렌지 — 버스 */
+  --domain-realcam: #ef4444;   /* 빨강 — 실 카메라 (라이브) */
+  --domain-ads: #10b981;       /* 그린 — 디스플레이 편성 (수익) */
+  --domain-arch: #a78bfa;      /* 보라 — 아키텍처 */
 }
+
+/* === 페이지 도메인별 상단 컬러 바 === */
+.domain-bar { height: 3px; width: 100%; }
+.domain-bar.subway  { background: linear-gradient(90deg, var(--domain-subway)  0%, transparent 60%); }
+.domain-bar.bus     { background: linear-gradient(90deg, var(--domain-bus)     0%, transparent 60%); }
+.domain-bar.realcam { background: linear-gradient(90deg, var(--domain-realcam) 0%, transparent 60%); }
+.domain-bar.ads     { background: linear-gradient(90deg, var(--domain-ads)     0%, transparent 60%); }
+.domain-bar.arch    { background: linear-gradient(90deg, var(--domain-arch)    0%, transparent 60%); }
+
+/* 도메인 라벨 (헤더 좌측, 페이지 식별성) */
+.domain-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-right: 14px; padding: 4px 10px;
+  border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+}
+.domain-label .ico { font-size: 14px; }
+.domain-label.subway  { background: rgba(125,211,211,0.12); color: var(--domain-subway);  border: 1px solid rgba(125,211,211,0.30); }
+.domain-label.bus     { background: rgba(249,115,22,0.12);  color: var(--domain-bus);     border: 1px solid rgba(249,115,22,0.30); }
+.domain-label.realcam { background: rgba(239,68,68,0.12);   color: var(--domain-realcam); border: 1px solid rgba(239,68,68,0.30); }
+.domain-label.ads     { background: rgba(16,185,129,0.12);  color: var(--domain-ads);     border: 1px solid rgba(16,185,129,0.30); }
+.domain-label.arch    { background: rgba(167,139,250,0.12); color: var(--domain-arch);    border: 1px solid rgba(167,139,250,0.30); }
+/* Pretendard 한글/영문 통합 폰트 (CDN, 1MB 미만, no-cors) */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
+
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
   margin: 0; color: var(--fg);
-  font-family: "Inter", -apple-system, "Segoe UI", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+  font-family: "Pretendard Variable", "Pretendard", -apple-system, "Segoe UI",
+               "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+  font-size: 14px; line-height: 1.55;
   background:
     radial-gradient(ellipse 800px 500px at 30% -20%, rgba(125, 211, 211, 0.05), transparent 60%),
     radial-gradient(ellipse 800px 500px at 70% 120%, rgba(255, 94, 87, 0.04), transparent 60%),
     var(--bg-0);
-  letter-spacing: -0.1px;
+  letter-spacing: -0.2px;
   font-feature-settings: "tnum", "ss01";
 }
 header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 28px; border-bottom: 1px solid var(--line);
+  padding: 14px 28px; border-bottom: 1px solid var(--line);
+  background: rgba(7, 9, 15, 0.5); backdrop-filter: blur(8px);
 }
-.brand { font-weight: 600; font-size: 14px; }
+.brand { font-weight: 600; font-size: 14px; display: flex; align-items: center; flex-wrap: wrap; }
 .brand .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%;
   background: var(--accent); margin-right: 10px; box-shadow: 0 0 14px var(--accent-glow); vertical-align: middle; }
-.brand small { color: var(--muted); margin-left: 12px; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; }
+.brand small { color: var(--muted); margin-left: 10px; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; }
 .brand .nav-sep { color: var(--line-2); margin: 0 14px; }
-.brand a { color: var(--muted); text-decoration: none; font-weight: 400; font-size: 12px; transition: color 0.15s; }
+.brand a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 12.5px; transition: color 0.15s; padding: 4px 0; }
 .brand a:hover { color: var(--fg); }
+/* 페이지별 active 색상 — body[data-domain] 으로 부착 */
 .brand a.active { color: var(--accent); }
+body[data-domain="subway"]  .brand a.active { color: var(--domain-subway); }
+body[data-domain="bus"]     .brand a.active { color: var(--domain-bus); }
+body[data-domain="realcam"] .brand a.active { color: var(--domain-realcam); }
+body[data-domain="ads"]     .brand a.active { color: var(--domain-ads); }
+body[data-domain="arch"]    .brand a.active { color: var(--domain-arch); }
+body[data-domain="subway"]  .brand .dot { background: var(--domain-subway);  box-shadow: 0 0 14px rgba(125,211,211,0.45); }
+body[data-domain="bus"]     .brand .dot { background: var(--domain-bus);     box-shadow: 0 0 14px rgba(249,115,22,0.45); }
+body[data-domain="realcam"] .brand .dot { background: var(--domain-realcam); box-shadow: 0 0 14px rgba(239,68,68,0.45); }
+body[data-domain="ads"]     .brand .dot { background: var(--domain-ads);     box-shadow: 0 0 14px rgba(16,185,129,0.45); }
+body[data-domain="arch"]    .brand .dot { background: var(--domain-arch);    box-shadow: 0 0 14px rgba(167,139,250,0.45); }
 .controls { display: flex; gap: 18px; align-items: center; font-size: 12px; }
 .tag { color: var(--muted); }
 .tag b { color: var(--fg); margin-left: 6px; font-weight: 500; }

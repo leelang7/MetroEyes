@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MetroEyes — 시스템 아키텍처</title>
+<link rel="stylesheet" href="../shared/bev_console.css">
+<style>
+  /* === 도메인별 헤더 액센트 (모든 페이지 공통 도입) === */
+  .domain-bar {
+    height: 3px; width: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+  }
+  .domain-bar.arch { background: linear-gradient(90deg, #a78bfa 0%, transparent 60%); }
+  .domain-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; margin-right: 8px;
+    background: rgba(167, 139, 250, 0.15);
+    border: 1px solid rgba(167, 139, 250, 0.4);
+    border-radius: 6px; color: #a78bfa; font-size: 13px;
+  }
+  .arch-page { padding: 32px 36px; }
+  .arch-page h1 { font-size: 22px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.4px; }
+  .arch-page h1 b { color: #a78bfa; font-weight: 700; }
+  .arch-page > p.lead { color: var(--muted-2); font-size: 13px; margin: 0 0 28px; line-height: 1.6; }
+
+  .arch-box {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 22px 26px; margin-bottom: 14px;
+  }
+  .arch-box h2 {
+    font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .arch-box h2 .badge {
+    padding: 2px 8px; border-radius: 4px; font-size: 9px;
+    background: rgba(125,211,211,0.15); color: var(--accent); letter-spacing: 1.2px;
+  }
+  .arch-box pre {
+    font-family: "SF Mono", "Consolas", "D2Coding", "Cascadia Mono", monospace;
+    font-size: 12.5px; line-height: 1.55; color: #e8edf5;
+    background: #050709; border: 1px solid var(--line); border-radius: 8px;
+    padding: 18px 20px; overflow-x: auto; margin: 0;
+    white-space: pre;
+  }
+  .arch-box pre b { color: #a78bfa; font-weight: 600; }
+  .arch-box pre em { color: var(--accent); font-style: normal; font-weight: 600; }
+  .arch-box pre i { color: #f0b46a; font-style: normal; font-weight: 600; }
+  .arch-box pre u { color: #ff8a82; text-decoration: none; font-weight: 600; }
+
+  .layer-grid {
+    display: grid; grid-template-columns: 100px 1fr; gap: 12px; align-items: stretch;
+    margin: 16px 0;
+  }
+  .layer-tag {
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, rgba(167,139,250,0.12), rgba(167,139,250,0.04));
+    border: 1px solid rgba(167,139,250,0.3); border-radius: 8px;
+    color: #a78bfa; font-weight: 700; font-size: 13px; letter-spacing: 1px;
+  }
+  .layer-content {
+    background: var(--bg-1); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+  .layer-item {
+    background: var(--panel); border: 1px solid var(--line-2); border-radius: 6px;
+    padding: 10px 12px; font-size: 12px;
+  }
+  .layer-item .name { color: var(--fg); font-weight: 600; margin-bottom: 4px; font-size: 13px; }
+  .layer-item .desc { color: var(--muted-2); font-size: 11px; line-height: 1.5; }
+
+  .flow-arrow {
+    text-align: center; color: var(--muted); font-size: 14px; padding: 4px 0;
+    font-weight: 700;
+  }
+
+  .meta-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0;
+  }
+  .meta-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .meta-card .label { font-size: 9px; color: var(--muted); letter-spacing: 1.4px; text-transform: uppercase; font-weight: 700; }
+  .meta-card .value { font-size: 18px; color: var(--fg); font-weight: 600; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .meta-card .sub { font-size: 11px; color: var(--muted-2); margin-top: 4px; }
+
+  .domain-route {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px;
+  }
+  .domain-route .card {
+    background: var(--bg-1); border-radius: 8px; padding: 14px;
+    border-top: 3px solid; transition: transform 0.15s;
+  }
+  .domain-route .card:hover { transform: translateY(-2px); }
+  .domain-route .card.subway { border-top-color: var(--accent); }
+  .domain-route .card.bus { border-top-color: #f97316; }
+  .domain-route .card.realcam { border-top-color: #ef4444; }
+  .domain-route .card.ads { border-top-color: #10b981; }
+  .domain-route .card .icon { font-size: 18px; margin-bottom: 6px; }
+  .domain-route .card .name { font-size: 13px; font-weight: 700; color: var(--fg); margin-bottom: 4px; }
+  .domain-route .card .desc { font-size: 11px; color: var(--muted-2); line-height: 1.55; }
+  .domain-route .card a { color: var(--accent); font-size: 11px; margin-top: 8px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div class="domain-bar arch"></div>
+
+<header>
+  <div class="brand">
+    <span class="dot" style="background:#a78bfa; box-shadow:0 0 14px rgba(167,139,250,0.45);"></span>
+    MetroEyes<small>Architecture View</small>
+    <span class="nav-sep">·</span>
+    <a href="index.html">🚇 지하철</a>
+    <a href="bus.html">🚌 버스</a>
+    <a href="realbev.html">📷 실 카메라</a>
+    <a href="ad_pricing.html">📺 디스플레이</a>
+    <a href="architecture.html" class="active" style="color:#a78bfa;">🏛 아키텍처</a>
+    <span class="nav-sep">|</span>
+    <a href="../passenger_app/index.html" style="color: var(--accent);">시민 앱 →</a>
+  </div>
+  <div class="controls">
+    <span class="tag">버전<b>v1.0</b></span>
+    <span class="tag">백엔드<b>wss://app.allthatai.kr</b></span>
+  </div>
+</header>
+
+<main class="arch-page">
+  <h1><span class="domain-icon">🏛</span><b>시스템 아키텍처</b> · 데이터·처리·전송·표시 4계층</h1>
+  <p class="lead">
+    9개 공공 API와 자체 CV 백엔드가 단일 WebSocket 채널로 운영자 4종 페이지·시민 PWA·네이티브 앱으로 분기됩니다.
+    각 계층은 독립적으로 교체 가능하며, 백엔드 한 채널로 잠자고 있던 차내 디스플레이까지 깨웁니다.
+  </p>
+
+  <!-- 계층 다이어그램 (ASCII + 박스 혼합) -->
+  <div class="arch-box">
+    <h2>🧩 4계층 데이터 플로우 <span class="badge">LAYERED</span></h2>
+
+    <div class="layer-grid">
+      <div class="layer-tag">A · INPUT</div>
+      <div class="layer-content">
+        <div class="layer-item"><div class="name">서울 OpenAPI</div><div class="desc">Card / realtime / citydata 7종</div></div>
+        <div class="layer-item"><div class="name">공공데이터포털</div><div class="desc">국토부 BIS 정류소·노선</div></div>
+        <div class="layer-item"><div class="name">자체 CV</div><div class="desc">USB / mp4 → YOLO11 검출</div></div>
+        <div class="layer-item"><div class="name">폰 텔레메트리</div><div class="desc">BLE/WiFi/모션 익명 송신</div></div>
+      </div>
+    </div>
+    <div class="flow-arrow">▼</div>
+
+    <div class="layer-grid">
+      <div class="layer-tag" style="background:linear-gradient(180deg,rgba(125,211,211,0.12),rgba(125,211,211,0.04)); border-color:rgba(125,211,211,0.3); color:var(--accent);">B · PROCESS</div>
+      <div class="layer-content">
+        <div class="layer-item"><div class="name">YOLO11s + BoT-SORT</div><div class="desc">검출 + 추적 (CUDA)</div></div>
+        <div class="layer-item"><div class="name">호모그래피 BEV</div><div class="desc">4점 캘리브레이션 → 평면 변환</div></div>
+        <div class="layer-item"><div class="name">다중신호 칼만 fusion</div><div class="desc">30분 평균 + 분 단위 통합</div></div>
+        <div class="layer-item"><div class="name">GBR + K-means</div><div class="desc">회귀 R²=0.78 / 클러스터 K=3</div></div>
+      </div>
+    </div>
+    <div class="flow-arrow">▼</div>
+
+    <div class="layer-grid">
+      <div class="layer-tag" style="background:linear-gradient(180deg,rgba(240,180,106,0.12),rgba(240,180,106,0.04)); border-color:rgba(240,180,106,0.3); color:var(--warn);">C · TRANSPORT</div>
+      <div class="layer-content" style="grid-template-columns: 1fr 1fr;">
+        <div class="layer-item"><div class="name">FastAPI :8765 (WebSocket)</div><div class="desc">로컬 백엔드 — Python 3.12 + asyncio</div></div>
+        <div class="layer-item"><div class="name">Cloudflare named tunnel</div><div class="desc">wss://app.allthatai.kr (영구 도메인)</div></div>
+      </div>
+    </div>
+    <div class="flow-arrow">▼</div>
+
+    <div class="layer-grid">
+      <div class="layer-tag" style="background:linear-gradient(180deg,rgba(255,138,130,0.12),rgba(255,138,130,0.04)); border-color:rgba(255,138,130,0.3); color:#ff8a82;">D · OUTPUT</div>
+      <div class="layer-content">
+        <div class="layer-item"><div class="name">운영자 콘솔 4종</div><div class="desc">지하철 / 버스 / 실카메라 / 디스플레이</div></div>
+        <div class="layer-item"><div class="name">시민 PWA</div><div class="desc">정류장 + 탑승 중 화면</div></div>
+        <div class="layer-item"><div class="name">Flutter 네이티브</div><div class="desc">Android, GPS 매칭 + 텔레메트리</div></div>
+        <div class="layer-item"><div class="name">차내 디스플레이</div><div class="desc">광고·안내·비상 동적 편성 (계획)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASCII Edge–Cloud 다이어그램 -->
+  <div class="arch-box">
+    <h2>📡 Edge ↔ Cloud 통신 모델 <span class="badge">REAL-TIME</span></h2>
+<pre>┌──────────── <b>Edge</b> (운영자 PC · 시민 폰 · 차내 디스플레이) ────────────┐
+│  영상 → YOLO11s → BoT-SORT → 호모그래피 BEV → 칸별 점유 추정      │
+│  citydata 폴 (60s) · 도착정보 폴 (20s) · 행사 폴 (10min)          │
+│  폰 BLE/WiFi/모션 → <em>익명 텔레메트리 5초 주기</em>                   │
+└─────────────┬───────────────────────────────────┬────────────────┘
+              │ WebSocket payload (JSON)         │ HUD / 안내 송출
+              ▼                                   ▲
+┌──────────── <b>Cloud</b> (app.allthatai.kr) ──────────────────────────┐
+│  FastAPI 라우터:                                                  │
+│    /ws        실시간 broadcast (BEV 트랙)                         │
+│    /citydata  도시데이터 통합 (날씨·공기·도로·따릉이·주차)         │
+│    /arrival   TOPIS 도착정보 프록시                               │
+│    /events    공공서비스예약 문화 행사                            │
+│    /impact    임팩트 로깅 (탑승 절감률 누적)                      │
+│                                                                   │
+│  ML 처리:                                                         │
+│    <i>다중신호 칼만 필터</i> ← 30분 평균 + 분 단위 + 1초 CV          │
+│    <i>K=3 클러스터링</i>      ← 296역 시간대 프로파일                │
+│    <i>CO₂ weak supervision</i> ← TimeAverageAirQuality 자기지도   │
+│                                                                   │
+│  Cloudflare named tunnel ─► <u>영구 도메인 외부 노출</u>             │
+└───────────────────────────────────────────────────────────────────┘</pre>
+  </div>
+
+  <!-- Domain별 라우팅 -->
+  <div class="arch-box">
+    <h2>🚦 도메인별 페이지 라우팅 <span class="badge">4 OPERATOR + 1 CITIZEN</span></h2>
+    <p style="font-size:12px; color:var(--muted-2); margin:0 0 14px;">
+      백엔드는 같은 데이터, 페이지는 도메인별 다른 의사결정 — 각자의 헤더 색상·아이콘으로 즉시 구분.
+    </p>
+    <div class="domain-route">
+      <div class="card subway">
+        <div class="icon">🚇</div>
+        <div class="name">지하철 운영자</div>
+        <div class="desc">호선·역·아키타입 슬라이더, 칸별 점유 BEV 2D, KPI 4종</div>
+        <a href="index.html">→ 진입</a>
+      </div>
+      <div class="card bus">
+        <div class="icon">🚌</div>
+        <div class="name">버스 운영자</div>
+        <div class="desc">노선 142 BIS 통합, 정류장 단위 차량 점유 + ETA</div>
+        <a href="bus.html">→ 진입</a>
+      </div>
+      <div class="card realcam">
+        <div class="icon">📷</div>
+        <div class="name">실 카메라 (3D BEV)</div>
+        <div class="desc">YOLO11 라이브 + Three.js 3D 시각화 + 비상 동선 추론</div>
+        <a href="realbev.html">→ 진입</a>
+      </div>
+      <div class="card ads">
+        <div class="icon">📺</div>
+        <div class="name">디스플레이 편성</div>
+        <div class="desc">역×시간대 인구 히트맵 + 동적 광고 단가 + 안내 우선 정책</div>
+        <a href="ad_pricing.html">→ 진입</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 핵심 메트릭 -->
+  <div class="arch-box">
+    <h2>📊 핵심 메트릭 <span class="badge">검증 완료</span></h2>
+    <div class="meta-row">
+      <div class="meta-card">
+        <div class="label">활용 공공데이터</div>
+        <div class="value">9 <span style="font-size:12px;color:var(--muted);">종</span></div>
+        <div class="sub">서울 7 + 공공포털 2</div>
+      </div>
+      <div class="meta-card">
+        <div class="label">백엔드 응답</div>
+        <div class="value">&lt; 50 <span style="font-size:12px;color:var(--muted);">ms</span></div>
+        <div class="sub">로컬 :8765 (CUDA)</div>
+      </div>
+      <div class="meta-card">
+        <div class="label">CO₂ ↔ 인원 상관</div>
+        <div class="value">+0.45 <span style="font-size:12px;color:var(--accent);">★</span></div>
+        <div class="sub">OZON Pearson r, p=0.026</div>
+      </div>
+      <div class="meta-card">
+        <div class="label">클러스터링 silhouette</div>
+        <div class="value">0.387</div>
+        <div class="sub">K=3, PCA 84.1% 분산</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

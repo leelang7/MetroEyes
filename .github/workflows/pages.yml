@@ -36,51 +36,87 @@ jobs:
           <meta charset="utf-8">
           <title>MetroEyes — 라이브 데모</title>
           <meta name="theme-color" content="#04060a">
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
           <style>
-            html,body { margin:0; height:100%; background:#04060a; color:#e8edf5;
-              font-family:"Inter",-apple-system,"Segoe UI","Malgun Gothic",system-ui,sans-serif;
-              display:flex; align-items:center; justify-content:center; }
-            .wrap { max-width:520px; padding:32px; text-align:left; }
-            h1 { font-size:36px; font-weight:200; letter-spacing:-1px; margin:0 0 6px; }
-            h1 b { color:#7dd3d3; font-weight:500; }
-            p.sub { color:#8e98ac; font-size:14px; margin:0 0 28px; line-height:1.5; }
-            a.card { display:block; padding:14px 18px; background:#0a0d14;
-              border:1px solid rgba(255,255,255,0.08); border-radius:12px;
-              color:#e8edf5; text-decoration:none; margin-bottom:10px;
-              transition:all 0.2s; }
-            a.card:hover { border-color:rgba(125,211,211,0.4); transform:translateX(2px); }
-            a.card .label { color:#7dd3d3; font-size:11px; letter-spacing:1.4px;
-              text-transform:uppercase; margin-bottom:4px; }
-            a.card .name { font-size:16px; font-weight:500; }
-            a.card .desc { color:#8e98ac; font-size:12px; margin-top:2px; }
-            footer { margin-top:32px; font-size:11px; color:#6b768a; letter-spacing:1.2px; }
+            :root {
+              --c-subway:#7dd3d3; --c-bus:#f97316; --c-realcam:#ef4444;
+              --c-ads:#10b981; --c-arch:#a78bfa; --c-citizen:#7dd3d3;
+            }
+            html,body { margin:0; min-height:100%;
+              background:radial-gradient(ellipse 800px 500px at 30% -20%, rgba(125,211,211,0.05), transparent 60%), #04060a;
+              color:#e8edf5;
+              font-family:"Pretendard Variable","Pretendard",-apple-system,"Segoe UI","Malgun Gothic",system-ui,sans-serif;
+              letter-spacing:-0.2px;
+              display:flex; align-items:center; justify-content:center; padding:40px 20px; }
+            .wrap { max-width:760px; width:100%; }
+            h1 { font-size:42px; font-weight:200; letter-spacing:-1.5px; margin:0 0 8px; }
+            h1 b { color:var(--c-subway); font-weight:600; }
+            p.sub { color:#8e98ac; font-size:14px; margin:0 0 32px; line-height:1.6; }
+            .grid { display:grid; gap:10px; grid-template-columns:1fr 1fr; }
+            .grid .full { grid-column:1 / -1; }
+            a.card { display:block; padding:16px 18px; background:#0a0d14;
+              border:1px solid rgba(255,255,255,0.06); border-radius:10px;
+              color:#e8edf5; text-decoration:none;
+              border-left:3px solid var(--c-subway); transition:all 0.18s; }
+            a.card:hover { border-color:rgba(255,255,255,0.18); transform:translateY(-1px); }
+            a.card.subway  { border-left-color:var(--c-subway); }
+            a.card.bus     { border-left-color:var(--c-bus); }
+            a.card.realcam { border-left-color:var(--c-realcam); }
+            a.card.ads     { border-left-color:var(--c-ads); }
+            a.card.arch    { border-left-color:var(--c-arch); }
+            a.card.citizen { border-left-color:var(--c-citizen); }
+            a.card .label { font-size:10px; letter-spacing:1.5px;
+              text-transform:uppercase; font-weight:700; margin-bottom:6px; }
+            a.card.subway  .label { color:var(--c-subway); }
+            a.card.bus     .label { color:var(--c-bus); }
+            a.card.realcam .label { color:var(--c-realcam); }
+            a.card.ads     .label { color:var(--c-ads); }
+            a.card.arch    .label { color:var(--c-arch); }
+            a.card.citizen .label { color:var(--c-citizen); }
+            a.card .name { font-size:15px; font-weight:600; display:flex; align-items:center; gap:6px; }
+            a.card .desc { color:#8e98ac; font-size:11.5px; margin-top:4px; line-height:1.5; }
+            footer { margin-top:32px; font-size:10px; color:#6b768a; letter-spacing:1.4px; text-align:center; }
+            footer code { background:rgba(255,255,255,0.04); padding:2px 6px; border-radius:3px; }
           </style>
           </head>
           <body>
           <div class="wrap">
             <h1>MetroEyes <b>·</b></h1>
             <p class="sub">테슬라가 도로를 BEV로 보듯, 도시 교통 전체를 본다.<br>
-              자체 CV + 4중 데이터 융합 라이브 데모.</p>
-            <a class="card" href="frontend/operator_web/realbev.html">
-              <div class="label">Operator · 3D BEV</div>
-              <div class="name">실시간 카메라 BEV (Three.js)</div>
-              <div class="desc">11카드 풀 융합 + ML 24h 예측 + 정확도</div>
-            </a>
-            <a class="card" href="frontend/operator_web/index.html">
-              <div class="label">Operator · 지하철</div>
-              <div class="name">10량 편성 BEV</div>
-              <div class="desc">4중 fusion-strip + 임계 분산 안내</div>
-            </a>
-            <a class="card" href="frontend/operator_web/bus.html">
-              <div class="label">Operator · 버스</div>
-              <div class="name">정류장 BEV</div>
-            </a>
-            <a class="card" href="frontend/passenger_app/index.html">
-              <div class="label">Citizen PWA</div>
-              <div class="name">시민 앱 (모바일)</div>
-              <div class="desc">GPS · 칸별 점유율 · 인구 chip · 강수 예보</div>
-            </a>
-            <footer>BACKEND wss://app.allthatai.kr</footer>
+              자체 CV · 9개 공공 데이터 융합 · 라이브 운영 데모.</p>
+            <div class="grid">
+              <a class="card realcam full" href="frontend/operator_web/realbev.html">
+                <div class="label">📷 OPERATOR · LIVE</div>
+                <div class="name">실시간 3D BEV (Three.js)</div>
+                <div class="desc">YOLO11 + BoT-SORT + 호모그래피 · 비상 동선 추론 + 칼만 fusion KPI</div>
+              </a>
+              <a class="card subway" href="frontend/operator_web/index.html">
+                <div class="label">🚇 OPERATOR · 지하철</div>
+                <div class="name">10량 편성 점유</div>
+                <div class="desc">호선·역·시각 슬라이더 + 4중 fusion-strip</div>
+              </a>
+              <a class="card bus" href="frontend/operator_web/bus.html">
+                <div class="label">🚌 OPERATOR · 버스</div>
+                <div class="name">정류장 BEV</div>
+                <div class="desc">간선 142 BIS + 차량 점유 + ETA</div>
+              </a>
+              <a class="card ads" href="frontend/operator_web/ad_pricing.html">
+                <div class="label">📺 OPERATOR · 디스플레이</div>
+                <div class="name">차내 디스플레이 편성</div>
+                <div class="desc">역×시간대 인구 히트맵 + 동적 광고 단가 + 안내 우선 정책</div>
+              </a>
+              <a class="card arch" href="frontend/operator_web/architecture.html">
+                <div class="label">🏛 ARCHITECTURE</div>
+                <div class="name">시스템 아키텍처</div>
+                <div class="desc">4계층 데이터 플로우 · Edge↔Cloud · 핵심 메트릭</div>
+              </a>
+              <a class="card citizen full" href="frontend/passenger_app/index.html">
+                <div class="label">📱 CITIZEN · PWA</div>
+                <div class="name">시민 앱 (모바일)</div>
+                <div class="desc">GPS · 추천 칸 · citydata 칩 · 분산 인센티브 · 행사 카드 · 임팩트 카운터</div>
+              </a>
+            </div>
+            <footer>BACKEND <code>wss://app.allthatai.kr</code> · GITHUB <code>github.com/leelang7/MetroEyes</code></footer>
           </div>
           </body>
           </html>
