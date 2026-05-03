@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MetroEyes — 운영자 콘솔 · 지하철</title>
+<link rel="stylesheet" href="../shared/bev_console.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="dot"></span>MetroEyes<small>Operator Console</small>
+    <span class="nav-sep">·</span>
+    <a href="index.html" class="active">지하철</a>
+    <a href="bus.html">버스</a>
+    <a href="realbev.html">실 카메라</a>
+    <span class="nav-sep">|</span>
+    <a href="../passenger_app/index.html" style="color: var(--accent);">시민 앱 →</a>
+  </div>
+  <div class="controls">
+    <span class="tag">노선<b id="t-line">2호선</b></span>
+    <span class="tag">역<b id="t-station">잠실(송파구청)</b></span>
+    <span class="tag">아키타입<b id="t-cluster">환승 허브</b></span>
+    <div class="slider-wrap">
+      <label>시각</label>
+      <input id="hour" type="range" min="5" max="23" value="18" step="1">
+      <output id="hourlabel">18시</output>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
+    <div class="fusion-card dim" id="fc-cv" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">검출 인원 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">자체 CV</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-cv-v">—명</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cv-sub">백엔드 미연결</div>
+    </div>
+    <div class="fusion-card dim" id="fc-arr" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">다음 도착 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 TOPIS</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-arr-v">—분</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-arr-sub">realtimeStationArrival</div>
+    </div>
+    <div class="fusion-card dim" id="fc-pop" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">역세권 인구 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 도시데이터</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-pop-v">—명</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-pop-sub">citydata_ppltn</div>
+    </div>
+    <div class="fusion-card dim" id="fc-cong" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">혼잡 레벨 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">융합</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300;" id="fc-cong-v">—</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cong-sub">CV + 인구 결합</div>
+    </div>
+  </section>
+
+  <section class="train-strip">
+    <div class="train-strip-head">
+      <h2><b>2호선 잠실행 1234편성</b><span style="color: var(--muted)">10량 점유 BEV</span></h2>
+      <div class="train-meta">
+        <span class="pulse"></span>실시간 추론 · 60Hz
+        <span id="phase-tag" class="phase-tag">운행 중</span>
+      </div>
+    </div>
+    <canvas id="strip"></canvas>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <h2><b>5호차</b><span style="color: var(--muted)">선택된 칸 · 천장 4-카메라 BEV 융합 · 벡터 객체 트랙</span></h2>
+      <canvas id="bev"></canvas>
+      <div class="legend">
+        <span><i style="background: var(--fg)"></i>입석 승객</span>
+        <span><i style="background: var(--muted-2)"></i>좌석 승객</span>
+        <span><i style="background: var(--warn)"></i>고밀집</span>
+        <span><i style="background: var(--accent); border-radius: 1px; height: 2px; width: 14px"></i>출입문 (정차 시 활성)</span>
+      </div>
+      <div class="kpi">
+        <div><b id="kpi-pct">—</b><span class="unit">%</span><small>점유율</small></div>
+        <div><b id="kpi-cnt">—</b><span class="unit">명</span><small>인원 · 정원 160</small></div>
+        <div><b id="kpi-density">—</b><span class="unit">/m²</span><small>밀집도</small></div>
+      </div>
+      <div id="alert" class="alert"><span class="dot-warn"></span>임계 밀집 — 인접 칸 분산 안내 송출 권고</div>
+    </div>
+    <div class="panel">
+      <h2><b>10량 편성</b><span style="color: var(--muted)">호차별</span></h2>
+      <div id="carList" class="car-list"></div>
+      <div id="recommend" class="recommend">
+        <div class="head">권장 탑승 칸</div>
+        <div><span class="num" id="rec-num">—</span> · <span id="rec-pct" style="color: var(--fg)">—%</span></div>
+        <div style="color: var(--muted); font-size: 11px; margin-top: 6px;" id="rec-meta">—</div>
+      </div>
+      <div id="priority-kpi" class="priority-kpi">
+        <span class="label">약자석 점유</span>
+        <span class="val" id="pri-val">— / —</span>
+      </div>
+      <div class="safety-panel">
+        <div class="safety-head">
+          <h2><b>안전 감지</b><span style="color: var(--muted)">멀티태스크 BEV</span></h2>
+          <div class="badges">
+            <span class="b high" id="b-emer">응급 0</span>
+            <span class="b med" id="b-susp">이상 0</span>
+            <span class="b low" id="b-lost">분실 0</span>
+            <span class="b" id="b-free">무임 0</span>
+          </div>
+        </div>
+        <div class="incident-list" id="incidents"></div>
+        <button class="tts-btn" id="ttsBtn">🔊 분산 안내 음성 송출</button>
+        <div class="tts-lang">
+          <button data-lang="ko" class="active">한</button>
+          <button data-lang="en">EN</button>
+          <button data-lang="zh">中</button>
+          <button data-lang="ja">日</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="toast-stack" id="toastStack"></div>
+
+<button class="llm-fab" id="llmFab" aria-label="AI 어시스턴트 열기">✨<span class="badge">AI</span></button>
+<div class="llm-panel" id="llmPanel" role="dialog">
+  <div class="llm-head">
+    <div class="ttl"><span class="dot"></span>운영자 어시스턴트<small>생성형 AI · 한국어</small></div>
+    <button class="llm-close" id="llmClose">✕</button>
+  </div>
+  <div class="llm-msgs" id="llmMsgs"></div>
+  <div class="llm-suggest" id="llmSuggest">
+    <span class="chip">지금 가장 위급한 칸</span>
+    <span class="chip">평소와 다른 점</span>
+    <span class="chip">다음 5분 예측</span>
+    <span class="chip">분산 안내 권고문</span>
+    <span class="chip">약자석 처리</span>
+    <span class="chip">에너지 효율화</span>
+  </div>
+  <div class="llm-input">
+    <button class="mic" id="llmMic" aria-label="음성 입력">🎤</button>
+    <input type="text" id="llmInput" placeholder="질문 또는 명령 (음성 가능)..." />
+    <button id="llmSend">전송</button>
+  </div>
+</div>
+
+<script src="../shared/bev_engine.js"></script>
+<script src="../shared/safety_features.js"></script>
+<script src="../shared/llm_assistant.js"></script>
+<script>
+const STATION = { line: '2호선', name: '잠실(송파구청)', cluster: 'hub' };
+const CAPACITY = 160;
+const CAR_COUNT = 10;
+const { layouts, model, occColor, rgba } = BEVEngine;
+const SF = window.SafetyFeatures;
+
+const incidentsLog = [];   // {id, type, severity, msg, ts}
+const toastStack = document.getElementById('toastStack');
+
+const canvas = document.getElementById('bev');
+const sim = BEVEngine.createSim({
+  canvas,
+  capacity: CAPACITY,
+  cycleDur: { arriving: 1.8, stopped: 5.5, departing: 1.8, running: 4.5 },
+  layoutFn: layouts.subway,
+  enableSafetyDetection: true,
+  safetyMeanInterval: 12,
+  onIncident: (ev) => {
+    incidentsLog.unshift(ev);
+    if (incidentsLog.length > 30) incidentsLog.length = 30;
+    SF.pushToast(toastStack, ev);
+    renderIncidents();
+  },
+});
+
+// ============== 10량 strip ==============
+let lastOccs = [];
+function drawStrip(occs, selectedIdx) {
+  const cv = document.getElementById('strip');
+  const fitted = BEVEngine.fitCanvas(cv);
+  if (!fitted) return;
+  const { ctx, W, H } = fitted;
+  ctx.clearRect(0, 0, W, H);
+  const n = occs.length;
+  const pad = 16, gap = 4;
+  const carW = (W - pad * 2 - gap * (n - 1)) / n;
+  const carH = H - pad * 2 - 26;
+  const yTop = pad;
+  for (let i = 0; i < n; i++) {
+    const x = pad + i * (carW + gap);
+    const o = occs[i];
+    const col = occColor(o);
+    BEVEngine.rrect(ctx, x, yTop, carW, carH, 6);
+    ctx.fillStyle = 'rgba(255,255,255,0.025)'; ctx.fill();
+    const fillH = carH * Math.min(1, o);
+    BEVEngine.rrect(ctx, x, yTop + (carH - fillH), carW, fillH, 6);
+    ctx.fillStyle = rgba(col, 0.78); ctx.fill();
+    ctx.strokeStyle = (i === selectedIdx) ? rgba([125, 211, 211], 0.85) : 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = (i === selectedIdx) ? 1.5 : 1;
+    BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 6);
+    ctx.stroke();
+    if (i === selectedIdx) {
+      ctx.save();
+      ctx.shadowColor = rgba([125, 211, 211], 0.5);
+      ctx.shadowBlur = 14;
+      BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 6);
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.font = '500 11px Inter, "Malgun Gothic"';
+    ctx.fillStyle = (i === selectedIdx) ? '#7dd3d3' : '#6b768a';
+    ctx.fillText(`${i + 1}`, x + carW / 2 - 4, yTop + carH + 14);
+    ctx.font = '500 10px Inter, "Malgun Gothic"';
+    ctx.fillStyle = (i === selectedIdx) ? '#e8edf5' : '#8e98ac';
+    const pct = `${Math.round(o * 100)}%`;
+    ctx.fillText(pct, x + carW / 2 - ctx.measureText(pct).width / 2, yTop + carH + 26);
+  }
+}
+
+// ============== UI ==============
+const hourEl = document.getElementById('hour');
+const hourLabel = document.getElementById('hourlabel');
+const carList = document.getElementById('carList');
+const kpiPct = document.getElementById('kpi-pct');
+const kpiCnt = document.getElementById('kpi-cnt');
+const kpiDen = document.getElementById('kpi-density');
+const alertEl = document.getElementById('alert');
+const recNum = document.getElementById('rec-num');
+const recPct = document.getElementById('rec-pct');
+const recMeta = document.getElementById('rec-meta');
+const phaseTag = document.getElementById('phase-tag');
+
+document.getElementById('t-line').textContent = STATION.line;
+document.getElementById('t-station').textContent = STATION.name;
+document.getElementById('t-cluster').textContent = model.CLUSTERS[STATION.cluster].label;
+
+let selected = 4;
+let prevSelected = selected;
+
+function applyHour() {
+  const hour = +hourEl.value;
+  hourLabel.textContent = hour + '시';
+  const trainAvg = model.trainOccupancyAt(hour, STATION.cluster);
+  const occs = model.carOccupancies(trainAvg, CAR_COUNT, hour * 13 + 7);
+  lastOccs = occs;
+  const myOcc = occs[selected];
+  sim.setTargetOccupancy(myOcc);
+
+  if (selected !== prevSelected) {
+    sim.forceRebuild(myOcc);
+  }
+  prevSelected = selected;
+
+  const cnt = Math.round(CAPACITY * myOcc);
+  const density = (cnt / 35).toFixed(1);
+  kpiPct.textContent = Math.round(myOcc * 100);
+  kpiCnt.textContent = cnt;
+  kpiDen.textContent = density;
+  alertEl.classList.toggle('show', +density >= 4);
+
+  carList.innerHTML = '';
+  occs.forEach((o, i) => {
+    const cls = o > 0.85 ? 'crit' : o > 0.65 ? 'warn' : '';
+    const sel = i === selected ? ' selected' : '';
+    const row = document.createElement('div');
+    row.className = 'car-row' + sel;
+    row.innerHTML = `
+      <span class="num">${i + 1}</span>
+      <div class="car-bar ${cls}"><div style="width: ${Math.min(100, o * 100)}%"></div></div>
+      <span style="text-align: right;">${Math.round(o * 100)}%</span>`;
+    row.addEventListener('click', () => { selected = i; applyHour(); });
+    carList.appendChild(row);
+  });
+
+  let mi = 0, mv = occs[0];
+  occs.forEach((o, i) => { if (o < mv) { mv = o; mi = i; } });
+  recNum.textContent = `${mi + 1}호차`;
+  recPct.textContent = `${Math.round(mv * 100)}%`;
+  recMeta.textContent = `편성 평균 ${Math.round(trainAvg * 100)}% · ${model.CLUSTERS[STATION.cluster].label} · ${hour}시`;
+}
+
+function updatePhaseTag() {
+  const m = { arriving: ['도착 중', ''], stopped: ['정차', 'stopped'], departing: ['출발', ''], running: ['운행 중', ''] };
+  const [text, cls] = m[sim.getPhase()];
+  phaseTag.textContent = text;
+  phaseTag.className = 'phase-tag ' + cls;
+}
+
+function updateLiveKpi() {
+  const cnt = sim.liveCount();
+  const den = (cnt / 35).toFixed(1);
+  kpiCnt.textContent = cnt;
+  kpiDen.textContent = den;
+  alertEl.classList.toggle('show', +den >= 4);
+
+  // 약자석 점유 모니터
+  const pr = sim.priorityStats();
+  const valEl = document.getElementById('pri-val');
+  const kpiBox = document.getElementById('priority-kpi');
+  valEl.textContent = `${pr.occupied} / ${pr.total}` + (pr.blocked > 0 ? ` · 차단 ${pr.blocked}` : '');
+  kpiBox.classList.toggle('warn', pr.blocked > 0);
+}
+
+// ============== 안전 감지 UI ==============
+function renderIncidents() {
+  const root = document.getElementById('incidents');
+  root.innerHTML = '';
+  let nE = 0, nS = 0, nL = 0, nF = 0;
+  for (const ev of incidentsLog) {
+    if (ev.type === 'emergency') nE++;
+    else if (ev.type === 'suspicious') nS++;
+    else if (ev.type === 'lost') nL++;
+    else if (ev.type === 'free_ride') nF++;
+  }
+  document.getElementById('b-emer').textContent = '응급 ' + nE;
+  document.getElementById('b-susp').textContent = '이상 ' + nS;
+  document.getElementById('b-lost').textContent = '분실 ' + nL;
+  document.getElementById('b-free').textContent = '무임 ' + nF;
+
+  for (const ev of incidentsLog.slice(0, 8)) {
+    const row = document.createElement('div');
+    row.className = `incident ${ev.severity}`;
+    row.innerHTML = `
+      <span class="type">${SF.TYPE_LABEL[ev.type] || ev.type}</span>
+      <span class="msg">${ev.msg}</span>
+      <span class="ts">${SF.formatRelTime(ev.ts)}</span>
+    `;
+    root.appendChild(row);
+  }
+}
+setInterval(renderIncidents, 1000);  // ts 갱신용
+
+// ============== TTS ==============
+let ttsLang = 'ko';
+document.querySelectorAll('.tts-lang button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tts-lang button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    ttsLang = b.dataset.lang;
+  });
+});
+document.getElementById('ttsBtn').addEventListener('click', () => {
+  const occs = lastOccs;
+  const myOcc = occs[selected];
+  let mi = 0, mv = occs[0];
+  occs.forEach((o, i) => { if (o < mv) { mv = o; mi = i; } });
+  const carLabel = `${selected + 1}호차`;
+  const recCar = `${mi + 1}호차`;
+  const btn = document.getElementById('ttsBtn');
+  btn.classList.add('speaking');
+  setTimeout(() => btn.classList.remove('speaking'), 3000);
+  if (myOcc >= 0.85) {
+    SF.announce('crowded', ttsLang, [carLabel, recCar]);
+  } else {
+    SF.announce('arrival', ttsLang, [carLabel, Math.round(myOcc * 100)]);
+  }
+});
+
+let lastT = performance.now();
+function tick(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000);
+  lastT = now;
+  sim.tick(dt);
+  drawStrip(lastOccs, selected);
+  updatePhaseTag();
+  updateLiveKpi();
+  requestAnimationFrame(tick);
+}
+
+hourEl.addEventListener('input', applyHour);
+window.addEventListener('resize', () => {
+  sim.invalidateLayout();
+  applyHour();
+});
+applyHour();
+requestAnimationFrame(tick);
+
+// ============== LLM 어시스턴트 ==============
+const llmFab = document.getElementById('llmFab');
+const llmPanel = document.getElementById('llmPanel');
+const llmClose = document.getElementById('llmClose');
+const llmInput = document.getElementById('llmInput');
+const llmSend = document.getElementById('llmSend');
+const llmMsgs = document.getElementById('llmMsgs');
+const llmMic = document.getElementById('llmMic');
+
+llmFab.addEventListener('click', () => llmPanel.classList.add('open'));
+llmClose.addEventListener('click', () => llmPanel.classList.remove('open'));
+
+document.querySelectorAll('#llmSuggest .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    llmInput.value = c.textContent;
+    askLLM();
+  });
+});
+
+async function askLLM() {
+  const q = llmInput.value.trim();
+  if (!q) return;
+  // 사용자 메시지
+  const um = document.createElement('div');
+  um.className = 'llm-msg user';
+  um.textContent = q;
+  llmMsgs.appendChild(um);
+  llmInput.value = '';
+  llmSend.disabled = true;
+  llmMsgs.scrollTop = llmMsgs.scrollHeight;
+  // 사고 중 placeholder
+  const bm = document.createElement('div');
+  bm.className = 'llm-msg bot thinking';
+  llmMsgs.appendChild(bm);
+  llmMsgs.scrollTop = llmMsgs.scrollHeight;
+  const resp = await LLMAssistant.callLLM(q, 'operator');
+  bm.classList.remove('thinking');
+  await LLMAssistant.streamTo(bm, resp);
+  llmMsgs.scrollTop = llmMsgs.scrollHeight;
+  llmSend.disabled = false;
+  llmInput.focus();
+}
+llmSend.addEventListener('click', askLLM);
+llmInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askLLM(); });
+
+// ============== STT (음성 입력) ==============
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR) {
+  const rec = new SR();
+  rec.lang = 'ko-KR';
+  rec.continuous = false;
+  rec.interimResults = false;
+  let listening = false;
+  llmMic.addEventListener('click', () => {
+    if (listening) { rec.stop(); return; }
+    try { rec.start(); listening = true; llmMic.classList.add('listening'); } catch {}
+  });
+  rec.addEventListener('result', (ev) => {
+    const text = ev.results[0][0].transcript;
+    llmInput.value = text;
+    askLLM();
+  });
+  rec.addEventListener('end', () => {
+    listening = false; llmMic.classList.remove('listening');
+  });
+  rec.addEventListener('error', () => {
+    listening = false; llmMic.classList.remove('listening');
+  });
+} else {
+  llmMic.style.display = 'none';
+}
+
+// ============== 4중 데이터 융합 (BEV + 도착 + 인구 + 혼잡 평가) ==============
+(() => {
+  const wsUrl = (() => {
+    const p = new URLSearchParams(location.search).get('ws');
+    if (p) return p;
+    const saved = localStorage.getItem('subwaybev_ws');
+    if (saved) return saved;
+    if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
+    return 'ws://localhost:8765';
+  })();
+  let ws = null, lastBev = null, lastPop = null, arrT = null, popT = null;
+  const station = { name: '잠실', line: 2, poi: '잠실역' };
+  function fmtN(n) { if (n == null) return '—'; if (n >= 10000) return (n/10000).toFixed(1) + '만'; if (n >= 1000) return (n/1000).toFixed(1) + 'K'; return String(n); }
+  function setCard(id, cls) { const c = document.getElementById(id); if (!c) return; c.classList.remove('dim','ok','warn','crit'); c.classList.add(cls); const v = c.querySelector('div:nth-child(2)'); if (v) v.style.color = cls === 'ok' ? 'var(--accent)' : cls === 'warn' ? 'var(--warn)' : cls === 'crit' ? 'var(--crit)' : 'var(--muted)'; }
+  function applyBev(p) {
+    lastBev = p;
+    const n = (p.tracks || []).filter(t => t.class === 'person').length;
+    document.getElementById('fc-cv-v').textContent = `${n}명`;
+    document.getElementById('fc-cv-sub').textContent = `YOLO ${(p.fps ?? 0).toFixed(1)} fps · ${(p.tracks || []).length} 트랙`;
+    setCard('fc-cv', 'ok'); evalCong();
+  }
+  function applyArrival(j) {
+    let best = null;
+    for (const r of (j.items || [])) {
+      let s = (typeof r.barvlDt === 'number' && r.barvlDt > 0) ? r.barvlDt : null;
+      if (s == null && (r.arvlCd === 1 || r.arvlCd === 5)) s = 0;
+      if (s != null && (best == null || s < best)) best = s;
+    }
+    if (best == null) { document.getElementById('fc-arr-v').textContent = '—분'; document.getElementById('fc-arr-sub').textContent = `${j.station} 운행 정보 없음`; setCard('fc-arr', 'dim'); return; }
+    const m = Math.floor(best/60), s = best%60;
+    document.getElementById('fc-arr-v').textContent = best === 0 ? '당역접근' : (m > 0 ? `${m}분${s>0?' '+s+'초':''}` : `${s}초`);
+    const tag = j.simulated ? '<span style="color: var(--warn); font-weight: 500; margin-right: 4px;">SIM</span>' : '';
+    document.getElementById('fc-arr-sub').innerHTML = `${tag}${j.station} · ${(j.items[0]||{}).bstatnNm || '—'}행`;
+    setCard('fc-arr', j.simulated ? 'warn' : 'ok');
+  }
+  function applyPpltn(j) {
+    lastPop = j;
+    if (j.error || j.ppltn_max == null) { document.getElementById('fc-pop-v').textContent = '—명'; document.getElementById('fc-pop-sub').textContent = j.error || '데이터 없음'; setCard('fc-pop', 'dim'); return; }
+    const mid = Math.round(((j.ppltn_min||0) + (j.ppltn_max||0))/2);
+    document.getElementById('fc-pop-v').textContent = `${fmtN(mid)}명`;
+    document.getElementById('fc-pop-sub').textContent = `${j.area_nm} · ${j.congest_lvl} · ${j.ppltn_time||''}`;
+    const lvl = j.congest_lvl === '붐빔' ? 'crit' : j.congest_lvl === '약간 붐빔' ? 'warn' : 'ok';
+    setCard('fc-pop', lvl); evalCong();
+  }
+  function evalCong() {
+    const personN = lastBev ? (lastBev.tracks || []).filter(t => t.class === 'person').length : null;
+    const popLvl = lastPop && !lastPop.error ? lastPop.congest_lvl : null;
+    if (personN == null && popLvl == null) { document.getElementById('fc-cong-v').textContent = '—'; setCard('fc-cong', 'dim'); return; }
+    const popOrd = { '여유': 0, '보통': 0.4, '약간 붐빔': 0.7, '붐빔': 1 };
+    let combined = 0, w = 0;
+    if (personN != null) { combined += Math.min(1, personN/30) * 0.65; w += 0.65; }
+    if (popLvl != null) { combined += (popOrd[popLvl] ?? 0) * 0.35; w += 0.35; }
+    combined = w > 0 ? combined/w : 0;
+    const lvl = combined >= 0.75 ? '붐빔' : combined >= 0.5 ? '약간 붐빔' : combined >= 0.25 ? '보통' : '여유';
+    document.getElementById('fc-cong-v').textContent = lvl;
+    document.getElementById('fc-cong-sub').textContent = `CV ${personN ?? '—'}명 · 인구 ${popLvl ?? '—'} · 점수 ${(combined*100).toFixed(0)}`;
+    setCard('fc-cong', lvl === '붐빔' ? 'crit' : lvl === '약간 붐빔' ? 'warn' : 'ok');
+  }
+  function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
+  function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
+  function queryPop() { send({ type: 'population_query', poi: station.poi }); }
+  function connect() {
+    try { if (ws) ws.close(); } catch {}
+    ws = new WebSocket(wsUrl);
+    ws.onopen = () => { queryArr(); queryPop(); arrT = setInterval(queryArr, 20000); popT = setInterval(queryPop, 60000); };
+    ws.onmessage = (ev) => { try { const j = JSON.parse(ev.data); if (j.type === 'arrival') applyArrival(j); else if (j.type === 'population') applyPpltn(j); else applyBev(j); } catch {} };
+    ws.onclose = () => { if (arrT) clearInterval(arrT); if (popT) clearInterval(popT); setTimeout(connect, 3000); };
+    ws.onerror = () => {};
+  }
+  connect();
+})();
+</script>
+</body>
+</html>

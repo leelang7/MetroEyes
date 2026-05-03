@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04060a">
+<title>MetroEyes — 탑승 중</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <button class="back-btn" onclick="history.back()">← 뒤로</button>
+    <div class="brand">
+      <span class="dot"></span>MetroEyes<small>Onboard</small>
+      <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">오프라인</span></span>
+    </div>
+    <span style="width: 50px"></span>
+  </header>
+
+  <div class="topbar">
+    <div class="title">
+      <span id="t-car">5호차</span>
+      <small id="t-line">2호선 잠실행</small>
+    </div>
+  </div>
+
+  <section class="minibev" style="position: relative;">
+    <div class="head">
+      <span>차내 BEV · 본인 위치 표시</span>
+      <span class="live">LIVE</span>
+    </div>
+    <div class="you-here-tag">YOU</div>
+    <canvas id="bev" class="large"></canvas>
+  </section>
+
+  <section class="predict">
+    <div class="head">다음 정거장 예측</div>
+    <div class="flow">
+      <span class="now"><span id="now-pct">—</span>%</span>
+      <span class="arrow">→</span>
+      <span class="next"><span id="next-pct">—</span>%</span>
+      <span class="delta" id="delta-meta">—</span>
+    </div>
+    <div class="station" id="next-station">다음: 잠실나루역 · <span id="next-eta">—</span> 후</div>
+  </section>
+
+  <section class="transfer" id="transfer">
+    <div class="icon">⇄</div>
+    <div class="body">
+      <div class="head">환승/하차 안내</div>
+      <div class="text" id="transfer-text">— 정거장 정보 로딩 중 —</div>
+    </div>
+  </section>
+
+  <div class="alert" id="alert">임계 밀집 — 다음 정거장 알라이팅 시 분산 권고</div>
+
+  <div class="demo-time">
+    <label>데모 시각</label>
+    <input id="hour" type="range" min="5" max="23" value="18" step="1">
+    <output id="hourlabel">18시</output>
+  </div>
+</div>
+
+<script src="../shared/bev_engine.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const mode = params.get('mode') || 'subway';
+const idx = +params.get('idx') || 0;
+const initHour = +params.get('hour') || 18;
+
+const { layouts, decorators, model, occColor, rgba } = BEVEngine;
+
+const VEHICLES = {
+  subway: {
+    capacity: 160,
+    layoutFn: layouts.subway,
+    decorate: null,
+    cycleDur: { arriving: 1.8, stopped: 5.5, departing: 1.8, running: 4.5 },
+    bevCanvasClass: 'large',
+    label: (i) => `${i + 1}호차`,
+    line: '2호선 잠실행',
+    cluster: 'hub',
+    nextStop: (h) => ['잠실나루역', '강변역', '구의역'][h % 3] || '잠실나루역',
+    transfer: () => ({
+      head: '3호선 환승 (잠실나루역 도착 시)',
+      text: '<b>좌측 두 번째 문</b>으로 내리면 환승 통로 가까움 · 약 1분 30초',
+    }),
+  },
+  bus: {
+    capacity: 50,
+    layoutFn: layouts.bus,
+    decorate: decorators.bus,
+    cycleDur: { arriving: 1.2, stopped: 3.5, departing: 1.2, running: 3.0 },
+    bevCanvasClass: 'large',
+    label: (i) => `${i + 1}순위 차량`,
+    line: '간선 142',
+    cluster: 'hub',
+    nextStop: (h) => ['올림픽공원역', '몽촌토성역', '잠실나루역'][h % 3] || '올림픽공원역',
+    transfer: () => ({
+      head: '하차 안내',
+      text: '하차 시 <b>뒷문 사용</b>. 다음 정류장에 25명 하차 예정 → 한산해질 예정',
+    }),
+  },
+};
+
+const cfg = VEHICLES[mode];
+const canvas = document.getElementById('bev');
+canvas.className = cfg.bevCanvasClass;
+
+document.getElementById('t-car').textContent = cfg.label(idx);
+document.getElementById('t-line').textContent = cfg.line;
+
+// 사용자 위치 — 차량 안 어딘가 (랜덤하지만 일관되게)
+const userPos = { x: 0.4, y: 0.5 };  // 0~1 of car interior
+
+function drawUserOverlay(ctx, L, sim) {
+  // 사용자 위치 표시 (차량 좌표계로 변환)
+  const ux = L.pad + userPos.x * L.cw;
+  const uy = L.pad + userPos.y * L.ch;
+  // 외곽 펄스 링
+  const t = (performance.now() / 1000) % 1;
+  ctx.save();
+  for (let i = 0; i < 2; i++) {
+    const phase = (t + i * 0.5) % 1;
+    const radius = 8 + phase * 22;
+    const alpha = 0.6 * (1 - phase);
+    ctx.strokeStyle = `rgba(125, 211, 211, ${alpha})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(ux, uy, radius, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  // 코어 점
+  ctx.fillStyle = '#7dd3d3';
+  ctx.shadowColor = '#7dd3d3';
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(ux, uy, 5.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+const sim = BEVEngine.createSim({
+  canvas,
+  capacity: cfg.capacity,
+  cycleDur: cfg.cycleDur,
+  layoutFn: cfg.layoutFn,
+  decorate: cfg.decorate,
+  overlay: drawUserOverlay,
+  compact: true,
+});
+
+let currentOcc = 0.5;
+function applyHour() {
+  const hour = +document.getElementById('hour').value;
+  document.getElementById('hourlabel').textContent = hour + '시';
+
+  let occ;
+  if (mode === 'subway') {
+    const avg = model.trainOccupancyAt(hour, cfg.cluster);
+    const occs = model.carOccupancies(avg, 10, hour * 13 + 7);
+    occ = occs[idx];
+  } else {
+    const avg = model.trainOccupancyAt(hour, cfg.cluster);
+    const r = ((seed) => { let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3 + idx);
+    const noise = (r() - 0.5) * 0.20;
+    occ = Math.max(0.05, Math.min(1.05, avg * 0.92 + noise));
+  }
+  currentOcc = occ;
+  sim.setTargetOccupancy(occ);
+  // 다음 정거장 예측: 25% 알라이팅 가정 → 약 -15~25%
+  const nextOcc = Math.max(0.1, occ - 0.18 + (Math.random() - 0.5) * 0.06);
+
+  document.getElementById('now-pct').textContent = Math.round(occ * 100);
+  document.getElementById('next-pct').textContent = Math.round(nextOcc * 100);
+  const delta = Math.round((nextOcc - occ) * 100);
+  document.getElementById('delta-meta').textContent =
+    delta < 0 ? `${delta}%p · 약 ${Math.round(Math.abs(delta) * 0.4)}명 하차` : `+${delta}%p`;
+  document.getElementById('next-station').innerHTML =
+    `다음: <b style="color: var(--fg)">${cfg.nextStop(hour)}</b> · <span id="next-eta">2분 30초</span> 후`;
+
+  const tr = cfg.transfer();
+  document.getElementById('transfer').querySelector('.head').textContent = tr.head;
+  document.getElementById('transfer-text').innerHTML = tr.text;
+
+  document.getElementById('alert').classList.toggle('show', occ >= 0.92);
+}
+
+window.addEventListener('resize', () => sim.invalidateLayout());
+document.getElementById('hour').value = initHour;
+document.getElementById('hour').addEventListener('input', applyHour);
+applyHour();
+
+let lastT = performance.now();
+function tick(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000);
+  lastT = now;
+  sim.tick(dt);
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// ============== 라이브 백엔드 (탑승 후 — 차내 점유율 갱신) ==============
+(() => {
+  const wsUrl = (() => {
+    const p = new URLSearchParams(location.search).get('ws');
+    if (p) return p;
+    const saved = localStorage.getItem('subwaybev_ws');
+    if (saved) return saved;
+    if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
+    return 'ws://localhost:8765';
+  })();
+  const badge = document.getElementById('live-badge');
+  const label = document.getElementById('live-label');
+  function setBadge(state, text) { badge.classList.remove('connected','connecting','error'); if (state) badge.classList.add(state); label.textContent = text; }
+  let ws = null, retryT = null;
+  function connect() {
+    setBadge('connecting', '연결 중');
+    try { if (ws) ws.close(); } catch {}
+    ws = new WebSocket(wsUrl);
+    ws.onopen = () => setBadge('connected', 'LIVE');
+    ws.onmessage = (ev) => {
+      try {
+        const j = JSON.parse(ev.data);
+        if (j.type === 'arrival' || j.type === 'population' || j.type === 'occupancy_predict') return;
+        // BEV 페이로드 — 라이브 점유율 갱신
+        const personN = (j.tracks || []).filter(t => t.class === 'person').length;
+        const live = Math.min(1.05, personN / 20); // 정원 20 가정
+        if (typeof sim !== 'undefined' && sim) { sim.setTargetOccupancy(live); }
+        // 다음 정거장 예측 (간단 휴리스틱: 라이브 + 5%)
+        const nowPctEl = document.getElementById('now-pct');
+        const nextPctEl = document.getElementById('next-pct');
+        if (nowPctEl) nowPctEl.textContent = Math.round(live * 100);
+        if (nextPctEl) nextPctEl.textContent = Math.round(Math.min(1, live + 0.05) * 100);
+        if (typeof j.fps === 'number') label.textContent = `LIVE · ${j.fps.toFixed(1)} fps · ${personN}명`;
+      } catch {}
+    };
+    ws.onclose = () => { setBadge('', '오프라인'); clearTimeout(retryT); retryT = setTimeout(connect, 3000); };
+    ws.onerror = () => setBadge('error', '연결 실패');
+  }
+  connect();
+})();
+</script>
+</body>
+</html>

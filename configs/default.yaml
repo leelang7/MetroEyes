@@ -1,0 +1,59 @@
+# MetroEyes 기본 설정 — 실험별 override는 configs/exp_*.yaml 로 분리
+
+project:
+  name: subwaybev
+  seed: 42
+
+bev:
+  # 칸 내부 좌표계: 길이(x) × 폭(y), 단위 m
+  range:
+    x: [0.0, 19.5]   # 차량 길이 ~19.5m
+    y: [-1.4, 1.4]   # 차량 폭 ~2.8m
+  resolution: 0.1    # 1셀 = 10cm
+  # → grid shape: 195 × 28
+
+cameras:
+  count: 4
+  # 천장 4코너 — 캘리브레이션 결과는 calib/*.yaml 로 별도 관리
+  fov_deg: 120
+  resolution: [1280, 720]
+  fps: 10
+
+model:
+  backbone: resnet18         # 엣지 타깃이라 가볍게 시작
+  bev_channels: 64
+  heads:
+    occupancy: true
+    count: true
+    density: true
+
+training:
+  batch_size: 8
+  epochs: 50
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  optimizer: adamw
+  scheduler: cosine
+  amp: true                  # mixed precision
+
+inference:
+  device: cuda               # .env로 override
+  target: jetson_orin_nx     # 배포 타깃 메모
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  ws_path: /ws/bev
+  cors_origins: ["*"]
+
+seoul_opendata:
+  base_url: http://openapi.seoul.go.kr:8088
+  # 도시철도 실시간 도착정보 (TOPIS/서울교통공사) — 80 포트 + /api/subway prefix
+  # 키는 data.seoul.go.kr 마이페이지에서 "지하철 실시간 도착정보" 서비스 추가 신청 필요
+  realtime_arrival_base: http://swopenapi.seoul.go.kr/api/subway
+  endpoints:
+    realtime_train_position: realtimeStationArrival
+    congestion: CardSubwayStatsNew
+    air_quality: IndoorAirQualityMeasureService
+  timeout_sec: 10
+  retries: 3
