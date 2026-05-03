@@ -457,9 +457,10 @@ if (SR) {
     const saved = localStorage.getItem('subwaybev_ws');
     if (saved) return saved;
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
+    if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://rebekah-derisible-tanisha.ngrok-free.dev';
     return 'ws://localhost:8765';
   })();
-  let ws = null, lastBev = null, lastPop = null, popT = null;
+  let ws = null, lastBev = null, lastPop = null, lastCd = null, popT = null, cdT = null;
   // 버스 모드 — POI는 잠실역.7번출구 인근 → 잠실역으로 매핑
   const stop = { poi: '잠실역' };
   function fmtN(n) { if (n == null) return '—'; if (n >= 10000) return (n/10000).toFixed(1) + '만'; if (n >= 1000) return (n/1000).toFixed(1) + 'K'; return String(n); }
@@ -497,12 +498,38 @@ if (SR) {
   }
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryPop() { send({ type: 'population_query', poi: stop.poi }); }
+  function queryCitydata() { send({ type: 'citydata_query', poi: stop.poi }); }
+  function applyCitydata(j) {
+    lastCd = j;
+    if (j.error) return;
+    // 차량 도착 카드: LIVE_BUS_PPLTN 30분 누적 승차 max로 도착 활동 지표 표시
+    const card = document.getElementById('fc-arr');
+    if (j.bus_30wthn_gton_max != null) {
+      const n = j.bus_30wthn_gton_max;
+      card.classList.remove('dim','crit'); card.classList.add(n > 200 ? 'warn' : 'ok');
+      document.getElementById('fc-arr-v').innerHTML = `${n.toLocaleString()}<span class="unit">/30분</span>`;
+      document.getElementById('fc-arr-sub').textContent = `정류장 30분 누적 승차 (citydata LIVE_BUS_PPLTN)`;
+    }
+    evalCong();
+  }
   function connect() {
     try { if (ws) ws.close(); } catch {}
     ws = new WebSocket(wsUrl);
-    ws.onopen = () => { queryPop(); popT = setInterval(queryPop, 60000); };
-    ws.onmessage = (ev) => { try { const j = JSON.parse(ev.data); if (j.type === 'population') applyPpltn(j); else if (j.type === 'arrival' || j.type === 'occupancy_predict') {} else applyBev(j); } catch {} };
-    ws.onclose = () => { if (popT) clearInterval(popT); setTimeout(connect, 3000); };
+    ws.onopen = () => {
+      queryPop(); queryCitydata();
+      popT = setInterval(queryPop, 60000);
+      cdT = setInterval(queryCitydata, 90000);
+    };
+    ws.onmessage = (ev) => {
+      try {
+        const j = JSON.parse(ev.data);
+        if (j.type === 'population') applyPpltn(j);
+        else if (j.type === 'citydata') applyCitydata(j);
+        else if (j.type === 'arrival' || j.type === 'occupancy_predict') {}
+        else applyBev(j);
+      } catch {}
+    };
+    ws.onclose = () => { if (popT) clearInterval(popT); if (cdT) clearInterval(cdT); setTimeout(connect, 3000); };
     ws.onerror = () => {};
   }
   connect();

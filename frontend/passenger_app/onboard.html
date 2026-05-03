@@ -214,6 +214,7 @@ if ('serviceWorker' in navigator) {
     const saved = localStorage.getItem('subwaybev_ws');
     if (saved) return saved;
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
+    if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://rebekah-derisible-tanisha.ngrok-free.dev';
     return 'ws://localhost:8765';
   })();
   const badge = document.getElementById('live-badge');

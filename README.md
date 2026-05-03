@@ -2,6 +2,12 @@
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
 
+**라이브 데모 (외부 고정 URL)**: https://leelang7.github.io/MetroEyes/
+> 너 PC backend(ngrok 영구 도메인)에 자동 wss 연결. PC 켜둔 상태에서 누구든 접속하면 LIVE.
+
+---
+
+
 **4중 데이터 융합** + **자체 CV** + **시민/운영자 듀얼 도메인** — 지하철·버스 둘 다, 시민의 한 번의 탑승 결정을 더 정확하게.
 
 > 코드/디렉토리는 `subwaybev_*` 식별자를 보존 — 빌드 호환 유지. UI 표시만 MetroEyes.
@@ -28,12 +34,55 @@ pwsh scripts\start_demo.ps1
 
 | 데이터셋 | API | 사용처 |
 |---|---|---|
-| 서울 실시간 도시데이터 (POI 인구·혼잡도) | `citydata_ppltn` | 역세권 컨텍스트 |
+| 서울 실시간 도시데이터 — 통합 (인구·버스·도로·주차·따릉이·날씨·공기·UV·24h예보·상권) | `citydata` | 4중+ 라이브 융합 |
+| 서울 실시간 도시데이터 — 인구·혼잡도 | `citydata_ppltn` | 역세권 컨텍스트 |
 | 자치구 일별 생활인구 | `SPOP_DAILYSUM_JACHI` | 일별 트렌드 |
 | 시간대별 승하차 (CardSubway) | `CardSubwayStatsNew` | ML 학습 입력 |
-| 도시철도 실시간 도착 (TOPIS) | `realtimeStationArrival` | 도착 ETA |
+| 도시철도 실시간 도착 (TOPIS) | `realtimeStationArrival` | 도착 ETA — 별도 키 |
+| 문화 행사 예약 | `ListPublicReservationCulture` | 인구 영향 신호 |
+| 따릉이 정류장 실시간 | `bikeList` / `tbCycleStationInfo` | 환승 옵션 |
 
-키는 [data.seoul.go.kr](https://data.seoul.go.kr) 마이페이지에서 발급 후 `.env`의 `SEOUL_OPENDATA_API_KEY`에 저장.
+키는 [data.seoul.go.kr](https://data.seoul.go.kr) 마이페이지에서 발급. `.env`에:
+- `SEOUL_OPENDATA_API_KEY` — 일반 데이터 (citydata, CardSubway, 행사 등)
+- `SEOUL_SUBWAY_ARRIVAL_KEY` — 도시철도 실시간 도착 (별도 신청)
+- `SEOUL_BUS_ARRIVAL_KEY` — 버스 도착 (있으면)
+
+## 백엔드 WS 컨트롤 메시지
+
+운영자 콘솔 / 시민 PWA / Flutter 폰이 모두 이 컨트롤을 사용:
+
+| `type` | 인자 | 응답 |
+|---|---|---|
+| (JPEG bytes) | — | `{tracks, fps, frame_idx}` BEV 페이로드 broadcast |
+| `arrival_query` | stationName, line | `{type:'arrival', items, simulated}` |
+| `population_query` | poi | `{type:'population', congest_lvl, ppltn_min/max, ...}` |
+| `citydata_query` | poi | `{type:'citydata', 통합 (날씨·도로·환승·24h예보·...)}` |
+| `events_query` | poi | `{type:'events', events:[{name, place, v_max, dist_km}]}` 행사 list |
+| `predict_occupancy` | hour, line, stationName | `{type:'occupancy_predict', predicted}` ML 곡선 한 점 |
+| `model_metrics_query` | — | `{type:'model_metrics', mae_val, r2_val, mae_cv5, ...}` |
+| `impact_log` | station, car, saved_pct | broadcast `{type:'impact_summary', total_count, avg_saved_pct}` |
+
+## 실행 (sandbox 환경 우회)
+
+PowerShell sandbox에서 child Python이 stdout buffer로 stuck 되는 환경에서는 새 콘솔 창으로 띄우는 것이 가장 안전:
+
+```powershell
+pwsh scripts\start_demo.ps1            # backend + publisher + ngrok 새 콘솔 3개
+pwsh scripts\start_demo.ps1 -NoNgrok   # 외부 노출 없이 (USB/로컬만)
+pwsh scripts\start_demo.ps1 -Stop      # 모두 종료
+```
+
+또는 직접 두 콘솔에서:
+
+```powershell
+# 콘솔 1
+cd C:\Users\leesc\Documents\Seoul
+.\.venv\Scripts\python.exe -u -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --imgsz 1280 --conf 0.18
+
+# 콘솔 2 (영상 피더)
+cd C:\Users\leesc\Documents\Seoul
+.\.venv\Scripts\python.exe scripts\feed_video.py
+```
 
 ---
 

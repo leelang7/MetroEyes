@@ -21,7 +21,9 @@ class Env(BaseSettings):
         extra="ignore",
     )
 
-    seoul_opendata_api_key: str = ""
+    seoul_opendata_api_key: str = ""           # 일반 데이터 (citydata_ppltn, CardSubway, 생활인구 등)
+    seoul_subway_arrival_key: str = ""          # 도시철도 실시간 도착 (TOPIS / swopenapi) — 별도 신청 키
+    seoul_bus_arrival_key: str = ""             # 버스 도착 (있으면) — 별도 신청 키
     anthropic_api_key: str = ""
     api_host: str = "0.0.0.0"
     api_port: int = 8000

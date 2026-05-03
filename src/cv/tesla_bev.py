@@ -331,6 +331,26 @@ async def run_serve(args) -> None:
     ARRIVAL_TTL = 20.0
     population_cache: dict = {}   # poi → (ts, payload)
     POPULATION_TTL = 60.0   # 서울 실시간 도시데이터는 분 단위 갱신
+    citydata_cache: dict = {}     # poi → (ts, payload)  통합 도시데이터 (버스/도로/주차/따릉이/날씨)
+    CITYDATA_TTL = 60.0
+    events_cache: dict = {}        # poi → (ts, list)  주변 문화 행사 — 인구 예측 신호
+    EVENTS_TTL = 600.0  # 10분 (행사는 자주 안 바뀜)
+    # POI별 lat/lon 매핑 — 행사 거리 필터에 사용
+    POI_COORD = {
+        "잠실역": (37.5133, 127.1000), "강남역": (37.4980, 127.0276),
+        "홍대 관광특구": (37.5572, 126.9244), "광화문·덕수궁": (37.5717, 126.9766),
+        "서울역": (37.5547, 126.9707), "종로·청계 관광특구": (37.5717, 126.9914),
+        "신촌·이대역": (37.5556, 126.9362), "사당역": (37.4766, 126.9817),
+        "건대입구역": (37.5403, 127.0703), "김포공항": (37.5615, 126.8014),
+        "잠실종합운동장": (37.5159, 127.0731), "잠실한강공원": (37.5180, 127.0822),
+    }
+    # (I2) 사회적 임팩트 — 시민이 권장 칸 탑승 누를 때 누적
+    impact_state = {
+        "events": [],            # 최근 200개 이벤트 (ts, station, saved_pct)
+        "total_count": 0,
+        "saved_pct_sum": 0.0,
+    }
+    IMPACT_MAX = 200
 
     def _simulate_arrival_items(station: str, line: int | None) -> list[dict]:
         """API 응답이 비거나 ERROR-338(키 미등록) 시 시뮬 도착정보.
@@ -367,10 +387,13 @@ async def run_serve(args) -> None:
         def _fetch_sync():
             try:
                 from src.data_pipeline.seoul_opendata import SeoulOpenDataClient
-                from src.utils.settings import load_config
+                from src.utils.settings import load_config, load_env
                 cfg = load_config("default").seoul_opendata
+                env = load_env()
                 base = getattr(cfg, "realtime_arrival_base", None) or cfg.base_url
-                with SeoulOpenDataClient(base_url=base) as c:
+                # 도착정보는 별도 키가 있으면 그걸 우선 사용 (서울 OpenAPI는 키 단위 서비스 등록)
+                key = env.seoul_subway_arrival_key or env.seoul_opendata_api_key
+                with SeoulOpenDataClient(api_key=key, base_url=base) as c:
                     return c.fetch("realtimeStationArrival", 0, 10, station)
             except Exception as e:
                 return {"_error": f"{type(e).__name__}: {e}"}
@@ -462,6 +485,301 @@ async def run_serve(args) -> None:
         population_cache[poi] = (now, payload)
         return payload
 
+    def _haversine_km(lat1, lon1, lat2, lon2):
+        import math
+        R = 6371.0
+        dLat = math.radians(lat2 - lat1)
+        dLon = math.radians(lon2 - lon1)
+        a = math.sin(dLat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dLon / 2) ** 2
+        return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    async def fetch_events(poi: str, radius_km: float = 1.5) -> dict:
+        """주변 문화 행사 — 인구 폭증 예측 신호."""
+        now = time.time()
+        cached = events_cache.get(poi)
+        if cached and now - cached[0] < EVENTS_TTL:
+            return cached[1]
+        loop = asyncio.get_running_loop()
+
+        def _fetch_sync():
+            try:
+                from src.data_pipeline.seoul_opendata import SeoulOpenDataClient
+                with SeoulOpenDataClient() as c:
+                    # 행사 1~200 fetch
+                    return c.fetch("ListPublicReservationCulture", 1, 200)
+            except Exception as e:
+                return {"_error": f"{type(e).__name__}: {e}"}
+
+        raw = await loop.run_in_executor(None, _fetch_sync)
+        rows = (raw.get("ListPublicReservationCulture") or {}).get("row") or []
+        coord = POI_COORD.get(poi)
+        nearby = []
+        for r in rows:
+            try:
+                x = float(r.get("X")); y = float(r.get("Y"))  # X=lon, Y=lat
+            except Exception:
+                continue
+            if coord:
+                d = _haversine_km(coord[0], coord[1], y, x)
+                if d > radius_km: continue
+            else:
+                d = None
+            # 종료 안 된 행사만
+            stat = r.get("SVCSTATNM") or ""
+            if stat in ("접수종료", "운영종료"): continue
+            nearby.append({
+                "name": r.get("SVCNM"),
+                "place": r.get("PLACENM"),
+                "status": stat,
+                "open_begin": r.get("SVCOPNBGNDT"),
+                "open_end": r.get("SVCOPNENDDT"),
+                "tgt": r.get("USETGTINFO"),
+                "v_max": _to_int(r.get("V_MAX")),
+                "area": r.get("AREANM"),
+                "url": r.get("SVCURL"),
+                "tel": r.get("TELNO"),
+                "lat": y, "lon": x, "dist_km": round(d, 2) if d is not None else None,
+            })
+        # 거리 가까운 + capacity 큰 순으로 정렬
+        nearby.sort(key=lambda e: (e.get("dist_km") or 999, -(e.get("v_max") or 0)))
+        nearby = nearby[:10]
+        # 인구 영향 예상치 — 가까운 큰 행사 v_max 합
+        total_capacity = sum(e.get("v_max") or 0 for e in nearby)
+        payload = {
+            "type": "events",
+            "poi": poi,
+            "fetched_at": now,
+            "events": nearby,
+            "total_count": len(nearby),
+            "total_capacity": total_capacity,
+            "error": raw.get("_error"),
+        }
+        events_cache[poi] = (now, payload)
+        return payload
+
+    async def _reply_model_metrics(websocket, peer) -> None:
+        """학습된 ML 모델 검증 메트릭 — outputs/occupancy_metrics.json 읽어 응답."""
+        try:
+            from pathlib import Path as _P
+            import json as _json
+            root = _P(__file__).resolve().parents[2]
+            mp = root / "outputs" / "occupancy_metrics.json"
+            if not mp.exists():
+                payload = {"type": "model_metrics", "available": False,
+                           "reason": "outputs/occupancy_metrics.json 없음 — scripts/train_occupancy.py 실행 필요"}
+            else:
+                metrics = _json.loads(mp.read_text(encoding="utf-8"))
+                payload = {"type": "model_metrics", "available": True, **metrics}
+            await asyncio.wait_for(websocket.send(json.dumps(payload, ensure_ascii=False)), timeout=2.0)
+        except Exception as e:
+            print(f"[metrics] {peer} fail: {type(e).__name__}: {e}", flush=True)
+
+    async def _reply_events(websocket, poi: str, peer) -> None:
+        try:
+            payload = await fetch_events(poi)
+            await asyncio.wait_for(websocket.send(json.dumps(payload, ensure_ascii=False)), timeout=2.0)
+            print(f"[events] {peer} {poi} count={payload['total_count']} cap={payload['total_capacity']}", flush=True)
+        except Exception as e:
+            print(f"[events] {peer} fail: {type(e).__name__}: {e}", flush=True)
+
+    async def fetch_citydata(poi: str) -> dict:
+        """서울 실시간 도시데이터 통합 — 한 호출로 인구/버스/도로/주차/따릉이/날씨/상권."""
+        now = time.time()
+        cached = citydata_cache.get(poi)
+        if cached and now - cached[0] < CITYDATA_TTL:
+            return cached[1]
+        loop = asyncio.get_running_loop()
+
+        def _fetch_sync():
+            try:
+                from src.data_pipeline.seoul_opendata import SeoulOpenDataClient
+                with SeoulOpenDataClient() as c:
+                    return c.fetch("citydata", 1, 5, poi)
+            except Exception as e:
+                return {"_error": f"{type(e).__name__}: {e}"}
+
+        raw = await loop.run_in_executor(None, _fetch_sync)
+        cd = raw.get("CITYDATA") or {}
+        # 핵심 메트릭만 정규화 — 응답 자체는 매우 큼, 폰/UI에 필요한 것만 추림
+        ppltn = (cd.get("LIVE_PPLTN_STTS") or [{}])[0] if isinstance(cd.get("LIVE_PPLTN_STTS"), list) else cd.get("LIVE_PPLTN_STTS") or {}
+        weather = (cd.get("WEATHER_STTS") or [{}])[0] if cd.get("WEATHER_STTS") else {}
+        sub_ppltn = cd.get("LIVE_SUB_PPLTN") or {}
+        bus_ppltn = cd.get("LIVE_BUS_PPLTN") or {}
+        cmrcl = cd.get("LIVE_CMRCL_STTS") or {}
+        road = cd.get("ROAD_TRAFFIC_STTS") or {}
+        road_avg = (road.get("AVG_ROAD_DATA") if isinstance(road, dict) else None) or {}
+        prk_list = cd.get("PRK_STTS") or []
+        sbike_list = cd.get("SBIKE_STTS") or []
+
+        # 따릉이/주차 — 가까운 N개만, 핵심 필드만
+        sbike = [{
+            "name": s.get("SBIKE_SPOT_NM"), "shared": _to_int(s.get("SBIKE_SHARED")),
+            "rack": _to_int(s.get("SBIKE_RACK_CNT")), "parking": _to_int(s.get("SBIKE_PARKING_CNT")),
+        } for s in sbike_list[:5]]
+        parking = [{
+            "name": p.get("PRK_NM"), "type": p.get("PRK_TYPE"),
+            "cap": _to_int(p.get("CPCTY")), "cur": _to_int(p.get("CUR_PRK_CNT")),
+        } for p in prk_list[:5]]
+
+        # 도로 65개 list → 가장 느린/빠른 5개씩만 (UI용)
+        roads_all = []
+        rt = cd.get("ROAD_TRAFFIC_STTS")
+        if isinstance(rt, dict):
+            roads_all = rt.get("ROAD_TRAFFIC_STTS") or []
+        _road_link_count = len(roads_all) if isinstance(roads_all, list) else 0
+        roads_with_spd = []
+        for r in (roads_all or []):
+            spd = _to_float(r.get("SPD"))
+            if spd is None:
+                continue
+            roads_with_spd.append({
+                "name": r.get("ROAD_NM"),
+                "spd": spd,
+                "idx": r.get("IDX"),
+                "from": r.get("START_ND_NM"),
+                "to": r.get("END_ND_NM"),
+            })
+        roads_with_spd.sort(key=lambda x: x["spd"])
+        _roads_slow = roads_with_spd[:5]
+        _roads_fast = list(reversed(roads_with_spd[-5:])) if roads_with_spd else []
+
+        # 24시간 예보 — 향후 6시간 + 강수 시각만 추림 (UI 한 줄 표시용)
+        fcst_raw = weather.get("FCST24HOURS") or []
+        fcst = []
+        rain_first = None  # 첫 강수 예보 시각
+        for f in fcst_raw[:24]:
+            row = {
+                "dt": f.get("FCST_DT"),
+                "temp": _to_int(f.get("TEMP")),
+                "precpt_type": f.get("PRECPT_TYPE"),
+                "rain_chance": _to_int(f.get("RAIN_CHANCE")),
+                "sky": f.get("SKY_STTS"),
+            }
+            fcst.append(row)
+            if rain_first is None and (f.get("PRECPT_TYPE") in ("비", "눈", "비/눈", "소나기")):
+                rain_first = {"dt": f.get("FCST_DT"), "type": f.get("PRECPT_TYPE")}
+
+        # 상권 카테고리별 — 핵심만
+        rsb = cmrcl.get("CMRCL_RSB") or []
+        rsb_brief = [{
+            "ctgr": r.get("RSB_MID_CTGR"),
+            "lvl": r.get("RSB_PAYMENT_LVL"),
+            "cnt": _to_int(r.get("RSB_SH_PAYMENT_CNT")),
+        } for r in rsb[:6]]
+
+        payload = {
+            "type": "citydata",
+            "poi": poi,
+            "fetched_at": now,
+            # 인구·혼잡 (citydata_ppltn과 동일하지만 통합 호출에 포함)
+            "area_nm": ppltn.get("AREA_NM"), "area_cd": ppltn.get("AREA_CD"),
+            "congest_lvl": ppltn.get("AREA_CONGEST_LVL"),
+            "ppltn_min": _to_int(ppltn.get("AREA_PPLTN_MIN")),
+            "ppltn_max": _to_int(ppltn.get("AREA_PPLTN_MAX")),
+            "ppltn_time": ppltn.get("PPLTN_TIME"),
+            # 지하철·버스 라이브 승하차 (5/10/30분 누적)
+            "sub_5wthn_gton_max": _to_int(sub_ppltn.get("SUB_5WTHN_GTON_PPLTN_MAX")),
+            "sub_10wthn_gton_max": _to_int(sub_ppltn.get("SUB_10WTHN_GTON_PPLTN_MAX")),
+            "sub_30wthn_gton_max": _to_int(sub_ppltn.get("SUB_30WTHN_GTON_PPLTN_MAX")),
+            "sub_acml_gton_max": _to_int(sub_ppltn.get("SUB_ACML_GTON_PPLTN_MAX")),
+            "sub_stn_cnt": _to_int(sub_ppltn.get("SUB_STN_CNT")),
+            "bus_5wthn_gton_max": _to_int(bus_ppltn.get("BUS_5WTHN_GTON_PPLTN_MAX")),
+            "bus_10wthn_gton_max": _to_int(bus_ppltn.get("BUS_10WTHN_GTON_PPLTN_MAX")),
+            "bus_30wthn_gton_max": _to_int(bus_ppltn.get("BUS_30WTHN_GTON_PPLTN_MAX")),
+            "bus_acml_gton_max": _to_int(bus_ppltn.get("BUS_ACML_GTON_PPLTN_MAX")),
+            "bus_stn_cnt": _to_int(bus_ppltn.get("BUS_STN_CNT")),
+            # 도로 평균
+            "road_avg_speed": _to_float(road_avg.get("ROAD_TRAFFIC_SPD")),
+            "road_avg_idx": road_avg.get("ROAD_TRAFFIC_IDX"),
+            "road_msg": road_avg.get("ROAD_MSG"),
+            "road_link_cnt": _road_link_count,
+            "roads_slow": _roads_slow,
+            "roads_fast": _roads_fast,
+            # 날씨 (현재)
+            "temp": _to_float(weather.get("TEMP")),
+            "sensible_temp": _to_float(weather.get("SENSIBLE_TEMP")),
+            "max_temp": _to_float(weather.get("MAX_TEMP")),
+            "min_temp": _to_float(weather.get("MIN_TEMP")),
+            "humidity": _to_float(weather.get("HUMIDITY")),
+            "wind_dirct": weather.get("WIND_DIRCT"),
+            "wind_spd": _to_float(weather.get("WIND_SPD")),
+            "precpt_type": weather.get("PRECPT_TYPE"),
+            "pcp_msg": weather.get("PCP_MSG"),
+            "weather_time": weather.get("WEATHER_TIME"),
+            # 공기질
+            "pm25": _to_int(weather.get("PM25")),
+            "pm25_idx": weather.get("PM25_INDEX"),
+            "pm10": _to_int(weather.get("PM10")),
+            "pm10_idx": weather.get("PM10_INDEX"),
+            "air_idx": weather.get("AIR_IDX"),
+            "air_idx_mvl": _to_float(weather.get("AIR_IDX_MVL")),
+            "air_msg": weather.get("AIR_MSG"),
+            # 자외선
+            "uv_lvl": _to_int(weather.get("UV_INDEX_LVL")),
+            "uv_idx": weather.get("UV_INDEX"),
+            "uv_msg": weather.get("UV_MSG"),
+            "sunrise": weather.get("SUNRISE"),
+            "sunset": weather.get("SUNSET"),
+            # 24시간 예보 (강수 시각 first)
+            "fcst": fcst,
+            "rain_first": rain_first,
+            # 환승 옵션
+            "sbike": sbike,
+            "parking": parking,
+            # 상권 결제
+            "cmrcl_lvl": cmrcl.get("AREA_CMRCL_LVL"),
+            "cmrcl_payment_cnt": _to_int(cmrcl.get("AREA_SH_PAYMENT_CNT")),
+            "cmrcl_male_rate": _to_float(cmrcl.get("CMRCL_MALE_RATE")),
+            "cmrcl_female_rate": _to_float(cmrcl.get("CMRCL_FEMALE_RATE")),
+            "cmrcl_rsb": rsb_brief,
+            # 안전 알림
+            "events": cd.get("EVENT_STTS") or [],
+            "alerts": cd.get("LIVE_DST_MESSAGE") or [],
+            "accidents": cd.get("ACDNT_CNTRL_STTS") or [],
+            "error": raw.get("_error"),
+        }
+        citydata_cache[poi] = (now, payload)
+        return payload
+
+    async def _send_impact_to(ws_c) -> None:
+        n = impact_state["total_count"]
+        avg_saved = (impact_state["saved_pct_sum"] / n) if n > 0 else 0.0
+        payload = {
+            "type": "impact_summary",
+            "total_count": n,
+            "avg_saved_pct": avg_saved,
+            "recent": impact_state["events"][-10:],
+            "ts": time.time(),
+        }
+        try:
+            await asyncio.wait_for(ws_c.send(json.dumps(payload, ensure_ascii=False)), timeout=1.0)
+        except Exception:
+            pass
+
+    async def _broadcast_impact() -> None:
+        """누적 임팩트 요약을 모든 client에 broadcast."""
+        n = impact_state["total_count"]
+        avg_saved = (impact_state["saved_pct_sum"] / n) if n > 0 else 0.0
+        recent = impact_state["events"][-10:]
+        payload = {
+            "type": "impact_summary",
+            "total_count": n,
+            "avg_saved_pct": avg_saved,
+            "recent": recent,
+            "ts": time.time(),
+        }
+        await broadcast(json.dumps(payload, ensure_ascii=False))
+
+    async def _reply_citydata(websocket, poi: str, peer) -> None:
+        try:
+            payload = await fetch_citydata(poi)
+            await asyncio.wait_for(websocket.send(json.dumps(payload, ensure_ascii=False)), timeout=2.0)
+            err = payload.get("error")
+            tag = f"err={err}" if err else f"{payload.get('congest_lvl')} bus30={payload.get('bus_30wthn_gton_max')} bike={len(payload.get('sbike') or [])}"
+            print(f"[citydata] {peer} {poi} {tag}", flush=True)
+        except Exception as e:
+            print(f"[citydata] {peer} fail: {type(e).__name__}: {e}", flush=True)
+
     async def _reply_arrival(websocket, station: str, line, peer) -> None:
         try:
             payload = await fetch_arrival(station, line)
@@ -508,6 +826,9 @@ async def run_serve(args) -> None:
         peer = getattr(websocket, "remote_address", "?")
         clients.add(websocket)
         print(f"[ws] 연결 {peer} (총 {len(clients)})", flush=True)
+        # 새 client에 현재 임팩트 요약 즉시 전달
+        if impact_state["total_count"] > 0:
+            asyncio.create_task(_send_impact_to(websocket))
         try:
             async for msg in websocket:
                 # text 메시지 = 컨트롤 (호모그래피 set 등)
@@ -533,6 +854,29 @@ async def run_serve(args) -> None:
                         elif ctype == "population_query":
                             poi = (ctrl.get("poi") or "강남역").strip()
                             asyncio.create_task(_reply_population(websocket, poi, peer))
+                        elif ctype == "citydata_query":
+                            poi = (ctrl.get("poi") or "강남역").strip()
+                            asyncio.create_task(_reply_citydata(websocket, poi, peer))
+                        elif ctype == "events_query":
+                            poi = (ctrl.get("poi") or "강남역").strip()
+                            asyncio.create_task(_reply_events(websocket, poi, peer))
+                        elif ctype == "model_metrics_query":
+                            asyncio.create_task(_reply_model_metrics(websocket, peer))
+                        elif ctype == "impact_log":
+                            # 시민 PWA/폰이 "탑승하기" 누를 때
+                            saved = float(ctrl.get("saved_pct") or 0)
+                            impact_state["events"].append({
+                                "ts": time.time(),
+                                "station": ctrl.get("station") or "",
+                                "car": ctrl.get("car") or "",
+                                "saved_pct": saved,
+                            })
+                            if len(impact_state["events"]) > IMPACT_MAX:
+                                impact_state["events"] = impact_state["events"][-IMPACT_MAX:]
+                            impact_state["total_count"] += 1
+                            impact_state["saved_pct_sum"] += saved
+                            # 모든 client에 누적 요약 broadcast (운영자 콘솔이 받음)
+                            asyncio.create_task(_broadcast_impact())
                         elif ctype == "predict_occupancy":
                             hour = int(ctrl.get("hour", 18))
                             line = int(ctrl.get("line", 2))

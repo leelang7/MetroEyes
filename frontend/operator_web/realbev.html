@@ -58,6 +58,88 @@
 .ml-sparkline .ml-now b { color: var(--accent); }
 .ml-sparkline .ml-sub { font-size: 11px; color: var(--muted-2); }
 .ml-sparkline canvas { flex: 1; height: 60px; min-width: 0; }
+.ml-sparkline .accuracy {
+  display: flex; flex-direction: column; gap: 2px; padding: 0 12px; min-width: 110px;
+  border-left: 1px solid var(--line);
+}
+.ml-sparkline .accuracy .acc-label { font-size: 9px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
+.ml-sparkline .accuracy .acc-pct { font-size: 24px; font-weight: 300; color: var(--accent); font-variant-numeric: tabular-nums; }
+.ml-sparkline .accuracy .acc-pct.warn { color: var(--warn); }
+.ml-sparkline .accuracy .acc-pct.crit { color: var(--crit); }
+.ml-sparkline .accuracy .acc-detail { font-size: 10px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+
+/* 5/10/30분 단위 막대 그래프 — 지하철·버스 단기 활동 */
+.short-term-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 14px; }
+.short-bar { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.short-bar .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+.short-bar .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
+.short-bar .bars { display: flex; align-items: flex-end; gap: 12px; margin-top: 8px; height: 50px; }
+.short-bar .bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.short-bar .bar .fill { width: 100%; background: linear-gradient(180deg, rgba(125,211,211,0.6), rgba(125,211,211,0.1)); border-radius: 4px 4px 0 0; min-height: 2px; }
+.short-bar .bar .val { font-size: 11px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.short-bar .bar .tag { font-size: 9px; color: var(--muted); letter-spacing: 0.6px; }
+
+.safety-strip {
+  display: none; align-items: center; gap: 10px;
+  padding: 10px 14px; margin: 0 0 14px;
+  background: rgba(255,94,87,0.08); border: 1px solid rgba(255,94,87,0.3); border-radius: 10px;
+  font-size: 12px; color: var(--crit); font-weight: 500;
+}
+.safety-strip.show { display: flex; }
+
+/* 막힌 도로 list — 운영자 컨텍스트 */
+.roads-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
+.roads-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.roads-card .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
+.roads-card .road-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; font-size: 12px; }
+.roads-card .road-row .name { color: var(--fg); flex: 1; }
+.roads-card .road-row .spd { color: var(--crit); font-weight: 500; font-variant-numeric: tabular-nums; }
+.roads-card .road-row .spd.fast { color: var(--accent); }
+.roads-card .road-row .from-to { color: var(--muted); font-size: 10px; }
+.roads-card .roads-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.roads-card h4 { margin: 0 0 6px; font-size: 11px; color: var(--muted); font-weight: 500; }
+.roads-card h4.slow { color: var(--crit); }
+.roads-card h4.fast { color: var(--accent); }
+
+/* (I2) 사회적 임팩트 카드 */
+.impact-card {
+  background: linear-gradient(135deg, rgba(125,211,211,0.10), rgba(125,211,211,0.02));
+  border: 1px solid rgba(125,211,211,0.3); border-radius: 14px;
+  padding: 18px 22px; margin: 0 0 14px;
+  display: flex; align-items: center; gap: 24px;
+}
+.impact-card .ic-num { font-size: 38px; font-weight: 200; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; }
+.impact-card .ic-num small { font-size: 14px; color: var(--muted); margin-left: 4px; }
+.impact-card .ic-meta { display: flex; flex-direction: column; gap: 4px; }
+.impact-card .ic-meta .ic-label { font-size: 10px; color: var(--muted); letter-spacing: 1.4px; text-transform: uppercase; }
+.impact-card .ic-meta .ic-detail { font-size: 13px; color: var(--fg); }
+.impact-card .ic-bar { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.impact-card .ic-bar .ic-bar-label { font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; }
+.impact-card .ic-bar .ic-bar-fill { height: 6px; background: rgba(125,211,211,0.15); border-radius: 999px; overflow: hidden; }
+.impact-card .ic-bar .ic-bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), rgba(125,211,211,0.4)); border-radius: 999px; transition: width 0.6s ease; }
+
+/* 주변 행사 카드 — 인구 영향 신호 */
+.events-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
+.events-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.events-card .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
+.events-card .ev-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.events-card .ev-row:first-of-type { border-top: 0; }
+.events-card .ev-row .ev-place { color: var(--muted); font-size: 11px; min-width: 100px; }
+.events-card .ev-row .ev-name { color: var(--fg); flex: 1; }
+.events-card .ev-row .ev-cap { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 500; min-width: 56px; text-align: right; }
+.events-card .ev-row .ev-dist { color: var(--muted-2); font-size: 10px; min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; }
+.events-card .ev-summary { font-size: 11px; color: var(--muted-2); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+.events-card .ev-summary b { color: var(--warn); font-weight: 500; }
+
+/* ML 모델 검증 메트릭 카드 */
+.metrics-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; display: flex; align-items: center; gap: 18px; }
+.metrics-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); min-width: 140px; }
+.metrics-card .lbl .src { display: block; color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-top: 4px; width: fit-content; }
+.metrics-card .m { display: flex; flex-direction: column; gap: 2px; padding: 0 16px; border-left: 1px solid var(--line); }
+.metrics-card .m .v { font-size: 20px; font-weight: 300; color: var(--fg); font-variant-numeric: tabular-nums; }
+.metrics-card .m .v.ok { color: var(--accent); }
+.metrics-card .m .k { font-size: 10px; color: var(--muted); letter-spacing: 1.2px; }
+.metrics-card .miss { color: var(--muted-2); font-size: 12px; }
 .diag-log .ok { color: var(--accent); }
 .diag-log .err { color: var(--crit); }
 .diag-log .warn { color: var(--warn); }
@@ -97,6 +179,9 @@
         <span class="pulse"></span><span id="m-fps">— FPS</span> · <span id="m-tracks">— 트랙</span> · <span id="m-tx">송신 — fps</span>
       </div>
     </div>
+    <div class="safety-strip" id="safety-strip-top">
+      <span>⚠</span><span id="safety-strip-text-top">—</span>
+    </div>
     <div class="fusion-strip" id="fusion-strip">
       <div class="fusion-card dim" id="fc-cv">
         <div class="fc-label">검출 인원<span class="src">자체 CV</span></div>
@@ -119,6 +204,95 @@
         <div class="fc-sub" id="fc-cong-sub">CV + 인구 결합 평가</div>
       </div>
     </div>
+
+    <!-- 통합 도시데이터 row 2: 도로 / 환승(따릉이+주차) / 날씨 / 상권 -->
+    <div class="fusion-strip" id="fusion-strip-2" style="margin-top: -4px;">
+      <div class="fusion-card dim" id="fc-road">
+        <div class="fc-label">도로 평균<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-road-v">—<span class="unit">km/h</span></div>
+        <div class="fc-sub" id="fc-road-sub">ROAD_TRAFFIC_STTS</div>
+      </div>
+      <div class="fusion-card dim" id="fc-trans">
+        <div class="fc-label">환승 옵션<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-trans-v">—<span class="unit">대</span></div>
+        <div class="fc-sub" id="fc-trans-sub">따릉이 / 주차장</div>
+      </div>
+      <div class="fusion-card dim" id="fc-wx">
+        <div class="fc-label">날씨<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-wx-v">—<span class="unit">°C</span></div>
+        <div class="fc-sub" id="fc-wx-sub">기온 · 체감 · 습도</div>
+      </div>
+      <div class="fusion-card dim" id="fc-cmrcl">
+        <div class="fc-label">상권 결제<span class="src">citydata</span></div>
+        <div class="fc-value" id="fc-cmrcl-v">—</div>
+        <div class="fc-sub" id="fc-cmrcl-sub">LIVE_CMRCL_STTS</div>
+      </div>
+    </div>
+    <div class="impact-card" id="impact-card" hidden>
+      <div class="ic-num"><span id="ic-count">0</span><small>회</small></div>
+      <div class="ic-meta">
+        <span class="ic-label">사회적 임팩트 · 오늘 누적</span>
+        <span class="ic-detail">시민 권장 칸 탑승 수용</span>
+      </div>
+      <div class="ic-bar">
+        <div class="ic-bar-label"><span>평균 한산도 절감</span><span><b id="ic-saved">0</b>%</span></div>
+        <div class="ic-bar-fill"><div class="ic-bar-inner" id="ic-bar" style="width:0%"></div></div>
+        <div class="ic-bar-label" style="margin-top: 4px; color: var(--muted-2);"><span id="ic-recent">최근 5건: —</span></div>
+      </div>
+    </div>
+
+    <div class="safety-strip" id="safety-strip">
+      <span>⚠</span><span id="safety-strip-text">—</span>
+    </div>
+
+    <div class="events-card" id="events-card" hidden>
+      <div class="lbl">반경 1.5km 진행 행사 — 인구 영향 신호<span class="src">ListPublicReservationCulture</span></div>
+      <div id="events-rows"></div>
+      <div class="ev-summary" id="events-summary"></div>
+    </div>
+
+    <div class="roads-card" id="roads-card" hidden>
+      <div class="lbl">주변 도로 통행 — 65개 링크<span class="src">ROAD_TRAFFIC_STTS</span></div>
+      <div class="roads-grid">
+        <div>
+          <h4 class="slow">⚠ 가장 느린 5</h4>
+          <div id="roads-slow"></div>
+        </div>
+        <div>
+          <h4 class="fast">↑ 가장 빠른 5</h4>
+          <div id="roads-fast"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="short-term-row">
+      <div class="short-bar">
+        <div class="lbl">지하철 5/10/30분 누적<span class="src">LIVE_SUB_PPLTN</span></div>
+        <div class="bars">
+          <div class="bar"><div class="fill" id="sub-5"></div><span class="val" id="sub-5-v">—</span><span class="tag">5분</span></div>
+          <div class="bar"><div class="fill" id="sub-10"></div><span class="val" id="sub-10-v">—</span><span class="tag">10분</span></div>
+          <div class="bar"><div class="fill" id="sub-30"></div><span class="val" id="sub-30-v">—</span><span class="tag">30분</span></div>
+        </div>
+      </div>
+      <div class="short-bar">
+        <div class="lbl">버스 5/10/30분 누적<span class="src">LIVE_BUS_PPLTN</span></div>
+        <div class="bars">
+          <div class="bar"><div class="fill" id="bus-5"></div><span class="val" id="bus-5-v">—</span><span class="tag">5분</span></div>
+          <div class="bar"><div class="fill" id="bus-10"></div><span class="val" id="bus-10-v">—</span><span class="tag">10분</span></div>
+          <div class="bar"><div class="fill" id="bus-30"></div><span class="val" id="bus-30-v">—</span><span class="tag">30분</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-card" id="metrics-card" hidden>
+      <div class="lbl">ML 모델 검증<span class="src">GBR · CV5</span></div>
+      <div class="m"><span class="v ok" id="mt-mae">—</span><span class="k">MAE</span></div>
+      <div class="m"><span class="v" id="mt-rmse">—</span><span class="k">RMSE</span></div>
+      <div class="m"><span class="v" id="mt-r2">—</span><span class="k">R²</span></div>
+      <div class="m"><span class="v" id="mt-cv">—</span><span class="k">5-fold MAE</span></div>
+      <div class="m"><span class="v" id="mt-n">—</span><span class="k">표본</span></div>
+    </div>
+
     <div class="ml-sparkline" id="ml-sparkline">
       <div class="ml-meta">
         <div class="ml-label">24h 점유율 예측<span class="src">ML · GBR</span></div>
@@ -126,9 +300,14 @@
         <div class="ml-sub" id="ml-sub">학습 모델 미발견 — 시뮬 곡선</div>
       </div>
       <canvas id="ml-canvas"></canvas>
+      <div class="accuracy">
+        <span class="acc-label">예측 정확도</span>
+        <span class="acc-pct" id="acc-pct">—<span style="font-size:13px;color:var(--muted);">%</span></span>
+        <span class="acc-detail" id="acc-detail">예측 — / 실측 —</span>
+      </div>
     </div>
     <div class="ws-controls">
-      <input id="ws-url" type="text" value="ws://localhost:8765" />
+      <input id="ws-url" type="text" value="" placeholder="ws://localhost:8765" />
       <button id="ws-connect">연결</button>
       <button id="ws-disconnect" class="secondary">해제</button>
       <select id="fc-station-sel" style="background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-size: 12px;">
@@ -857,6 +1036,8 @@ function connect(url) {
     setStatus('connected', '연결됨'); diag('ok', 'WebSocket OPEN');
     // 4중 데이터 융합 — 도착정보 + 역세권 인구 즉시 + 폴링
     Fusion.startPolling();
+    // ML 모델 메트릭 1회 조회
+    try { ws.send(JSON.stringify({ type: 'model_metrics_query' })); } catch {}
   };
   ws.onclose = (e) => { setStatus('error', '연결 끊김'); ws = null; diag('warn', `CLOSE code=${e.code}`); Fusion.stopPolling(); };
   ws.onerror = () => { setStatus('error', '연결 오류'); diag('err', 'WS ERROR'); };
@@ -864,7 +1045,31 @@ function connect(url) {
     let p; try { p = JSON.parse(ev.data); } catch { return; }
     if (p.type === 'arrival') { Fusion.applyArrival(p); return; }
     if (p.type === 'population') { Fusion.applyPopulation(p); return; }
+    if (p.type === 'citydata') { Fusion.applyCitydata(p); return; }
+    if (p.type === 'events') { Fusion.applyEvents(p); return; }
+    if (p.type === 'model_metrics') {
+      const card = document.getElementById('metrics-card');
+      if (!p.available) { card.hidden = true; return; }
+      card.hidden = false;
+      const fmt = (v, d = 3) => v != null ? Number(v).toFixed(d) : '—';
+      document.getElementById('mt-mae').textContent = fmt(p.mae_val);
+      document.getElementById('mt-rmse').textContent = fmt(p.rmse_val);
+      document.getElementById('mt-r2').textContent = fmt(p.r2_val, 2);
+      document.getElementById('mt-cv').textContent = fmt(p.mae_cv5);
+      document.getElementById('mt-n').textContent = (p.n_samples || 0).toLocaleString();
+      return;
+    }
     if (p.type === 'occupancy_predict') { window.MLChart && MLChart.applyPredict(p); return; }
+    if (p.type === 'impact_summary') {
+      document.getElementById('impact-card').hidden = false;
+      document.getElementById('ic-count').textContent = (p.total_count || 0).toLocaleString();
+      const saved = +p.avg_saved_pct || 0;
+      document.getElementById('ic-saved').textContent = saved.toFixed(0);
+      document.getElementById('ic-bar').style.width = Math.min(100, saved * 4) + '%';
+      const recent = (p.recent || []).slice(-5).map(e => `${e.station}/${e.car}(-${e.saved_pct.toFixed(0)}%)`).join(' · ');
+      document.getElementById('ic-recent').textContent = recent ? `최근 5건: ${recent}` : '';
+      return;
+    }
     fpsEl.textContent = `${(p.fps ?? 0).toFixed(1)} FPS (백엔드)`;
     tracksEl.textContent = `${(p.tracks || []).length} 트랙`;
     document.getElementById('frame-idx').textContent = `frame ${p.frame_idx ?? 0}`;
@@ -1134,16 +1339,142 @@ const Fusion = (() => {
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryArrival() { const s = station(); send({ type: 'arrival_query', stationName: s.name, line: s.line }); }
   function queryPpltn() { const s = station(); send({ type: 'population_query', poi: s.poi }); }
+  let cdT = null, evT = null;
+  function queryCitydata() { const s = station(); send({ type: 'citydata_query', poi: s.poi }); }
+  function queryEvents() { const s = station(); send({ type: 'events_query', poi: s.poi }); }
   function startPolling() {
-    queryArrival(); queryPpltn();
+    queryArrival(); queryPpltn(); queryCitydata(); queryEvents();
     if (arrivalT) clearInterval(arrivalT);
     arrivalT = setInterval(queryArrival, 20000);
     if (popT) clearInterval(popT);
     popT = setInterval(queryPpltn, 60000);
+    if (cdT) clearInterval(cdT);
+    cdT = setInterval(queryCitydata, 90000);
+    if (evT) clearInterval(evT);
+    evT = setInterval(queryEvents, 600000);   // 10분
   }
   function stopPolling() {
     if (arrivalT) { clearInterval(arrivalT); arrivalT = null; }
     if (popT) { clearInterval(popT); popT = null; }
+    if (cdT) { clearInterval(cdT); cdT = null; }
+    if (evT) { clearInterval(evT); evT = null; }
+  }
+  function applyEvents(j) {
+    const card = document.getElementById('events-card');
+    const items = j.events || [];
+    if (items.length === 0) { card.hidden = true; return; }
+    card.hidden = false;
+    document.getElementById('events-rows').innerHTML = items.slice(0, 5).map(e => `
+      <div class="ev-row">
+        <span class="ev-place">${(e.place || '-').substring(0, 14)}</span>
+        <span class="ev-name">${(e.name || '-').substring(0, 50)}</span>
+        <span class="ev-cap">${e.v_max ? e.v_max.toLocaleString() + '명' : '—'}</span>
+        <span class="ev-dist">${e.dist_km != null ? e.dist_km.toFixed(1) + 'km' : '—'}</span>
+      </div>`).join('');
+    const totalCap = j.total_capacity || 0;
+    document.getElementById('events-summary').innerHTML =
+      `반경 내 <b>${j.total_count}건</b> · 누적 수용 <b>${totalCap.toLocaleString()}명</b> — 운행 분배에 반영 권장`;
+  }
+  function applyCitydata(j) {
+    if (j.error) return;
+    // 도로
+    if (j.road_avg_speed != null) {
+      const card = document.getElementById('fc-road');
+      card.classList.remove('dim','crit'); card.classList.add(j.road_avg_speed < 15 ? 'crit' : j.road_avg_speed < 25 ? 'warn' : 'ok');
+      document.getElementById('fc-road-v').innerHTML = `${j.road_avg_speed.toFixed(0)}<span class="unit">km/h</span>`;
+      document.getElementById('fc-road-sub').textContent = `${j.road_avg_idx || '—'} · 통행 평균`;
+    }
+    // 환승
+    const bikeShared = (j.sbike || []).reduce((a, b) => a + (b.shared || 0), 0);
+    const prkAvail = (j.parking || []).reduce((a, b) => a + Math.max(0, (b.cap || 0) - (b.cur || 0)), 0);
+    if (bikeShared || prkAvail) {
+      const card = document.getElementById('fc-trans');
+      card.classList.remove('dim'); card.classList.add('ok');
+      document.getElementById('fc-trans-v').innerHTML = `${bikeShared}<span class="unit">대</span>`;
+      document.getElementById('fc-trans-sub').textContent = `따릉이 ${(j.sbike||[]).length}곳 ${bikeShared}대 · 주차 ${prkAvail}자리`;
+    }
+    // 날씨
+    if (j.temp != null) {
+      const card = document.getElementById('fc-wx');
+      card.classList.remove('dim'); card.classList.add('ok');
+      document.getElementById('fc-wx-v').innerHTML = `${j.temp.toFixed(1)}<span class="unit">°C</span>`;
+      const sens = j.sensible_temp != null ? `체감 ${j.sensible_temp.toFixed(0)}°` : '';
+      const hum = j.humidity != null ? `습도 ${j.humidity.toFixed(0)}%` : '';
+      document.getElementById('fc-wx-sub').textContent = [sens, hum].filter(Boolean).join(' · ');
+    }
+    // 상권
+    if (j.cmrcl_lvl) {
+      const card = document.getElementById('fc-cmrcl');
+      card.classList.remove('dim'); card.classList.add('ok');
+      document.getElementById('fc-cmrcl-v').textContent = j.cmrcl_lvl;
+      const topRsb = (j.cmrcl_rsb || []).slice(0, 2).map(r => `${r.ctgr} ${r.lvl}`).join(' · ');
+      document.getElementById('fc-cmrcl-sub').textContent = topRsb || `결제 ${j.cmrcl_payment_cnt ?? '—'}건/시간`;
+    }
+    // 도로 list (가장 느린/빠른 5개)
+    const roadsCard = document.getElementById('roads-card');
+    const slow = j.roads_slow || [], fast = j.roads_fast || [];
+    if (slow.length || fast.length) {
+      const slowEl = document.getElementById('roads-slow');
+      const fastEl = document.getElementById('roads-fast');
+      slowEl.innerHTML = slow.map(r => `
+        <div class="road-row">
+          <span class="name">${r.name || '-'}<br><span class="from-to">${r.from || ''} → ${r.to || ''}</span></span>
+          <span class="spd">${r.spd != null ? r.spd.toFixed(0) : '—'} km/h</span>
+        </div>`).join('');
+      fastEl.innerHTML = fast.map(r => `
+        <div class="road-row">
+          <span class="name">${r.name || '-'}<br><span class="from-to">${r.from || ''} → ${r.to || ''}</span></span>
+          <span class="spd fast">${r.spd != null ? r.spd.toFixed(0) : '—'} km/h</span>
+        </div>`).join('');
+      roadsCard.hidden = false;
+    }
+    // 5/10/30분 단기 추세 막대
+    const subVals = [j.sub_5wthn_gton_max, j.sub_10wthn_gton_max, j.sub_30wthn_gton_max];
+    const busVals = [j.bus_5wthn_gton_max, j.bus_10wthn_gton_max, j.bus_30wthn_gton_max];
+    const subMax = Math.max(1, ...subVals.filter(v => v != null));
+    const busMax = Math.max(1, ...busVals.filter(v => v != null));
+    ['5','10','30'].forEach((tag, i) => {
+      if (subVals[i] != null) {
+        document.getElementById(`sub-${tag}`).style.height = `${(subVals[i] / subMax * 100)}%`;
+        document.getElementById(`sub-${tag}-v`).textContent = subVals[i].toLocaleString();
+      }
+      if (busVals[i] != null) {
+        document.getElementById(`bus-${tag}`).style.height = `${(busVals[i] / busMax * 100)}%`;
+        document.getElementById(`bus-${tag}-v`).textContent = busVals[i].toLocaleString();
+      }
+    });
+    // 안전 배너 (위/아래 둘 다)
+    const safety = (j.events || []).concat(j.alerts || []).concat(j.accidents || []);
+    const sStrip = document.getElementById('safety-strip');
+    const sStripTop = document.getElementById('safety-strip-top');
+    if (safety.length > 0) {
+      const f = safety[0];
+      const msg = (f.EVENT_NM || f.MESSAGE || f.ACDNT_TYPE || '안전 알림').toString().substring(0, 100);
+      document.getElementById('safety-strip-text').textContent = msg;
+      document.getElementById('safety-strip-text-top').textContent = msg;
+      sStrip.classList.add('show'); sStripTop.classList.add('show');
+    } else {
+      sStrip.classList.remove('show'); sStripTop.classList.remove('show');
+    }
+    // (I1) 예측 vs 실측 정확도 — POI별 peak 누적 정규화
+    if (j.ppltn_max != null && window.MLChart) {
+      const peakKey = 'metroeyes_poi_peak';
+      const peaks = JSON.parse(localStorage.getItem(peakKey) || '{}');
+      peaks[j.poi] = Math.max(peaks[j.poi] || 0, j.ppltn_max);
+      localStorage.setItem(peakKey, JSON.stringify(peaks));
+      const peak = peaks[j.poi];
+      if (peak >= 100) {
+        const actual = (((j.ppltn_min || 0) + (j.ppltn_max || 0)) / 2) / peak;
+        const hour = new Date().getHours();
+        const pred = MLChart.predictAt(hour);
+        const acc = Math.max(0, Math.round(100 * (1 - Math.abs(pred - actual))));
+        const el = document.getElementById('acc-pct');
+        el.innerHTML = `${acc}<span style="font-size:13px;color:var(--muted);">%</span>`;
+        el.className = 'acc-pct ' + (acc >= 85 ? '' : acc >= 70 ? 'warn' : 'crit');
+        document.getElementById('acc-detail').textContent =
+          `예측 ${(pred * 100).toFixed(0)}% / 실측 ${(actual * 100).toFixed(0)}%${MLChart.isMlAvailable() ? ' · ML' : ' · sim'}`;
+      }
+    }
   }
   function fmtNum(n) {
     if (n == null) return '—';
@@ -1238,7 +1569,7 @@ const Fusion = (() => {
   stationSel.addEventListener('change', () => {
     if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); }
   });
-  return { startPolling, stopPolling, applyBev, applyArrival, applyPopulation };
+  return { startPolling, stopPolling, applyBev, applyArrival, applyPopulation, applyCitydata, applyEvents };
 })();
 
 // =================== 24h 점유율 예측 sparkline ===================
@@ -1345,8 +1676,15 @@ const MLChart = (() => {
   // 첫 그리기 (시뮬 fallback)
   setTimeout(draw, 100);
   window.addEventListener('resize', draw);
-  return { fetch24h, applyPredict };
+  function predictAt(hour) {
+    const s = series[hour];
+    if (s != null) return s;          // ML 응답 있으면 그걸
+    return simOccAt(hour, 'hub');     // 없으면 시뮬 곡선
+  }
+  function isMlAvailable() { return mlAvailable; }
+  return { fetch24h, applyPredict, predictAt, isMlAvailable };
 })();
+window.MLChart = MLChart;
 
 // ws 메시지 핸들러에 occupancy_predict 분기 — Fusion 객체 안에 넣기 위해 patch
 (() => {
@@ -1368,6 +1706,18 @@ const MLChart = (() => {
 // connect 함수 안 ws.onmessage에 occupancy_predict 분기 — 위 ws.onmessage 코드는 module scope이라 직접 추가 못함.
 // 우회: realbev.html의 ws onmessage가 Fusion.applyArrival/applyPopulation을 위해 호출되는 점에 추가.
 
+// 자동 WS URL: host 기반 분기
+(function () {
+  const p = new URLSearchParams(location.search).get('ws');
+  const saved = localStorage.getItem('subwaybev_ws');
+  let url = 'ws://localhost:8765';
+  if (p) url = p;
+  else if (saved) url = saved;
+  else if (location.hostname.endsWith('ngrok-free.dev')) url = `wss://${location.host}`;
+  else if (location.hostname.endsWith('github.io') || location.protocol === 'https:')
+    url = 'wss://rebekah-derisible-tanisha.ngrok-free.dev';
+  wsUrlEl.value = url;
+})();
 setTimeout(() => connect(wsUrlEl.value), 400);
 </script>
 </body>

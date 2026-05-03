@@ -39,6 +39,29 @@
     <span class="source">서울 도시데이터</span>
   </div>
 
+  <div class="context-chips" id="context-chips" hidden>
+    <!-- 핵심 3개 (항상 노출) -->
+    <span class="chip" id="chip-weather"><span class="ico">☁</span><b id="chip-weather-v">—°</b><span id="chip-weather-sub" style="margin-left: 4px;"></span></span>
+    <span class="chip" id="chip-air" hidden><span class="ico">😷</span>미세 <b id="chip-air-v">—</b></span>
+    <span class="chip" id="chip-bike" hidden><span class="ico">🚲</span>따릉이 <b id="chip-bike-v">—</b>대</span>
+    <!-- 부가 (약자 모드 또는 펼치기) -->
+    <span class="chip more-chip" id="chip-uv" hidden><span class="ico">☀</span>UV <b id="chip-uv-v">—</b></span>
+    <span class="chip more-chip" id="chip-parking" hidden><span class="ico">🅿</span>주차 <b id="chip-parking-v">—</b></span>
+    <span class="chip more-chip" id="chip-road" hidden><span class="ico">🛣</span>도로 <b id="chip-road-v">—</b>km/h</span>
+  </div>
+
+  <div id="impact-counter" hidden style="font-size: 11px; color: var(--accent); padding: 6px 12px; background: var(--accent-soft); border-radius: 999px; display: inline-block; margin: -2px 0 10px; font-feature-settings: 'tnum';"></div>
+
+  <div class="rain-banner" id="rain-banner" hidden>
+    <span class="ico">🌧</span>
+    <span id="rain-banner-text">—</span>
+  </div>
+
+  <div class="safety-banner" id="safety-banner" hidden>
+    <span>⚠</span>
+    <span id="safety-banner-text">—</span>
+  </div>
+
   <section class="decision">
     <div class="label" id="d-label">권장 탑승 칸</div>
     <div class="pct">
@@ -269,11 +292,25 @@ function applyAll() {
 
   // CTA destination
   document.getElementById('cta').onclick = () => {
-    const params = new URLSearchParams({
-      mode,
-      idx: opt.idx,
-      hour,
-    });
+    // (I2) 사회적 임팩트 — 권장 칸 평균과의 차이를 "절감"으로 누적
+    try {
+      const avg = options.reduce((a, b) => a + b.occ, 0) / options.length;
+      const savedPct = Math.max(0, Math.round((avg - opt.occ) * 100));
+      const myKey = 'metroeyes_my_impact';
+      const my = JSON.parse(localStorage.getItem(myKey) || '{"n":0,"saved":0}');
+      my.n += 1; my.saved += savedPct;
+      localStorage.setItem(myKey, JSON.stringify(my));
+      // backend에 broadcast (있으면)
+      if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
+        window.LIVE_WS.send(JSON.stringify({
+          type: 'impact_log',
+          station: document.getElementById('ctx-name').textContent,
+          car: opt.label,
+          saved_pct: savedPct,
+        }));
+      }
+    } catch {}
+    const params = new URLSearchParams({ mode, idx: opt.idx, hour });
     location.href = `onboard.html?${params.toString()}`;
   };
 }
@@ -434,6 +471,10 @@ const LIVE = (() => {
     if (location.hostname.endsWith('ngrok-free.dev')) {
       return `wss://${location.host}`;
     }
+    // GitHub Pages 등 외부 호스팅 → ngrok 영구 도메인으로 직접
+    if (location.hostname.endsWith('github.io') || location.protocol === 'https:') {
+      return 'wss://rebekah-derisible-tanisha.ngrok-free.dev';
+    }
     return 'ws://localhost:8765';
   }
 
@@ -443,7 +484,7 @@ const LIVE = (() => {
   let liveArrival = null;   // 마지막 arrival 응답
   let livePpltn = null;     // 마지막 인구 응답
   let curStation = stations[0]; // 기본 잠실
-  let arrivalPoll = null, ppltnPoll = null;
+  let arrivalPoll = null, ppltnPoll = null, cdPoll = null;
 
   const badge = document.getElementById('live-badge');
   const label = document.getElementById('live-label');
@@ -519,24 +560,115 @@ const LIVE = (() => {
   function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); }
   function queryArrival() { send({ type: 'arrival_query', stationName: curStation.name, line: curStation.line }); }
   function queryPpltn() { if (curStation.poi) send({ type: 'population_query', poi: curStation.poi }); }
+  function queryCitydata() { if (curStation.poi) send({ type: 'citydata_query', poi: curStation.poi }); }
+
+  function applyCitydata(j) {
+    if (j.error) return;
+    const chips = document.getElementById('context-chips');
+    let any = false;
+    // 날씨 + 강수 표시 (현재)
+    if (j.temp != null) {
+      const cl = j.temp >= 25 ? 'warm' : j.temp <= 5 ? 'cold' : '';
+      const el = document.getElementById('chip-weather');
+      el.className = 'chip ' + cl;
+      const rainNow = (j.precpt_type && j.precpt_type !== '없음' && j.precpt_type !== '-') ? ` ${j.precpt_type}` : '';
+      document.getElementById('chip-weather-v').textContent = `${j.temp.toFixed(1)}°${rainNow}`;
+      document.getElementById('chip-weather-sub').textContent = j.sensible_temp != null ? `체감 ${j.sensible_temp.toFixed(0)}°` : '';
+      el.hidden = false; any = true;
+    }
+    // 공기질
+    if (j.air_idx) {
+      const lvl = j.air_idx;
+      const cls = (lvl === '좋음') ? 'air-good' : (lvl === '보통') ? 'air-good'
+                : (lvl === '나쁨') ? 'air-mid' : 'air-bad';
+      const el = document.getElementById('chip-air');
+      el.className = 'chip ' + cls;
+      document.getElementById('chip-air-v').textContent = lvl;
+      const pm25 = j.pm25 != null ? `PM2.5 ${j.pm25}` : '';
+      const pm10 = j.pm10 != null ? `PM10 ${j.pm10}` : '';
+      document.getElementById('chip-air-sub').textContent = [pm25, pm10].filter(Boolean).join(' · ');
+      el.hidden = false; any = true;
+    }
+    // 자외선 (높음/매우 높음일 때만)
+    if (j.uv_idx && (j.uv_idx === '높음' || j.uv_idx === '매우 높음' || (j.uv_lvl ?? 0) >= 6)) {
+      const cls = j.uv_idx === '매우 높음' || (j.uv_lvl ?? 0) >= 9 ? 'uv-veryhigh' : 'uv-high';
+      const el = document.getElementById('chip-uv');
+      el.className = 'chip ' + cls;
+      document.getElementById('chip-uv-v').textContent = j.uv_idx;
+      el.hidden = false; any = true;
+    } else {
+      document.getElementById('chip-uv').hidden = true;
+    }
+    const bikeShared = (j.sbike || []).reduce((a, b) => a + (b.shared || 0), 0);
+    if (bikeShared > 0 || (j.sbike || []).length > 0) {
+      document.getElementById('chip-bike-v').textContent = bikeShared;
+      document.getElementById('chip-bike').hidden = false; any = true;
+    }
+    const prkAvail = (j.parking || []).reduce((a, b) => a + Math.max(0, (b.cap || 0) - (b.cur || 0)), 0);
+    if (prkAvail > 0) {
+      document.getElementById('chip-parking-v').textContent = prkAvail;
+      document.getElementById('chip-parking').hidden = false; any = true;
+    }
+    if (j.road_avg_speed != null) {
+      document.getElementById('chip-road-v').textContent = j.road_avg_speed.toFixed(0);
+      document.getElementById('chip-road').hidden = false; any = true;
+    }
+    chips.hidden = !any;
+
+    // 강수 예보 배너
+    const rainEl = document.getElementById('rain-banner');
+    const rainText = document.getElementById('rain-banner-text');
+    if (j.rain_first && j.rain_first.dt) {
+      const dt = j.rain_first.dt;  // YYYYMMDDHHMM
+      const hh = dt.length >= 12 ? dt.substring(8, 10) : '?';
+      const tp = j.rain_first.type;
+      rainText.innerHTML = `<b>${hh}시</b>부터 <b>${tp}</b> 예보 — 우산 챙기세요`;
+      rainEl.hidden = false;
+    } else {
+      rainEl.hidden = true;
+    }
+
+    // 안전 알림 (사고/통제)
+    const safety = (j.events || []).concat(j.alerts || []).concat(j.accidents || []);
+    const safetyEl = document.getElementById('safety-banner');
+    if (safety.length > 0) {
+      const first = safety[0];
+      const msg = (first.EVENT_NM || first.MESSAGE || first.ACDNT_TYPE || '안전 알림').toString();
+      document.getElementById('safety-banner-text').textContent = msg.substring(0, 80);
+      safetyEl.hidden = false;
+    } else {
+      safetyEl.hidden = true;
+    }
+  }
 
   function connect(url) {
     try { if (ws) ws.close(); } catch {}
     setBadge('connecting', '연결 중');
     ws = new WebSocket(url);
+    window.LIVE_WS = ws;   // CTA에서 impact_log 송신용
     ws.onopen = () => {
       setBadge('connected', 'LIVE');
-      queryArrival(); queryPpltn();
+      queryArrival(); queryPpltn(); queryCitydata();
       if (arrivalPoll) clearInterval(arrivalPoll);
       arrivalPoll = setInterval(queryArrival, 20000);
       if (ppltnPoll) clearInterval(ppltnPoll);
       ppltnPoll = setInterval(queryPpltn, 60000);
+      if (cdPoll) clearInterval(cdPoll);
+      cdPoll = setInterval(queryCitydata, 90000);
     };
     ws.onmessage = (ev) => {
       try {
         const j = JSON.parse(ev.data);
         if (j.type === 'arrival') { liveArrival = j; applyOcc(); }
         else if (j.type === 'population') { livePpltn = j; applyPopulation(j); }
+        else if (j.type === 'citydata') { applyCitydata(j); }
+        else if (j.type === 'impact_summary') {
+          const c = document.getElementById('impact-counter');
+          if (c) {
+            c.textContent = `🎯 오늘 ${j.total_count.toLocaleString()}명 추천 수용 · 평균 -${j.avg_saved_pct.toFixed(0)}% 한산`;
+            c.hidden = false;
+          }
+        }
         else { liveBev = j;
           if (typeof j.fps === 'number') {
             label.textContent = `LIVE · ${j.fps.toFixed(1)} fps · ${(j.tracks || []).length} 트랙`;
@@ -557,7 +689,7 @@ const LIVE = (() => {
         curStation = r.station;
         document.getElementById('ctx-name').textContent = `${r.station.name}역`;
         document.getElementById('ctx-meta').textContent = `${r.station.line}호선 · ${r.km.toFixed(1)}km`;
-        if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); }
+        if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); }
       },
       () => {},
       { enableHighAccuracy: false, timeout: 8000 }

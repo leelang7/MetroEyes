@@ -53,13 +53,13 @@ def _start_static_server() -> threading.Thread:
 
 async def capture_page(context, url: str, png_out: Path,
                         wait_ms: int = 4000, viewport=(1440, 900),
-                        record_webm: Path | None = None) -> None:
+                        full_page: bool = False) -> None:
     page = await context.new_page()
     await page.set_viewport_size({"width": viewport[0], "height": viewport[1]})
     print(f"[goto] {url}", flush=True)
     await page.goto(url, wait_until="domcontentloaded")
     await page.wait_for_timeout(wait_ms)
-    await page.screenshot(path=str(png_out), full_page=False)
+    await page.screenshot(path=str(png_out), full_page=full_page)
     print(f"[png ] {png_out.relative_to(ROOT)}", flush=True)
     await page.close()
 
@@ -92,15 +92,19 @@ async def main(args) -> None:
             ctx_kwargs["record_video_size"] = {"width": 1440, "height": 900}
         ctx = await browser.new_context(**ctx_kwargs)
 
+        # 운영자 realbev: 카드 많아서 긴 viewport + 풀페이지 + 모든 라이브 데이터 도착까지 대기
         await capture_page(ctx, f"{base}/frontend/operator_web/realbev.html{qs}",
-                            OUT_DIR / "operator_realbev.png", wait_ms=5000,
-                            viewport=(1600, 1000))
+                            OUT_DIR / "operator_realbev.png", wait_ms=12000,
+                            viewport=(1600, 1400), full_page=True)
         await capture_page(ctx, f"{base}/frontend/operator_web/index.html{qs}",
-                            OUT_DIR / "operator_index.png", wait_ms=4000,
-                            viewport=(1600, 1000))
+                            OUT_DIR / "operator_index.png", wait_ms=8000,
+                            viewport=(1600, 1100), full_page=True)
+        await capture_page(ctx, f"{base}/frontend/operator_web/bus.html{qs}",
+                            OUT_DIR / "operator_bus.png", wait_ms=8000,
+                            viewport=(1600, 1100), full_page=True)
         await capture_page(ctx, f"{base}/frontend/passenger_app/index.html{qs}",
-                            OUT_DIR / "citizen_pwa.png", wait_ms=5000,
-                            viewport=(440, 900))
+                            OUT_DIR / "citizen_pwa.png", wait_ms=10000,
+                            viewport=(440, 1100), full_page=True)
 
         if args.record:
             await record_clip(ctx, f"{base}/frontend/operator_web/realbev.html{qs}",

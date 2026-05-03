@@ -456,3 +456,53 @@ a { color: inherit; text-decoration: none; }
   background: var(--accent-soft); color: var(--accent);
   font-size: 9px; letter-spacing: 0.8px; font-weight: 500;
 }
+
+/* ====== 환승·환경 chip 행 (날씨/따릉이/주차) ====== */
+.context-chips {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin: -6px 0 12px;
+}
+.context-chips .chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 9px; border-radius: 999px;
+  background: var(--panel); border: 1px solid var(--line);
+  font-size: 11px; color: var(--muted-2);
+  font-feature-settings: "tnum";
+}
+.context-chips .chip b { color: var(--fg); font-weight: 500; }
+.context-chips .chip .ico { color: var(--accent); font-size: 12px; }
+.context-chips .chip.warm { border-color: rgba(240,180,106,0.3); }
+.context-chips .chip.warm .ico { color: var(--warn); }
+.context-chips .chip.cold { border-color: rgba(125,211,211,0.3); }
+.context-chips .chip.air-good { border-color: rgba(125,211,211,0.4); color: var(--accent); }
+.context-chips .chip.air-mid { border-color: rgba(240,180,106,0.4); color: var(--warn); }
+.context-chips .chip.air-bad { border-color: rgba(255,94,87,0.4); color: var(--crit); }
+.context-chips .chip.uv-high { border-color: rgba(240,180,106,0.4); color: var(--warn); }
+.context-chips .chip.uv-veryhigh { border-color: rgba(255,94,87,0.4); color: var(--crit); }
+/* 부가 chip — 약자 모드 또는 데이터 풍부할 때만 표시. 기본은 숨김 */
+.context-chips .more-chip { display: none; }
+.app.a11y .context-chips .more-chip:not([hidden]) { display: inline-flex; }
+@media (min-width: 600px) { .context-chips .more-chip:not([hidden]) { display: inline-flex; } }
+
+/* 강수 예보 배너 — 향후 N시간 내 비/눈 시작 알림 */
+.rain-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; margin: -4px 0 12px;
+  background: linear-gradient(90deg, rgba(125,211,211,0.06), rgba(125,211,211,0.02));
+  border: 1px solid rgba(125,211,211,0.25);
+  border-radius: 12px;
+  font-size: 12px; color: var(--fg);
+}
+.rain-banner .ico { font-size: 16px; color: var(--accent); }
+.rain-banner b { color: var(--accent); font-weight: 500; }
+
+/* 안전 알림 배너 — 사고/통제 등 */
+.safety-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; margin: 0 0 10px;
+  background: var(--crit-soft);
+  border: 1px solid rgba(255,94,87,0.3);
+  border-radius: 12px;
+  font-size: 12px; color: var(--crit);
+  font-weight: 500;
+}

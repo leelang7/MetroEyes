@@ -278,13 +278,92 @@ class _HomeScreenState extends State<HomeScreen> {
         _stationDistKm = r.km;
         _population = null; // 이전 역 인구 무효화
       });
-      // 새 역으로 도착정보/인구 즉시 재조회
-      if (_wsState == SocketState.connected) {
-        _bev.queryArrival(_stationName, line: _stationLine);
-        if (_stationPoi != null) _bev.queryPopulation(_stationPoi!);
-      }
+      _refetchForStation();
     } catch (_) {
       // 무시: 잠실 fallback 유지
+    }
+  }
+
+  /// station 변경 시 (GPS 또는 수동 선택) 모든 query 재호출.
+  void _refetchForStation() {
+    if (_wsState != SocketState.connected) return;
+    _bev.queryArrival(_stationName, line: _stationLine);
+    if (_stationPoi != null) _bev.queryPopulation(_stationPoi!);
+  }
+
+  /// 수동 station picker — 12개 역 list에서 선택.
+  Future<void> _showStationPicker() async {
+    final picked = await showModalBottomSheet<StationCoord>(
+      context: context,
+      backgroundColor: _panel,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 6),
+              child: Row(
+                children: [
+                  const Text('역 선택',
+                      style: TextStyle(color: _muted, fontSize: 11, letterSpacing: 1.2)),
+                  const Spacer(),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _resolveStationByGps();
+                    },
+                    icon: const Icon(Icons.my_location_rounded, color: _accent, size: 14),
+                    label: const Text('GPS 재시도',
+                        style: TextStyle(color: _accent, fontSize: 12)),
+                  ),
+                ],
+              ),
+            ),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final s in _stations)
+                    ListTile(
+                      onTap: () => Navigator.pop(ctx, s),
+                      leading: Icon(
+                        s.name == _stationName
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                        color: s.name == _stationName ? _accent : _muted,
+                        size: 18,
+                      ),
+                      title: Text('${s.name}역',
+                          style: TextStyle(
+                              color: s.name == _stationName ? _accent : _fg,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
+                      subtitle: Text(
+                          '${s.line}호선 · ${s.populationPoi ?? "POI 없음"}',
+                          style: const TextStyle(color: _muted, fontSize: 11)),
+                      dense: true,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (picked != null && picked.name != _stationName) {
+      setState(() {
+        _stationName = picked.name;
+        _stationLine = picked.line;
+        _stationPoi = picked.populationPoi;
+        _stationDistKm = null; // 수동 선택은 거리 의미 없음
+        _population = null;
+        _arrivals = null;
+      });
+      _refetchForStation();
     }
   }
 
@@ -460,6 +539,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     time: _liveClock(),
                     scale: scale,
                     gpsKm: _stationDistKm,
+                    onTapStation: _showStationPicker,
                   ),
                   if (_population != null && _population!.error == null &&
                       _population!.ppltnMid != null) ...[
@@ -648,12 +728,14 @@ class _ContextBar extends StatelessWidget {
   final String station, meta, time;
   final double scale;
   final double? gpsKm;
+  final VoidCallback? onTapStation;
   const _ContextBar(
       {required this.station,
       required this.meta,
       required this.time,
       required this.scale,
-      this.gpsKm});
+      this.gpsKm,
+      this.onTapStation});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -662,26 +744,41 @@ class _ContextBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
         children: [
-          Text(station,
-              style: TextStyle(
-                  color: _fg,
-                  fontSize: 18 * scale,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.3)),
-          if (gpsKm != null) ...[
-            const SizedBox(width: 8),
-            Icon(Icons.my_location_rounded, color: _accent, size: 11 * scale),
-            const SizedBox(width: 3),
-            Text(
-              gpsKm! < 1.0
-                  ? '${(gpsKm! * 1000).round()}m'
-                  : '${gpsKm!.toStringAsFixed(1)}km',
-              style: TextStyle(
-                  color: _accent,
-                  fontSize: 11 * scale,
-                  fontFeatures: const [FontFeature.tabularFigures()]),
+          // station + GPS km — 탭 시 station picker
+          GestureDetector(
+            onTap: onTapStation,
+            behavior: HitTestBehavior.opaque,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(station,
+                    style: TextStyle(
+                        color: _fg,
+                        fontSize: 18 * scale,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: -0.3)),
+                const SizedBox(width: 4),
+                Icon(Icons.expand_more_rounded,
+                    color: _muted, size: 14 * scale),
+                if (gpsKm != null) ...[
+                  const SizedBox(width: 6),
+                  Icon(Icons.my_location_rounded,
+                      color: _accent, size: 11 * scale),
+                  const SizedBox(width: 3),
+                  Text(
+                    gpsKm! < 1.0
+                        ? '${(gpsKm! * 1000).round()}m'
+                        : '${gpsKm!.toStringAsFixed(1)}km',
+                    style: TextStyle(
+                        color: _accent,
+                        fontSize: 11 * scale,
+                        fontFeatures: const [FontFeature.tabularFigures()]),
+                  ),
+                ],
+              ],
             ),
-          ],
+          ),
           const SizedBox(width: 6),
           Expanded(
               child: Text(meta,

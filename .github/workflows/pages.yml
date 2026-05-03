@@ -1,0 +1,95 @@
+name: Deploy frontend to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 정적 파일만 모아서 site/ 디렉토리에 배치
+      - name: Stage site
+        run: |
+          mkdir -p site
+          cp -r frontend site/frontend
+          # 루트 진입은 시민 PWA 또는 운영자 콘솔 — 간단 index.html 추가
+          cat > site/index.html << 'HTML'
+          <!doctype html>
+          <html lang="ko">
+          <head>
+          <meta charset="utf-8">
+          <title>MetroEyes — 라이브 데모</title>
+          <meta name="theme-color" content="#04060a">
+          <style>
+            html,body { margin:0; height:100%; background:#04060a; color:#e8edf5;
+              font-family:"Inter",-apple-system,"Segoe UI","Malgun Gothic",system-ui,sans-serif;
+              display:flex; align-items:center; justify-content:center; }
+            .wrap { max-width:520px; padding:32px; text-align:left; }
+            h1 { font-size:36px; font-weight:200; letter-spacing:-1px; margin:0 0 6px; }
+            h1 b { color:#7dd3d3; font-weight:500; }
+            p.sub { color:#8e98ac; font-size:14px; margin:0 0 28px; line-height:1.5; }
+            a.card { display:block; padding:14px 18px; background:#0a0d14;
+              border:1px solid rgba(255,255,255,0.08); border-radius:12px;
+              color:#e8edf5; text-decoration:none; margin-bottom:10px;
+              transition:all 0.2s; }
+            a.card:hover { border-color:rgba(125,211,211,0.4); transform:translateX(2px); }
+            a.card .label { color:#7dd3d3; font-size:11px; letter-spacing:1.4px;
+              text-transform:uppercase; margin-bottom:4px; }
+            a.card .name { font-size:16px; font-weight:500; }
+            a.card .desc { color:#8e98ac; font-size:12px; margin-top:2px; }
+            footer { margin-top:32px; font-size:11px; color:#6b768a; letter-spacing:1.2px; }
+          </style>
+          </head>
+          <body>
+          <div class="wrap">
+            <h1>MetroEyes <b>·</b></h1>
+            <p class="sub">테슬라가 도로를 BEV로 보듯, 도시 교통 전체를 본다.<br>
+              자체 CV + 4중 데이터 융합 라이브 데모.</p>
+            <a class="card" href="frontend/operator_web/realbev.html">
+              <div class="label">Operator · 3D BEV</div>
+              <div class="name">실시간 카메라 BEV (Three.js)</div>
+              <div class="desc">11카드 풀 융합 + ML 24h 예측 + 정확도</div>
+            </a>
+            <a class="card" href="frontend/operator_web/index.html">
+              <div class="label">Operator · 지하철</div>
+              <div class="name">10량 편성 BEV</div>
+              <div class="desc">4중 fusion-strip + 임계 분산 안내</div>
+            </a>
+            <a class="card" href="frontend/operator_web/bus.html">
+              <div class="label">Operator · 버스</div>
+              <div class="name">정류장 BEV</div>
+            </a>
+            <a class="card" href="frontend/passenger_app/index.html">
+              <div class="label">Citizen PWA</div>
+              <div class="name">시민 앱 (모바일)</div>
+              <div class="desc">GPS · 칸별 점유율 · 인구 chip · 강수 예보</div>
+            </a>
+            <footer>BACKEND wss://rebekah-derisible-tanisha.ngrok-free.dev</footer>
+          </div>
+          </body>
+          </html>
+          HTML
+
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
