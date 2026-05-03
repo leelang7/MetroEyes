@@ -1,0 +1,19 @@
+# Cloudflare named tunnel config — 도메인 구매 + Cloudflare 등록 후 사용
+#
+# 절차 (도메인 결정 후):
+#   1. cloudflared tunnel login                    # 브라우저로 Cloudflare 인증
+#   2. cloudflared tunnel create metroeyes         # tunnel 생성 (UUID 발급)
+#   3. cloudflared tunnel route dns metroeyes app.YOUR-DOMAIN
+#   4. 이 파일을 cloudflared-config.yml로 복사 후 tunnel 값 채움
+#   5. cloudflared tunnel --config cloudflared-config.yml run metroeyes
+
+tunnel: <YOUR-TUNNEL-UUID>            # cloudflared tunnel create 출력값
+credentials-file: C:\Users\leesc\.cloudflared\<UUID>.json
+
+ingress:
+  - hostname: app.YOUR-DOMAIN          # 예: app.metroeyes.app
+    service: http://localhost:8765
+    originRequest:
+      noTLSVerify: true
+      # WebSocket 자동 — cloudflared가 Upgrade 헤더 그대로 통과
+  - service: http_status:404           # catch-all
