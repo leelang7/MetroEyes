@@ -496,6 +496,39 @@ a { color: inherit; text-decoration: none; }
 .rain-banner .ico { font-size: 16px; color: var(--accent); }
 .rain-banner b { color: var(--accent); font-weight: 500; }
 
+/* 주변 행사 카드 — 인구 영향 신호 */
+.events-strip {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.events-strip .events-head {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--muted); letter-spacing: 1.2px;
+  margin-bottom: 8px;
+}
+.events-strip .events-head .ico { color: var(--accent); font-size: 14px; }
+.events-strip .events-head .src {
+  margin-left: auto; padding: 2px 6px; border-radius: 4px;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: 9px; letter-spacing: 0.6px;
+}
+.events-strip .ev-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 0; font-size: 12px;
+  border-top: 1px solid var(--line);
+}
+.events-strip .ev-row:first-of-type { border-top: 0; }
+.events-strip .ev-row .name { color: var(--fg); flex: 1; }
+.events-strip .ev-row .cap { color: var(--accent); font-weight: 500; font-feature-settings: 'tnum'; }
+.events-strip .ev-row .dist { color: var(--muted-2); font-size: 10px; min-width: 38px; text-align: right; font-feature-settings: 'tnum'; }
+.events-strip .events-summary {
+  font-size: 11px; color: var(--muted-2);
+  margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line);
+}
+.events-strip .events-summary b { color: var(--warn); font-weight: 500; }
+
 /* 안전 알림 배너 — 사고/통제 등 */
 .safety-banner {
   display: flex; align-items: center; gap: 10px;

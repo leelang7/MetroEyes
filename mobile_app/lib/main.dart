@@ -171,19 +171,27 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Option> _options = [];
   int _selected = 0;
 
-  // 백엔드 라이브 연결 (ngrok 외부 노출)
+  // 백엔드 라이브 연결 (Cloudflare 터널 — 외부 노출 고정 도메인)
   final BevSocket _bev = BevSocket();
-  String _wsUrl = 'wss://rebekah-derisible-tanisha.ngrok-free.dev';
+  String _wsUrl = 'wss://app.allthatai.kr';
   SocketState _wsState = SocketState.disconnected;
   BevPayload? _livePayload;
-  ArrivalResponse? _arrivals;        // 마지막 수신 도착정보
-  PopulationResponse? _population;   // 마지막 수신 역세권 인구
+  ArrivalResponse? _arrivals;
+  PopulationResponse? _population;
+  CitydataResponse? _citydata;
+  EventsResponse? _events;
+  ImpactSummary? _impact;
   Timer? _arrivalPoll;
   Timer? _populationPoll;
+  Timer? _citydataPoll;
+  Timer? _eventsPoll;
   StreamSubscription? _stateSub;
   StreamSubscription? _payloadSub;
   StreamSubscription? _arrivalSub;
   StreamSubscription? _populationSub;
+  StreamSubscription? _citydataSub;
+  StreamSubscription? _eventsSub;
+  StreamSubscription? _impactSub;
 
   // 현재 선택된 역 (GPS 매칭 결과로 갱신).
   String _stationName = '잠실';
@@ -203,19 +211,33 @@ class _HomeScreenState extends State<HomeScreen> {
         _arrivalPoll?.cancel();
         _arrivalPoll = Timer.periodic(const Duration(seconds: 20),
             (_) => _bev.queryArrival(_stationName, line: _stationLine));
-        // 역세권 인구: 즉시 + 60초 폴링 (서울 도시데이터 분 단위 갱신)
-        if (_stationPoi != null) {
-          _bev.queryPopulation(_stationPoi!);
-        }
+        // 역세권 인구: 즉시 + 60초 폴링
+        if (_stationPoi != null) _bev.queryPopulation(_stationPoi!);
         _populationPoll?.cancel();
         _populationPoll = Timer.periodic(const Duration(seconds: 60), (_) {
           if (_stationPoi != null) _bev.queryPopulation(_stationPoi!);
+        });
+        // 통합 도시데이터(날씨/공기/도로/따릉이/주차): 즉시 + 60초
+        if (_stationPoi != null) _bev.queryCitydata(_stationPoi!);
+        _citydataPoll?.cancel();
+        _citydataPoll = Timer.periodic(const Duration(seconds: 60), (_) {
+          if (_stationPoi != null) _bev.queryCitydata(_stationPoi!);
+        });
+        // 행사/문화: 즉시 + 10분
+        if (_stationPoi != null) _bev.queryEvents(_stationPoi!);
+        _eventsPoll?.cancel();
+        _eventsPoll = Timer.periodic(const Duration(minutes: 10), (_) {
+          if (_stationPoi != null) _bev.queryEvents(_stationPoi!);
         });
       } else {
         _arrivalPoll?.cancel();
         _arrivalPoll = null;
         _populationPoll?.cancel();
         _populationPoll = null;
+        _citydataPoll?.cancel();
+        _citydataPoll = null;
+        _eventsPoll?.cancel();
+        _eventsPoll = null;
       }
     });
     _payloadSub = _bev.payloads.listen((p) {
@@ -236,6 +258,15 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     _populationSub = _bev.populations.listen((p) {
       if (mounted) setState(() => _population = p);
+    });
+    _citydataSub = _bev.citydatas.listen((c) {
+      if (mounted) setState(() => _citydata = c);
+    });
+    _eventsSub = _bev.events.listen((e) {
+      if (mounted) setState(() => _events = e);
+    });
+    _impactSub = _bev.impacts.listen((i) {
+      if (mounted) setState(() => _impact = i);
     });
     // 자동 연결 시도 (USB adb reverse 가정)
     Future.delayed(const Duration(milliseconds: 500), () => _bev.connect(_wsUrl));
@@ -288,7 +319,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void _refetchForStation() {
     if (_wsState != SocketState.connected) return;
     _bev.queryArrival(_stationName, line: _stationLine);
-    if (_stationPoi != null) _bev.queryPopulation(_stationPoi!);
+    if (_stationPoi != null) {
+      _bev.queryPopulation(_stationPoi!);
+      _bev.queryCitydata(_stationPoi!);
+      _bev.queryEvents(_stationPoi!);
+    }
   }
 
   /// 수동 station picker — 12개 역 list에서 선택.
@@ -359,9 +394,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _stationName = picked.name;
         _stationLine = picked.line;
         _stationPoi = picked.populationPoi;
-        _stationDistKm = null; // 수동 선택은 거리 의미 없음
+        _stationDistKm = null;
         _population = null;
         _arrivals = null;
+        _citydata = null;
+        _events = null;
       });
       _refetchForStation();
     }
@@ -373,8 +410,13 @@ class _HomeScreenState extends State<HomeScreen> {
     _payloadSub?.cancel();
     _arrivalSub?.cancel();
     _populationSub?.cancel();
+    _citydataSub?.cancel();
+    _eventsSub?.cancel();
+    _impactSub?.cancel();
     _arrivalPoll?.cancel();
     _populationPoll?.cancel();
+    _citydataPoll?.cancel();
+    _eventsPoll?.cancel();
     _bev.dispose();
     super.dispose();
   }
@@ -523,7 +565,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _Header(wsState: _wsState, payload: _livePayload, onSettings: _showSettings),
+                  _Header(
+                      wsState: _wsState,
+                      payload: _livePayload,
+                      impact: _impact,
+                      onSettings: _showSettings),
                   const SizedBox(height: 10),
                   _ModeToggle(
                     mode: _mode,
@@ -545,6 +591,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       _population!.ppltnMid != null) ...[
                     const SizedBox(height: 4),
                     _PopulationStrip(p: _population!),
+                  ],
+                  if (_citydata != null && _citydata!.error == null) ...[
+                    const SizedBox(height: 8),
+                    _CitydataChips(c: _citydata!),
+                    if (_citydata!.rainFirstDt != null) ...[
+                      const SizedBox(height: 8),
+                      _RainBanner(c: _citydata!),
+                    ],
+                    if (_citydata!.events.isNotEmpty ||
+                        _citydata!.alerts.isNotEmpty ||
+                        _citydata!.accidents.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      _SafetyBanner(c: _citydata!),
+                    ],
                   ],
                   const SizedBox(height: 14),
                   _DecisionCard(
@@ -571,6 +631,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       mode: _mode,
                       scale: scale),
                   const SizedBox(height: 14),
+                  if (_events != null && _events!.events.isNotEmpty) ...[
+                    _EventsCard(ev: _events!),
+                    const SizedBox(height: 14),
+                  ],
                   if (opt.occ >= 0.92) const _AlertBanner(),
                   const SizedBox(height: 12),
                   _A11yToggle(
@@ -599,7 +663,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
-                  child: _CTABar(opt: opt, mode: _mode),
+                  child: _CTABar(
+                    opt: opt,
+                    mode: _mode,
+                    onTap: () {
+                      // 사회적 임팩트 로깅 — 권장 칸 탑승 시 절감률 추정.
+                      final selOcc = opt.occ;
+                      final allOcc = _options.map((o) => o.occ).toList();
+                      if (allOcc.isNotEmpty) {
+                        final avg =
+                            allOcc.reduce((a, b) => a + b) / allOcc.length;
+                        final saved = ((avg - selOcc) * 100).round();
+                        if (saved > 0 && _wsState == SocketState.connected) {
+                          _bev.logImpact(
+                            station: _stationName,
+                            car: opt.label,
+                            savedPct: saved,
+                          );
+                        }
+                      }
+                    },
+                  ),
                 ),
               ),
             ),
@@ -614,8 +698,14 @@ class _HomeScreenState extends State<HomeScreen> {
 class _Header extends StatelessWidget {
   final SocketState wsState;
   final BevPayload? payload;
+  final ImpactSummary? impact;
   final VoidCallback onSettings;
-  const _Header({required this.wsState, required this.payload, required this.onSettings});
+  const _Header({
+    required this.wsState,
+    required this.payload,
+    required this.impact,
+    required this.onSettings,
+  });
 
   Color get _ledColor {
     switch (wsState) {
@@ -666,6 +756,32 @@ class _Header extends StatelessWidget {
                 fontFeatures: const [FontFeature.tabularFigures()],
               )),
           ),
+          if (impact != null && impact!.totalCount > 0) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: _accentSoft,
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: _accent.withOpacity(0.25)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.eco_rounded, color: _accent, size: 11),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${impact!.totalCount}회 · 평균 -${impact!.avgSavedPct.round()}%',
+                    style: const TextStyle(
+                        color: _accent,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        fontFeatures: [FontFeature.tabularFigures()]),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 6),
+          ],
           IconButton(
             onPressed: onSettings,
             icon: const Icon(Icons.tune_rounded, color: _muted, size: 20),
@@ -1478,7 +1594,8 @@ class _DemoTimeSlider extends StatelessWidget {
 class _CTABar extends StatelessWidget {
   final Option opt;
   final VehicleMode mode;
-  const _CTABar({required this.opt, required this.mode});
+  final VoidCallback? onTap;
+  const _CTABar({required this.opt, required this.mode, this.onTap});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1486,8 +1603,9 @@ class _CTABar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 22),
       child: GestureDetector(
         onTap: () {
+          onTap?.call();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('${opt.label} 탑승 모드 (시뮬)',
+            content: Text('${opt.label} 탑승 — 임팩트 기록됨',
                 style: const TextStyle(color: Color(0xFF04060A))),
             backgroundColor: _accent,
             duration: const Duration(seconds: 2),
@@ -1524,6 +1642,284 @@ class _CTABar extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ============== 도시데이터 위젯 ==============
+
+class _CitydataChips extends StatelessWidget {
+  final CitydataResponse c;
+  const _CitydataChips({required this.c});
+
+  Color _airColor(String? idx) {
+    switch (idx) {
+      case '좋음': return _accent;
+      case '보통': return _muted2;
+      case '나쁨': return _warn;
+      case '매우나쁨': return _crit;
+      default: return _muted;
+    }
+  }
+
+  Color _roadColor(String? idx) {
+    switch (idx) {
+      case '원활': return _accent;
+      case '서행': return _warn;
+      case '정체': return _crit;
+      default: return _muted;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chips = <Widget>[];
+    // 날씨
+    if (c.temp != null) {
+      final t = c.temp!.toStringAsFixed(0);
+      final st = c.sensibleTemp?.toStringAsFixed(0);
+      chips.add(_chip(
+        Icons.thermostat_rounded,
+        st != null && st != t ? '$t° (체감 $st°)' : '$t°',
+        _accent,
+      ));
+    }
+    // 공기질 (PM2.5)
+    if (c.pm25 != null) {
+      chips.add(_chip(
+        Icons.air_rounded,
+        'PM2.5 ${c.pm25} · ${c.pm25Idx ?? "-"}',
+        _airColor(c.pm25Idx ?? c.airIdx),
+      ));
+    }
+    // UV
+    if (c.uvLvl != null && c.uvLvl! > 0) {
+      chips.add(_chip(
+        Icons.wb_sunny_outlined,
+        'UV ${c.uvLvl}',
+        c.uvLvl! >= 6 ? _warn : _muted2,
+      ));
+    }
+    // 도로
+    if (c.roadAvgSpeed != null) {
+      chips.add(_chip(
+        Icons.alt_route_rounded,
+        '${c.roadAvgSpeed!.toStringAsFixed(0)}km/h · ${c.roadAvgIdx ?? "-"}',
+        _roadColor(c.roadAvgIdx),
+      ));
+    }
+    // 따릉이
+    if (c.sbikeSharedTotal > 0) {
+      chips.add(_chip(
+        Icons.pedal_bike_rounded,
+        '따릉이 ${c.sbikeSharedTotal}',
+        _accent,
+      ));
+    }
+    // 주차
+    if (c.parkingAvailTotal > 0) {
+      chips.add(_chip(
+        Icons.local_parking_rounded,
+        '주차 ${c.parkingAvailTotal}',
+        _muted2,
+      ));
+    }
+    if (chips.isEmpty) return const SizedBox.shrink();
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (var i = 0; i < chips.length; i++) ...[
+            chips[i],
+            if (i < chips.length - 1) const SizedBox(width: 6),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _chip(IconData icon, String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: _panel,
+        border: Border.all(color: _line),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 12),
+          const SizedBox(width: 5),
+          Text(text,
+              style: TextStyle(
+                  color: _fg,
+                  fontSize: 11,
+                  fontFeatures: const [FontFeature.tabularFigures()])),
+        ],
+      ),
+    );
+  }
+}
+
+class _RainBanner extends StatelessWidget {
+  final CitydataResponse c;
+  const _RainBanner({required this.c});
+
+  String _typeText(String? t) {
+    switch (t) {
+      case '비': return '비';
+      case '눈': return '눈';
+      case '진눈깨비': return '진눈깨비';
+      case '소나기': return '소나기';
+      default: return t ?? '강수';
+    }
+  }
+
+  String _shortDt(String? dt) {
+    if (dt == null || dt.length < 16) return dt ?? '';
+    // YYYY-MM-DD HH:MM → HH:MM
+    return dt.substring(11, 16);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0x1A7DD3D3),
+        border: Border.all(color: _accent.withOpacity(0.30)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.umbrella_rounded, color: _accent, size: 14),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '${_shortDt(c.rainFirstDt)} ${_typeText(c.rainFirstType)} 시작 — 우산 챙기세요',
+              style: const TextStyle(
+                  color: _accent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SafetyBanner extends StatelessWidget {
+  final CitydataResponse c;
+  const _SafetyBanner({required this.c});
+
+  @override
+  Widget build(BuildContext context) {
+    final n = c.events.length + c.alerts.length + c.accidents.length;
+    final isCrit = c.alerts.isNotEmpty || c.accidents.isNotEmpty;
+    final color = isCrit ? _crit : _warn;
+    final label = isCrit
+        ? '안전 알림 · 사고/특보 ${c.alerts.length + c.accidents.length}건'
+        : '주변 행사 영향 · ${c.events.length}건';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.10),
+        border: Border.all(color: color.withOpacity(0.35)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(isCrit ? Icons.warning_rounded : Icons.event_note_rounded,
+              color: color, size: 14),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(label,
+                style: TextStyle(
+                    color: color, fontSize: 12, fontWeight: FontWeight.w500)),
+          ),
+          Text('총 $n',
+              style: TextStyle(color: color.withOpacity(0.7), fontSize: 11)),
+        ],
+      ),
+    );
+  }
+}
+
+class _EventsCard extends StatelessWidget {
+  final EventsResponse ev;
+  const _EventsCard({required this.ev});
+
+  String _formatN(int n) {
+    if (n >= 10000) return '${(n / 10000).toStringAsFixed(1)}만';
+    if (n >= 1000) return '${(n / 1000).toStringAsFixed(1)}K';
+    return '$n';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = ev.events.take(3).toList();
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      decoration: BoxDecoration(
+        color: _panel,
+        border: Border.all(color: _line),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.celebration_rounded, color: _warn, size: 14),
+              const SizedBox(width: 6),
+              const Text('주변 행사 / 인구 신호',
+                  style: TextStyle(
+                      color: _muted, fontSize: 11, letterSpacing: 1.2)),
+              const Spacer(),
+              if (ev.totalCapacity > 0)
+                Text('정원 ${_formatN(ev.totalCapacity)}',
+                    style: const TextStyle(color: _warn, fontSize: 11)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          for (final r in rows)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      r.name ?? '행사',
+                      style: const TextStyle(color: _fg, fontSize: 13),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  if (r.vMax != null)
+                    Text('${_formatN(r.vMax!)}명',
+                        style: const TextStyle(color: _muted2, fontSize: 11)),
+                  if (r.distKm != null) ...[
+                    const SizedBox(width: 8),
+                    Text(
+                      r.distKm! < 1.0
+                          ? '${(r.distKm! * 1000).round()}m'
+                          : '${r.distKm!.toStringAsFixed(1)}km',
+                      style: const TextStyle(color: _accent, fontSize: 11),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          if (ev.events.length > 3)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text('외 ${ev.events.length - 3}건',
+                  style: const TextStyle(color: _muted, fontSize: 11)),
+            ),
+        ],
       ),
     );
   }

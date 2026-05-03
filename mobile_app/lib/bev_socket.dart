@@ -71,6 +71,148 @@ class ArrivalRow {
   }
 }
 
+/// citydata 통합 응답 (날씨/공기/UV/주차/따릉이/도로/24h 예보/상권/안전).
+class CitydataResponse {
+  final String poi;
+  // 인구·혼잡 (citydata_ppltn과 중복)
+  final String? areaNm;
+  final String? congestLvl;
+  final int? ppltnMin, ppltnMax;
+  final String? ppltnTime;
+  // 날씨
+  final double? temp, sensibleTemp, humidity;
+  final String? precptType, pcpMsg;
+  // 공기질
+  final int? pm25, pm10;
+  final String? pm25Idx, pm10Idx, airIdx, airMsg;
+  // 자외선
+  final int? uvLvl;
+  final String? uvIdx, uvMsg;
+  // 강수 예보 첫 시각
+  final String? rainFirstDt;
+  final String? rainFirstType;
+  // 도로
+  final double? roadAvgSpeed;
+  final String? roadAvgIdx, roadMsg;
+  // 환승 옵션 합계
+  final int sbikeSharedTotal;
+  final int parkingAvailTotal;
+  // 안전
+  final List<dynamic> events;
+  final List<dynamic> alerts;
+  final List<dynamic> accidents;
+  final String? error;
+
+  CitydataResponse({
+    required this.poi,
+    this.areaNm, this.congestLvl, this.ppltnMin, this.ppltnMax, this.ppltnTime,
+    this.temp, this.sensibleTemp, this.humidity, this.precptType, this.pcpMsg,
+    this.pm25, this.pm10, this.pm25Idx, this.pm10Idx, this.airIdx, this.airMsg,
+    this.uvLvl, this.uvIdx, this.uvMsg,
+    this.rainFirstDt, this.rainFirstType,
+    this.roadAvgSpeed, this.roadAvgIdx, this.roadMsg,
+    this.sbikeSharedTotal = 0, this.parkingAvailTotal = 0,
+    this.events = const [], this.alerts = const [], this.accidents = const [],
+    this.error,
+  });
+
+  factory CitydataResponse.fromJson(Map<String, dynamic> j) {
+    final sbike = (j['sbike'] as List?) ?? const [];
+    final parking = (j['parking'] as List?) ?? const [];
+    final rainFirst = j['rain_first'] as Map<String, dynamic>?;
+    int sbikeShared = 0;
+    for (final s in sbike) {
+      if (s is Map && s['shared'] is num) sbikeShared += (s['shared'] as num).toInt();
+    }
+    int prkAvail = 0;
+    for (final p in parking) {
+      if (p is Map) {
+        final cap = (p['cap'] as num?)?.toInt() ?? 0;
+        final cur = (p['cur'] as num?)?.toInt() ?? 0;
+        if (cap > cur) prkAvail += (cap - cur);
+      }
+    }
+    return CitydataResponse(
+      poi: j['poi']?.toString() ?? '',
+      areaNm: j['area_nm']?.toString(),
+      congestLvl: j['congest_lvl']?.toString(),
+      ppltnMin: (j['ppltn_min'] as num?)?.toInt(),
+      ppltnMax: (j['ppltn_max'] as num?)?.toInt(),
+      ppltnTime: j['ppltn_time']?.toString(),
+      temp: (j['temp'] as num?)?.toDouble(),
+      sensibleTemp: (j['sensible_temp'] as num?)?.toDouble(),
+      humidity: (j['humidity'] as num?)?.toDouble(),
+      precptType: j['precpt_type']?.toString(),
+      pcpMsg: j['pcp_msg']?.toString(),
+      pm25: (j['pm25'] as num?)?.toInt(),
+      pm10: (j['pm10'] as num?)?.toInt(),
+      pm25Idx: j['pm25_idx']?.toString(),
+      pm10Idx: j['pm10_idx']?.toString(),
+      airIdx: j['air_idx']?.toString(),
+      airMsg: j['air_msg']?.toString(),
+      uvLvl: (j['uv_lvl'] as num?)?.toInt(),
+      uvIdx: j['uv_idx']?.toString(),
+      uvMsg: j['uv_msg']?.toString(),
+      rainFirstDt: rainFirst?['dt']?.toString(),
+      rainFirstType: rainFirst?['type']?.toString(),
+      roadAvgSpeed: (j['road_avg_speed'] as num?)?.toDouble(),
+      roadAvgIdx: j['road_avg_idx']?.toString(),
+      roadMsg: j['road_msg']?.toString(),
+      sbikeSharedTotal: sbikeShared,
+      parkingAvailTotal: prkAvail,
+      events: (j['events'] as List?) ?? const [],
+      alerts: (j['alerts'] as List?) ?? const [],
+      accidents: (j['accidents'] as List?) ?? const [],
+      error: j['error']?.toString(),
+    );
+  }
+}
+
+/// 행사 1건.
+class EventItem {
+  final String? name;
+  final String? place;
+  final int? vMax;
+  final double? distKm;
+  EventItem({this.name, this.place, this.vMax, this.distKm});
+  factory EventItem.fromJson(Map<String, dynamic> j) => EventItem(
+        name: j['name']?.toString(),
+        place: j['place']?.toString(),
+        vMax: (j['v_max'] as num?)?.toInt(),
+        distKm: (j['dist_km'] as num?)?.toDouble(),
+      );
+}
+
+class EventsResponse {
+  final String poi;
+  final List<EventItem> events;
+  final int totalCount;
+  final int totalCapacity;
+  final String? error;
+  EventsResponse({required this.poi, required this.events, this.totalCount = 0, this.totalCapacity = 0, this.error});
+  factory EventsResponse.fromJson(Map<String, dynamic> j) => EventsResponse(
+        poi: j['poi']?.toString() ?? '',
+        events: ((j['events'] as List?) ?? const [])
+            .cast<Map<String, dynamic>>()
+            .map(EventItem.fromJson)
+            .toList(),
+        totalCount: (j['total_count'] as num?)?.toInt() ?? 0,
+        totalCapacity: (j['total_capacity'] as num?)?.toInt() ?? 0,
+        error: j['error']?.toString(),
+      );
+}
+
+/// 사회적 임팩트 누적.
+class ImpactSummary {
+  final int totalCount;
+  final double avgSavedPct;
+  ImpactSummary({this.totalCount = 0, this.avgSavedPct = 0});
+  factory ImpactSummary.fromJson(Map<String, dynamic> j) => ImpactSummary(
+        totalCount: (j['total_count'] as num?)?.toInt() ?? 0,
+        avgSavedPct: (j['avg_saved_pct'] as num?)?.toDouble() ?? 0,
+      );
+}
+
 /// 서울 실시간 도시데이터 — POI별 현재 추정 인구 + 혼잡도 레벨.
 class PopulationResponse {
   final String poi;
@@ -154,12 +296,18 @@ class BevSocket {
   final _payloadCtrl = StreamController<BevPayload>.broadcast();
   final _arrivalCtrl = StreamController<ArrivalResponse>.broadcast();
   final _populationCtrl = StreamController<PopulationResponse>.broadcast();
+  final _citydataCtrl = StreamController<CitydataResponse>.broadcast();
+  final _eventsCtrl = StreamController<EventsResponse>.broadcast();
+  final _impactCtrl = StreamController<ImpactSummary>.broadcast();
   Timer? _retry;
 
   Stream<SocketState> get state => _stateCtrl.stream;
   Stream<BevPayload> get payloads => _payloadCtrl.stream;
   Stream<ArrivalResponse> get arrivals => _arrivalCtrl.stream;
   Stream<PopulationResponse> get populations => _populationCtrl.stream;
+  Stream<CitydataResponse> get citydatas => _citydataCtrl.stream;
+  Stream<EventsResponse> get events => _eventsCtrl.stream;
+  Stream<ImpactSummary> get impacts => _impactCtrl.stream;
   SocketState _current = SocketState.disconnected;
   SocketState get current => _current;
 
@@ -180,8 +328,31 @@ class BevSocket {
   void queryPopulation(String poi) {
     final ws = _ws;
     if (ws == null) return;
+    try { ws.add(jsonEncode({'type': 'population_query', 'poi': poi})); } catch (_) {}
+  }
+
+  /// citydata 통합 (날씨/공기/도로/환승). 응답은 [citydatas] stream.
+  void queryCitydata(String poi) {
+    final ws = _ws;
+    if (ws == null) return;
+    try { ws.add(jsonEncode({'type': 'citydata_query', 'poi': poi})); } catch (_) {}
+  }
+
+  /// 주변 행사 (인구 영향 신호). 응답은 [events] stream.
+  void queryEvents(String poi) {
+    final ws = _ws;
+    if (ws == null) return;
+    try { ws.add(jsonEncode({'type': 'events_query', 'poi': poi})); } catch (_) {}
+  }
+
+  /// 사회적 임팩트 로그 — 추천 칸 탑승 시 호출. 백엔드가 broadcast한 [impacts]를 모든 client가 받음.
+  void logImpact({required String station, required String car, required int savedPct}) {
+    final ws = _ws;
+    if (ws == null) return;
     try {
-      ws.add(jsonEncode({'type': 'population_query', 'poi': poi}));
+      ws.add(jsonEncode({
+        'type': 'impact_log', 'station': station, 'car': car, 'saved_pct': savedPct,
+      }));
     } catch (_) {}
   }
 
@@ -211,6 +382,12 @@ class BevSocket {
                   _arrivalCtrl.add(ArrivalResponse.fromJson(j));
                 } else if (type == 'population') {
                   _populationCtrl.add(PopulationResponse.fromJson(j));
+                } else if (type == 'citydata') {
+                  _citydataCtrl.add(CitydataResponse.fromJson(j));
+                } else if (type == 'events') {
+                  _eventsCtrl.add(EventsResponse.fromJson(j));
+                } else if (type == 'impact_summary') {
+                  _impactCtrl.add(ImpactSummary.fromJson(j));
                 } else {
                   _payloadCtrl.add(BevPayload.fromJson(j));
                 }
@@ -256,5 +433,8 @@ class BevSocket {
     _payloadCtrl.close();
     _arrivalCtrl.close();
     _populationCtrl.close();
+    _citydataCtrl.close();
+    _eventsCtrl.close();
+    _impactCtrl.close();
   }
 }

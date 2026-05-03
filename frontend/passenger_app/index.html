@@ -62,6 +62,16 @@
     <span id="safety-banner-text">—</span>
   </div>
 
+  <section class="events-strip" id="events-strip" hidden>
+    <div class="events-head">
+      <span class="ico">🎫</span>
+      <span>주변 행사 — 인구 영향</span>
+      <span class="src">서울 도시데이터</span>
+    </div>
+    <div id="events-rows"></div>
+    <div class="events-summary" id="events-summary"></div>
+  </section>
+
   <section class="decision">
     <div class="label" id="d-label">권장 탑승 칸</div>
     <div class="pct">
@@ -484,7 +494,7 @@ const LIVE = (() => {
   let liveArrival = null;   // 마지막 arrival 응답
   let livePpltn = null;     // 마지막 인구 응답
   let curStation = stations[0]; // 기본 잠실
-  let arrivalPoll = null, ppltnPoll = null, cdPoll = null;
+  let arrivalPoll = null, ppltnPoll = null, cdPoll = null, evPoll = null;
 
   const badge = document.getElementById('live-badge');
   const label = document.getElementById('live-label');
@@ -561,6 +571,22 @@ const LIVE = (() => {
   function queryArrival() { send({ type: 'arrival_query', stationName: curStation.name, line: curStation.line }); }
   function queryPpltn() { if (curStation.poi) send({ type: 'population_query', poi: curStation.poi }); }
   function queryCitydata() { if (curStation.poi) send({ type: 'citydata_query', poi: curStation.poi }); }
+  function queryEvents() { if (curStation.poi) send({ type: 'events_query', poi: curStation.poi }); }
+  function applyEvents(j) {
+    const card = document.getElementById('events-strip');
+    const items = j.events || [];
+    if (items.length === 0 || j.error) { card.hidden = true; return; }
+    card.hidden = false;
+    document.getElementById('events-rows').innerHTML = items.slice(0, 4).map(e => `
+      <div class="ev-row">
+        <span class="name">${(e.name || '-').substring(0, 32)}</span>
+        <span class="cap">${e.v_max ? e.v_max.toLocaleString() + '명' : '—'}</span>
+        <span class="dist">${e.dist_km != null ? e.dist_km.toFixed(1) + 'km' : '—'}</span>
+      </div>`).join('');
+    const cap = j.total_capacity || 0;
+    document.getElementById('events-summary').innerHTML =
+      `반경 1.5km <b>${j.total_count}건</b> · 누적 ${cap.toLocaleString()}명 — 환승 / 대안 노선 고려`;
+  }
 
   function applyCitydata(j) {
     if (j.error) return;
@@ -648,13 +674,15 @@ const LIVE = (() => {
     window.LIVE_WS = ws;   // CTA에서 impact_log 송신용
     ws.onopen = () => {
       setBadge('connected', 'LIVE');
-      queryArrival(); queryPpltn(); queryCitydata();
+      queryArrival(); queryPpltn(); queryCitydata(); queryEvents();
       if (arrivalPoll) clearInterval(arrivalPoll);
       arrivalPoll = setInterval(queryArrival, 20000);
       if (ppltnPoll) clearInterval(ppltnPoll);
       ppltnPoll = setInterval(queryPpltn, 60000);
       if (cdPoll) clearInterval(cdPoll);
       cdPoll = setInterval(queryCitydata, 90000);
+      if (evPoll) clearInterval(evPoll);
+      evPoll = setInterval(queryEvents, 600000);
     };
     ws.onmessage = (ev) => {
       try {
@@ -662,6 +690,7 @@ const LIVE = (() => {
         if (j.type === 'arrival') { liveArrival = j; applyOcc(); }
         else if (j.type === 'population') { livePpltn = j; applyPopulation(j); }
         else if (j.type === 'citydata') { applyCitydata(j); }
+        else if (j.type === 'events') { applyEvents(j); }
         else if (j.type === 'impact_summary') {
           const c = document.getElementById('impact-counter');
           if (c) {
@@ -689,7 +718,7 @@ const LIVE = (() => {
         curStation = r.station;
         document.getElementById('ctx-name').textContent = `${r.station.name}역`;
         document.getElementById('ctx-meta').textContent = `${r.station.line}호선 · ${r.km.toFixed(1)}km`;
-        if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); }
+        if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); }
       },
       () => {},
       { enableHighAccuracy: false, timeout: 8000 }
