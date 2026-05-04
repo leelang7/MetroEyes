@@ -245,7 +245,7 @@ const recMeta = document.getElementById('rec-meta');
 const phaseTag = document.getElementById('phase-tag');
 
 document.getElementById('t-line').textContent = STATION.line;
-document.getElementById('t-station').textContent = STATION.name;
+document.getElementById('gps-station').textContent = STATION.name;
 document.getElementById('t-cluster').textContent = model.CLUSTERS[STATION.cluster].label;
 
 let selected = 4;
@@ -415,9 +415,8 @@ function haversineKm(lat1, lon1, lat2, lon2) {
       }
       stEl.textContent = best.name;
       dEl.textContent = bestKm < 1.0 ? `${Math.round(bestKm * 1000)}m` : `${bestKm.toFixed(1)}km`;
-      // 헤더 노선/아키타입 갱신
+      // 헤더 노선 갱신 (역명은 위에서 gps-station 으로 이미 처리)
       document.getElementById('t-line').textContent = `${best.line}호선`;
-      document.getElementById('t-station').textContent = best.name + '역';
     },
     err => {
       tag.classList.remove('searching');
