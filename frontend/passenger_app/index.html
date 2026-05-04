@@ -98,6 +98,16 @@
       <span class="car" id="d-car">5호차</span>
       <span id="d-pct">32</span><span class="unit">%</span>
     </div>
+    <div class="people-row">
+      <span class="people-stat">
+        <span class="people-num" id="d-people">—</span><span class="people-unit">명</span>
+        <span class="people-cap"> / 정원 <span id="d-cap">—</span>명</span>
+      </span>
+      <span class="people-density">
+        <span id="d-density">—</span><span class="density-unit">/m²</span>
+        <span class="density-label">밀집도</span>
+      </span>
+    </div>
     <div class="why" id="d-why">편성 평균 <b>78%</b>보다 한산. <b>3호선 환승</b>도 가까움.</div>
   </section>
 
@@ -117,6 +127,7 @@
   <section class="minibev">
     <div class="head">
       <span>실시간 BEV · <span id="mini-title">5호차</span></span>
+      <span class="bev-people"><b id="bev-cnt">—</b>명 검출</span>
       <span class="live">LIVE</span>
     </div>
     <canvas id="bev"></canvas>
@@ -256,6 +267,7 @@ function renderCompare() {
   const cfg = VEHICLES[mode];
   const root = document.getElementById('compare-rows');
   root.innerHTML = '';
+  const cap = mode === 'subway' ? 20 : 35;
   options.forEach((opt, i) => {
     if (i === selected) return;
     const cls = opt.occ > 0.85 ? 'crit' : opt.occ > 0.65 ? 'warn' : '';
@@ -264,12 +276,13 @@ function renderCompare() {
     const whenText = mode === 'subway'
       ? (i === 0 ? '지금' : `${i}회 뒤`)
       : (`${Math.round(opt.eta / 60)}분 후`);
+    const cnt = Math.round(cap * opt.occ);
     const row = document.createElement('div');
     row.className = 'compare-row';
     row.innerHTML = `
       <span class="when">${whenText}</span>
       <div class="bar ${cls}"><div style="width: ${Math.min(100, opt.occ * 100)}%"></div></div>
-      <span class="pct">${Math.round(opt.occ * 100)}%</span>
+      <span class="pct">${Math.round(opt.occ * 100)}%<small style="color:var(--muted);font-weight:400;font-size:10px;margin-left:4px;">${cnt}명</small></span>
       <span class="verdict ${verdictCls}">${verdictText}</span>
     `;
     root.appendChild(row);
@@ -294,6 +307,15 @@ function applyAll() {
   document.getElementById('d-car').textContent = opt.label;
   document.getElementById('d-pct').textContent = Math.round(opt.occ * 100);
   const trainAvg = model.trainOccupancyAt(hour, cfg.label.cluster);
+  // 명수 — 정원 기준 (지하철 칸 20, 버스 정원 35명 전형)
+  const cap = mode === 'subway' ? 20 : 35;
+  const cnt = Math.round(cap * opt.occ);
+  // 면적 — 지하철 칸 약 7m² 가용, 버스 약 12m²
+  const area = mode === 'subway' ? 7 : 12;
+  const density = (cnt / area).toFixed(1);
+  document.getElementById('d-people').textContent = cnt;
+  document.getElementById('d-cap').textContent = cap;
+  document.getElementById('d-density').textContent = density;
   document.getElementById('d-why').innerHTML = mode === 'subway'
     ? `편성 평균 <b>${Math.round(trainAvg * 100)}%</b>보다 한산. ${cfg.label.station} ${cfg.label.line}.`
     : `노선 평균 <b>${Math.round(trainAvg * 100)}%</b>보다 한산. ${opt.eta < 5 * 60 ? '바로 도착 예정' : '약간 대기 가치'}.`;
@@ -305,8 +327,9 @@ function applyAll() {
   // ETA
   document.getElementById('eta-num').innerHTML = fmtETA(opt.eta);
 
-  // Mini BEV title
+  // Mini BEV title + 검출 인원
   document.getElementById('mini-title').textContent = opt.label;
+  document.getElementById('bev-cnt').textContent = cnt;
 
   // Sim
   if (sim) {
@@ -557,12 +580,19 @@ const LIVE = (() => {
       const opt = options[selected];
       document.getElementById('d-car').textContent = opt.label;
       document.getElementById('d-pct').textContent = Math.round(opt.occ * 100);
+      // 라이브 인원: bins[selected] 기반
+      const liveCnt = bins[selected] || 0;
+      const liveDensity = (liveCnt / 7).toFixed(1);   // 칸 면적 7m²
+      document.getElementById('d-people').textContent = liveCnt;
+      document.getElementById('d-cap').textContent = cap;
+      document.getElementById('d-density').textContent = liveDensity;
       const liveAvg = options.reduce((a,b) => a + b.occ, 0) / options.length;
       const personN = liveBev.tracks.filter(t => t.class === 'person').length;
       document.getElementById('d-why').innerHTML =
-        `실측 평균 <b>${Math.round(liveAvg * 100)}%</b>보다 한산. 라이브 카메라 ${personN}명 검출.`;
+        `실측 평균 <b>${Math.round(liveAvg * 100)}%</b>보다 한산. 라이브 카메라 <b>${personN}명</b> 검출.`;
       document.getElementById('eta-num').innerHTML = fmtETA(opt.eta);
       document.getElementById('mini-title').textContent = opt.label;
+      document.getElementById('bev-cnt').textContent = liveCnt;
       if (sim) { sim.setTargetOccupancy(opt.occ); sim.forceRebuild(opt.occ); }
       renderCompare();
     }

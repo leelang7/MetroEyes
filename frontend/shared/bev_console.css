@@ -113,13 +113,54 @@ body[data-domain="arch"]    .brand .dot { background: var(--domain-arch);    box
 }
 .brand a.cta-citizen:hover { background: rgba(125,211,211,0.18); color: var(--fg); }
 
-/* === GPS 위젯 (헤더 우측) === */
+/* === GPS 위젯 (헤더 우측) — 클릭 시 station picker === */
 .gps-tag {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 10px; border-radius: 999px;
   background: rgba(125,211,211,0.10); border: 1px solid rgba(125,211,211,0.30);
-  font-size: 12px; cursor: help;
+  font-size: 12px; cursor: pointer; user-select: none;
+  position: relative; transition: all 0.15s;
 }
+.gps-tag:hover { background: rgba(125,211,211,0.18); }
+.gps-tag .arrow { color: var(--muted); font-size: 9px; margin-left: 2px; }
+
+/* === Station Picker 드롭다운 === */
+.station-picker {
+  position: absolute; top: 100%; right: 0; margin-top: 6px; z-index: 100;
+  background: var(--panel); border: 1px solid var(--line-2); border-radius: 8px;
+  min-width: 220px; max-height: 360px; overflow-y: auto;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+  display: none;
+}
+.station-picker.open { display: block; }
+.station-picker .picker-head {
+  padding: 10px 14px; border-bottom: 1px solid var(--line);
+  font-size: 10px; color: var(--muted); letter-spacing: 1.4px;
+  text-transform: uppercase; font-weight: 700;
+}
+.station-picker .picker-row {
+  padding: 10px 14px; cursor: pointer; transition: background 0.1s;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; color: var(--fg);
+}
+.station-picker .picker-row:hover { background: rgba(255,255,255,0.04); }
+.station-picker .picker-row.current { background: rgba(125,211,211,0.10); color: var(--accent); }
+.station-picker .picker-row .meta { color: var(--muted); font-size: 11px; }
+.station-picker .picker-row .km {
+  color: var(--accent); font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.station-picker .picker-row.current .meta { color: var(--accent); opacity: 0.7; }
+.station-picker .picker-foot {
+  padding: 8px 14px; border-top: 1px solid var(--line);
+  font-size: 11px; color: var(--muted);
+}
+.station-picker .picker-foot button {
+  background: transparent; border: 1px solid var(--line-2); color: var(--muted-2);
+  padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+  font-family: inherit;
+}
+.station-picker .picker-foot button:hover { color: var(--fg); border-color: var(--accent); }
 .gps-tag .gps-led {
   width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
   box-shadow: 0 0 8px var(--accent); animation: gps-pulse 1.8s ease-in-out infinite;

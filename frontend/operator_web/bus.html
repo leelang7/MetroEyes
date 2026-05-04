@@ -19,10 +19,18 @@
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
   </div>
   <div class="controls">
-    <span class="tag gps-tag" id="gps-tag" title="GPS로 가까운 정류장 자동 매칭">
+    <span class="tag gps-tag" id="gps-tag" title="GPS 자동 매칭 + 클릭 시 다른 정류장 선택">
       <span class="gps-led"></span>
       <b id="gps-stop">잠실역</b>
       <em id="gps-dist">— km</em>
+      <span class="arrow">▾</span>
+      <div class="station-picker" id="station-picker">
+        <div class="picker-head">정류장 변경 (관제 시점 전환)</div>
+        <div id="picker-rows"></div>
+        <div class="picker-foot">
+          <button id="picker-gps-btn">📍 GPS 재매칭</button>
+        </div>
+      </div>
     </span>
     <span class="tag">노선<b id="t-line">간선 142</b></span>
     <span class="tag">정류장<b id="t-stop">잠실역.7번출구</b></span>
@@ -530,17 +538,17 @@ function drawBusSparkline(busIdx, currentHour) {
     `현재 ${currentHour}시 · ${Math.round(occs[currentHour] * 100)}%`;
 }
 
-// ============== GPS 매칭 (가까운 정류장) ==============
+// ============== 정류장 picker + GPS 매칭 ==============
 const STOP_LIST = [
-  { name: '잠실역.7번출구',    lat: 37.5133, lon: 127.1003 },
-  { name: '강남역.11번출구',   lat: 37.4980, lon: 127.0276 },
-  { name: '홍대입구역.9번출구', lat: 37.5572, lon: 126.9244 },
-  { name: '시청역.6번출구',    lat: 37.5642, lon: 126.9778 },
-  { name: '서울역.버스환승',   lat: 37.5547, lon: 126.9707 },
-  { name: '광화문.교보문고',   lat: 37.5717, lon: 126.9766 },
-  { name: '신촌오거리',        lat: 37.5556, lon: 126.9362 },
-  { name: '사당역.4번출구',    lat: 37.4766, lon: 126.9817 },
-  { name: '건대입구역.6번출구', lat: 37.5403, lon: 127.0703 },
+  { name: '잠실역.7번출구',    short: '잠실역',     route: '간선 142', lat: 37.5133, lon: 127.1003, cluster: 'hub' },
+  { name: '강남역.11번출구',   short: '강남역',     route: '광역 9408', lat: 37.4980, lon: 127.0276, cluster: 'office' },
+  { name: '홍대입구역.9번출구', short: '홍대입구',   route: '간선 271',  lat: 37.5572, lon: 126.9244, cluster: 'hub' },
+  { name: '시청역.6번출구',    short: '시청',       route: '간선 162',  lat: 37.5642, lon: 126.9778, cluster: 'office' },
+  { name: '서울역.버스환승',   short: '서울역',     route: '광역 9714', lat: 37.5547, lon: 126.9707, cluster: 'hub' },
+  { name: '광화문.교보문고',   short: '광화문',     route: '간선 401',  lat: 37.5717, lon: 126.9766, cluster: 'office' },
+  { name: '신촌오거리',        short: '신촌',       route: '간선 753',  lat: 37.5556, lon: 126.9362, cluster: 'office' },
+  { name: '사당역.4번출구',    short: '사당',       route: '간선 4318', lat: 37.4766, lon: 126.9817, cluster: 'resi' },
+  { name: '건대입구역.6번출구', short: '건대입구',   route: '간선 240',  lat: 37.5403, lon: 127.0703, cluster: 'resi' },
 ];
 function busHaversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371, toRad = d => d * Math.PI / 180;
@@ -548,37 +556,96 @@ function busHaversineKm(lat1, lon1, lat2, lon2) {
   const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
-(function tryGps() {
+let _userPos = null;
+
+function selectStop(s, kmFromUser) {
+  ROUTE.name = s.route;
+  ROUTE.stop = s.name;
+  ROUTE.cluster = s.cluster;
+  document.getElementById('gps-stop').textContent = s.short;
+  document.getElementById('gps-dist').textContent =
+    kmFromUser == null ? '관제' :
+    kmFromUser < 1.0 ? `${Math.round(kmFromUser * 1000)}m` : `${kmFromUser.toFixed(1)}km`;
+  document.getElementById('t-line').textContent = s.route;
+  document.getElementById('t-stop').textContent = s.name;
+  document.getElementById('t-cluster').textContent = model.CLUSTERS[s.cluster].label;
+  applyHour();
+  renderPicker();
+}
+function renderPicker() {
+  const rows = document.getElementById('picker-rows');
+  if (!rows) return;
+  rows.innerHTML = '';
+  const list = _userPos
+    ? STOP_LIST.map(s => ({ ...s, km: busHaversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon) }))
+               .sort((a, b) => a.km - b.km)
+    : STOP_LIST;
+  for (const s of list) {
+    const row = document.createElement('div');
+    const isCurrent = s.name === ROUTE.stop;
+    row.className = 'picker-row' + (isCurrent ? ' current' : '');
+    const km = s.km != null ? (s.km < 1 ? `${Math.round(s.km * 1000)}m` : `${s.km.toFixed(1)}km`) : '';
+    row.innerHTML = `
+      <span><b>${s.short}</b><span class="meta"> · ${s.route}</span></span>
+      ${km ? `<span class="km">${km}</span>` : ''}`;
+    row.addEventListener('click', () => {
+      selectStop(s, s.km);
+      document.getElementById('station-picker').classList.remove('open');
+    });
+    rows.appendChild(row);
+  }
+}
+document.getElementById('gps-tag').addEventListener('click', e => {
+  if (e.target.closest('.station-picker')) return;
+  const picker = document.getElementById('station-picker');
+  picker.classList.toggle('open');
+  if (picker.classList.contains('open')) renderPicker();
+  e.stopPropagation();
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#gps-tag')) {
+    document.getElementById('station-picker').classList.remove('open');
+  }
+});
+function tryGps() {
   const tag = document.getElementById('gps-tag');
   const stEl = document.getElementById('gps-stop');
   const dEl = document.getElementById('gps-dist');
   if (!('geolocation' in navigator)) {
     tag.classList.add('error');
     stEl.textContent = '미지원'; dEl.textContent = '—';
+    renderPicker();
     return;
   }
   tag.classList.add('searching');
-  stEl.textContent = '탐색 중'; dEl.textContent = '— km';
+  dEl.textContent = '탐색 중';
   navigator.geolocation.getCurrentPosition(
     pos => {
       tag.classList.remove('searching');
+      _userPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
       let best = STOP_LIST[0], bestKm = Infinity;
       for (const s of STOP_LIST) {
-        const km = busHaversineKm(pos.coords.latitude, pos.coords.longitude, s.lat, s.lon);
+        const km = busHaversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon);
         if (km < bestKm) { bestKm = km; best = s; }
       }
-      stEl.textContent = best.name.split('.')[0];
-      dEl.textContent = bestKm < 1.0 ? `${Math.round(bestKm * 1000)}m` : `${bestKm.toFixed(1)}km`;
-      document.getElementById('t-stop').textContent = best.name;
+      selectStop(best, bestKm);
     },
     err => {
       tag.classList.remove('searching');
       tag.classList.add('error');
-      stEl.textContent = '권한 거부'; dEl.textContent = '—';
+      dEl.textContent = '권한 거부';
+      renderPicker();
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
   );
-})();
+}
+document.getElementById('picker-gps-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('gps-tag').classList.remove('error');
+  tryGps();
+});
+tryGps();
+renderPicker();
 
 // ============== LLM 어시스턴트 ==============
 const llmFab = document.getElementById('llmFab');

@@ -19,10 +19,18 @@
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
   </div>
   <div class="controls">
-    <span class="tag gps-tag" id="gps-tag" title="GPS로 가까운 역 자동 매칭">
+    <span class="tag gps-tag" id="gps-tag" title="GPS 자동 매칭 + 클릭 시 다른 역 선택">
       <span class="gps-led"></span>
       <b id="gps-station">잠실</b>
       <em id="gps-dist">— km</em>
+      <span class="arrow">▾</span>
+      <div class="station-picker" id="station-picker">
+        <div class="picker-head">역 변경 (관제 시점 전환)</div>
+        <div id="picker-rows"></div>
+        <div class="picker-foot">
+          <button id="picker-gps-btn">📍 GPS 재매칭</button>
+        </div>
+      </div>
     </span>
     <span class="tag">노선<b id="t-line">2호선</b></span>
     <span class="tag">아키타입<b id="t-cluster">환승 허브</b></span>
@@ -436,18 +444,20 @@ function drawCarSparkline(carIdx, currentHour) {
     `현재 ${currentHour}시 · ${Math.round(occs[currentHour] * 100)}%`;
 }
 
-// ============== GPS 매칭 ==============
+// ============== 역 picker + GPS 매칭 (관제 시점 전환) ==============
 const STATION_LIST = [
-  { name: '잠실',    line: 2, lat: 37.5133, lon: 127.1000 },
-  { name: '강남',    line: 2, lat: 37.4980, lon: 127.0276 },
-  { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244 },
-  { name: '시청',    line: 2, lat: 37.5642, lon: 126.9778 },
-  { name: '서울역',  line: 1, lat: 37.5547, lon: 126.9707 },
-  { name: '광화문',  line: 5, lat: 37.5717, lon: 126.9766 },
-  { name: '신촌',    line: 2, lat: 37.5556, lon: 126.9362 },
-  { name: '사당',    line: 2, lat: 37.4766, lon: 126.9817 },
-  { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703 },
-  { name: '종로3가', line: 1, lat: 37.5717, lon: 126.9914 },
+  { name: '잠실',     line: 2, lat: 37.5133, lon: 127.1000, cluster: 'hub' },
+  { name: '강남',     line: 2, lat: 37.4980, lon: 127.0276, cluster: 'office' },
+  { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244, cluster: 'hub' },
+  { name: '시청',     line: 2, lat: 37.5642, lon: 126.9778, cluster: 'office' },
+  { name: '서울역',   line: 1, lat: 37.5547, lon: 126.9707, cluster: 'hub' },
+  { name: '광화문',   line: 5, lat: 37.5717, lon: 126.9766, cluster: 'office' },
+  { name: '신촌',     line: 2, lat: 37.5556, lon: 126.9362, cluster: 'office' },
+  { name: '사당',     line: 2, lat: 37.4766, lon: 126.9817, cluster: 'resi' },
+  { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703, cluster: 'resi' },
+  { name: '종로3가',  line: 1, lat: 37.5717, lon: 126.9914, cluster: 'hub' },
+  { name: '여의도',   line: 5, lat: 37.5215, lon: 126.9243, cluster: 'office' },
+  { name: '노원',     line: 4, lat: 37.6543, lon: 127.0617, cluster: 'resi' },
 ];
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371, toRad = d => d * Math.PI / 180;
@@ -455,7 +465,61 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
-(function tryGps() {
+let _userPos = null;
+
+function selectStation(s, kmFromUser) {
+  STATION.line = `${s.line}호선`;
+  STATION.name = s.name;
+  STATION.cluster = s.cluster;
+  document.getElementById('gps-station').textContent = s.name;
+  document.getElementById('gps-dist').textContent =
+    kmFromUser == null ? '관제' :
+    kmFromUser < 1.0 ? `${Math.round(kmFromUser * 1000)}m` : `${kmFromUser.toFixed(1)}km`;
+  document.getElementById('t-line').textContent = STATION.line;
+  document.getElementById('t-cluster').textContent = model.CLUSTERS[s.cluster].label;
+  applyHour();   // 시각화 + 칸 상세 + sparkline 모두 갱신
+  renderPicker();
+}
+
+function renderPicker() {
+  const rows = document.getElementById('picker-rows');
+  if (!rows) return;
+  rows.innerHTML = '';
+  const list = _userPos
+    ? STATION_LIST.map(s => ({ ...s, km: haversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon) }))
+                  .sort((a, b) => a.km - b.km)
+    : STATION_LIST;
+  for (const s of list) {
+    const row = document.createElement('div');
+    const isCurrent = s.name === STATION.name;
+    row.className = 'picker-row' + (isCurrent ? ' current' : '');
+    const km = s.km != null ? (s.km < 1 ? `${Math.round(s.km * 1000)}m` : `${s.km.toFixed(1)}km`) : '';
+    row.innerHTML = `
+      <span><b>${s.name}</b><span class="meta"> · ${s.line}호선</span></span>
+      ${km ? `<span class="km">${km}</span>` : ''}`;
+    row.addEventListener('click', () => {
+      selectStation(s, s.km);
+      document.getElementById('station-picker').classList.remove('open');
+    });
+    rows.appendChild(row);
+  }
+}
+
+// 위젯 클릭 시 picker 토글
+document.getElementById('gps-tag').addEventListener('click', e => {
+  if (e.target.closest('.station-picker')) return;  // 내부 클릭은 무시
+  const picker = document.getElementById('station-picker');
+  picker.classList.toggle('open');
+  if (picker.classList.contains('open')) renderPicker();
+  e.stopPropagation();
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#gps-tag')) {
+    document.getElementById('station-picker').classList.remove('open');
+  }
+});
+
+function tryGps() {
   const tag = document.getElementById('gps-tag');
   const stEl = document.getElementById('gps-station');
   const dEl = document.getElementById('gps-dist');
@@ -463,33 +527,38 @@ function haversineKm(lat1, lon1, lat2, lon2) {
     tag.classList.add('error');
     stEl.textContent = '미지원';
     dEl.textContent = '—';
+    renderPicker();
     return;
   }
   tag.classList.add('searching');
-  stEl.textContent = '탐색 중';
-  dEl.textContent = '— km';
+  dEl.textContent = '탐색 중';
   navigator.geolocation.getCurrentPosition(
     pos => {
       tag.classList.remove('searching');
+      _userPos = { lat: pos.coords.latitude, lon: pos.coords.longitude };
       let best = STATION_LIST[0], bestKm = Infinity;
       for (const s of STATION_LIST) {
-        const km = haversineKm(pos.coords.latitude, pos.coords.longitude, s.lat, s.lon);
+        const km = haversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon);
         if (km < bestKm) { bestKm = km; best = s; }
       }
-      stEl.textContent = best.name;
-      dEl.textContent = bestKm < 1.0 ? `${Math.round(bestKm * 1000)}m` : `${bestKm.toFixed(1)}km`;
-      // 헤더 노선 갱신 (역명은 위에서 gps-station 으로 이미 처리)
-      document.getElementById('t-line').textContent = `${best.line}호선`;
+      selectStation(best, bestKm);
     },
     err => {
       tag.classList.remove('searching');
       tag.classList.add('error');
-      stEl.textContent = '권한 거부';
-      dEl.textContent = '—';
+      dEl.textContent = '권한 거부';
+      renderPicker();
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
   );
-})();
+}
+document.getElementById('picker-gps-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('gps-tag').classList.remove('error');
+  tryGps();
+});
+tryGps();
+renderPicker();
 
 function updatePhaseTag() {
   const m = { arriving: ['도착 중', ''], stopped: ['정차', 'stopped'], departing: ['출발', ''], running: ['운행 중', ''] };
