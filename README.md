@@ -5,6 +5,12 @@
 **라이브 데모 (외부 고정 URL)**: https://leelang7.github.io/MetroEyes/
 > 너 PC backend(ngrok 영구 도메인)에 자동 wss 연결. PC 켜둔 상태에서 누구든 접속하면 LIVE.
 
+**핵심 KPI (정책 ROI v3, 응답률 30% 가정)**:
+- 순 사회적 가치 **1,393억/년** · ROI **347x** · 인프라 4억 (134역 우선)
+- 절감 시간 473.4M분/년 · cap 평탄화 −0.66%p · 2호선 단독 157M분 절감
+
+**진입**: [`frontend/index.html`](frontend/index.html) — 8장 카드 허브 (📊 정책 보고 / 🎬 통합 시연 / 🚇 운영자 / 📱 시민 / 🛠 디버그)
+
 ---
 
 
@@ -14,6 +20,13 @@
 
 ## 라이브 데모 (3분)
 
+**가장 빠른 시연 (CV 모델 없이)**:
+```powershell
+python -m src.cv.lite_server --port 8765 --demo
+```
+→ fake BEV 트랙 5Hz broadcast + 모든 외부 API 라이브 호출 활성. 운영자 콘솔 → ▶︎ 시연 모드 30초 자동 재생.
+
+**완전한 실데이터 흐름**:
 1. 백엔드: `.venv\Scripts\python.exe -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --imgsz 1280 --conf 0.18`
 2. 영상 피더: `.venv\Scripts\python.exe scripts\feed_video.py`
 3. (옵션) ngrok 외부 노출: `ngrok http 8765`
@@ -60,7 +73,8 @@ pwsh scripts\start_demo.ps1
 | `events_query` | poi | `{type:'events', events:[{name, place, v_max, dist_km}]}` 행사 list |
 | `predict_occupancy` | hour, line, stationName | `{type:'occupancy_predict', predicted}` ML 곡선 한 점 |
 | `model_metrics_query` | — | `{type:'model_metrics', mae_val, r2_val, mae_cv5, ...}` |
-| `impact_log` | station, car, saved_pct | broadcast `{type:'impact_summary', total_count, avg_saved_pct}` |
+| `impact_log` | station, car, saved_pct, krw | broadcast `{type:'impact_summary', total_count, avg_saved_pct, saved_min_total, value_won, krw_paid, roi_x, est_response_rate, top_station}` |
+| `predict_surge` | poi, hours_ahead | `{type:'surge_forecast', peaks, hourly}` 24h 폭증 예측 |
 
 ## 실행 (sandbox 환경 우회)
 
@@ -173,6 +187,22 @@ python scripts/train_occupancy.py --month 202602
 
 → `outputs/models/occupancy_lgbm.joblib` + 검증 metrics + 산점도/특징 중요도 그림.
 백엔드는 모델 파일이 있으면 lazy load해 `predict_occupancy` WS 컨트롤로 응답.
+
+---
+
+## 정책 ROI v3 (호선 × 시간대 차등 모델)
+
+```bash
+python scripts/policy_roi_v3.py
+```
+
+산출:
+- `outputs/policy_roi_v3_report.json` — 5단계 시나리오 + 호선별 절감 매트릭스
+- `outputs/policy_roi_v3_matrix.png` — 호선 9 × 시간 24 절감 분 히트맵
+
+**v2 대비 진화**: 호선별 cap 도달도 (1호선 0.55 vs 9호선 1.10) 차등 + 출퇴근 응답률 비대칭 (8시 0.7 / 18시 1.0) + cap 평탄화 효과. 응답률 30% 시 v2 283억 → v3 **1,393억/년 (5x 정밀화)**.
+
+자세한 분석: [`frontend/pitch.html`](frontend/pitch.html) (한 페이지 정량 보고)
 
 ---
 
