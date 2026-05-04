@@ -383,6 +383,14 @@ main {
 .safety-head .badges .b.high { color: var(--crit); border-color: rgba(255,94,87,0.4); background: rgba(255,94,87,0.06); }
 .safety-head .badges .b.med { color: var(--warn); border-color: rgba(240,180,106,0.4); background: rgba(240,180,106,0.06); }
 .safety-head .badges .b.low { color: var(--accent); border-color: rgba(125,211,211,0.3); background: rgba(125,211,211,0.04); }
+.safety-head .badges .b.free { color: #c084fc; border-color: rgba(192,132,252,0.4); background: rgba(192,132,252,0.06); }
+/* 활성 알림 시 펄스 LED */
+.safety-led { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); margin-right: 8px; vertical-align: middle; transition: all 0.3s; }
+.safety-led.active { background: var(--crit); box-shadow: 0 0 10px var(--crit); animation: ledPulse 1.2s ease-in-out infinite; }
+@keyframes ledPulse { 0%,100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+/* 안전 패널 자체 — 활성 사고 N건 시 빨간 외곽선 펄스 */
+.safety-panel.has-alert { border-color: rgba(255,94,87,0.5); box-shadow: 0 0 16px rgba(255,94,87,0.2); animation: panelPulse 2.4s ease-in-out infinite; }
+@keyframes panelPulse { 0%,100% { box-shadow: 0 0 12px rgba(255,94,87,0.15); } 50% { box-shadow: 0 0 24px rgba(255,94,87,0.4); } }
 
 .incident-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
 .incident {

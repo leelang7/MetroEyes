@@ -10,6 +10,12 @@
 <link rel="stylesheet" href="../shared/bev_console.css">
 </head>
 <body data-domain="subway">
+<!-- 상단 안전 알림 띠 — 임계 사건 시 자동 표시 -->
+<div id="alert-banner" style="display:none;position:sticky;top:0;z-index:9990;background:linear-gradient(90deg,#ff5e57,#ff8a4c);color:#fff;padding:10px 20px;font-weight:600;font-size:13px;text-align:center;box-shadow:0 2px 12px rgba(255,94,87,0.4);animation:alertPulse 1.5s ease-in-out infinite;">
+  <span id="alert-banner-text">—</span>
+  <button id="alert-close" style="float:right;background:rgba(0,0,0,0.2);border:0;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-weight:700;line-height:0;padding:0;">×</button>
+</div>
+<style>@keyframes alertPulse { 0%,100%{box-shadow:0 2px 12px rgba(255,94,87,0.4)} 50%{box-shadow:0 2px 24px rgba(255,94,87,0.7)} }</style>
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
 (function () {
@@ -150,14 +156,14 @@
         <span class="label">약자석 점유</span>
         <span class="val" id="pri-val">— / —</span>
       </div>
-      <div class="safety-panel">
+      <div class="safety-panel" id="safety-panel">
         <div class="safety-head">
-          <h2><b>안전 감지</b><span style="color: var(--muted)">멀티태스크 BEV</span></h2>
+          <h2><span class="safety-led" id="safety-led" title="활성 알림 시 펄스"></span><b>안전 감지</b><span style="color: var(--muted)">멀티태스크 BEV · 응급/이상/분실/무임</span></h2>
           <div class="badges">
             <span class="b high" id="b-emer">응급 0</span>
             <span class="b med" id="b-susp">이상 0</span>
             <span class="b low" id="b-lost">분실 0</span>
-            <span class="b" id="b-free">무임 0</span>
+            <span class="b free" id="b-free">무임 0</span>
           </div>
         </div>
         <div class="incident-list" id="incidents"></div>
@@ -222,6 +228,11 @@ const sim = BEVEngine.createSim({
     if (incidentsLog.length > 30) incidentsLog.length = 30;
     SF.pushToast(toastStack, ev);
     renderIncidents();
+    // 상단 alert 띠 — emergency / suspicious 만
+    if (ev.severity === 'high' || ev.type === 'emergency' || ev.type === 'suspicious') {
+      const label = ({ emergency: '응급', suspicious: '이상행동', lost: '분실물', free_ride: '무임 의심' })[ev.type] || ev.type;
+      if (typeof maybeAlertBanner === 'function') maybeAlertBanner(`${label} — ${ev.msg}`, 'crit');
+    }
   },
 });
 
@@ -632,6 +643,10 @@ function renderIncidents() {
   document.getElementById('b-susp').textContent = '이상 ' + nS;
   document.getElementById('b-lost').textContent = '분실 ' + nL;
   document.getElementById('b-free').textContent = '무임 ' + nF;
+  // 활성 사고 (응급/이상/무임) 있으면 패널 펄스 + LED 활성
+  const hasAlert = (nE + nS + nF) > 0;
+  document.getElementById('safety-panel')?.classList.toggle('has-alert', hasAlert);
+  document.getElementById('safety-led')?.classList.toggle('active', hasAlert);
 
   for (const ev of incidentsLog.slice(0, 8)) {
     const row = document.createElement('div');
@@ -826,16 +841,13 @@ if (SR) {
   }
 
   // 시간대 × 클러스터 기반 태그 추정 (CardSubway 스키마 부재 → 모델 보간)
-  // 모델: trainOccupancyAt × CAPACITY × N칸 차원의 태그 (역 진입 카드 통계 가정)
-  // 차내 카메라 검출과 비교 → 차이 = 무임/미태그/이상 추정
+  let _lastTagAlert = 0;  // 같은 alert 60초 throttle
   function evalTagVsCV(cvN) {
     const tagEl = document.getElementById('fc-tag-v');
     const subEl = document.getElementById('fc-tag-sub');
     if (cvN == null) { tagEl.textContent = '— 명'; subEl.textContent = 'CV 검출 대기'; setCard('fc-tag', 'dim'); return; }
-    // 시뮬 (또는 추후 실 GTON 호출): 시간대 × 클러스터 평균
     const hour = +(document.getElementById('hour')?.value || 18);
     const trainAvg = model.trainOccupancyAt(hour, STATION.cluster);
-    // 칸당 평균 태그 인원 (정원 20 기준 — 차내 카메라 한 칸 시야 가정)
     const tagEst = Math.round(20 * trainAvg);
     const diff = cvN - tagEst;
     const ratio = tagEst > 0 ? diff / tagEst : 0;
@@ -843,6 +855,18 @@ if (SR) {
     let cls = 'ok', msg = '태그 일치';
     if (diff > 5 || ratio > 0.30) {
       cls = 'crit'; msg = `🚨 무임/미태그 의심 ${diff}명 (+${(ratio*100).toFixed(0)}%)`;
+      maybeAlertBanner(`무임/미태그 의심 — CV ${cvN}명 vs 태그 ${tagEst}명 차이 +${diff}명`, 'crit');
+      // incidentsLog 에 자동 push (60초 throttle)
+      if (Date.now() - _lastTagAlert > 60000) {
+        _lastTagAlert = Date.now();
+        incidentsLog.unshift({
+          id: `tag-${Date.now()}`, type: 'free_ride', severity: 'high',
+          msg: `CV ${cvN}명 vs 태그 추정 ${tagEst}명 (+${diff}, +${(ratio*100).toFixed(0)}%)`,
+          ts: Date.now(),
+        });
+        if (incidentsLog.length > 30) incidentsLog.length = 30;
+        renderIncidents();
+      }
     } else if (diff > 2 || ratio > 0.15) {
       cls = 'warn'; msg = `⚠ 미태그 가능 ${diff}명 (+${(ratio*100).toFixed(0)}%)`;
     } else if (diff < -2) {
@@ -853,6 +877,22 @@ if (SR) {
     subEl.textContent = msg;
     setCard('fc-tag', cls);
   }
+
+  // 상단 alert 띠 표시 (3가지 우선순위: emergency > suspicious > free_ride)
+  let _alertHide = null;
+  function maybeAlertBanner(text, level) {
+    const b = document.getElementById('alert-banner');
+    const t = document.getElementById('alert-banner-text');
+    if (!b || !t) return;
+    t.textContent = (level === 'crit' ? '🚨 ' : '⚠ ') + text;
+    b.style.display = 'block';
+    if (_alertHide) clearTimeout(_alertHide);
+    _alertHide = setTimeout(() => b.style.display = 'none', 12000);
+  }
+  document.getElementById('alert-close')?.addEventListener('click', () => {
+    document.getElementById('alert-banner').style.display = 'none';
+    if (_alertHide) clearTimeout(_alertHide);
+  });
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
   function queryPop() { send({ type: 'population_query', poi: station.poi }); }
