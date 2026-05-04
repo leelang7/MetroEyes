@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v3.6-demolink';
+  const CUR = 'v3.7-pitchlink';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -29,6 +29,7 @@
     </div>
     <a class="back-btn" href="../operator_web/index.html">관제 →</a>
     <a class="back-btn" href="../demo.html" title="4-패널 통합 시연" style="background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border-color: rgba(245,158,11,.55); color: #fbbf24;">🎬</a>
+    <a class="back-btn" href="../pitch.html" title="정책 ROI v3 정량 보고" style="background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border-color: rgba(125,211,211,.55); color: #7dd3d3;">📊</a>
   </header>
 
   <div class="tabs" role="tablist">

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<title>MetroEyes — 진입</title>
+<style>
+  :root {
+    --bg: #0a0a0e;
+    --panel: #14141a;
+    --line: rgba(125,211,211,.16);
+    --text: #e8e8ee;
+    --muted: #8a8a96;
+    --accent: #7dd3d3;
+    --bus: #f97316;
+    --realcam: #ef4444;
+    --ads: #10b981;
+    --citizen: #f59e0b;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+  body {
+    display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(125,211,211,.08), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(16,185,129,.06), transparent 40%),
+      var(--bg);
+  }
+  .brand {
+    text-align: center; margin-bottom: 24px;
+  }
+  .brand h1 {
+    font-size: 36px; font-weight: 800; margin: 0; letter-spacing: -.6px;
+    background: linear-gradient(135deg, var(--accent), #38bdf8);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .brand .tag {
+    display: inline-block; padding: 3px 10px; background: rgba(125,211,211,.10);
+    border: 1px solid var(--line); color: var(--accent); border-radius: 999px;
+    font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; margin-top: 8px;
+  }
+  .lede {
+    color: var(--muted); font-size: 13px; max-width: 640px; text-align: center; line-height: 1.7;
+    margin: 16px 0 32px;
+  }
+  .lede b { color: var(--text); }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px; max-width: 1080px; width: 100%;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; text-decoration: none; color: var(--text);
+    transition: transform .18s, border-color .18s, box-shadow .18s;
+    display: flex; flex-direction: column; gap: 6px; position: relative; overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-2px); border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(125,211,211,.18);
+  }
+  .card .ico { font-size: 28px; }
+  .card .title { font-size: 17px; font-weight: 800; }
+  .card .sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .card .badge {
+    position: absolute; top: 14px; right: 14px;
+    font-size: 9px; padding: 1px 6px; border-radius: 4px;
+    font-weight: 700; letter-spacing: .4px;
+  }
+  .card.subway .badge { color: var(--accent); background: rgba(125,211,211,.12); border: 1px solid var(--line); }
+  .card.bus .badge { color: var(--bus); background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.30); }
+  .card.realcam .badge { color: var(--realcam); background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.30); }
+  .card.ads .badge { color: var(--ads); background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.30); }
+  .card.citizen .badge { color: var(--citizen); background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.30); }
+  .card.demo .badge { color: #fbbf24; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.50); }
+  .card.demo {
+    background: linear-gradient(135deg, rgba(245,158,11,.10), rgba(239,68,68,.06));
+    border-color: rgba(245,158,11,.4);
+  }
+  .card.pitch {
+    background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(16,185,129,.06));
+    border-color: rgba(125,211,211,.45);
+  }
+  .card.pitch .badge { color: var(--accent); background: rgba(125,211,211,.14); border: 1px solid var(--line); }
+  footer {
+    margin-top: 40px; color: var(--muted); font-size: 10px; opacity: .65;
+  }
+  footer code { background: rgba(255,255,255,.04); padding: 1px 6px; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <div class="brand">
+    <h1>MetroEyes</h1>
+    <div class="tag">SubwayBEV · 2026 Seoul Big Data</div>
+  </div>
+  <div class="lede">
+    <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의 통합 시스템<br>
+    응답률 30% 가정 시 사회적 가치 <b>1,393억/년</b> · ROI <b>347x</b>
+  </div>
+  <div class="grid">
+    <a class="card pitch" href="pitch.html">
+      <span class="badge">REPORT</span>
+      <span class="ico">📊</span>
+      <span class="title">정책 보고</span>
+      <span class="sub">ROI v3 정량 분석 — 핵심 KPI / 호선×시간 매트릭스</span>
+    </a>
+    <a class="card demo" href="demo.html">
+      <span class="badge">5min</span>
+      <span class="ico">🎬</span>
+      <span class="title">통합 시연</span>
+      <span class="sub">4-패널 동시 재생 (운영자/시민/광고/실카메라)</span>
+    </a>
+    <a class="card subway" href="operator_web/index.html">
+      <span class="badge">SUBWAY</span>
+      <span class="ico">🚇</span>
+      <span class="title">운영자 — 지하철</span>
+      <span class="sub">10량 BEV + fusion-strip + 자동 의사결정 로그</span>
+    </a>
+    <a class="card bus" href="operator_web/bus.html">
+      <span class="badge">BUS</span>
+      <span class="ico">🚌</span>
+      <span class="title">운영자 — 버스</span>
+      <span class="sub">정류장 단위 BEV + GPS 매칭 + 시연 인젝터</span>
+    </a>
+    <a class="card realcam" href="operator_web/realbev.html">
+      <span class="badge">REAL CV</span>
+      <span class="ico">📷</span>
+      <span class="title">실 카메라 BEV (3D)</span>
+      <span class="sub">YOLO11n + BoT-SORT + A* 비상동선 + 분실/응급</span>
+    </a>
+    <a class="card ads" href="operator_web/ad_pricing.html">
+      <span class="badge">ADS</span>
+      <span class="ico">📺</span>
+      <span class="title">광고 단가 라이브</span>
+      <span class="sub">12 POI 분 단위 변동 + 실 노출 보정 KPI</span>
+    </a>
+    <a class="card citizen" href="passenger_app/index.html">
+      <span class="badge">CITIZEN</span>
+      <span class="ico">📱</span>
+      <span class="title">시민 PWA</span>
+      <span class="sub">권장 칸 + 분산 보상 (5%p +100, 30%p +200원)</span>
+    </a>
+    <a class="card" href="admin.html">
+      <span class="badge" style="color: var(--muted); border: 1px solid var(--line);">DEBUG</span>
+      <span class="ico">🛠</span>
+      <span class="title">Debug Console</span>
+      <span class="sub">WS 직접 호출 + Live Impact + 메시지 sparkline</span>
+    </a>
+  </div>
+  <footer>
+    backend: <code>python -m src.cv.lite_server --demo</code> (CV 모델 없이 BEV 라이브) · D-8 본선 출품 (5/13 마감)
+  </footer>
+</body>
+</html>
