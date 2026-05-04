@@ -91,6 +91,55 @@ def http_post_json(url: str, body: dict, headers: dict, timeout: float = 8.0) ->
 
 # ============== Seoul Open API fetchers ==============
 
+def predict_surge(poi: str, hours_ahead: int = 24) -> dict:
+    """24시간 폭증 예측 — 시간대 baseline + 과거 추세 + 행사 신호.
+
+    단순 모델:
+      base[h] = 출퇴근 양봉 + 시간대 가우시안
+      hist_trend = ppltn_history 의 최근 1시간 ratio
+      forecast[h+i] = base[h+i] × hist_trend × event_boost
+      surge_prob[h+i] = sigmoid((forecast - threshold) × 5)
+    """
+    import math, time
+    now = time.time()
+    cur_hour = int(time.localtime().tm_hour)
+    hist = ppltn_history.get(poi, [])
+    hist_trend = 1.0
+    if len(hist) >= 2:
+        recent = sum(v for _, v in hist[-3:]) / max(1, len(hist[-3:]))
+        early = sum(v for _, v in hist[:3]) / max(1, len(hist[:3]))
+        if early > 0: hist_trend = recent / early
+    # 시간대 baseline (출퇴근 양봉)
+    def base(h):
+        am = 0.7 * math.exp(-((h - 8) ** 2) / 4.0)
+        pm = 0.85 * math.exp(-((h - 18) ** 2) / 5.0)
+        leisure = 0.5 * math.exp(-((h - 20) ** 2) / 8.0)  # 성수/홍대 같은 핫스팟 저녁
+        return 0.2 + am + pm + leisure
+    # POI hot 가중치
+    is_hot = any(k in poi for k in ["성수", "홍대", "서울숲", "뚝섬", "강남"])
+    forecasts = []
+    for i in range(hours_ahead):
+        h = (cur_hour + i) % 24
+        b = base(h)
+        if is_hot: b *= 1.3
+        f = b * hist_trend
+        # surge_prob
+        prob = 1.0 / (1.0 + math.exp(-(f - 1.5) * 3.0))
+        forecasts.append({"hour": h, "level": round(f, 2), "surge_prob": round(prob, 2)})
+    # peak hours (prob > 0.7)
+    peaks = sorted([f for f in forecasts if f["surge_prob"] > 0.7], key=lambda x: -x["surge_prob"])[:3]
+    return {
+        "type": "surge_forecast",
+        "poi": poi,
+        "fetched_at": now,
+        "hist_trend": round(hist_trend, 2),
+        "is_hot": is_hot,
+        "forecasts": forecasts,
+        "peaks": peaks,
+        "summary": f"{poi} 향후 {hours_ahead}h: 폭증 가능 시간대 {len(peaks)}개" + (f" (가장 강력: {peaks[0]['hour']}시 prob={peaks[0]['surge_prob']:.0%})" if peaks else ""),
+    }
+
+
 async def fetch_population(poi: str) -> dict:
     """citydata_ppltn — 분 단위 POI 인구."""
     if not SEOUL_KEY:
@@ -295,8 +344,11 @@ async def handler(websocket):
                     "events": [], "total_count": 0, "total_capacity": 0,
                 }, ensure_ascii=False))
             elif t == "impact_log":
-                # 임팩트 누적 (메모리만)
                 pass
+            elif t == "predict_surge" and req.get("poi"):
+                # IDEA-7 24h 폭증 예측 — 과거 추세(ppltn_history) + 시간대 baseline + 행사 신호
+                payload = predict_surge(req["poi"], req.get("hours_ahead", 24))
+                await websocket.send(json.dumps(payload, ensure_ascii=False))
     except Exception as e:
         print(f"[ws] err {e}", flush=True)
     finally:

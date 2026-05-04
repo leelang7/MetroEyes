@@ -1826,6 +1826,63 @@ onTracksUpdate = function (trks) {
   return _origOnTracks(trks);
 };
 
+// ============== IDEA-7 응급 골든타임 (사람 30초+ 정지) ==============
+// 같은 사람 트랙이 같은 위치에 머무름 → 의식 잃은 환자 가능성
+const _personStill = new Map();   // id → { since, x, y, alerted }
+const _STILL_THRESHOLD_MS = 30000;
+// 가상 AED 좌표 (역사 평면 2~3 곳 가정)
+const AED_LOCATIONS = [
+  { id: 'AED-1', label: '1번 출구 옆', x: 0.10, y: 0.10 },
+  { id: 'AED-2', label: '환승 통로', x: 0.50, y: 0.50 },
+  { id: 'AED-3', label: '역무실', x: 0.90, y: 0.90 },
+];
+
+function checkEmergency(persons) {
+  const now = Date.now();
+  for (const p of persons) {
+    const id = p.id;
+    const exist = _personStill.get(id);
+    if (!exist) {
+      _personStill.set(id, { since: now, x: p.bev_x, y: p.bev_y, alerted: false });
+      continue;
+    }
+    // 0.05 (BEV 약 50cm) 이상 움직였으면 reset
+    const moved = Math.hypot(p.bev_x - exist.x, p.bev_y - exist.y);
+    if (moved > 0.05) {
+      _personStill.set(id, { since: now, x: p.bev_x, y: p.bev_y, alerted: false });
+      continue;
+    }
+    if (now - exist.since >= _STILL_THRESHOLD_MS && !exist.alerted) {
+      exist.alerted = true;
+      // 가장 가까운 AED
+      let nearest = AED_LOCATIONS[0], minD = Infinity;
+      for (const a of AED_LOCATIONS) {
+        const d = Math.hypot(p.bev_x - a.x, p.bev_y - a.y);
+        if (d < minD) { minD = d; nearest = a; }
+      }
+      const distM = Math.round(minD * 30); // BEV 1.0 = 약 30m 가정
+      const incident = {
+        id: `emer-${id}`, type: 'emergency', severity: 'high',
+        msg: `🚨 사람 트랙 #${id} ${((now-exist.since)/1000).toFixed(0)}초 정지 — AED ${nearest.label} (${distM}m) · 119 자동 통보 권장`,
+        ts: now, bev_x: p.bev_x, bev_y: p.bev_y, aed: nearest, dist_m: distM,
+      };
+      try { diagEl.append(`[EMER] id=${id} still=${((now-exist.since)/1000).toFixed(0)}s AED=${nearest.id}(${distM}m)\n`); } catch {}
+      if (window._emergencyListener) window._emergencyListener(incident);
+    }
+  }
+  // GC: 안 보인 사람 제거
+  const ids = new Set(persons.map(p => p.id));
+  for (const id of _personStill.keys()) if (!ids.has(id)) _personStill.delete(id);
+}
+
+// onTracksUpdate hook 보강
+const _origOnTracks2 = onTracksUpdate;
+onTracksUpdate = function (trks) {
+  const persons = (trks || []).filter(t => t.class === 'person' && Number.isFinite(t.bev_x));
+  checkEmergency(persons);
+  return _origOnTracks2(trks);
+};
+
 // === A* pathfinder on BEV grid ===
 // 점유 분포로 cost field 만든 후 4개 출구 각각의 최적 경로 길이 계산.
 // 가장 짧은 경로 = 권장 출구. 회피 출구는 가장 긴 경로.
