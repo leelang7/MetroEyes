@@ -26,6 +26,18 @@
     </div>
   </div>
 
+  <!-- 편성 strip — 본인 칸 + 추천 칸 비교 -->
+  <section class="train-bar" id="train-bar">
+    <div class="tb-head">
+      <span>편성 점유 비교</span>
+      <span class="tb-meta" id="tb-meta">10량 · 평균 — %</span>
+    </div>
+    <canvas id="trainStrip" class="train-strip-canvas"></canvas>
+    <div class="tb-foot">
+      <span class="tb-tip" id="tb-tip">— 추천 칸 분석 중</span>
+    </div>
+  </section>
+
   <section class="minibev" style="position: relative;">
     <div class="head">
       <span>차내 BEV · 본인 위치 표시</span>
@@ -188,10 +200,106 @@ function applyHour() {
   document.getElementById('alert').classList.toggle('show', occ >= 0.92);
 }
 
-window.addEventListener('resize', () => sim.invalidateLayout());
+// === 편성 strip — 다른 칸 점유 비교 + 추천 칸 ===
+const stripCv = document.getElementById('trainStrip');
+let _liveOccs = null;   // 백엔드 라이브 — null 이면 시뮬
+
+function drawTrainStrip() {
+  const r = stripCv.getBoundingClientRect();
+  const dpr = devicePixelRatio || 1;
+  stripCv.width = r.width * dpr; stripCv.height = r.height * dpr;
+  const ctx = stripCv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = r.width, H = r.height;
+  ctx.clearRect(0, 0, W, H);
+  const N = mode === 'subway' ? 10 : 3;
+  const pad = 8, gap = 4;
+  const cw = (W - pad * 2 - gap * (N - 1)) / N;
+  const ch = H - pad - 18;
+
+  // 점유 데이터 (라이브 우선, 없으면 모델 시뮬)
+  let occs;
+  if (_liveOccs && _liveOccs.length === N) {
+    occs = _liveOccs;
+  } else {
+    const hour = +document.getElementById('hour').value;
+    if (mode === 'subway') {
+      const avg = model.trainOccupancyAt(hour, cfg.cluster);
+      occs = model.carOccupancies(avg, N, hour * 13 + 7);
+    } else {
+      const avg = model.trainOccupancyAt(hour, cfg.cluster);
+      const r2 = (s => () => { s = (s * 9301 + 49297) % 233280; return s / 233280; })(hour * 17 + 3);
+      occs = Array.from({ length: N }, () => Math.max(0.05, Math.min(1.05, avg * 0.92 + (r2() - 0.5) * 0.20)));
+    }
+  }
+  const meanOcc = occs.reduce((a, b) => a + b, 0) / occs.length;
+  // 추천 칸: 가장 한산
+  let bestI = 0;
+  for (let i = 1; i < N; i++) if (occs[i] < occs[bestI]) bestI = i;
+
+  // 막대 그리기
+  for (let i = 0; i < N; i++) {
+    const x = pad + i * (cw + gap);
+    const o = occs[i];
+    const isMe = i === idx;
+    const isBest = i === bestI;
+    // 배경 박스
+    ctx.fillStyle = 'rgba(255,255,255,0.025)';
+    roundRect(ctx, x, pad, cw, ch, 4); ctx.fill();
+    // 점유 막대
+    const fillH = ch * Math.min(1, o);
+    const c = occColor(o);
+    ctx.fillStyle = `rgba(${c[0]|0},${c[1]|0},${c[2]|0},0.78)`;
+    roundRect(ctx, x, pad + (ch - fillH), cw, fillH, 4); ctx.fill();
+    // 테두리 (본인 / 추천)
+    ctx.lineWidth = isMe || isBest ? 2 : 1;
+    ctx.strokeStyle = isMe ? '#7dd3d3' : isBest ? '#7dd3d3' : 'rgba(255,255,255,0.08)';
+    if (isMe || isBest) {
+      ctx.shadowColor = '#7dd3d3'; ctx.shadowBlur = isMe ? 14 : 8;
+    }
+    roundRect(ctx, x + 0.5, pad + 0.5, cw - 1, ch - 1, 4); ctx.stroke();
+    ctx.shadowBlur = 0;
+    // 호차 번호 + %
+    ctx.font = '600 11px Inter, "Malgun Gothic"';
+    ctx.fillStyle = isMe ? '#7dd3d3' : '#8e98ac';
+    ctx.textAlign = 'center';
+    const label = mode === 'subway' ? `${i + 1}` : ['1순', '2순', '3순'][i];
+    ctx.fillText(label, x + cw / 2, pad + ch + 12);
+    // 본인 표시 마커 (위)
+    if (isMe) {
+      ctx.fillStyle = '#7dd3d3';
+      ctx.beginPath(); ctx.moveTo(x + cw/2 - 5, pad - 3); ctx.lineTo(x + cw/2 + 5, pad - 3); ctx.lineTo(x + cw/2, pad + 3); ctx.fill();
+    }
+  }
+
+  // 메타 + 추천 메시지
+  document.getElementById('tb-meta').textContent =
+    `${N}량 · 평균 ${Math.round(meanOcc * 100)}% · ${_liveOccs ? 'LIVE' : 'SIM'}`;
+  const tip = document.getElementById('tb-tip');
+  if (bestI === idx) {
+    tip.innerHTML = `✓ 현재 ${cfg.label(idx)}가 가장 한산. 그대로 탑승.`;
+  } else {
+    const diff = Math.round((occs[idx] - occs[bestI]) * 100);
+    const dist = Math.abs(idx - bestI);
+    tip.innerHTML = `▶ <b>${cfg.label(bestI)}</b>이 가장 한산 (${diff}%p 더 한산, ${dist}칸 이동 = 약 ${dist * 20}m · ${dist * 6}초)`;
+  }
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+window.addEventListener('resize', () => { sim.invalidateLayout(); drawTrainStrip(); });
 document.getElementById('hour').value = initHour;
-document.getElementById('hour').addEventListener('input', applyHour);
+document.getElementById('hour').addEventListener('input', () => { applyHour(); drawTrainStrip(); });
 applyHour();
+drawTrainStrip();
+setInterval(drawTrainStrip, 1500);
 
 let lastT = performance.now();
 function tick(now) {
@@ -229,12 +337,28 @@ if ('serviceWorker' in navigator) {
     ws.onmessage = (ev) => {
       try {
         const j = JSON.parse(ev.data);
-        if (j.type === 'arrival' || j.type === 'population' || j.type === 'occupancy_predict') return;
-        // BEV 페이로드 — 라이브 점유율 갱신
-        const personN = (j.tracks || []).filter(t => t.class === 'person').length;
-        const live = Math.min(1.05, personN / 20); // 정원 20 가정
+        if (j.type === 'arrival' || j.type === 'population' || j.type === 'occupancy_predict' || j.type === 'context') return;
+        // BEV 페이로드 — 라이브 점유율 갱신 + 칸별 분포 추정
+        const persons = (j.tracks || []).filter(t => t.class === 'person');
+        const personN = persons.length;
+        const live = Math.min(1.05, personN / 20);
         if (typeof sim !== 'undefined' && sim) { sim.setTargetOccupancy(live); }
-        // 다음 정거장 예측 (간단 휴리스틱: 라이브 + 5%)
+        // bev_x 분포 → N 칸 빈도. 한 카메라 = 한 칸 가정이면 모든 칸 동일.
+        // 데모: 한 칸의 분포를 N 칸의 가짜 분산으로 매핑 (bev_x quantile bins)
+        const N = mode === 'subway' ? 10 : 3;
+        const bins = new Array(N).fill(0);
+        for (const p of persons) {
+          if (!Number.isFinite(p.bev_x)) continue;
+          let i = Math.floor(p.bev_x * N);
+          if (i < 0) i = 0; if (i >= N) i = N - 1;
+          bins[i]++;
+        }
+        // 정원 N명/칸 = 빈도 정규화
+        if (personN >= 2) {
+          _liveOccs = bins.map(b => Math.min(1.05, b / Math.max(2, personN/N * 1.5)));
+          drawTrainStrip();
+        }
+        // 다음 정거장 예측 (휴리스틱)
         const nowPctEl = document.getElementById('now-pct');
         const nextPctEl = document.getElementById('next-pct');
         if (nowPctEl) nowPctEl.textContent = Math.round(live * 100);
