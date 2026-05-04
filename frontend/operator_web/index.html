@@ -19,7 +19,7 @@
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
 (function () {
-  const CUR = 'v3.1-debug-2026-05-04';
+  const CUR = 'v3.2-impact-2026-05-05';
   if (sessionStorage.getItem('me_ver') !== CUR) {
     sessionStorage.setItem('me_ver', CUR);
     // navigation type 1 = reload — loop 방지
@@ -57,6 +57,12 @@
     </span>
     <span class="tag">노선<b id="t-line">2호선</b></span>
     <span class="tag">아키타입<b id="t-cluster">환승 허브</b></span>
+    <span class="tag impact-pill" id="impact-pill" hidden title="시민 PWA 분산 누적 임팩트" style="background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(125,211,211,.10)); border: 1px solid rgba(16,185,129,.45);">
+      <span style="font-size: 10px; color: #10b981; font-weight: 700; margin-right: 4px;">🎯 분산</span>
+      <b id="impact-pill-cnt">0</b><em style="opacity:.7;">명</em>
+      <span style="margin-left: 6px; opacity: .85;">⏱<b id="impact-pill-min" style="margin-left:2px;">0</b>분</span>
+      <span style="margin-left: 6px; opacity: .85;">💰<b id="impact-pill-val" style="margin-left:2px;">₩0</b></span>
+    </span>
     <div class="slider-wrap">
       <label>시각</label>
       <input id="hour" type="range" min="5" max="23" value="18" step="1">
@@ -942,6 +948,23 @@ if (SR) {
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
   function queryPop() { send({ type: 'population_query', poi: station.poi }); }
+  // 시민 분산 누적 임팩트 — 운영자 콘솔 헤더 pill
+  function applyImpactPill(j) {
+    const pill = document.getElementById('impact-pill');
+    if (!pill) return;
+    const cnt = document.getElementById('impact-pill-cnt');
+    const mn = document.getElementById('impact-pill-min');
+    const vv = document.getElementById('impact-pill-val');
+    if (cnt) cnt.textContent = (j.total_count || 0).toLocaleString();
+    if (mn) mn.textContent = Math.round(j.saved_min_total || 0).toLocaleString();
+    if (vv) {
+      const w = j.value_won || 0;
+      vv.textContent = w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString()}`;
+    }
+    if (j.top_station) pill.title = `시민 PWA 분산 누적 — 최다 ${j.top_station} · 평균 -${(j.avg_saved_pct||0).toFixed(0)}% 한산`;
+    pill.hidden = false;
+  }
+
   // 인파 폭증 컨텍스트 toast (운영자 alert)
   let _toastTimer = null;
   function showContextToast(j) {
@@ -1004,6 +1027,7 @@ if (SR) {
         if (j.type === 'arrival') applyArrival(j);
         else if (j.type === 'population') applyPpltn(j);
         else if (j.type === 'context') showContextToast(j);
+        else if (j.type === 'impact_summary') applyImpactPill(j);
         else applyBev(j);
       } catch { _dbg.last='parse_err'; updDbg(); }
     };

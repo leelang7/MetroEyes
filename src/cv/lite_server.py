@@ -64,6 +64,11 @@ ppltn_history: dict[str, list] = {}        # poi → [(ts, mid)]
 context_cache: dict[str, tuple] = {}       # poi → (ts, payload)
 CONTEXT_TTL = 600.0
 
+# 누적 임팩트 — impact_log 들어오면 합산 후 impact_summary broadcast
+_impact_total = {"count": 0, "saved_pct_sum": 0.0, "stations": {}}
+IMPACT_AVG_TRIP_MIN = 25.0      # 평균 통행 시간 (분)
+IMPACT_VALUE_PER_MIN = 167      # 혼잡 1분 당 사회적 비용 추정 (원) — 한국교통연구원 혼잡비용 환산
+
 
 # ============== HTTP helpers ==============
 
@@ -350,7 +355,26 @@ async def handler(websocket):
                     "events": [], "total_count": 0, "total_capacity": 0,
                 }, ensure_ascii=False))
             elif t == "impact_log":
-                pass
+                saved = float(req.get("saved_pct") or 0)
+                _impact_total["count"] += 1
+                _impact_total["saved_pct_sum"] += saved
+                st = req.get("station") or "?"
+                _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
+                n = _impact_total["count"]
+                avg_saved = _impact_total["saved_pct_sum"] / max(1, n)
+                # 누적 절감 분 = sum(saved_pct/100 × avg_trip_min)
+                saved_min_total = (_impact_total["saved_pct_sum"] / 100.0) * IMPACT_AVG_TRIP_MIN
+                value_won = int(saved_min_total * IMPACT_VALUE_PER_MIN)
+                top_st = max(_impact_total["stations"].items(), key=lambda x: x[1])[0] if _impact_total["stations"] else None
+                summary = {
+                    "type": "impact_summary",
+                    "total_count": n,
+                    "avg_saved_pct": round(avg_saved, 1),
+                    "saved_min_total": round(saved_min_total, 1),
+                    "value_won": value_won,
+                    "top_station": top_st,
+                }
+                await broadcast(json.dumps(summary, ensure_ascii=False))
             elif t == "predict_surge" and req.get("poi"):
                 # IDEA-7 24h 폭증 예측 — 과거 추세(ppltn_history) + 시간대 baseline + 행사 신호
                 payload = predict_surge(req["poi"], req.get("hours_ahead", 24))

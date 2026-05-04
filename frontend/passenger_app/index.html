@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v3.2-pwa-picker';
+  const CUR = 'v3.3-impact-card';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -100,7 +100,15 @@
     <span class="chip more-chip" id="chip-road" hidden><span class="ico">🛣</span>도로 <b id="chip-road-v">—</b>km/h</span>
   </div>
 
-  <div id="impact-counter" hidden style="font-size: 11px; color: var(--accent); padding: 6px 12px; background: var(--accent-soft); border-radius: 999px; display: inline-block; margin: -2px 0 10px; font-feature-settings: 'tnum';"></div>
+  <div id="impact-counter" hidden style="margin: -2px 0 10px; padding: 10px 12px; background: linear-gradient(135deg, var(--accent-soft), rgba(125,211,211,.05)); border: 1px solid var(--accent); border-radius: 12px; font-feature-settings: 'tnum';">
+    <div style="font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: .5px; margin-bottom: 4px;">🎯 시민 분산 임팩트 (누적)</div>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: baseline;">
+      <span style="font-size: 18px; font-weight: 800; color: var(--text);"><span id="impact-count">—</span><span style="font-size: 11px; color: var(--muted); font-weight: 600; margin-left: 2px;">명</span></span>
+      <span style="font-size: 13px; color: var(--text);">⏱ <span id="impact-min" style="font-weight: 700;">—</span><span style="font-size: 10px; color: var(--muted);">분 절감</span></span>
+      <span style="font-size: 13px; color: var(--text);">💰 <span id="impact-value" style="font-weight: 700;">—</span></span>
+    </div>
+    <div id="impact-detail" style="font-size: 10px; color: var(--muted); margin-top: 4px;"></div>
+  </div>
 
   <div class="rain-banner" id="rain-banner" hidden>
     <span class="ico">🌧</span>
@@ -903,7 +911,22 @@ const LIVE = (() => {
         else if (j.type === 'impact_summary') {
           const c = document.getElementById('impact-counter');
           if (c) {
-            c.textContent = `🎯 오늘 ${j.total_count.toLocaleString()}명 추천 수용 · 평균 -${j.avg_saved_pct.toFixed(0)}% 한산`;
+            const cnt = document.getElementById('impact-count');
+            const mn = document.getElementById('impact-min');
+            const vv = document.getElementById('impact-value');
+            const dt = document.getElementById('impact-detail');
+            if (cnt) cnt.textContent = (j.total_count || 0).toLocaleString();
+            if (mn) mn.textContent = (j.saved_min_total || 0).toLocaleString();
+            if (vv) {
+              const won = j.value_won || 0;
+              vv.textContent = won >= 10000 ? `₩${(won/10000).toFixed(1)}만` : `₩${won.toLocaleString()}`;
+            }
+            if (dt) {
+              const parts = [];
+              if (j.avg_saved_pct) parts.push(`평균 -${j.avg_saved_pct.toFixed(0)}% 한산 효과`);
+              if (j.top_station) parts.push(`최다 분산 — ${j.top_station}`);
+              dt.textContent = parts.join(' · ');
+            }
             c.hidden = false;
           }
         }
