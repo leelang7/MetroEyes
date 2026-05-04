@@ -105,11 +105,6 @@ jobs:
                 <div class="name">차내 디스플레이 편성</div>
                 <div class="desc">역×시간대 인구 히트맵 + 동적 광고 단가 + 안내 우선 정책</div>
               </a>
-              <a class="card arch" href="frontend/operator_web/architecture.html">
-                <div class="label">🏛 ARCHITECTURE</div>
-                <div class="name">시스템 아키텍처</div>
-                <div class="desc">4계층 데이터 플로우 · Edge↔Cloud · 핵심 메트릭</div>
-              </a>
               <a class="card citizen full" href="frontend/passenger_app/index.html">
                 <div class="label">📱 CITIZEN · PWA</div>
                 <div class="name">시민 앱 (모바일)</div>

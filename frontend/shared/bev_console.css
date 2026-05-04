@@ -60,28 +60,58 @@ body {
 }
 header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 28px; border-bottom: 1px solid var(--line);
+  padding: 16px 32px; border-bottom: 1px solid var(--line);
   background: rgba(7, 9, 15, 0.5); backdrop-filter: blur(8px);
+  gap: 24px;
 }
-.brand { font-weight: 600; font-size: 14px; display: flex; align-items: center; flex-wrap: wrap; }
-.brand .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent); margin-right: 10px; box-shadow: 0 0 14px var(--accent-glow); vertical-align: middle; }
-.brand small { color: var(--muted); margin-left: 10px; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; }
-.brand .nav-sep { color: var(--line-2); margin: 0 14px; }
-.brand a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: 12.5px; transition: color 0.15s; padding: 4px 0; }
-.brand a:hover { color: var(--fg); }
-/* 페이지별 active 색상 — body[data-domain] 으로 부착 */
-.brand a.active { color: var(--accent); }
-body[data-domain="subway"]  .brand a.active { color: var(--domain-subway); }
-body[data-domain="bus"]     .brand a.active { color: var(--domain-bus); }
-body[data-domain="realcam"] .brand a.active { color: var(--domain-realcam); }
-body[data-domain="ads"]     .brand a.active { color: var(--domain-ads); }
-body[data-domain="arch"]    .brand a.active { color: var(--domain-arch); }
+.brand {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 4px;
+  font-weight: 700; font-size: 16px; letter-spacing: -0.3px;
+}
+.brand .dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); margin-right: 11px; box-shadow: 0 0 14px var(--accent-glow);
+  vertical-align: middle; flex-shrink: 0;
+}
+.brand small {
+  color: var(--muted); margin: 0 18px 0 12px;
+  font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 1.4px;
+  padding-left: 12px; border-left: 1px solid var(--line-2);
+}
+.brand .nav-sep { display: none; }   /* 시각 분리는 padding/border 로 처리 */
+.brand a {
+  color: var(--muted-2); text-decoration: none;
+  font-weight: 500; font-size: 13.5px; letter-spacing: -0.1px;
+  padding: 8px 14px; margin: 0 2px;
+  border-radius: 8px; transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.brand a:hover { color: var(--fg); background: rgba(255,255,255,0.04); }
+
+/* 활성 페이지 — 도메인 컬러 배경 박스 + 글자 굵게 */
+.brand a.active {
+  color: var(--accent); background: rgba(125,211,211,0.12);
+  font-weight: 700;
+}
+body[data-domain="subway"]  .brand a.active { color: var(--domain-subway);  background: rgba(125,211,211,0.12); }
+body[data-domain="bus"]     .brand a.active { color: var(--domain-bus);     background: rgba(249,115,22,0.12); }
+body[data-domain="realcam"] .brand a.active { color: var(--domain-realcam); background: rgba(239,68,68,0.12); }
+body[data-domain="ads"]     .brand a.active { color: var(--domain-ads);     background: rgba(16,185,129,0.12); }
+body[data-domain="arch"]    .brand a.active { color: var(--domain-arch);    background: rgba(167,139,250,0.12); }
 body[data-domain="subway"]  .brand .dot { background: var(--domain-subway);  box-shadow: 0 0 14px rgba(125,211,211,0.45); }
 body[data-domain="bus"]     .brand .dot { background: var(--domain-bus);     box-shadow: 0 0 14px rgba(249,115,22,0.45); }
 body[data-domain="realcam"] .brand .dot { background: var(--domain-realcam); box-shadow: 0 0 14px rgba(239,68,68,0.45); }
 body[data-domain="ads"]     .brand .dot { background: var(--domain-ads);     box-shadow: 0 0 14px rgba(16,185,129,0.45); }
 body[data-domain="arch"]    .brand .dot { background: var(--domain-arch);    box-shadow: 0 0 14px rgba(167,139,250,0.45); }
+
+/* 시민 앱 진입 — 우측 끝 강조 (CTA) */
+.brand a.cta-citizen {
+  color: var(--accent); background: rgba(125,211,211,0.08);
+  border: 1px solid rgba(125,211,211,0.25); font-weight: 600;
+  margin-left: 12px;
+}
+.brand a.cta-citizen:hover { background: rgba(125,211,211,0.18); color: var(--fg); }
 .controls { display: flex; gap: 18px; align-items: center; font-size: 12px; }
 .tag { color: var(--muted); }
 .tag b { color: var(--fg); margin-left: 6px; font-weight: 500; }
