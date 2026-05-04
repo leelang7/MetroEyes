@@ -60,7 +60,7 @@
 </header>
 
 <main>
-  <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
+  <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(5, 1fr); margin-bottom: 14px;">
     <div class="fusion-card dim" id="fc-cv" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
       <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">검출 인원 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">자체 CV</span></div>
       <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-cv-v">—명</div>
@@ -80,6 +80,12 @@
       <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">혼잡 레벨 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">융합</span></div>
       <div style="font-size: 22px; color: var(--muted); font-weight: 300;" id="fc-cong-v">—</div>
       <div style="font-size: 11px; color: var(--muted-2);" id="fc-cong-sub">CV + 인구 결합</div>
+    </div>
+    <!-- ★ 태그 vs CV 비교 — 무임/미태그/이상 검출 -->
+    <div class="fusion-card dim" id="fc-tag" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
+      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">태그 vs CV <span style="color: #ff5e57; font-size: 9px; padding: 1px 5px; background: rgba(255,94,87,0.12); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">무임 추정</span></div>
+      <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-tag-v">— 명</div>
+      <div style="font-size: 11px; color: var(--muted-2);" id="fc-tag-sub">CardSubway GTON × CV 차이</div>
     </div>
   </section>
 
@@ -815,6 +821,37 @@ if (SR) {
     document.getElementById('fc-cong-v').textContent = lvl;
     document.getElementById('fc-cong-sub').textContent = `CV ${personN ?? '—'}명 · 인구 ${popLvl ?? '—'} · 점수 ${(combined*100).toFixed(0)}`;
     setCard('fc-cong', lvl === '붐빔' ? 'crit' : lvl === '약간 붐빔' ? 'warn' : 'ok');
+    // ★ 태그 vs CV — 무임 추정
+    evalTagVsCV(personN);
+  }
+
+  // 시간대 × 클러스터 기반 태그 추정 (CardSubway 스키마 부재 → 모델 보간)
+  // 모델: trainOccupancyAt × CAPACITY × N칸 차원의 태그 (역 진입 카드 통계 가정)
+  // 차내 카메라 검출과 비교 → 차이 = 무임/미태그/이상 추정
+  function evalTagVsCV(cvN) {
+    const tagEl = document.getElementById('fc-tag-v');
+    const subEl = document.getElementById('fc-tag-sub');
+    if (cvN == null) { tagEl.textContent = '— 명'; subEl.textContent = 'CV 검출 대기'; setCard('fc-tag', 'dim'); return; }
+    // 시뮬 (또는 추후 실 GTON 호출): 시간대 × 클러스터 평균
+    const hour = +(document.getElementById('hour')?.value || 18);
+    const trainAvg = model.trainOccupancyAt(hour, STATION.cluster);
+    // 칸당 평균 태그 인원 (정원 20 기준 — 차내 카메라 한 칸 시야 가정)
+    const tagEst = Math.round(20 * trainAvg);
+    const diff = cvN - tagEst;
+    const ratio = tagEst > 0 ? diff / tagEst : 0;
+    tagEl.innerHTML = `${tagEst}<span style="font-size:14px;color:var(--muted)"> / </span>${cvN}<span style="font-size:14px;color:${diff>0?'#ff5e57':'#7dd3d3'}"> ${diff>=0?'+':''}${diff}</span>`;
+    let cls = 'ok', msg = '태그 일치';
+    if (diff > 5 || ratio > 0.30) {
+      cls = 'crit'; msg = `🚨 무임/미태그 의심 ${diff}명 (+${(ratio*100).toFixed(0)}%)`;
+    } else if (diff > 2 || ratio > 0.15) {
+      cls = 'warn'; msg = `⚠ 미태그 가능 ${diff}명 (+${(ratio*100).toFixed(0)}%)`;
+    } else if (diff < -2) {
+      cls = 'warn'; msg = `△ CV 미검출 ${-diff}명 (오차 또는 가림)`;
+    } else {
+      msg = `태그 ${tagEst} ≈ CV ${cvN} (오차 ${diff>=0?'+':''}${diff})`;
+    }
+    subEl.textContent = msg;
+    setCard('fc-tag', cls);
   }
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }

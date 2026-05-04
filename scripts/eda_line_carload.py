@@ -56,12 +56,12 @@ def load_data() -> pd.DataFrame:
 def estimate_carload(df: pd.DataFrame) -> pd.DataFrame:
     """호선 × 시간대 평균 칸 점유율 추정.
 
-    수식:
-        시간당 통행 = HR_h_GET_ON + HR_h_GET_OFF
-        시간당 차편 수 = 60 / headway_min
-        차편당 평균 인원 = 시간당 통행 / 시간당 차편 수
-        칸당 평균 인원  = 차편당 인원 / cars
-        점유율 = 칸당 인원 / 칸 정원
+    수식 (보정):
+        시간당 한 방향 승차 = HR_h_GET_ON_NOPE 합 (역수)
+        OFF 는 같은 사람이 다른 역에서 내림 → ON 만 사용 (중복 회피)
+        역 평균 차내 인원 = 승차합 / (역수 × (60/headway) × 양방향 2)
+        차량당 = 그 인원 / cars
+        점유율 = 차량당 / capacity
     """
     rows = []
     for h in range(5, 24):
@@ -70,23 +70,26 @@ def estimate_carload(df: pd.DataFrame) -> pd.DataFrame:
         if on_col not in df.columns or off_col not in df.columns:
             continue
         for line, sub in df.groupby("SBWY_ROUT_LN_NM"):
-            on_total = sub[on_col].sum()
-            off_total = sub[off_col].sum()
+            on_total = float(sub[on_col].sum())
+            off_total = float(sub[off_col].sum())
             cars = LINE_CARS.get(line, 8)
             cap = LINE_CAPACITY.get(line, 140)
             headway = LINE_HEADWAY_MIN.get(line, 5.0)
-            n_stations = sub["STTN"].nunique()
+            n_stations = max(1, sub["STTN"].nunique())
             trains_per_h = 60.0 / headway
-            # 시간당 한 방향 차편 통행 (역 평균)
-            avg_per_station = (on_total + off_total) / max(1, n_stations)
-            per_train = avg_per_station / trains_per_h
-            per_car = per_train / cars
-            occ = per_car / cap
+            # ON 만 사용 + 양방향 분리 (상행/하행)
+            # 시간당 노선 전체에서 차편 1 대당 받는 평균 승차 = on_total / (trains_per_h * 2)
+            per_train_ride = on_total / (trains_per_h * 2)
+            # 차편 안에서 머무는 평균 인원: 승차 후 평균 5정거장 머무름 가정 (n_stations / 6 정도)
+            avg_dwell_stations = max(2, n_stations / 8)  # 짧은 노선은 더 짧게
+            per_train_avg = per_train_ride * avg_dwell_stations / max(1, n_stations / trains_per_h)
+            per_car = per_train_avg / cars
+            occ = min(2.0, per_car / cap)  # cap 200% (만석 + 입석)
             rows.append({
                 "line": line, "hour": h,
                 "on_total": int(on_total), "off_total": int(off_total),
-                "trains_per_h": round(trains_per_h, 1),
-                "per_car": round(per_car, 1),
+                "n_stations": n_stations, "trains_per_h": round(trains_per_h, 1),
+                "per_car_avg": round(per_car, 1),
                 "occ_pct": round(occ * 100, 1),
             })
     return pd.DataFrame(rows)
