@@ -54,7 +54,8 @@
 
 <h1>
   <span class="dot"></span>MetroEyes Debug Console
-  <small>WS 직접 호출 / 응답 검증 / 라이브 트래픽</small>
+  <small>WS 직접 호출 / 응답 검증 / 라이브 트래픽 / 임팩트 모니터링</small>
+  <a href="demo.html" style="float: right; padding: 3px 10px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; letter-spacing: .3px; margin-top: 2px;">🎬 통합 시연</a>
 </h1>
 
 <div class="url-bar">
@@ -76,6 +77,29 @@
       <div class="stat">BEV frames  <b id="s-bev">0</b></div>
       <div class="stat">Avg FPS     <b id="s-fps">—</b></div>
       <div class="stat">Last error  <b id="s-err">—</b></div>
+    </div>
+
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(16,185,129,.04));">
+      <h2>🎯 Live Impact (impact_summary)</h2>
+      <div class="stat">분산 액션      <b id="im-cnt" class="ok">0</b></div>
+      <div class="stat">절감 분        <b id="im-min" class="ok">0</b></div>
+      <div class="stat">사회적 가치     <b id="im-val" class="ok">₩0</b></div>
+      <div class="stat">정책 비용 (krw) <b id="im-krw" class="warn">₩0</b></div>
+      <div class="stat">ROI            <b id="im-roi" class="ok">—x</b></div>
+      <div class="stat">최다 분산역     <b id="im-top">—</b></div>
+      <div class="stat">응답률 추정     <b id="im-rate">—%</b></div>
+    </div>
+
+    <div class="panel" style="margin-top:12px;">
+      <h2>📈 Message Type Sparkline (60s window)</h2>
+      <canvas id="spark" width="560" height="120" style="width:100%; height:120px; background:#04060a; border:1px solid rgba(255,255,255,.05); border-radius:6px;"></canvas>
+      <div style="display: flex; gap: 12px; font-size: 10px; margin-top: 6px; flex-wrap: wrap;">
+        <span style="color:#7dd3d3;">● bev</span>
+        <span style="color:#f0b46a;">● arrival</span>
+        <span style="color:#ef4444;">● population</span>
+        <span style="color:#10b981;">● impact</span>
+        <span style="color:#a78bfa;">● other</span>
+      </div>
     </div>
 
     <div class="panel" style="margin-top:12px;">
@@ -173,19 +197,28 @@ function connectWs() {
     stats.recv++;
     let j = null;
     try { j = JSON.parse(ev.data); } catch {}
+    let bucket = 'other';
     if (j && j.tracks !== undefined) {
       // BEV frame
       stats.bev++;
+      bucket = 'bev';
       if (typeof j.fps === 'number') { stats.fpsSum += j.fps; stats.fpsN++; }
       if (!document.getElementById('mute-bev').checked) {
         const tracks = (j.tracks || []).length;
-        append('BEV', `frame ${j.frame_idx} fps ${(j.fps||0).toFixed(1)} tracks ${tracks}`, '');
+        append('BEV', `frame ${j.frame_idx||'-'} fps ${(j.fps||0).toFixed(1)} tracks ${tracks}`, '');
       }
     } else {
       const t = (j && j.type) || 'unknown';
+      if (t === 'arrival') bucket = 'arrival';
+      else if (t === 'population' || t === 'citydata') bucket = 'population';
+      else if (t === 'impact_summary') {
+        bucket = 'impact';
+        applyImpactCard(j);
+      }
       const summary = ev.data.substring(0, 250);
       append(`RECV [${t}]`, summary, '');
     }
+    sparkBump(bucket);
     refreshStats();
   };
   ws.onclose = () => { setLed('error'); append('CLOSE', '', ''); };
@@ -224,6 +257,65 @@ function preset(poi, station, line) {
 function getPoi() { return document.getElementById('poi').value; }
 
 function clearLog() { logEl.innerHTML = ''; stats = { sent:0, recv:0, bev:0, fpsSum:0, fpsN:0 }; refreshStats(); }
+
+// ====== Live Impact card ======
+function applyImpactCard(j) {
+  const fmt = (w) => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
+  document.getElementById('im-cnt').textContent = (j.total_count || 0).toLocaleString();
+  document.getElementById('im-min').textContent = Math.round(j.saved_min_total || 0).toLocaleString();
+  document.getElementById('im-val').textContent = fmt(j.value_won || 0);
+  document.getElementById('im-krw').textContent = fmt(j.krw_paid || 0);
+  document.getElementById('im-roi').textContent = j.roi_x != null ? `${Math.round(j.roi_x).toLocaleString()}x` : '—x';
+  document.getElementById('im-top').textContent = j.top_station || '—';
+  document.getElementById('im-rate').textContent = j.est_response_rate != null
+    ? `${(j.est_response_rate*100).toFixed(2)}%` : '—%';
+}
+
+// ====== Sparkline ======
+const SPARK_BUCKETS = ['bev','arrival','population','impact','other'];
+const SPARK_COLOR = { bev:'#7dd3d3', arrival:'#f0b46a', population:'#ef4444', impact:'#10b981', other:'#a78bfa' };
+const sparkData = {};
+SPARK_BUCKETS.forEach(b => sparkData[b] = new Array(60).fill(0));
+function sparkBump(bucket) {
+  const arr = sparkData[bucket];
+  if (arr) arr[arr.length - 1]++;
+}
+function sparkTick() {
+  // shift left + 0 push
+  SPARK_BUCKETS.forEach(b => { sparkData[b].shift(); sparkData[b].push(0); });
+  drawSpark();
+}
+function drawSpark() {
+  const cv = document.getElementById('spark');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  // 격자
+  ctx.strokeStyle = 'rgba(255,255,255,.04)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 6; i++) {
+    const y = H * i / 6;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  // 각 bucket max
+  let max = 1;
+  SPARK_BUCKETS.forEach(b => { sparkData[b].forEach(v => { if (v > max) max = v; }); });
+  SPARK_BUCKETS.forEach(b => {
+    const arr = sparkData[b];
+    ctx.strokeStyle = SPARK_COLOR[b];
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    arr.forEach((v, i) => {
+      const x = i / (arr.length - 1) * W;
+      const y = H - (v / max) * (H - 6) - 3;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  });
+}
+setInterval(sparkTick, 1000);
+drawSpark();
 
 // 자동 host 분기
 (function () {
