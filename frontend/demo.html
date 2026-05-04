@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1600, initial-scale=0.6">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>MetroEyes — 통합 시연 (마스터)</title>
+<style>
+  :root {
+    --bg: #0a0a0e;
+    --panel: #14141a;
+    --line: rgba(125,211,211,0.16);
+    --text: #e8e8ee;
+    --muted: #8a8a96;
+    --accent: #7dd3d3;
+    --bus: #f97316;
+    --realcam: #ef4444;
+    --ads: #10b981;
+  }
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; overflow: hidden; }
+  header {
+    display: flex; align-items: center; gap: 16px; padding: 8px 16px; height: 44px;
+    background: linear-gradient(135deg, rgba(125,211,211,0.10), rgba(20,20,26,0.85));
+    border-bottom: 1px solid var(--line);
+  }
+  header .brand { font-size: 14px; font-weight: 800; letter-spacing: .8px; color: var(--accent); }
+  header .brand small { display: block; font-size: 9px; letter-spacing: 1.2px; color: var(--muted); font-weight: 500; }
+  header .scenario { flex: 1; font-size: 11px; color: var(--muted); }
+  header .scenario b { color: var(--text); font-weight: 700; }
+  header .timer { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--accent); padding: 4px 10px; background: rgba(125,211,211,.10); border: 1px solid var(--line); border-radius: 6px; min-width: 64px; text-align: center; }
+  header button {
+    padding: 6px 14px; background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 800;
+    cursor: pointer; letter-spacing: .4px;
+  }
+  header button:disabled { opacity: .55; cursor: not-allowed; }
+  main {
+    display: grid; grid-template-columns: 1.6fr 1fr 1.2fr; gap: 8px;
+    padding: 8px; height: calc(100vh - 60px);
+  }
+  .panel {
+    position: relative; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden;
+  }
+  .panel-head {
+    position: absolute; top: 0; left: 0; right: 0; height: 28px;
+    display: flex; align-items: center; gap: 8px; padding: 0 12px;
+    background: rgba(0,0,0,.4); backdrop-filter: blur(6px);
+    font-size: 11px; letter-spacing: .8px; text-transform: uppercase; z-index: 5;
+    border-bottom: 1px solid var(--line);
+  }
+  .panel-head .led {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 8px var(--accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .panel-head.bus .led { background: var(--bus); box-shadow: 0 0 8px var(--bus); }
+  .panel-head.cam .led { background: var(--realcam); box-shadow: 0 0 8px var(--realcam); }
+  .panel-head.ads .led { background: var(--ads); box-shadow: 0 0 8px var(--ads); }
+  .panel-head.app .led { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: .55; transform: scale(.85); }
+  }
+  iframe {
+    width: 100%; height: 100%; border: 0; display: block;
+    transform-origin: top left;
+  }
+  .col-stack {
+    display: grid; grid-template-rows: 1fr 1fr; gap: 8px;
+    height: 100%;
+  }
+  .stage-banner {
+    position: absolute; left: 50%; top: 38px; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--accent), #38bdf8); color: #0a0a0e;
+    padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 800;
+    letter-spacing: .4px; box-shadow: 0 8px 24px rgba(125,211,211,.4);
+    opacity: 0; transition: opacity .35s, transform .35s; pointer-events: none; z-index: 100;
+  }
+  .stage-banner.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">MetroEyes 통합 시연<small>SubwayBEV — 운영자 + 시민 + 디스플레이 양면 가치 사슬</small></div>
+  <div class="scenario" id="scenario">▶︎ <b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span></div>
+  <div class="timer" id="timer">00:00</div>
+  <button id="start">▶︎ 시연 시작</button>
+</header>
+<main>
+  <div class="panel">
+    <div class="panel-head"><span class="led"></span>운영자 콘솔 — 지하철</div>
+    <iframe id="if-op" src="operator_web/index.html"></iframe>
+  </div>
+  <div class="col-stack">
+    <div class="panel">
+      <div class="panel-head app"><span class="led"></span>시민 PWA</div>
+      <iframe id="if-pwa" src="passenger_app/index.html"></iframe>
+    </div>
+    <div class="panel">
+      <div class="panel-head ads"><span class="led"></span>광고 단가 라이브</div>
+      <iframe id="if-ad" src="operator_web/ad_pricing.html"></iframe>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head cam"><span class="led"></span>실 카메라 BEV (3D)</div>
+    <iframe id="if-cam" src="operator_web/realbev.html"></iframe>
+  </div>
+</main>
+<div class="stage-banner" id="stage"></div>
+<script>
+const startBtn = document.getElementById('start');
+const timer = document.getElementById('timer');
+const stage = document.getElementById('stage');
+const scen = document.getElementById('scenario');
+
+function fmtT(ms) {
+  const s = Math.floor(ms / 1000);
+  return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+function flash(msg) {
+  stage.textContent = msg;
+  stage.classList.add('show');
+  clearTimeout(stage._t);
+  stage._t = setTimeout(() => stage.classList.remove('show'), 3500);
+}
+
+// 시연 페이지 안의 iframe ▶︎ 시연 모드 버튼 자동 클릭
+function clickInside(iframeId, btnId) {
+  try {
+    const ifr = document.getElementById(iframeId);
+    const doc = ifr.contentDocument;
+    const btn = doc && doc.getElementById(btnId);
+    if (btn) btn.click();
+  } catch (e) { /* cross-origin or not loaded */ }
+}
+
+const SCRIPT = [
+  // [ms, banner, action]
+  [0,     '🎬 잠실역 18시 — 평상 운영',                     null],
+  [5000,  '📊 광고 단가 라이브 시연 — 12 POI 분 단위 변동',   () => clickInside('if-ad', 'demo-trigger')],
+  [12000, '🚨 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s', () => clickInside('if-op', 'demo-trigger')],
+  [60000, '📱 시민 PWA — 분산 인센티브 보상 시연',           null],
+  [180000,'📈 임팩트 양면 가시화 — krw 누적 → ROI x',         null],
+  [240000,'⏱  5분 시연 종료 — 핵심 수치 검토 시간',           null],
+];
+
+let started = false;
+startBtn.addEventListener('click', () => {
+  if (started) return;
+  started = true;
+  startBtn.disabled = true;
+  startBtn.textContent = '시연 진행 중...';
+  scen.innerHTML = '<b>시연 진행 중</b> — 운영자/시민/광고/실카메라 4-패널 동시 모니터링';
+  const t0 = Date.now();
+  SCRIPT.forEach(([ms, msg, act]) => {
+    setTimeout(() => {
+      flash(msg);
+      if (act) try { act(); } catch {}
+    }, ms);
+  });
+  // timer
+  const tk = setInterval(() => {
+    const dt = Date.now() - t0;
+    timer.textContent = fmtT(dt);
+    if (dt > 5 * 60 * 1000) {
+      clearInterval(tk);
+      startBtn.disabled = false;
+      startBtn.textContent = '▶︎ 다시 재생';
+      started = false;
+      scen.innerHTML = '✅ <b>시연 종료</b> — 다시 재생 또는 개별 패널 자유 조작';
+    }
+  }, 250);
+});
+</script>
+</body>
+</html>

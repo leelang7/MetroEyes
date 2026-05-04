@@ -329,9 +329,38 @@ async def broadcast(text: str):
 
 # ============== WebSocket handler ==============
 
+def _build_impact_summary() -> dict:
+    """현재 누적 임팩트를 dict 로 — 신규 join + impact_log 시 공통 사용."""
+    n = _impact_total["count"]
+    avg_saved = _impact_total["saved_pct_sum"] / max(1, n) if n else 0.0
+    saved_min_total = (_impact_total["saved_pct_sum"] / 100.0) * IMPACT_AVG_TRIP_MIN
+    value_won = int(saved_min_total * IMPACT_VALUE_PER_MIN)
+    top_st = max(_impact_total["stations"].items(), key=lambda x: x[1])[0] if _impact_total["stations"] else None
+    est_response_rate = min(1.0, n * 1000 / DAILY_RIDERS_BASELINE) if n else 0.0
+    policy_cost = _impact_total["krw_paid"] or 1
+    roi_x = value_won / policy_cost if policy_cost else 0
+    return {
+        "type": "impact_summary",
+        "total_count": n,
+        "avg_saved_pct": round(avg_saved, 1),
+        "saved_min_total": round(saved_min_total, 1),
+        "value_won": value_won,
+        "top_station": top_st,
+        "krw_paid": _impact_total["krw_paid"],
+        "est_response_rate": round(est_response_rate, 4),
+        "roi_x": round(roi_x, 1),
+    }
+
+
 async def handler(websocket):
     clients.add(websocket)
     print(f"[ws] connect {websocket.remote_address}, clients={len(clients)}", flush=True)
+    # 신규 클라이언트 join 시 즉시 현재 누적 impact_summary 전송 (페이지 reload 후에도 카운터 유지)
+    try:
+        if _impact_total["count"] > 0:
+            await websocket.send(json.dumps(_build_impact_summary(), ensure_ascii=False))
+    except Exception:
+        pass
     try:
         async for msg in websocket:
             try:
@@ -364,28 +393,7 @@ async def handler(websocket):
                 _impact_total["krw_paid"] += krw
                 st = req.get("station") or "?"
                 _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
-                n = _impact_total["count"]
-                avg_saved = _impact_total["saved_pct_sum"] / max(1, n)
-                saved_min_total = (_impact_total["saved_pct_sum"] / 100.0) * IMPACT_AVG_TRIP_MIN
-                value_won = int(saved_min_total * IMPACT_VALUE_PER_MIN)
-                top_st = max(_impact_total["stations"].items(), key=lambda x: x[1])[0] if _impact_total["stations"] else None
-                # 응답률 추정 — 누적 액션 / 일평균 통행 비례 (시연/소규모 보정 위해 *1000)
-                est_response_rate = min(1.0, n * 1000 / DAILY_RIDERS_BASELINE)
-                # ROI = 사회적 가치 / 정책 비용 (수치 0 보호)
-                policy_cost = _impact_total["krw_paid"] or 1
-                roi_x = value_won / policy_cost if policy_cost else 0
-                summary = {
-                    "type": "impact_summary",
-                    "total_count": n,
-                    "avg_saved_pct": round(avg_saved, 1),
-                    "saved_min_total": round(saved_min_total, 1),
-                    "value_won": value_won,
-                    "top_station": top_st,
-                    "krw_paid": _impact_total["krw_paid"],
-                    "est_response_rate": round(est_response_rate, 4),
-                    "roi_x": round(roi_x, 1),
-                }
-                await broadcast(json.dumps(summary, ensure_ascii=False))
+                await broadcast(json.dumps(_build_impact_summary(), ensure_ascii=False))
             elif t == "predict_surge" and req.get("poi"):
                 # IDEA-7 24h 폭증 예측 — 과거 추세(ppltn_history) + 시간대 baseline + 행사 신호
                 payload = predict_surge(req["poi"], req.get("hours_ahead", 24))
