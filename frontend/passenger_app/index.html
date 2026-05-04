@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v3.3-impact-card';
+  const CUR = 'v3.4-reward-loop';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -109,6 +109,7 @@
     </div>
     <div id="impact-detail" style="font-size: 10px; color: var(--muted); margin-top: 4px;"></div>
   </div>
+  <div id="my-reward-line" hidden style="margin: -6px 0 10px; padding: 8px 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.32); border-radius: 10px; font-size: 11px;"></div>
 
   <div class="rain-banner" id="rain-banner" hidden>
     <span class="ico">🌧</span>
@@ -402,14 +403,21 @@ function applyAll() {
 
   // CTA destination
   document.getElementById('cta').onclick = () => {
-    // (I2) 사회적 임팩트 — 권장 칸 평균과의 차이를 "절감"으로 누적
+    // (I2) 사회적 임팩트 — 권장 칸 평균과의 차이를 "절감"으로 누적 + 인센티브 보상
+    let earnedKrw = 0;
     try {
       const avg = options.reduce((a, b) => a + b.occ, 0) / options.length;
       const savedPct = Math.max(0, Math.round((avg - opt.occ) * 100));
       const myKey = 'metroeyes_my_impact';
-      const my = JSON.parse(localStorage.getItem(myKey) || '{"n":0,"saved":0}');
-      my.n += 1; my.saved += savedPct;
+      const my = JSON.parse(localStorage.getItem(myKey) || '{"n":0,"saved":0,"krw":0}');
+      // 분산 보상 — 5%p 이상 분산 시에만 100원, 15%p+ 면 150원, 30%p+ 면 200원 (정책 v3)
+      if (savedPct >= 30) earnedKrw = 200;
+      else if (savedPct >= 15) earnedKrw = 150;
+      else if (savedPct >= 5) earnedKrw = 100;
+      my.n += 1; my.saved += savedPct; my.krw = (my.krw || 0) + earnedKrw;
       localStorage.setItem(myKey, JSON.stringify(my));
+      renderRewardSummary(my);
+      if (earnedKrw > 0) showRewardToast(earnedKrw, savedPct);
       // backend에 broadcast (있으면)
       if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
         window.LIVE_WS.send(JSON.stringify({
@@ -417,13 +425,53 @@ function applyAll() {
           station: document.getElementById('ctx-name').textContent,
           car: opt.label,
           saved_pct: savedPct,
+          krw: earnedKrw,
         }));
       }
     } catch {}
+    // 보상 toast 가 있으면 1.4s 지연 후 이동 (사용자가 보상 확인)
     const params = new URLSearchParams({ mode, idx: opt.idx, hour });
-    location.href = `onboard.html?${params.toString()}`;
+    const url = `onboard.html?${params.toString()}`;
+    if (earnedKrw > 0) setTimeout(() => location.href = url, 1400);
+    else location.href = url;
   };
 }
+
+// 인센티브 보상 toast — 분산 액션 → 즉각 시각 피드백
+function showRewardToast(krw, savedPct) {
+  let t = document.getElementById('reward-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'reward-toast';
+    t.style.cssText = 'position:fixed;left:50%;top:30%;transform:translateX(-50%) scale(.85);padding:18px 24px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:18px;font-weight:800;font-size:18px;box-shadow:0 12px 36px rgba(16,185,129,.45);z-index:9999;text-align:center;opacity:0;transition:opacity .25s,transform .25s cubic-bezier(.2,1.4,.4,1);pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = `<div style="font-size:32px;margin-bottom:6px;">🪙</div><div>+₩${krw.toLocaleString()} 분산 보상</div><div style="font-size:11px;font-weight:600;opacity:.85;margin-top:4px;">권장 칸 평균보다 ${savedPct}%p 한산 선택</div>`;
+  requestAnimationFrame(() => {
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) scale(1)';
+  });
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) scale(.85)';
+  }, 1300);
+}
+
+// 누적 보상/임팩트 요약 — 임팩트 카드 보강
+function renderRewardSummary(my) {
+  if (!my) {
+    try { my = JSON.parse(localStorage.getItem('metroeyes_my_impact') || '{}'); } catch { my = {}; }
+  }
+  const el = document.getElementById('my-reward-line');
+  if (!el) return;
+  if (!my.n) { el.hidden = true; return; }
+  const krw = my.krw || 0;
+  const krwLabel = krw >= 10000 ? `₩${(krw/10000).toFixed(1)}만` : `₩${krw.toLocaleString()}`;
+  el.innerHTML = `<span style="color:#10b981;font-weight:800;">🪙 내 적립 ${krwLabel}</span> · <span style="color:var(--muted);">${my.n}회 분산 액션</span>`;
+  el.hidden = false;
+}
+// 페이지 진입 시 1회 누적 표시
+window.addEventListener('DOMContentLoaded', () => renderRewardSummary());
 
 function setMode(m) {
   if (mode === m) return;

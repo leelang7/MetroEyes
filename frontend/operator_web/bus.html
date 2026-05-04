@@ -13,7 +13,7 @@
 <script>
 // 자동 캐시 무효화 — sessionStorage 마커로 버전 다르면 1회 reload
 (function () {
-  const CUR = 'v3.1-debug-2026-05-04';
+  const CUR = 'v3.4-demoinject-2026-05-05';
   if (sessionStorage.getItem('me_ver_bus') !== CUR) {
     sessionStorage.setItem('me_ver_bus', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -31,6 +31,7 @@
     <a href="realbev.html">📷 실 카메라</a>
     <a href="ad_pricing.html">📺 디스플레이</a>
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
+    <button id="demo-trigger" title="시연 시나리오 30초 자동 재생" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
   </div>
   <div class="controls">
     <span class="tag gps-tag" id="gps-tag" title="GPS 자동 매칭 + 클릭 시 다른 정류장 선택">
@@ -457,6 +458,29 @@ function renderIncidents() {
   }
 }
 setInterval(renderIncidents, 1000);
+
+// ▶︎ 시연 시나리오 자동 인젝터 — 30초 5종 이벤트 시퀀스 (버스용)
+function injectIncidentBus(ev) {
+  incidentsLog.unshift(ev);
+  if (incidentsLog.length > 30) incidentsLog.length = 30;
+  if (window.SafetyFeatures && SF.pushToast) SF.pushToast(toastStack, ev);
+  renderIncidents();
+}
+document.getElementById('demo-trigger')?.addEventListener('click', () => {
+  const btn = document.getElementById('demo-trigger');
+  btn.disabled = true; btn.textContent = '시연 진행 중...'; btn.style.opacity = '.65';
+  const seq = [
+    { delay: 0,    ev: { id: Date.now()+1, type: 'free_ride',  severity: 'med',  msg: '5번 좌석 무임 의심 — 카드 미스캔', ts: Date.now() } },
+    { delay: 5000, ev: { id: Date.now()+2, type: 'lost',       severity: 'low',  msg: '뒷좌석 가방 12초+ 무인 — 분실 의심', ts: Date.now() } },
+    { delay: 11000, ev: { id: Date.now()+3, type: 'emergency', severity: 'high', msg: '서서 30초+ 미동작 승객 — 응급 의심', ts: Date.now() } },
+    { delay: 18000, ev: { id: Date.now()+4, type: 'suspicious',severity: 'high', msg: '하차문 군집 이상 — 안전 모니터링', ts: Date.now() } },
+    { delay: 24000, ev: { id: Date.now()+5, type: 'free_ride', severity: 'med',  msg: '자동 분산 안내 — 다음 차량 권고', ts: Date.now() } },
+  ];
+  seq.forEach(({ delay, ev }) => setTimeout(() => injectIncidentBus(ev), delay));
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = '▶︎ 시연 모드'; btn.style.opacity = '1';
+  }, 30000);
+});
 
 let ttsLang = 'ko';
 document.querySelectorAll('.tts-lang button').forEach(b => {
