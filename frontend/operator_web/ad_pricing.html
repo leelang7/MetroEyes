@@ -41,7 +41,7 @@
 <body data-domain="ads">
 <script>
 (function () {
-  const CUR = 'v3.2-ad-live';
+  const CUR = 'v3.4-demoinject-2026-05-05';
   if (sessionStorage.getItem('me_ver_ad') !== CUR) {
     sessionStorage.setItem('me_ver_ad', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -59,6 +59,7 @@
     <a href="realbev.html">📷 실 카메라</a>
     <a href="ad_pricing.html" class="active">📺 디스플레이</a>
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
+    <button id="demo-trigger" title="라이브 단가 변동 30초 시연" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
   </div>
   <div class="controls">
     <span class="tag">데이터<b>citydata_ppltn 분 단위</b></span>
@@ -348,6 +349,35 @@ function requestAllPois() {
     try { _ws.send(JSON.stringify({ type: 'population_query', poi })); } catch {}
   }
 }
+
+// ▶︎ 시연 모드 — 30초 동안 가짜 density 변동으로 단가 라이브 갱신 시연
+document.getElementById('demo-trigger')?.addEventListener('click', () => {
+  const btn = document.getElementById('demo-trigger');
+  btn.disabled = true; btn.textContent = '시연 진행 중...'; btn.style.opacity = '.65';
+  const t0 = Date.now();
+  const T = 30000;
+  const tick = () => {
+    const dt = Date.now() - t0;
+    if (dt > T) {
+      btn.disabled = false; btn.textContent = '▶︎ 시연 모드'; btn.style.opacity = '1';
+      return;
+    }
+    // POI 마다 사인파 + 랜덤 위상으로 0.3~1.0 변동 — 강남/홍대/성수 폭증 강조
+    STATIONS.forEach((poi, i) => {
+      const t = dt / 1000;
+      const phase = i * 0.7;
+      const hot = ['강남역', '홍대 관광특구', '성수카페거리'].includes(poi);
+      const base = hot ? 0.7 : 0.5;
+      const amp = hot ? 0.30 : 0.20;
+      const d = Math.max(0.15, Math.min(1.0, base + amp * Math.sin(t * 0.6 + phase)));
+      const ppltn = Math.round(d * 50000);
+      liveDensity[poi] = { density: d, ppltn, lvl: d > 0.85 ? '붐빔' : d > 0.6 ? '약간 붐빔' : '보통', ts: Date.now() };
+    });
+    applyLiveDensity();
+    setTimeout(tick, 600);
+  };
+  tick();
+});
 
 // === 광고 실 노출 보정 (TOP 5) ===
 // 명목 노출 = 정원 100% 가정 / 실 노출 = 라이브 인구 비율

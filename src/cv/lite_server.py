@@ -65,9 +65,11 @@ context_cache: dict[str, tuple] = {}       # poi → (ts, payload)
 CONTEXT_TTL = 600.0
 
 # 누적 임팩트 — impact_log 들어오면 합산 후 impact_summary broadcast
-_impact_total = {"count": 0, "saved_pct_sum": 0.0, "stations": {}}
+_impact_total = {"count": 0, "saved_pct_sum": 0.0, "stations": {}, "krw_paid": 0}
 IMPACT_AVG_TRIP_MIN = 25.0      # 평균 통행 시간 (분)
 IMPACT_VALUE_PER_MIN = 167      # 혼잡 1분 당 사회적 비용 추정 (원) — 한국교통연구원 혼잡비용 환산
+# 운영자 콘솔에 표시할 일평균 통행 (서울교통공사 2024) — 응답률 추정 기준
+DAILY_RIDERS_BASELINE = 7_000_000
 
 
 # ============== HTTP helpers ==============
@@ -356,16 +358,22 @@ async def handler(websocket):
                 }, ensure_ascii=False))
             elif t == "impact_log":
                 saved = float(req.get("saved_pct") or 0)
+                krw = int(req.get("krw") or 0)
                 _impact_total["count"] += 1
                 _impact_total["saved_pct_sum"] += saved
+                _impact_total["krw_paid"] += krw
                 st = req.get("station") or "?"
                 _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
                 n = _impact_total["count"]
                 avg_saved = _impact_total["saved_pct_sum"] / max(1, n)
-                # 누적 절감 분 = sum(saved_pct/100 × avg_trip_min)
                 saved_min_total = (_impact_total["saved_pct_sum"] / 100.0) * IMPACT_AVG_TRIP_MIN
                 value_won = int(saved_min_total * IMPACT_VALUE_PER_MIN)
                 top_st = max(_impact_total["stations"].items(), key=lambda x: x[1])[0] if _impact_total["stations"] else None
+                # 응답률 추정 — 누적 액션 / 일평균 통행 비례 (시연/소규모 보정 위해 *1000)
+                est_response_rate = min(1.0, n * 1000 / DAILY_RIDERS_BASELINE)
+                # ROI = 사회적 가치 / 정책 비용 (수치 0 보호)
+                policy_cost = _impact_total["krw_paid"] or 1
+                roi_x = value_won / policy_cost if policy_cost else 0
                 summary = {
                     "type": "impact_summary",
                     "total_count": n,
@@ -373,6 +381,9 @@ async def handler(websocket):
                     "saved_min_total": round(saved_min_total, 1),
                     "value_won": value_won,
                     "top_station": top_st,
+                    "krw_paid": _impact_total["krw_paid"],
+                    "est_response_rate": round(est_response_rate, 4),
+                    "roi_x": round(roi_x, 1),
                 }
                 await broadcast(json.dumps(summary, ensure_ascii=False))
             elif t == "predict_surge" and req.get("poi"):

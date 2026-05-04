@@ -19,7 +19,7 @@
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
 (function () {
-  const CUR = 'v3.4-demoinject-2026-05-05';
+  const CUR = 'v3.5-policycost-2026-05-05';
   if (sessionStorage.getItem('me_ver') !== CUR) {
     sessionStorage.setItem('me_ver', CUR);
     // navigation type 1 = reload — loop 방지
@@ -63,6 +63,8 @@
       <b id="impact-pill-cnt">0</b><em style="opacity:.7;">명</em>
       <span style="margin-left: 6px; opacity: .85;">⏱<b id="impact-pill-min" style="margin-left:2px;">0</b>분</span>
       <span style="margin-left: 6px; opacity: .85;">💰<b id="impact-pill-val" style="margin-left:2px;">₩0</b></span>
+      <span style="margin-left: 6px; opacity: .75; font-size: 10px;">🪙<b id="impact-pill-krw" style="margin-left:2px;">₩0</b></span>
+      <span style="margin-left: 6px; padding: 0 5px; background: rgba(16,185,129,.18); border-radius: 4px; font-size: 10px; opacity: .9;">ROI <b id="impact-pill-roi">—</b>x</span>
     </span>
     <div class="slider-wrap">
       <label>시각</label>
@@ -1006,13 +1008,19 @@ if (SR) {
     const cnt = document.getElementById('impact-pill-cnt');
     const mn = document.getElementById('impact-pill-min');
     const vv = document.getElementById('impact-pill-val');
+    const kw = document.getElementById('impact-pill-krw');
+    const roi = document.getElementById('impact-pill-roi');
+    const fmt = (w) => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString()}`;
     if (cnt) cnt.textContent = (j.total_count || 0).toLocaleString();
     if (mn) mn.textContent = Math.round(j.saved_min_total || 0).toLocaleString();
-    if (vv) {
-      const w = j.value_won || 0;
-      vv.textContent = w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString()}`;
-    }
-    if (j.top_station) pill.title = `시민 PWA 분산 누적 — 최다 ${j.top_station} · 평균 -${(j.avg_saved_pct||0).toFixed(0)}% 한산`;
+    if (vv) vv.textContent = fmt(j.value_won || 0);
+    if (kw) kw.textContent = fmt(j.krw_paid || 0);
+    if (roi) roi.textContent = j.roi_x != null ? Math.round(j.roi_x) : '—';
+    const parts = [];
+    if (j.top_station) parts.push(`최다 ${j.top_station}`);
+    if (j.avg_saved_pct != null) parts.push(`평균 -${(j.avg_saved_pct||0).toFixed(0)}% 한산`);
+    if (j.est_response_rate != null) parts.push(`응답률 ~${(j.est_response_rate*100).toFixed(2)}%`);
+    pill.title = `시민 PWA 분산 누적 — ${parts.join(' · ')}`;
     pill.hidden = false;
   }
 
