@@ -102,6 +102,13 @@
           <div class="info-cell"><div class="label">편성 평균 대비</div><div class="value" id="cd-vs">—</div></div>
         </div>
         <div class="verdict" id="cd-verdict">—</div>
+        <div class="sparkline-wrap">
+          <div class="sparkline-head">
+            <span>이 칸의 24시간 점유 (출퇴근 양봉)</span>
+            <em id="cd-spark-now">현재 18시 · —%</em>
+          </div>
+          <svg id="cd-spark" class="sparkline" viewBox="0 0 240 56" preserveAspectRatio="none"></svg>
+        </div>
       </div>
       <div id="recommend" class="recommend">
         <div class="head">권장 탑승 칸</div>
@@ -357,6 +364,9 @@ function applyHour() {
     ? `<span style="color: var(--accent);">${Math.round(diff)}%p 한산</span>`
     : `<span>평균</span>`;
 
+  // === 시간대 양봉 sparkline — 이 칸의 24h 패턴 ===
+  drawCarSparkline(selected, hour);
+
   // 평결
   const verdict = document.getElementById('cd-verdict');
   if (selOcc >= 0.92) {
@@ -371,6 +381,59 @@ function applyHour() {
       ? `✓ 선택한 ${selected + 1}호차가 가장 한산. 그대로 탑승 권장`
       : `○ 선택 칸도 한산하지만, ${mi + 1}호차가 가장 비어 있음`;
   }
+}
+
+// === 24시간 sparkline 렌더 (선택 칸의 시간대별 점유) ===
+function drawCarSparkline(carIdx, currentHour) {
+  const svg = document.getElementById('cd-spark');
+  if (!svg) return;
+  const W = 240, H = 56, pad = 4;
+  const hours = Array.from({ length: 24 }, (_, h) => h);
+  const occs = hours.map(h => {
+    const trainAvg = model.trainOccupancyAt(h, STATION.cluster);
+    const carOccs = model.carOccupancies(trainAvg, CAR_COUNT, h * 13 + 7);
+    return carOccs[carIdx];
+  });
+  const maxO = Math.max(...occs, 0.01);
+  const xAt = h => pad + (h / 23) * (W - pad * 2);
+  const yAt = o => H - pad - (o / 1.05) * (H - pad * 2 - 6);
+
+  // path 면적 + 라인
+  let area = `M${xAt(0).toFixed(1)},${(H - pad).toFixed(1)}`;
+  let line = `M${xAt(0).toFixed(1)},${yAt(occs[0]).toFixed(1)}`;
+  for (let h = 0; h < 24; h++) {
+    const x = xAt(h).toFixed(1), y = yAt(occs[h]).toFixed(1);
+    area += ` L${x},${y}`;
+    line += ` L${x},${y}`;
+  }
+  area += ` L${xAt(23).toFixed(1)},${(H - pad).toFixed(1)} Z`;
+
+  // 두 봉우리(아침/저녁) 자동 표시
+  const morningPeak = occs.slice(6, 11).reduce((m, o, i) => o > occs[m+6] ? i+6 : m, 0);
+  const eveningPeak = occs.slice(15, 21).reduce((m, o, i) => o > occs[m+15] ? i+15 : m, 0);
+
+  // 현 시각 마커
+  const nowX = xAt(currentHour);
+  const nowY = yAt(occs[currentHour]);
+
+  svg.innerHTML = `
+    <line class="axis" x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}"/>
+    <path class="area" d="${area}"/>
+    <path class="line" d="${line}"/>
+    <line class="now-line" x1="${nowX}" y1="${pad}" x2="${nowX}" y2="${H - pad}"/>
+    <circle class="peak" cx="${xAt(morningPeak)}" cy="${yAt(occs[morningPeak])}" r="2.5"/>
+    <circle class="peak" cx="${xAt(eveningPeak)}" cy="${yAt(occs[eveningPeak])}" r="2.5"/>
+    <circle class="marker" cx="${nowX}" cy="${nowY}" r="3"/>
+    <text class="label" x="${pad + 2}" y="${H - 1}">5</text>
+    <text class="label" x="${(W / 2 - 4)}" y="${H - 1}">14</text>
+    <text class="label" x="${W - pad - 10}" y="${H - 1}">23</text>
+    <text class="label" x="${xAt(morningPeak) - 4}" y="${yAt(occs[morningPeak]) - 5}">${morningPeak}시</text>
+    <text class="label" x="${xAt(eveningPeak) - 4}" y="${yAt(occs[eveningPeak]) - 5}">${eveningPeak}시</text>
+  `;
+
+  // 현 시각 점유율 텍스트
+  document.getElementById('cd-spark-now').textContent =
+    `현재 ${currentHour}시 · ${Math.round(occs[currentHour] * 100)}%`;
 }
 
 // ============== GPS 매칭 ==============

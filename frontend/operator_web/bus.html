@@ -103,6 +103,13 @@
           <div class="info-cell"><div class="label">대기 vs 탑승</div><div class="value" id="cd-walk">—</div></div>
         </div>
         <div class="verdict" id="cd-verdict">—</div>
+        <div class="sparkline-wrap">
+          <div class="sparkline-head">
+            <span>이 차량의 24시간 점유 (출퇴근 양봉)</span>
+            <em id="cd-spark-now">현재 18시 · —%</em>
+          </div>
+          <svg id="cd-spark" class="sparkline" viewBox="0 0 240 56" preserveAspectRatio="none"></svg>
+        </div>
       </div>
       <div id="recommend" class="recommend">
         <div class="head">권장 탑승 차량</div>
@@ -361,6 +368,9 @@ function applyHour() {
                        waitDiff > 0 ? `${waitDiff}분 더 대기` :
                        `${-waitDiff}분 빠름`;
 
+  // === 시간대 양봉 sparkline — 이 순위 차량의 24h 패턴 ===
+  drawBusSparkline(selected, hour);
+
   const verdict = document.getElementById('cd-verdict');
   if (sel.occ >= 0.92) {
     verdict.className = 'verdict crit';
@@ -468,6 +478,57 @@ window.addEventListener('resize', () => {
 });
 applyHour();
 requestAnimationFrame(tick);
+
+// === 24시간 sparkline — 이 순위 차량의 시간대별 점유 ===
+function drawBusSparkline(busIdx, currentHour) {
+  const svg = document.getElementById('cd-spark');
+  if (!svg) return;
+  const W = 240, H = 56, pad = 4;
+  const occs = Array.from({ length: 24 }, (_, h) => {
+    const buses = (function () {
+      const avg = model.trainOccupancyAt(h, ROUTE.cluster);
+      const r = (n => { let s = n; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(h * 17 + 3);
+      return Array.from({ length: BUS_COUNT }, (_, i) => {
+        const noise = (r() - 0.5) * 0.20;
+        return Math.max(0.05, Math.min(1.05, avg * 0.92 + noise));
+      });
+    })();
+    return buses[busIdx];
+  });
+  const xAt = h => pad + (h / 23) * (W - pad * 2);
+  const yAt = o => H - pad - (o / 1.05) * (H - pad * 2 - 6);
+
+  let area = `M${xAt(0).toFixed(1)},${(H - pad).toFixed(1)}`;
+  let line = `M${xAt(0).toFixed(1)},${yAt(occs[0]).toFixed(1)}`;
+  for (let h = 0; h < 24; h++) {
+    const x = xAt(h).toFixed(1), y = yAt(occs[h]).toFixed(1);
+    area += ` L${x},${y}`;
+    line += ` L${x},${y}`;
+  }
+  area += ` L${xAt(23).toFixed(1)},${(H - pad).toFixed(1)} Z`;
+
+  const morningPeak = occs.slice(6, 11).reduce((m, o, i) => o > occs[m+6] ? i+6 : m, 0);
+  const eveningPeak = occs.slice(15, 21).reduce((m, o, i) => o > occs[m+15] ? i+15 : m, 0);
+  const nowX = xAt(currentHour);
+  const nowY = yAt(occs[currentHour]);
+
+  svg.innerHTML = `
+    <line class="axis" x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}"/>
+    <path class="area" d="${area}"/>
+    <path class="line" d="${line}"/>
+    <line class="now-line" x1="${nowX}" y1="${pad}" x2="${nowX}" y2="${H - pad}"/>
+    <circle class="peak" cx="${xAt(morningPeak)}" cy="${yAt(occs[morningPeak])}" r="2.5"/>
+    <circle class="peak" cx="${xAt(eveningPeak)}" cy="${yAt(occs[eveningPeak])}" r="2.5"/>
+    <circle class="marker" cx="${nowX}" cy="${nowY}" r="3"/>
+    <text class="label" x="${pad + 2}" y="${H - 1}">5</text>
+    <text class="label" x="${(W / 2 - 4)}" y="${H - 1}">14</text>
+    <text class="label" x="${W - pad - 10}" y="${H - 1}">23</text>
+    <text class="label" x="${xAt(morningPeak) - 4}" y="${yAt(occs[morningPeak]) - 5}">${morningPeak}시</text>
+    <text class="label" x="${xAt(eveningPeak) - 4}" y="${yAt(occs[eveningPeak]) - 5}">${eveningPeak}시</text>
+  `;
+  document.getElementById('cd-spark-now').textContent =
+    `현재 ${currentHour}시 · ${Math.round(occs[currentHour] * 100)}%`;
+}
 
 // ============== GPS 매칭 (가까운 정류장) ==============
 const STOP_LIST = [
