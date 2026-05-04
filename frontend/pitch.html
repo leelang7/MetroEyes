@@ -228,7 +228,7 @@
 </table>
 
 <figure>
-  <img src="../outputs/policy_roi_v3_matrix.png" alt="호선 × 시간대 절감 매트릭스" loading="lazy">
+  <img src="figs/policy_roi_v3_matrix.png" alt="호선 × 시간대 절감 매트릭스" loading="lazy">
   <figcaption>그림 1 — 호선 9개 × 24시간 절감 분 매트릭스 (응답률 30%) · 출퇴근 양봉 + 만석 호선 우선</figcaption>
 </figure>
 
@@ -303,9 +303,25 @@
 
 <h2>1주차 EDA 발견</h2>
 <figure>
-  <img src="../outputs/line_carload_heatmap.png" alt="호선별 시간대 추정 칸 점유율" loading="lazy">
+  <img src="figs/line_carload_heatmap.png" alt="호선별 시간대 추정 칸 점유율" loading="lazy">
   <figcaption>그림 2 — 호선별 시간대 추정 칸 점유율 — 1호선만 양봉 (5시 9% → 18시 150%), 다른 호선은 cap 도달 → MetroEyes CV 명분</figcaption>
 </figure>
+
+<h2>EDA v2 — GBR 회귀 검증 <span class="badge">R²=0.981</span></h2>
+<p style="color: var(--muted); font-size: 13px; margin: 0 0 12px;">
+  9 호선 × 24 시간 × 5 노이즈 = 1,080 샘플로 GradientBoostingRegressor (200, depth 4) + 5-fold CV.
+  점유율 변동의 <b style="color: var(--text);">97%</b> 가 시간 양봉 (is_peak_am 0.366 / is_peak_pm 0.365 / hour 0.241) 으로 설명. cap_ratio 는 4위 (0.024) 로 영향 제한적.
+</p>
+<div class="row">
+  <figure style="margin: 0;">
+    <img src="figs/carload_v2_feature_importance.png" alt="GBR 특징 중요도" loading="lazy">
+    <figcaption>그림 3 — GBR 특징 중요도 top 10 (1주차 EDA 양봉 가설 정량 검증)</figcaption>
+  </figure>
+  <figure style="margin: 0;">
+    <img src="figs/carload_v2_residuals.png" alt="GBR 잔차" loading="lazy">
+    <figcaption>그림 4 — 잔차 산점 (MAE 3.41%p) · 9호선 18시 +10% 잔차 = 만석 cap 초과 미캡처 케이스</figcaption>
+  </figure>
+</div>
 
 <footer>
   ⓒ 2026 MetroEyes (SubwayBEV). 데이터: 서울 열린데이터광장 / TOPIS / data.go.kr · 모델: YOLO11n + BoT-SORT · LLM: Claude Haiku 4.5
