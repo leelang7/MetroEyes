@@ -112,6 +112,73 @@ body[data-domain="arch"]    .brand .dot { background: var(--domain-arch);    box
   margin-left: 12px;
 }
 .brand a.cta-citizen:hover { background: rgba(125,211,211,0.18); color: var(--fg); }
+
+/* === GPS 위젯 (헤더 우측) === */
+.gps-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 999px;
+  background: rgba(125,211,211,0.10); border: 1px solid rgba(125,211,211,0.30);
+  font-size: 12px; cursor: help;
+}
+.gps-tag .gps-led {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 8px var(--accent); animation: gps-pulse 1.8s ease-in-out infinite;
+}
+.gps-tag b { color: var(--fg); font-weight: 600; margin-left: 2px; }
+.gps-tag em { color: var(--muted-2); font-style: normal; font-size: 11px;
+              font-variant-numeric: tabular-nums; padding-left: 6px;
+              border-left: 1px solid rgba(255,255,255,0.10); margin-left: 4px; }
+.gps-tag.searching { background: rgba(240,180,106,0.10); border-color: rgba(240,180,106,0.30); }
+.gps-tag.searching .gps-led { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+.gps-tag.error { background: rgba(255,94,87,0.10); border-color: rgba(255,94,87,0.30); }
+.gps-tag.error .gps-led { background: var(--crit); box-shadow: 0 0 8px var(--crit); }
+@keyframes gps-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* 도메인별 GPS 색상 */
+body[data-domain="bus"]     .gps-tag { background: rgba(249,115,22,0.10); border-color: rgba(249,115,22,0.30); }
+body[data-domain="bus"]     .gps-tag .gps-led { background: var(--domain-bus); box-shadow: 0 0 8px var(--domain-bus); }
+body[data-domain="realcam"] .gps-tag { background: rgba(239,68,68,0.10); border-color: rgba(239,68,68,0.30); }
+body[data-domain="realcam"] .gps-tag .gps-led { background: var(--domain-realcam); box-shadow: 0 0 8px var(--domain-realcam); }
+body[data-domain="ads"]     .gps-tag { background: rgba(16,185,129,0.10); border-color: rgba(16,185,129,0.30); }
+body[data-domain="ads"]     .gps-tag .gps-led { background: var(--domain-ads); box-shadow: 0 0 8px var(--domain-ads); }
+
+/* === 칸 클릭 후 풍부한 상세 카드 === */
+.car-detail {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px 18px; margin-top: 12px;
+}
+.car-detail .head-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.car-detail .car-num {
+  font-size: 26px; font-weight: 700; color: var(--accent); letter-spacing: -0.6px;
+  font-variant-numeric: tabular-nums;
+}
+.car-detail .car-occ {
+  font-size: 22px; font-weight: 300; color: var(--fg); font-variant-numeric: tabular-nums;
+}
+.car-detail .car-occ b { font-weight: 700; }
+.car-detail .car-occ.crit b { color: var(--crit); }
+.car-detail .car-occ.warn b { color: var(--warn); }
+.car-detail .info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;
+}
+.car-detail .info-cell { padding: 8px 10px; background: var(--bg-1); border-radius: 6px; }
+.car-detail .info-cell .label {
+  font-size: 9px; color: var(--muted); letter-spacing: 1.2px;
+  text-transform: uppercase; font-weight: 600; margin-bottom: 4px;
+}
+.car-detail .info-cell .value {
+  font-size: 14px; color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums;
+}
+.car-detail .verdict {
+  margin-top: 10px; padding: 8px 12px; border-radius: 6px; font-size: 12px;
+  background: rgba(125,211,211,0.08); border-left: 2px solid var(--accent);
+  color: var(--accent); font-weight: 500;
+}
+.car-detail .verdict.warn { background: rgba(240,180,106,0.08); border-left-color: var(--warn); color: var(--warn); }
+.car-detail .verdict.crit { background: rgba(255,94,87,0.10); border-left-color: var(--crit); color: var(--crit); }
 .controls { display: flex; gap: 18px; align-items: center; font-size: 12px; }
 .tag { color: var(--muted); }
 .tag b { color: var(--fg); margin-left: 6px; font-weight: 500; }

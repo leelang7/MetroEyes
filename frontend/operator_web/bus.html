@@ -19,6 +19,11 @@
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
   </div>
   <div class="controls">
+    <span class="tag gps-tag" id="gps-tag" title="GPS로 가까운 정류장 자동 매칭">
+      <span class="gps-led"></span>
+      <b id="gps-stop">잠실역</b>
+      <em id="gps-dist">— km</em>
+    </span>
     <span class="tag">노선<b id="t-line">간선 142</b></span>
     <span class="tag">정류장<b id="t-stop">잠실역.7번출구</b></span>
     <span class="tag">아키타입<b id="t-cluster">환승 허브</b></span>
@@ -83,8 +88,22 @@
       <div id="alert" class="alert"><span class="dot-warn"></span>임계 밀집 — 다음 차 분산 안내 송출 권고</div>
     </div>
     <div class="panel">
-      <h2><b>접근 중인 버스</b><span style="color: var(--muted)">정차 순서</span></h2>
+      <h2><b>접근 중인 버스</b><span style="color: var(--muted)">행 클릭 또는 strip 클릭으로 선택</span></h2>
       <div id="busList" class="car-list"></div>
+      <!-- 선택 차량 상세 -->
+      <div id="car-detail" class="car-detail">
+        <div class="head-row">
+          <span class="car-num" id="cd-num">1순위</span>
+          <span class="car-occ" id="cd-occ-wrap">선택 차량 점유 <b id="cd-occ">—%</b></span>
+        </div>
+        <div class="info-grid">
+          <div class="info-cell"><div class="label">검출 인원</div><div class="value"><span id="cd-cnt">—</span> 명</div></div>
+          <div class="info-cell"><div class="label">도착 ETA</div><div class="value"><span id="cd-eta">—</span> 분</div></div>
+          <div class="info-cell"><div class="label">권장 차량 대비</div><div class="value" id="cd-vs">—</div></div>
+          <div class="info-cell"><div class="label">대기 vs 탑승</div><div class="value" id="cd-walk">—</div></div>
+        </div>
+        <div class="verdict" id="cd-verdict">—</div>
+      </div>
       <div id="recommend" class="recommend">
         <div class="head">권장 탑승 차량</div>
         <div><span class="num" id="rec-num">—</span> · <span id="rec-pct" style="color: var(--fg)">—%</span> · <span id="rec-eta" style="color: var(--fg)">—분 후</span></div>
@@ -239,6 +258,31 @@ document.getElementById('t-cluster').textContent = model.CLUSTERS[ROUTE.cluster]
 let selected = 0;
 let prevSelected = selected;
 
+// === strip 클릭 → 차량 선택 ===
+(function bindStripClick() {
+  const cv = document.getElementById('strip');
+  function pickFromX(clientX, n) {
+    const r = cv.getBoundingClientRect();
+    const x = clientX - r.left;
+    const pad = 16, gap = 4;
+    const carW = (r.width - pad * 2 - gap * (n - 1)) / n;
+    if (x < pad) return 0;
+    if (x > r.width - pad) return n - 1;
+    return Math.max(0, Math.min(n - 1, Math.floor((x - pad) / (carW + gap))));
+  }
+  cv.style.cursor = 'pointer';
+  cv.addEventListener('click', e => {
+    if (!lastBuses.length) return;
+    selected = pickFromX(e.clientX, lastBuses.length);
+    applyHour();
+  });
+  cv.addEventListener('mousemove', e => {
+    if (!lastBuses.length) { cv.title = ''; return; }
+    const i = pickFromX(e.clientX, lastBuses.length);
+    cv.title = `${i + 1}순위 — ${Math.round(lastBuses[i].occ * 100)}% / ${lastBuses[i].eta}분 후`;
+  });
+})();
+
 function generateBuses(hour) {
   const avg = model.trainOccupancyAt(hour, ROUTE.cluster);
   const r = (n => { let s = n; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3);
@@ -292,6 +336,45 @@ function applyHour() {
   recNum.textContent = ['1순위', '2순위', '3순위'][mi];
   recPct.textContent = `${Math.round(mv * 100)}%`;
   recEta.textContent = `${buses[mi].eta}분 후`;
+
+  // === 선택 차량 상세 ===
+  const sel = buses[selected];
+  const selCnt = Math.round(CAPACITY * sel.occ);
+  document.getElementById('cd-num').textContent = `${selected + 1}순위`;
+  document.getElementById('cd-occ').textContent = `${Math.round(sel.occ * 100)}%`;
+  const wrap = document.getElementById('cd-occ-wrap');
+  wrap.classList.toggle('crit', sel.occ >= 0.85);
+  wrap.classList.toggle('warn', sel.occ >= 0.65 && sel.occ < 0.85);
+  document.getElementById('cd-cnt').textContent = selCnt;
+  document.getElementById('cd-eta').textContent = sel.eta;
+
+  const cdVs = document.getElementById('cd-vs');
+  if (selected === mi) {
+    cdVs.innerHTML = `<span style="color: var(--accent);">권장 차량</span>`;
+  } else {
+    const diffPct = Math.round((sel.occ - mv) * 100);
+    cdVs.innerHTML = `<span style="color: var(--warn);">+${diffPct}%p 더 혼잡</span>`;
+  }
+  const cdWalk = document.getElementById('cd-walk');
+  const waitDiff = sel.eta - buses[mi].eta;
+  cdWalk.textContent = waitDiff === 0 ? '동시 도착' :
+                       waitDiff > 0 ? `${waitDiff}분 더 대기` :
+                       `${-waitDiff}분 빠름`;
+
+  const verdict = document.getElementById('cd-verdict');
+  if (sel.occ >= 0.92) {
+    verdict.className = 'verdict crit';
+    verdict.textContent = `⚠ 임계 밀집 — ${mi + 1}순위 차량 +${Math.max(0, buses[mi].eta - sel.eta)}분 대기 권고`;
+  } else if (sel.occ >= 0.65) {
+    verdict.className = 'verdict warn';
+    verdict.textContent = `△ 혼잡 — ${mi + 1}순위 차량 (${Math.round(mv * 100)}%) 추천`;
+  } else if (selected === mi) {
+    verdict.className = 'verdict';
+    verdict.textContent = `✓ 가장 한산한 차량 선택. 그대로 탑승 권장`;
+  } else {
+    verdict.className = 'verdict';
+    verdict.textContent = `○ 선택 차량도 한산 — 시간 우선이면 그대로, 한산 우선이면 ${mi + 1}순위`;
+  }
   recMeta.textContent = `노선 평균 ${Math.round(model.trainOccupancyAt(hour, ROUTE.cluster) * 100)}% · ${model.CLUSTERS[ROUTE.cluster].label} · ${hour}시`;
 }
 
@@ -385,6 +468,56 @@ window.addEventListener('resize', () => {
 });
 applyHour();
 requestAnimationFrame(tick);
+
+// ============== GPS 매칭 (가까운 정류장) ==============
+const STOP_LIST = [
+  { name: '잠실역.7번출구',    lat: 37.5133, lon: 127.1003 },
+  { name: '강남역.11번출구',   lat: 37.4980, lon: 127.0276 },
+  { name: '홍대입구역.9번출구', lat: 37.5572, lon: 126.9244 },
+  { name: '시청역.6번출구',    lat: 37.5642, lon: 126.9778 },
+  { name: '서울역.버스환승',   lat: 37.5547, lon: 126.9707 },
+  { name: '광화문.교보문고',   lat: 37.5717, lon: 126.9766 },
+  { name: '신촌오거리',        lat: 37.5556, lon: 126.9362 },
+  { name: '사당역.4번출구',    lat: 37.4766, lon: 126.9817 },
+  { name: '건대입구역.6번출구', lat: 37.5403, lon: 127.0703 },
+];
+function busHaversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+(function tryGps() {
+  const tag = document.getElementById('gps-tag');
+  const stEl = document.getElementById('gps-stop');
+  const dEl = document.getElementById('gps-dist');
+  if (!('geolocation' in navigator)) {
+    tag.classList.add('error');
+    stEl.textContent = '미지원'; dEl.textContent = '—';
+    return;
+  }
+  tag.classList.add('searching');
+  stEl.textContent = '탐색 중'; dEl.textContent = '— km';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      tag.classList.remove('searching');
+      let best = STOP_LIST[0], bestKm = Infinity;
+      for (const s of STOP_LIST) {
+        const km = busHaversineKm(pos.coords.latitude, pos.coords.longitude, s.lat, s.lon);
+        if (km < bestKm) { bestKm = km; best = s; }
+      }
+      stEl.textContent = best.name.split('.')[0];
+      dEl.textContent = bestKm < 1.0 ? `${Math.round(bestKm * 1000)}m` : `${bestKm.toFixed(1)}km`;
+      document.getElementById('t-stop').textContent = best.name;
+    },
+    err => {
+      tag.classList.remove('searching');
+      tag.classList.add('error');
+      stEl.textContent = '권한 거부'; dEl.textContent = '—';
+    },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+  );
+})();
 
 // ============== LLM 어시스턴트 ==============
 const llmFab = document.getElementById('llmFab');

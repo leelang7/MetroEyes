@@ -19,8 +19,12 @@
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
   </div>
   <div class="controls">
+    <span class="tag gps-tag" id="gps-tag" title="GPS로 가까운 역 자동 매칭">
+      <span class="gps-led"></span>
+      <b id="gps-station">잠실</b>
+      <em id="gps-dist">— km</em>
+    </span>
     <span class="tag">노선<b id="t-line">2호선</b></span>
-    <span class="tag">역<b id="t-station">잠실(송파구청)</b></span>
     <span class="tag">아키타입<b id="t-cluster">환승 허브</b></span>
     <div class="slider-wrap">
       <label>시각</label>
@@ -83,8 +87,22 @@
       <div id="alert" class="alert"><span class="dot-warn"></span>임계 밀집 — 인접 칸 분산 안내 송출 권고</div>
     </div>
     <div class="panel">
-      <h2><b>10량 편성</b><span style="color: var(--muted)">호차별</span></h2>
+      <h2><b>10량 편성</b><span style="color: var(--muted)">호차별 — 클릭/strip 클릭으로 선택</span></h2>
       <div id="carList" class="car-list"></div>
+      <!-- 선택 칸 상세 — strip 클릭 시 정보 갱신 -->
+      <div id="car-detail" class="car-detail">
+        <div class="head-row">
+          <span class="car-num" id="cd-num">5호차</span>
+          <span class="car-occ" id="cd-occ-wrap">선택 칸 점유 <b id="cd-occ">—%</b></span>
+        </div>
+        <div class="info-grid">
+          <div class="info-cell"><div class="label">검출 인원</div><div class="value"><span id="cd-cnt">—</span> 명</div></div>
+          <div class="info-cell"><div class="label">밀집도</div><div class="value"><span id="cd-den">—</span> /m²</div></div>
+          <div class="info-cell"><div class="label">현 위치 → 권장 칸</div><div class="value" id="cd-walk">—</div></div>
+          <div class="info-cell"><div class="label">편성 평균 대비</div><div class="value" id="cd-vs">—</div></div>
+        </div>
+        <div class="verdict" id="cd-verdict">—</div>
+      </div>
       <div id="recommend" class="recommend">
         <div class="head">권장 탑승 칸</div>
         <div><span class="num" id="rec-num">—</span> · <span id="rec-pct" style="color: var(--fg)">—%</span></div>
@@ -232,6 +250,36 @@ document.getElementById('t-cluster').textContent = model.CLUSTERS[STATION.cluste
 
 let selected = 4;
 let prevSelected = selected;
+const CAR_COUNT_FALLBACK = 10;
+
+// ============== 10량 strip 클릭 → 칸 선택 ==============
+(function bindStripClick() {
+  const cv = document.getElementById('strip');
+  function pickCarFromX(clientX, n) {
+    const r = cv.getBoundingClientRect();
+    const x = clientX - r.left;
+    const pad = 16, gap = 4;
+    const carW = (r.width - pad * 2 - gap * (n - 1)) / n;
+    if (x < pad) return 0;
+    if (x > r.width - pad) return n - 1;
+    const idx = Math.floor((x - pad) / (carW + gap));
+    return Math.max(0, Math.min(n - 1, idx));
+  }
+  cv.style.cursor = 'pointer';
+  cv.addEventListener('click', e => {
+    if (!lastOccs.length) return;
+    const idx = pickCarFromX(e.clientX, lastOccs.length);
+    selected = idx;
+    applyHour();
+  });
+  // 호버 — 어떤 칸인지 hint
+  cv.addEventListener('mousemove', e => {
+    if (!lastOccs.length) { cv.title = ''; return; }
+    const idx = pickCarFromX(e.clientX, lastOccs.length);
+    const o = lastOccs[idx];
+    cv.title = `${idx + 1}호차 — ${Math.round(o * 100)}% 점유`;
+  });
+})();
 
 function applyHour() {
   const hour = +hourEl.value;
@@ -273,7 +321,113 @@ function applyHour() {
   recNum.textContent = `${mi + 1}호차`;
   recPct.textContent = `${Math.round(mv * 100)}%`;
   recMeta.textContent = `편성 평균 ${Math.round(trainAvg * 100)}% · ${model.CLUSTERS[STATION.cluster].label} · ${hour}시`;
+
+  // === 선택 칸 상세 카드 갱신 ===
+  const selOcc = occs[selected];
+  const selCnt = Math.round(CAPACITY * selOcc);
+  const selDen = (selCnt / 35).toFixed(1);
+  document.getElementById('cd-num').textContent = `${selected + 1}호차`;
+  const cdOcc = document.getElementById('cd-occ');
+  cdOcc.textContent = `${Math.round(selOcc * 100)}%`;
+  const wrap = document.getElementById('cd-occ-wrap');
+  wrap.classList.toggle('crit', selOcc >= 0.85);
+  wrap.classList.toggle('warn', selOcc >= 0.65 && selOcc < 0.85);
+  document.getElementById('cd-cnt').textContent = selCnt;
+  document.getElementById('cd-den').textContent = selDen;
+
+  // 현 위치(선택 칸) → 권장 칸 거리 (1칸 ≈ 약 20m)
+  const walkCars = Math.abs(selected - mi);
+  const walkM = walkCars * 20;
+  const walkSec = Math.max(15, walkCars * 6);
+  const cdWalk = document.getElementById('cd-walk');
+  if (walkCars === 0) {
+    cdWalk.textContent = `현재 칸이 권장 칸`;
+    cdWalk.style.color = 'var(--accent)';
+  } else {
+    cdWalk.textContent = `${walkCars}칸 (${walkM}m · 약 ${walkSec}초)`;
+    cdWalk.style.color = '';
+  }
+
+  // 편성 평균 대비
+  const diff = (selOcc - trainAvg) * 100;
+  const cdVs = document.getElementById('cd-vs');
+  cdVs.innerHTML = diff > 0
+    ? `<span style="color: var(--warn);">+${Math.round(diff)}%p 혼잡</span>`
+    : diff < 0
+    ? `<span style="color: var(--accent);">${Math.round(diff)}%p 한산</span>`
+    : `<span>평균</span>`;
+
+  // 평결
+  const verdict = document.getElementById('cd-verdict');
+  if (selOcc >= 0.92) {
+    verdict.className = 'verdict crit';
+    verdict.textContent = `⚠ 임계 밀집 — 다음 차 +3분 대기 권고. 권장: ${mi + 1}호차로 이동`;
+  } else if (selOcc >= 0.65) {
+    verdict.className = 'verdict warn';
+    verdict.textContent = `△ 혼잡 — 더 한산한 ${mi + 1}호차로 ${walkCars}칸 이동 시 ${Math.round((1 - mv/selOcc) * 100)}% 한산`;
+  } else {
+    verdict.className = 'verdict';
+    verdict.textContent = walkCars === 0
+      ? `✓ 선택한 ${selected + 1}호차가 가장 한산. 그대로 탑승 권장`
+      : `○ 선택 칸도 한산하지만, ${mi + 1}호차가 가장 비어 있음`;
+  }
 }
+
+// ============== GPS 매칭 ==============
+const STATION_LIST = [
+  { name: '잠실',    line: 2, lat: 37.5133, lon: 127.1000 },
+  { name: '강남',    line: 2, lat: 37.4980, lon: 127.0276 },
+  { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244 },
+  { name: '시청',    line: 2, lat: 37.5642, lon: 126.9778 },
+  { name: '서울역',  line: 1, lat: 37.5547, lon: 126.9707 },
+  { name: '광화문',  line: 5, lat: 37.5717, lon: 126.9766 },
+  { name: '신촌',    line: 2, lat: 37.5556, lon: 126.9362 },
+  { name: '사당',    line: 2, lat: 37.4766, lon: 126.9817 },
+  { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703 },
+  { name: '종로3가', line: 1, lat: 37.5717, lon: 126.9914 },
+];
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+(function tryGps() {
+  const tag = document.getElementById('gps-tag');
+  const stEl = document.getElementById('gps-station');
+  const dEl = document.getElementById('gps-dist');
+  if (!('geolocation' in navigator)) {
+    tag.classList.add('error');
+    stEl.textContent = '미지원';
+    dEl.textContent = '—';
+    return;
+  }
+  tag.classList.add('searching');
+  stEl.textContent = '탐색 중';
+  dEl.textContent = '— km';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      tag.classList.remove('searching');
+      let best = STATION_LIST[0], bestKm = Infinity;
+      for (const s of STATION_LIST) {
+        const km = haversineKm(pos.coords.latitude, pos.coords.longitude, s.lat, s.lon);
+        if (km < bestKm) { bestKm = km; best = s; }
+      }
+      stEl.textContent = best.name;
+      dEl.textContent = bestKm < 1.0 ? `${Math.round(bestKm * 1000)}m` : `${bestKm.toFixed(1)}km`;
+      // 헤더 노선/아키타입 갱신
+      document.getElementById('t-line').textContent = `${best.line}호선`;
+      document.getElementById('t-station').textContent = best.name + '역';
+    },
+    err => {
+      tag.classList.remove('searching');
+      tag.classList.add('error');
+      stEl.textContent = '권한 거부';
+      dEl.textContent = '—';
+    },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+  );
+})();
 
 function updatePhaseTag() {
   const m = { arriving: ['도착 중', ''], stopped: ['정차', 'stopped'], departing: ['출발', ''], running: ['운행 중', ''] };

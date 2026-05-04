@@ -76,8 +76,17 @@ a { color: inherit; text-decoration: none; }
   display: flex; align-items: baseline; justify-content: space-between;
   padding: 10px 4px 18px;
 }
-.context .station { font-size: 18px; font-weight: 500; letter-spacing: -0.3px; }
+.context .station { font-size: 18px; font-weight: 500; letter-spacing: -0.3px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
 .context .station small { color: var(--muted); font-weight: 400; font-size: 13px; margin-left: 6px; }
+.context .station .gps-pulse {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 10px var(--accent); animation: gps-pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0; cursor: help;
+}
+.context .station .gps-pulse.searching { background: var(--warn); box-shadow: 0 0 10px var(--warn); }
+.context .station .gps-pulse.error { background: var(--crit); box-shadow: 0 0 10px var(--crit); animation: none; opacity: 0.5; }
+.context .station .gps-pulse.locked { animation: none; opacity: 1; }
+@keyframes gps-pulse { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 1; transform: scale(1.15); } }
 .context .time { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 
 /* 메인 결정 카드 */

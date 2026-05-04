@@ -25,6 +25,7 @@
 
   <div class="context">
     <div class="station">
+      <span class="gps-pulse" id="gps-pulse" title="GPS로 자동 매칭됨"></span>
       <span id="ctx-name">잠실역</span>
       <small id="ctx-meta">2호선 · 잠실행</small>
     </div>
@@ -767,18 +768,37 @@ const LIVE = (() => {
   }
 
   // GPS 매칭 시도 (HTTPS context 또는 localhost에서만)
+  const gpsPulse = document.getElementById('gps-pulse');
   if (navigator.geolocation) {
+    if (gpsPulse) gpsPulse.classList.add('searching');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const r = nearest(pos.coords.latitude, pos.coords.longitude);
         curStation = r.station;
+        const distLabel = r.km < 1.0 ? `${Math.round(r.km * 1000)}m` : `${r.km.toFixed(1)}km`;
         document.getElementById('ctx-name').textContent = `${r.station.name}역`;
-        document.getElementById('ctx-meta').textContent = `${r.station.line}호선 · ${r.km.toFixed(1)}km`;
+        document.getElementById('ctx-meta').textContent = `${r.station.line}호선 · GPS ${distLabel}`;
+        if (gpsPulse) {
+          gpsPulse.classList.remove('searching');
+          gpsPulse.classList.add('locked');
+          gpsPulse.title = `GPS 매칭 — 거리 ${distLabel}`;
+        }
         if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); }
       },
-      () => {},
+      (err) => {
+        if (gpsPulse) {
+          gpsPulse.classList.remove('searching');
+          gpsPulse.classList.add('error');
+          gpsPulse.title = 'GPS 권한 거부 — 잠실역 기본값';
+        }
+      },
       { enableHighAccuracy: false, timeout: 8000 }
     );
+  } else {
+    if (gpsPulse) {
+      gpsPulse.classList.add('error');
+      gpsPulse.title = 'GPS 미지원';
+    }
   }
 
   return { connect, pickWsUrl };
