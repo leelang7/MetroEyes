@@ -349,6 +349,17 @@ function requestAllPois() {
   }
 }
 
+// === 광고 실 노출 보정 (TOP 5) ===
+// 명목 노출 = 정원 100% 가정 / 실 노출 = 라이브 인구 비율
+// 보정 단가 = 명목 단가 × (실/명목)  → 광고주 신뢰 ↑
+function effectiveImpressionRatio() {
+  const lives = Object.values(liveDensity);
+  if (!lives.length) return null;
+  const avgD = lives.reduce((a, b) => a + b.density, 0) / lives.length;
+  // 정원 50% 가정 baseline. 라이브가 50% 면 ratio 1.0
+  return Math.max(0.3, Math.min(1.5, avgD / 0.5));
+}
+
 function applyLiveDensity() {
   // 현 시각 셀의 색상 + 가격을 라이브 값으로 redraw
   const nowH = new Date().getHours();
@@ -379,6 +390,14 @@ function applyLiveDensity() {
     const uplift = ((avgLivePrice - BASE_PRICE) / BASE_PRICE) * 100;
     document.getElementById('kpi-uplift').textContent = `${uplift > 0 ? '+' : ''}${uplift.toFixed(1)}%`;
     document.getElementById('kpi-rev').textContent = `+${(2000 * uplift / 100).toFixed(0)}억/년`;
+    // ★ 실 노출 보정 — 명목 vs 실 노출 비율
+    const ratio = effectiveImpressionRatio();
+    if (ratio != null) {
+      const subEl = document.getElementById('kpi-peak-when');
+      if (subEl && !subEl.textContent.includes('실노출')) {
+        subEl.innerHTML = `${peakPoi} · 현재 · <span style="color:#10b981">실 노출 ${(ratio*100).toFixed(0)}% (명목 대비)</span>`;
+      }
+    }
   }
 }
 

@@ -1767,12 +1767,62 @@ window.MLChart = MLChart;
 })();
 setTimeout(() => connect(wsUrlEl.value), 400);
 
-// ============== IDEA-6 비상 동선 추론 (BEV → 안전) ==============
-// 현재 점유 분포에서 가장 한산한 4분면 출구 추천. 발표용 30초 데모.
+// ============== IDEA-6 비상 동선 + IDEA-7 분실물 자동 검출 ==============
 let _lastTracksForEvac = [];
+// 분실물 후보 = 짐 트랙 + 인근에 사람 없음 (10초 이상)
+const BAG_CLASSES = new Set(['backpack', 'handbag', 'suitcase', 'umbrella', 'cell phone', 'book']);
+const _bagTracking = new Map();   // track_id → { firstSeen, lastSeen, x, y, withPerson, alerted }
+const _LOST_THRESHOLD_MS = 10000;  // 10초 이상 사람 없음
+
+function checkLostItems(tracks) {
+  const now = Date.now();
+  const persons = tracks.filter(t => t.class === 'person' && Number.isFinite(t.bev_x));
+  const bags = tracks.filter(t => BAG_CLASSES.has(t.class) && Number.isFinite(t.bev_x));
+  // 짐 위치 갱신
+  for (const b of bags) {
+    const id = b.id;
+    const exist = _bagTracking.get(id);
+    // 가장 가까운 사람 거리
+    let minDist = Infinity;
+    for (const p of persons) {
+      const d = Math.hypot(b.bev_x - p.bev_x, b.bev_y - p.bev_y);
+      if (d < minDist) minDist = d;
+    }
+    const withPerson = minDist < 0.10;  // BEV 좌표 0.10 = 약 1m 가정
+    if (!exist) {
+      _bagTracking.set(id, { firstSeen: now, lastSeen: now, x: b.bev_x, y: b.bev_y, withPerson, lonelySince: withPerson ? null : now, alerted: false });
+    } else {
+      exist.lastSeen = now; exist.x = b.bev_x; exist.y = b.bev_y;
+      if (withPerson) { exist.withPerson = true; exist.lonelySince = null; }
+      else if (!exist.lonelySince) { exist.lonelySince = now; }
+    }
+    const tr = _bagTracking.get(id);
+    // 임계 도달 + 미알림
+    if (tr.lonelySince && now - tr.lonelySince >= _LOST_THRESHOLD_MS && !tr.alerted) {
+      tr.alerted = true;
+      const lonelyMs = now - tr.lonelySince;
+      const cls = b.class;
+      const incident = {
+        id: `lost-${id}`, type: 'lost', severity: 'med',
+        msg: `🎒 ${cls} 트랙 #${id} — 사람 없이 ${(lonelyMs/1000).toFixed(0)}초 정지 (BEV ${b.bev_x.toFixed(2)}, ${b.bev_y.toFixed(2)})`,
+        ts: now, bev_x: b.bev_x, bev_y: b.bev_y, item: cls,
+      };
+      // 기존 incident 시스템에 push (있으면)
+      if (window._lostItemListener) window._lostItemListener(incident);
+      // diag 로그
+      try { diagEl.append(`[LOST] ${cls} id=${id} lonely=${(lonelyMs/1000).toFixed(0)}s pos=(${b.bev_x.toFixed(2)},${b.bev_y.toFixed(2)})\n`); } catch {}
+    }
+  }
+  // GC: 안 보인 지 30초+ 짐 제거
+  for (const [id, tr] of _bagTracking) {
+    if (now - tr.lastSeen > 30000) _bagTracking.delete(id);
+  }
+}
+
 const _origOnTracks = onTracksUpdate;
 onTracksUpdate = function (trks) {
   _lastTracksForEvac = (trks || []).filter(t => t.class === 'person' && Number.isFinite(t.bev_x));
+  checkLostItems(trks || []);
   return _origOnTracks(trks);
 };
 
