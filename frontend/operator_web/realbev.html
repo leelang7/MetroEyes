@@ -1776,6 +1776,142 @@ onTracksUpdate = function (trks) {
   return _origOnTracks(trks);
 };
 
+// === A* pathfinder on BEV grid ===
+// 점유 분포로 cost field 만든 후 4개 출구 각각의 최적 경로 길이 계산.
+// 가장 짧은 경로 = 권장 출구. 회피 출구는 가장 긴 경로.
+const GRID_N = 16;  // 16x16 grid on BEV [0,1]^2
+
+function buildCostField(persons) {
+  const cost = Array(GRID_N).fill(0).map(() => new Float32Array(GRID_N).fill(1));
+  // 사람 위치 주변 인플레이션 (가우시안)
+  for (const p of persons) {
+    const cx = Math.floor(p.bev_x * GRID_N);
+    const cy = Math.floor(p.bev_y * GRID_N);
+    for (let dy = -3; dy <= 3; dy++) {
+      for (let dx = -3; dx <= 3; dx++) {
+        const x = cx + dx, y = cy + dy;
+        if (x < 0 || y < 0 || x >= GRID_N || y >= GRID_N) continue;
+        const d2 = dx*dx + dy*dy;
+        cost[y][x] += 8 * Math.exp(-d2 / 4);  // 군중 비용 가산
+      }
+    }
+  }
+  return cost;
+}
+
+function aStar(cost, sx, sy, ex, ey) {
+  const N = GRID_N;
+  const idx = (x, y) => y * N + x;
+  const inb = (x, y) => x >= 0 && y >= 0 && x < N && y < N;
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
+  const open = new Map();   // simple priority via array sort
+  const g = new Float32Array(N*N).fill(Infinity);
+  const parent = new Int32Array(N*N).fill(-1);
+  const visited = new Uint8Array(N*N);
+  g[idx(sx, sy)] = 0;
+  open.set(idx(sx, sy), Math.hypot(ex-sx, ey-sy));
+  while (open.size) {
+    // pick min f
+    let bestId = -1, bestF = Infinity;
+    for (const [k, v] of open) if (v < bestF) { bestF = v; bestId = k; }
+    open.delete(bestId);
+    const cy = Math.floor(bestId / N), cx = bestId % N;
+    if (cx === ex && cy === ey) {
+      // backtrack
+      const path = [];
+      let cur = bestId;
+      while (cur !== -1) {
+        path.push([cur % N, Math.floor(cur / N)]);
+        cur = parent[cur];
+      }
+      return { path: path.reverse(), cost: g[bestId] };
+    }
+    visited[bestId] = 1;
+    for (const [dx, dy] of dirs) {
+      const nx = cx + dx, ny = cy + dy;
+      if (!inb(nx, ny)) continue;
+      const ni = idx(nx, ny);
+      if (visited[ni]) continue;
+      const stepCost = (Math.abs(dx) + Math.abs(dy) === 2 ? 1.41 : 1) * cost[ny][nx];
+      const tentG = g[bestId] + stepCost;
+      if (tentG < g[ni]) {
+        g[ni] = tentG;
+        parent[ni] = bestId;
+        const f = tentG + Math.hypot(ex-nx, ey-ny);
+        open.set(ni, f);
+      }
+    }
+  }
+  return null;
+}
+
+function drawPathOverlay(paths, exits, best, worst) {
+  // canvas overlay 생성 (없으면)
+  let cv = document.getElementById('evac-overlay');
+  if (!cv) {
+    cv = document.createElement('canvas');
+    cv.id = 'evac-overlay';
+    cv.width = 480; cv.height = 480;
+    cv.style.cssText = 'position:fixed;top:80px;right:20px;z-index:9998;background:rgba(4,6,10,0.94);border:2px solid #ff5e57;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.5);padding:6px';
+    document.body.appendChild(cv);
+    cv.addEventListener('click', () => cv.remove());   // 클릭 시 닫힘
+  }
+  const ctx = cv.getContext('2d');
+  const W = 480, H = 480;
+  ctx.fillStyle = '#04060a';
+  ctx.fillRect(0, 0, W, H);
+  // 그리드
+  ctx.strokeStyle = 'rgba(125,211,211,0.08)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= GRID_N; i++) {
+    const p = i * W / GRID_N;
+    ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(W, p); ctx.stroke();
+  }
+  // 사람 위치 점
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for (const p of _lastTracksForEvac) {
+    ctx.beginPath();
+    ctx.arc(p.bev_x * W, p.bev_y * H, 4, 0, Math.PI*2);
+    ctx.fill();
+  }
+  // 모든 경로
+  for (const [exId, path] of Object.entries(paths)) {
+    if (!path) continue;
+    const isBest = exId === best.id;
+    const isWorst = exId === worst.id;
+    ctx.strokeStyle = isBest ? '#7dd3d3' : isWorst ? 'rgba(255,94,87,0.4)' : 'rgba(240,180,106,0.35)';
+    ctx.lineWidth = isBest ? 4 : 2;
+    ctx.beginPath();
+    path.path.forEach((pt, i) => {
+      const x = (pt[0] + 0.5) * W / GRID_N;
+      const y = (pt[1] + 0.5) * H / GRID_N;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  // 출구 마커
+  for (const ex of exits) {
+    const x = ex.tx * W, y = ex.ty * H;
+    ctx.fillStyle = ex.id === best.id ? '#7dd3d3' : ex.id === worst.id ? '#ff5e57' : '#f0b46a';
+    ctx.beginPath();
+    ctx.arc(x, y, 14, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#04060a';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(ex.id, x, y + 4);
+  }
+  // 헤더
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(`A* 비상 동선 — ${best.label} 권장 (cost ${paths[best.id].cost.toFixed(1)})`, 12, 22);
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('클릭으로 닫기', W - 80, 22);
+}
+
 document.getElementById('evac-btn').addEventListener('click', () => {
   const persons = _lastTracksForEvac;
   const result = document.getElementById('evac-result');
@@ -1783,41 +1919,46 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     result.innerHTML = `<span style="color:#f0b46a">⚠ 트랙 ${persons.length}명 — 최소 2명 이상 검출 시 추천 가능</span>`;
     return;
   }
-  // 4분면 인구 밀도 (NW/NE/SW/SE — BEV 평면 분할)
-  // BEV: x=0 좌, x=1 우 / y=0 위(원거리), y=1 아래(근거리)
-  const Q = { NW: 0, NE: 0, SW: 0, SE: 0 };
-  for (const p of persons) {
-    const w = p.bev_x < 0.5, n = p.bev_y < 0.5;
-    if (n && w) Q.NW++; else if (n && !w) Q.NE++;
-    else if (!n && w) Q.SW++; else Q.SE++;
-  }
-  const total = persons.length;
+  const cost = buildCostField(persons);
   const exits = [
-    { id: 'NW', label: '북서 출구', tx: 0.15, ty: 0.15, occ: Q.NW },
-    { id: 'NE', label: '북동 출구', tx: 0.85, ty: 0.15, occ: Q.NE },
-    { id: 'SW', label: '남서 출구', tx: 0.15, ty: 0.85, occ: Q.SW },
-    { id: 'SE', label: '남동 출구', tx: 0.85, ty: 0.85, occ: Q.SE },
+    { id: 'NW', label: '북서 출구', tx: 0.10, ty: 0.10 },
+    { id: 'NE', label: '북동 출구', tx: 0.90, ty: 0.10 },
+    { id: 'SW', label: '남서 출구', tx: 0.10, ty: 0.90 },
+    { id: 'SE', label: '남동 출구', tx: 0.90, ty: 0.90 },
   ];
-  // 가장 비어있는 출구 + 가장 막힌 출구
-  exits.sort((a, b) => a.occ - b.occ);
-  const best = exits[0], worst = exits[exits.length - 1];
-  const safePct = ((1 - best.occ / total) * 100).toFixed(0);
-  const congestPct = ((worst.occ / total) * 100).toFixed(0);
-  // 평균 거리 절감 가정 (사람-출구 유클리드 거리 평균)
-  const dist = (p, ex) => Math.hypot(p.bev_x - ex.tx, p.bev_y - ex.ty);
-  const avgBest = persons.reduce((s, p) => s + dist(p, best), 0) / total;
-  const avgWorst = persons.reduce((s, p) => s + dist(p, worst), 0) / total;
-  const distSavedPct = (((avgWorst - avgBest) / avgWorst) * 100).toFixed(0);
+  // 군중 중심점 = 평균 위치 (사람들이 출발)
+  const cx = persons.reduce((s,p) => s + p.bev_x, 0) / persons.length;
+  const cy = persons.reduce((s,p) => s + p.bev_y, 0) / persons.length;
+  const sx = Math.max(0, Math.min(GRID_N-1, Math.floor(cx * GRID_N)));
+  const sy = Math.max(0, Math.min(GRID_N-1, Math.floor(cy * GRID_N)));
 
+  const paths = {};
+  let best = null, worst = null;
+  for (const ex of exits) {
+    const ex_gx = Math.floor(ex.tx * GRID_N);
+    const ex_gy = Math.floor(ex.ty * GRID_N);
+    const r = aStar(cost, sx, sy, ex_gx, ex_gy);
+    paths[ex.id] = r;
+    if (r) {
+      if (!best || r.cost < paths[best.id].cost) best = ex;
+      if (!worst || r.cost > paths[worst.id].cost) worst = ex;
+    }
+  }
+  if (!best) {
+    result.innerHTML = `<span style="color:#ff5e57">⚠ 경로 없음 — 그리드 차단</span>`;
+    return;
+  }
+  const savePct = (((paths[worst.id].cost - paths[best.id].cost) / paths[worst.id].cost) * 100).toFixed(0);
   result.innerHTML = `
     <span style="color:#7dd3d3; font-weight:600;">▶ ${best.label}</span>
-    <span style="color:#fff;"> (${total}명 중 ${best.occ}명 / 안전도 ${safePct}%)</span>
+    <span style="color:#fff;"> (cost ${paths[best.id].cost.toFixed(1)}, ${persons.length}명)</span>
     &nbsp;|&nbsp;
     <span style="color:#ff5e57">▼ ${worst.label} 회피</span>
-    <span style="color:var(--muted)">(${worst.occ}명 ${congestPct}% — 거리 -${distSavedPct}% 절감 예상)</span>
+    <span style="color:var(--muted)">(cost ${paths[worst.id].cost.toFixed(1)}, ${savePct}% 절감)</span>
+    &nbsp;|&nbsp;<span style="color:#f0b46a">A* 그리드 ${GRID_N}x${GRID_N}</span>
   `;
-  // 결과를 diag 로그에도 박음
-  diagEl.append(`[EVAC] ${best.label} 추천 / ${worst.label} 회피 / ${total}명 분포 NW=${Q.NW} NE=${Q.NE} SW=${Q.SW} SE=${Q.SE}\n`);
+  drawPathOverlay(paths, exits, best, worst);
+  diagEl.append(`[EVAC A*] ${best.label} cost=${paths[best.id].cost.toFixed(1)} / ${worst.label} cost=${paths[worst.id].cost.toFixed(1)} / ${persons.length}명\n`);
 });
 </script>
 </body>
