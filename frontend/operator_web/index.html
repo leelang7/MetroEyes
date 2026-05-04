@@ -19,7 +19,7 @@
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
 (function () {
-  const CUR = 'v3.3-decisionlog-2026-05-05';
+  const CUR = 'v3.4-demoinject-2026-05-05';
   if (sessionStorage.getItem('me_ver') !== CUR) {
     sessionStorage.setItem('me_ver', CUR);
     // navigation type 1 = reload — loop 방지
@@ -40,6 +40,7 @@
     <a href="realbev.html">📷 실 카메라</a>
     <a href="ad_pricing.html">📺 디스플레이</a>
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
+    <button id="demo-trigger" title="시연 시나리오 30초 자동 재생" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
   </div>
   <div class="controls">
     <span class="tag gps-tag" id="gps-tag" title="GPS 자동 매칭 + 클릭 시 다른 역 선택">
@@ -968,6 +969,32 @@ if (SR) {
   document.getElementById('alert-close')?.addEventListener('click', () => {
     document.getElementById('alert-banner').style.display = 'none';
     if (_alertHide) clearTimeout(_alertHide);
+  });
+
+  // ▶︎ 시연 시나리오 자동 인젝터 — 30초 5종 이벤트 시퀀스
+  function injectIncident(ev) {
+    incidentsLog.unshift(ev);
+    if (incidentsLog.length > 30) incidentsLog.length = 30;
+    if (window.SafetyFeatures && SF.pushToast) SF.pushToast(toastStack, ev);
+    if (typeof renderIncidents === 'function') renderIncidents();
+    const labels = { emergency: '응급', suspicious: '이상행동', lost: '분실물', free_ride: '무임 의심' };
+    const lbl = labels[ev.type] || ev.type;
+    if (ev.severity === 'high') maybeAlertBanner(`${lbl} — ${ev.msg}`, 'crit');
+  }
+  document.getElementById('demo-trigger')?.addEventListener('click', () => {
+    const btn = document.getElementById('demo-trigger');
+    btn.disabled = true; btn.textContent = '시연 진행 중...'; btn.style.opacity = '.65';
+    const seq = [
+      { delay: 0,    ev: { id: Date.now()+1, type: 'free_ride',  severity: 'med',  msg: '6호차 무임 의심 — 태그 미스캔', ts: Date.now() } },
+      { delay: 5000, ev: { id: Date.now()+2, type: 'lost',       severity: 'low',  msg: '4호차 가방 12초+ 무인 — 분실 의심', ts: Date.now() } },
+      { delay: 11000, ev: { id: Date.now()+3, type: 'emergency', severity: 'high', msg: '7호차 30초+ 정지 — 응급 의심 (AED 28m)', ts: Date.now() } },
+      { delay: 18000, ev: { id: Date.now()+4, type: 'suspicious',severity: 'high', msg: '환승 통로 군집 이상 — 충돌 위험', ts: Date.now() } },
+      { delay: 24000, ev: { id: Date.now()+5, type: 'free_ride', severity: 'med',  msg: '자동 분산 안내 송출 — 5호차 만석 → 9호차 권고', ts: Date.now() } },
+    ];
+    seq.forEach(({ delay, ev }) => setTimeout(() => injectIncident(ev), delay));
+    setTimeout(() => {
+      btn.disabled = false; btn.textContent = '▶︎ 시연 모드'; btn.style.opacity = '1';
+    }, 30000);
   });
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
