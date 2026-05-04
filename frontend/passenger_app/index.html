@@ -4,11 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#04060a">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>MetroEyes — 시민 앱</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<script>
+(function () {
+  const CUR = 'v3.2-pwa-picker';
+  if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
+    sessionStorage.setItem('me_ver_pwa', CUR);
+    const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
+    if (navType !== 'reload') location.reload();
+  }
+})();
+</script>
 <div class="app">
   <header class="app-header">
     <div class="brand">
@@ -24,12 +36,29 @@
   </div>
 
   <div class="context">
-    <div class="station">
+    <div class="station" id="station-trigger" role="button" tabindex="0" aria-label="역 변경">
       <span class="gps-pulse" id="gps-pulse" title="GPS로 자동 매칭됨"></span>
       <span id="ctx-name">잠실역</span>
       <small id="ctx-meta">2호선 · 잠실행</small>
+      <span class="picker-arrow">▾</span>
     </div>
     <div class="time" id="ctx-time">18:22</div>
+  </div>
+
+  <!-- 역 picker 모달 (시민 수동 선택) -->
+  <div class="station-modal" id="station-modal" hidden>
+    <div class="modal-bg" id="modal-bg"></div>
+    <div class="modal-panel">
+      <div class="modal-head">
+        <span>역 선택</span>
+        <button class="modal-close" id="modal-close" aria-label="닫기">×</button>
+      </div>
+      <input class="modal-search" id="modal-search" placeholder="역 이름 검색..." autocomplete="off">
+      <div class="modal-list" id="modal-list"></div>
+      <div class="modal-foot">
+        <button id="modal-gps">📍 현재 위치 다시 잡기</button>
+      </div>
+    </div>
   </div>
 
   <div class="ppltn-strip" id="ppltn-strip" hidden>
@@ -895,7 +924,83 @@ const LIVE = (() => {
     }
   }
 
-  return { connect, pickWsUrl };
+  // ───── 사용자 picker ─────
+  function setStation(s, distKm) {
+    curStation = s;
+    const distLabel = distKm == null ? '관제' :
+      distKm < 1.0 ? `${Math.round(distKm * 1000)}m` : `${distKm.toFixed(1)}km`;
+    document.getElementById('ctx-name').textContent = `${s.name}역`;
+    document.getElementById('ctx-meta').textContent = `${s.line}호선 · ${distKm == null ? '수동 선택' : 'GPS ' + distLabel}`;
+    if (gpsPulse) {
+      gpsPulse.classList.remove('searching', 'error');
+      gpsPulse.classList.add('locked');
+    }
+    if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); }
+  }
+
+  function renderModalList(filter) {
+    const list = document.getElementById('modal-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const f = (filter || '').trim().toLowerCase();
+    let entries = stations.map(s => ({ ...s }));
+    if (f) entries = entries.filter(s => s.name.toLowerCase().includes(f) || (s.poi||'').toLowerCase().includes(f));
+    // 핫스팟 우선, 그 다음 GPS 거리 (있으면)
+    entries.sort((a, b) => (b.hot?1:0) - (a.hot?1:0));
+    for (const s of entries) {
+      const row = document.createElement('div');
+      const cur = curStation && s.name === curStation.name;
+      row.className = 'modal-row' + (cur ? ' current' : '');
+      const hot = s.hot ? '<span class="hot" title="인파 폭증 핫스팟">🔥</span>' : '';
+      const lineLabel = s.line > 0 ? `${s.line}호선` : 'POI';
+      row.innerHTML = `
+        <span class="name"><b>${s.name}</b>${hot}<span class="meta">· ${lineLabel}</span></span>
+      `;
+      row.addEventListener('click', () => {
+        setStation(s, null);
+        closeModal();
+      });
+      list.appendChild(row);
+    }
+  }
+  function openModal() {
+    const m = document.getElementById('station-modal');
+    if (!m) return;
+    m.hidden = false;
+    renderModalList('');
+    setTimeout(() => { const i = document.getElementById('modal-search'); if (i) i.focus(); }, 100);
+  }
+  function closeModal() {
+    const m = document.getElementById('station-modal');
+    if (m) m.hidden = true;
+  }
+  // 이벤트 바인딩 (한 번만)
+  const trigger = document.getElementById('station-trigger');
+  if (trigger) {
+    trigger.addEventListener('click', openModal);
+    trigger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); } });
+  }
+  const closeBtn = document.getElementById('modal-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  const modalBg = document.getElementById('modal-bg');
+  if (modalBg) modalBg.addEventListener('click', closeModal);
+  const search = document.getElementById('modal-search');
+  if (search) search.addEventListener('input', e => renderModalList(e.target.value));
+  const gpsBtn = document.getElementById('modal-gps');
+  if (gpsBtn) gpsBtn.addEventListener('click', () => {
+    closeModal();
+    if (navigator.geolocation) {
+      gpsPulse && gpsPulse.classList.add('searching');
+      navigator.geolocation.getCurrentPosition(pos => {
+        const r = nearest(pos.coords.latitude, pos.coords.longitude);
+        setStation(r.station, r.km);
+      }, () => { gpsPulse && gpsPulse.classList.add('error'); }, { enableHighAccuracy: false, timeout: 8000 });
+    }
+  });
+  // ESC 닫기
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  return { connect, pickWsUrl, setStation };
 })();
 
 // 자동 연결

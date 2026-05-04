@@ -39,6 +39,16 @@
 </style>
 </head>
 <body data-domain="ads">
+<script>
+(function () {
+  const CUR = 'v3.2-ad-live';
+  if (sessionStorage.getItem('me_ver_ad') !== CUR) {
+    sessionStorage.setItem('me_ver_ad', CUR);
+    const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
+    if (navType !== 'reload') location.reload();
+  }
+})();
+</script>
 <div class="domain-bar ads"></div>
 <header>
   <div class="brand">
@@ -278,6 +288,104 @@ function activateStation(st) {
 document.querySelectorAll('.station-picker button').forEach(b =>
   b.addEventListener('click', () => activateStation(b.dataset.st)));
 activateStation('강남역');
+
+// ============== 라이브 citydata 연동 ==============
+// 12개 POI 의 현 시각 인구를 ws population_query 로 받아 densityAt 보정.
+// liveDensity 가 채워지면 colorFor + 가격 표시에 LIVE 라벨.
+
+const liveDensity = {};   // poi → {density, ppltn, lvl, ts}
+let _ws = null;
+let _wsState = 'init';
+const VER_AD = 'v3.2-ad-live';
+
+// 디버그 바 (좌하단)
+const dbgEl = document.createElement('div');
+dbgEl.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:99999;background:rgba(16,185,129,0.12);border:2px solid #10b981;border-radius:8px;padding:8px 14px;font:12px ui-monospace,monospace;color:#fff;line-height:1.5;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.5);min-width:340px';
+document.body.appendChild(dbgEl);
+function updDbg() {
+  const c = _wsState==='open' ? '#10b981' : _wsState==='connecting' ? '#f0b46a' : '#ff5e57';
+  const liveCount = Object.keys(liveDensity).length;
+  dbgEl.innerHTML = `<span style="color:#10b981;font-weight:700">[AD LIVE ${VER_AD}]</span><br>` +
+    `WS:<b style="color:${c}">${_wsState}</b>  LIVE POI:<b style="color:#10b981">${liveCount}/${STATIONS.length}</b>  현 시각: ${new Date().toTimeString().slice(0,5)}`;
+}
+updDbg();
+
+function pickWsUrl() {
+  const p = new URLSearchParams(location.search).get('ws');
+  if (p) return p;
+  if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
+  return 'ws://localhost:8765';
+}
+
+function connectAdLive() {
+  try { if (_ws) _ws.close(); } catch {}
+  _wsState = 'connecting'; updDbg();
+  _ws = new WebSocket(pickWsUrl());
+  _ws.onopen = () => {
+    _wsState = 'open'; updDbg();
+    requestAllPois();
+  };
+  _ws.onmessage = ev => {
+    try {
+      const j = JSON.parse(ev.data);
+      if (j.type === 'population' && j.ppltn_max != null) {
+        const mid = ((j.ppltn_min || 0) + (j.ppltn_max || 0)) / 2;
+        // 정규화: 5만명 = 1.0, 1만명 = 0.2 같이 max 5만 기준
+        const d = Math.min(1.0, Math.max(0.05, mid / 50000));
+        liveDensity[j.poi] = { density: d, ppltn: mid, lvl: j.congest_lvl, ts: Date.now() };
+        applyLiveDensity();
+        updDbg();
+      }
+    } catch {}
+  };
+  _ws.onclose = () => { _wsState='closed'; updDbg(); setTimeout(connectAdLive, 5000); };
+  _ws.onerror = () => { _wsState='error'; updDbg(); };
+}
+
+function requestAllPois() {
+  if (!_ws || _ws.readyState !== 1) return;
+  for (const poi of STATIONS) {
+    try { _ws.send(JSON.stringify({ type: 'population_query', poi })); } catch {}
+  }
+}
+
+function applyLiveDensity() {
+  // 현 시각 셀의 색상 + 가격을 라이브 값으로 redraw
+  const nowH = new Date().getHours();
+  document.querySelectorAll('.cell[data-station]').forEach(cell => {
+    const st = cell.dataset.station;
+    const h = parseInt(cell.dataset.hour, 10);
+    if (h !== nowH) return;
+    const live = liveDensity[st];
+    if (!live) return;
+    cell.style.background = colorFor(live.density);
+    cell.style.outline = '2px solid #10b981';
+    cell.style.outlineOffset = '-1px';
+    cell.title = `${st} ${h}시 [LIVE]: ${Math.round(live.ppltn).toLocaleString()}명 / ${live.lvl} / 단가 ${Math.round(BASE_PRICE * (0.6 + 1.4 * live.density)).toLocaleString()}원`;
+    if (live.density > 0.7) cell.textContent = (live.density * 100).toFixed(0);
+  });
+
+  // KPI 갱신
+  const liveValues = Object.values(liveDensity);
+  if (liveValues.length > 0) {
+    const livePrices = liveValues.map(v => BASE_PRICE * (0.6 + 1.4 * v.density));
+    const avgLivePrice = livePrices.reduce((a,b)=>a+b,0) / livePrices.length;
+    const peakIdx = livePrices.indexOf(Math.max(...livePrices));
+    const peakPoi = Object.keys(liveDensity)[peakIdx];
+    const liveAvg = Math.round(avgLivePrice).toLocaleString();
+    document.getElementById('kpi-avg').innerHTML = `${liveAvg}원<span style="font-size:11px; color:#10b981; margin-left:6px;">LIVE</span>`;
+    document.getElementById('kpi-peak').innerHTML = `${Math.round(Math.max(...livePrices)).toLocaleString()}원<span style="font-size:11px; color:#10b981; margin-left:6px;">LIVE</span>`;
+    document.getElementById('kpi-peak-when').textContent = `${peakPoi} · 현재`;
+    const uplift = ((avgLivePrice - BASE_PRICE) / BASE_PRICE) * 100;
+    document.getElementById('kpi-uplift').textContent = `${uplift > 0 ? '+' : ''}${uplift.toFixed(1)}%`;
+    document.getElementById('kpi-rev').textContent = `+${(2000 * uplift / 100).toFixed(0)}억/년`;
+  }
+}
+
+connectAdLive();
+// 60초마다 라이브 갱신
+setInterval(() => { if (_ws && _ws.readyState === 1) requestAllPois(); }, 60000);
+setInterval(updDbg, 30000);
 </script>
 </body>
 </html>
