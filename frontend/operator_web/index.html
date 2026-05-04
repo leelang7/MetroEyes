@@ -854,6 +854,36 @@ if (SR) {
     setCard('fc-cong', lvl === '붐빔' ? 'crit' : lvl === '약간 붐빔' ? 'warn' : 'ok');
     // ★ 태그 vs CV — 무임 추정
     evalTagVsCV(personN);
+    // ★ 자동 분산 안내 트리거 — '붐빔' 시 5분 throttle 로 자동 TTS
+    autoDispatchAnnounce(lvl);
+  }
+
+  // 자동 분산 안내 (5분 throttle, '붐빔' 등급일 때만)
+  let _lastAutoTts = 0;
+  function autoDispatchAnnounce(lvl) {
+    if (lvl !== '붐빔') return;
+    const now = Date.now();
+    if (now - _lastAutoTts < 5 * 60 * 1000) return;  // 5분 cooldown
+    _lastAutoTts = now;
+    const occs = lastOccs;
+    if (!occs || !occs.length) return;
+    let mi = 0, mv = occs[0];
+    occs.forEach((o, i) => { if (o < mv) { mv = o; mi = i; } });
+    const carLabel = `${selected + 1}호차`;
+    const recCar = `${mi + 1}호차`;
+    if (window.SafetyFeatures && window.SafetyFeatures.announce) {
+      try { window.SafetyFeatures.announce('crowded', ttsLang || 'ko', [carLabel, recCar]); } catch {}
+    }
+    // alert 띠에도 표시
+    if (typeof maybeAlertBanner === 'function') {
+      maybeAlertBanner(`자동 분산 안내 송출 — ${carLabel} 만석 → ${recCar} 분산 권고`, 'crit');
+    }
+    // diag 로그
+    const ttsBtn = document.getElementById('ttsBtn');
+    if (ttsBtn) {
+      ttsBtn.classList.add('speaking');
+      setTimeout(() => ttsBtn.classList.remove('speaking'), 3000);
+    }
   }
 
   // 시간대 × 클러스터 기반 태그 추정 (CardSubway 스키마 부재 → 모델 보간)
