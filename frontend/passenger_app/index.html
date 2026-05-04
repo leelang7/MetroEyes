@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v3.4-reward-loop';
+  const CUR = 'v3.6-demolink';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -28,6 +28,7 @@
       <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">오프라인</span></span>
     </div>
     <a class="back-btn" href="../operator_web/index.html">관제 →</a>
+    <a class="back-btn" href="../demo.html" title="4-패널 통합 시연" style="background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border-color: rgba(245,158,11,.55); color: #fbbf24;">🎬</a>
   </header>
 
   <div class="tabs" role="tablist">
