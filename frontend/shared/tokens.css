@@ -1,0 +1,42 @@
+/* MetroEyes Design Tokens — 모든 페이지에서 공유.
+ * 운영자 콘솔 (bev_console.css) 의 :root 와 같은 색을 정렬, 부족분 추가.
+ */
+:root {
+  /* surface */
+  --bg: #0a0a0e;
+  --bg-0: #04060a;
+  --bg-1: #07090f;
+  --panel: #14141a;
+  --panel-2: #1a1a22;
+
+  /* line */
+  --line: rgba(125, 211, 211, .16);
+  --line-soft: rgba(255, 255, 255, .06);
+  --line-strong: rgba(255, 255, 255, .12);
+
+  /* text */
+  --text: #e8e8ee;
+  --fg: #e8edf5;
+  --muted: #8a8a96;
+  --muted-2: #5a5a66;
+
+  /* semantic */
+  --accent: #7dd3d3;
+  --accent-glow: rgba(125, 211, 211, .45);
+  --accent-soft: rgba(125, 211, 211, .10);
+  --good: #10b981;
+  --warn: #f59e0b;
+  --warn-soft: #f0b46a;
+  --crit: #ef4444;
+  --crit-2: #ff5e57;
+  --crit-glow: rgba(239, 68, 68, .4);
+  --link: #38bdf8;
+
+  /* domain */
+  --domain-subway: #7dd3d3;
+  --domain-bus: #f97316;
+  --domain-realcam: #ef4444;
+  --domain-ads: #10b981;
+  --domain-arch: #a78bfa;
+  --domain-citizen: #f59e0b;
+}
