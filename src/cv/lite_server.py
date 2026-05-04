@@ -126,8 +126,14 @@ def predict_surge(poi: str, hours_ahead: int = 24) -> dict:
         # surge_prob
         prob = 1.0 / (1.0 + math.exp(-(f - 1.5) * 3.0))
         forecasts.append({"hour": h, "level": round(f, 2), "surge_prob": round(prob, 2)})
-    # peak hours (prob > 0.7)
-    peaks = sorted([f for f in forecasts if f["surge_prob"] > 0.7], key=lambda x: -x["surge_prob"])[:3]
+    # peak hours (prob > 0.5) — 폭증 가능
+    high_peaks = sorted([f for f in forecasts if f["surge_prob"] > 0.5], key=lambda x: -x["surge_prob"])[:3]
+    # peak 없으면 상위 3개 (그냥 시간대별 강한 시간)
+    peaks = high_peaks if high_peaks else sorted(forecasts, key=lambda x: -x["surge_prob"])[:3]
+    if high_peaks:
+        summary = f"{poi} 향후 {hours_ahead}h: 폭증 가능 {len(high_peaks)}개 — 가장 강 {peaks[0]['hour']}시 prob {peaks[0]['surge_prob']:.0%}"
+    else:
+        summary = f"{poi} 향후 {hours_ahead}h: 정상 — 가장 붐비는 시간 {peaks[0]['hour']}시"
     return {
         "type": "surge_forecast",
         "poi": poi,
@@ -136,7 +142,7 @@ def predict_surge(poi: str, hours_ahead: int = 24) -> dict:
         "is_hot": is_hot,
         "forecasts": forecasts,
         "peaks": peaks,
-        "summary": f"{poi} 향후 {hours_ahead}h: 폭증 가능 시간대 {len(peaks)}개" + (f" (가장 강력: {peaks[0]['hour']}시 prob={peaks[0]['surge_prob']:.0%})" if peaks else ""),
+        "summary": summary,
     }
 
 

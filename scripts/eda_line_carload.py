@@ -78,12 +78,13 @@ def estimate_carload(df: pd.DataFrame) -> pd.DataFrame:
             n_stations = max(1, sub["STTN"].nunique())
             trains_per_h = 60.0 / headway
             # 단순 모델:
-            #   ON_h = 시간당 노선 전체 신규 승차 (ON 만)
+            #   on_total 은 월(202602) 누적 → 일평균 = /28 (영업일 기준)
+            #   시간당 신규 승차 = 일평균 (이미 시간대별 컬럼이라 시간당)
             #   양방향 차편 = trains_per_h × 2
-            #   1편당 신규 승차 = ON_h / (trains_per_h × 2)
-            #   평균 차내 인원 ≈ 신규 승차 × dwell_factor (체류 multiplier 2~3)
-            #   dwell_factor: 평균 체류 정거장 / 평균 신규 승차 정거장 ≈ 2.5
-            per_train_new = on_total / (trains_per_h * 2)
+            #   per_train_new = ON_h / (trains_per_h × 2)
+            #   평균 차내 인원 ≈ per_train_new × dwell_factor (체류 multiplier 2~3)
+            on_daily = on_total / 28.0   # 월 → 일평균 정규화
+            per_train_new = on_daily / (trains_per_h * 2)
             dwell = 2.5
             per_train_avg = per_train_new * dwell
             per_car = per_train_avg / cars
