@@ -69,6 +69,16 @@
     <span class="source">서울 도시데이터</span>
   </div>
 
+  <!-- 24h 폭증 예측 카드 — predict_surge 응답 -->
+  <div class="forecast-card" id="forecast-card" hidden>
+    <div class="fc-head">
+      <span class="fc-tag">📈 24시간 폭증 예측</span>
+      <span class="fc-source" id="fc-source">시간대 + 추세 + LLM</span>
+    </div>
+    <div class="fc-summary" id="fc-summary">—</div>
+    <div class="fc-peaks" id="fc-peaks"></div>
+  </div>
+
   <!-- 인파 폭증 컨텍스트 카드 — 백엔드가 'type=context' broadcast 시 표시 -->
   <div class="context-card" id="context-card" hidden>
     <div class="ctx-head">
@@ -641,6 +651,23 @@ const LIVE = (() => {
     }
   }
 
+  // 24h 폭증 예측 카드
+  function applyForecast(j) {
+    const card = document.getElementById('forecast-card');
+    if (!j || !j.peaks || !j.peaks.length) { card.hidden = true; return; }
+    if (j.poi && curStation && curStation.poi && j.poi !== curStation.poi) return;
+    document.getElementById('fc-summary').textContent = j.summary || '—';
+    const peaks = document.getElementById('fc-peaks');
+    peaks.innerHTML = '';
+    for (const p of j.peaks.slice(0, 5)) {
+      const el = document.createElement('span');
+      el.className = 'fc-peak';
+      el.innerHTML = `<b>${p.hour}시</b> · prob ${(p.surge_prob*100).toFixed(0)}%`;
+      peaks.appendChild(el);
+    }
+    card.hidden = false;
+  }
+
   // 폭증 컨텍스트 (네이버 뉴스 + LLM)
   function applyContext(j) {
     const card = document.getElementById('context-card');
@@ -714,6 +741,7 @@ const LIVE = (() => {
   function queryPpltn() { if (curStation.poi) send({ type: 'population_query', poi: curStation.poi }); }
   function queryCitydata() { if (curStation.poi) send({ type: 'citydata_query', poi: curStation.poi }); }
   function queryEvents() { if (curStation.poi) send({ type: 'events_query', poi: curStation.poi }); }
+  function queryForecast() { if (curStation.poi) send({ type: 'predict_surge', poi: curStation.poi, hours_ahead: 12 }); }
   function applyEvents(j) {
     const card = document.getElementById('events-strip');
     const items = j.events || [];
@@ -853,7 +881,7 @@ const LIVE = (() => {
     window.LIVE_WS = ws;   // CTA에서 impact_log 송신용
     ws.onopen = () => {
       setBadge('connected', 'LIVE');
-      queryArrival(); queryPpltn(); queryCitydata(); queryEvents();
+      queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); queryForecast();
       if (arrivalPoll) clearInterval(arrivalPoll);
       arrivalPoll = setInterval(queryArrival, 20000);
       if (ppltnPoll) clearInterval(ppltnPoll);
@@ -871,6 +899,7 @@ const LIVE = (() => {
         else if (j.type === 'citydata') { applyCitydata(j); }
         else if (j.type === 'events') { applyEvents(j); }
         else if (j.type === 'context') { applyContext(j); }
+        else if (j.type === 'surge_forecast') { applyForecast(j); }
         else if (j.type === 'impact_summary') {
           const c = document.getElementById('impact-counter');
           if (c) {

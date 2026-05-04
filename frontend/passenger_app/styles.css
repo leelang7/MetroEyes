@@ -679,6 +679,33 @@ a { color: inherit; text-decoration: none; }
 }
 .events-strip .events-summary b { color: var(--warn); font-weight: 500; }
 
+/* === 24h 폭증 예측 카드 === */
+.forecast-card {
+  background: linear-gradient(135deg, rgba(167,139,250,0.10), rgba(125,211,211,0.04));
+  border: 1px solid rgba(167,139,250,0.30);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 0 0 10px;
+}
+.forecast-card .fc-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+}
+.forecast-card .fc-tag {
+  font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
+  color: #a78bfa; padding: 3px 8px; background: rgba(167,139,250,0.15);
+  border: 1px solid rgba(167,139,250,0.4); border-radius: 999px; font-weight: 700;
+}
+.forecast-card .fc-source { margin-left: auto; font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 500; }
+.forecast-card .fc-summary { font-size: 13px; color: var(--fg); font-weight: 500; line-height: 1.5; padding: 4px 0; }
+.forecast-card .fc-peaks { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); }
+.forecast-card .fc-peak {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 999px; font-size: 11px;
+  background: rgba(255,94,87,0.12); border: 1px solid rgba(255,94,87,0.3);
+  color: #ff8a82; font-feature-settings: 'tnum';
+}
+.forecast-card .fc-peak b { color: #fff; font-weight: 600; }
+
 /* === 인파 폭증 컨텍스트 카드 (네이버 뉴스 + LLM) === */
 .context-card {
   background: linear-gradient(135deg, rgba(255,94,87,0.12), rgba(240,180,106,0.06));
