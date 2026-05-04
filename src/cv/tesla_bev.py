@@ -7,7 +7,7 @@
 
 실행:
   python -m src.cv.tesla_bev --port 8765
-  python -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --device cuda
+  python -m src.cv.tesla_bev --port 8765 --model yolo11n.pt --device cuda
 """
 from __future__ import annotations
 

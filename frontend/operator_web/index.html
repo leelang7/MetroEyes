@@ -3,10 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>MetroEyes — 운영자 콘솔 · 지하철</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
 </head>
 <body data-domain="subway">
+<script>
+// 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
+(function () {
+  const CUR = 'v3.1-debug-2026-05-04';
+  if (sessionStorage.getItem('me_ver') !== CUR) {
+    sessionStorage.setItem('me_ver', CUR);
+    // navigation type 1 = reload — loop 방지
+    const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
+    if (navType !== 'reload') {
+      location.reload();
+    }
+  }
+})();
+</script>
 <div class="domain-bar subway"></div>
 <header>
   <div class="brand">
@@ -474,14 +491,20 @@ function selectStation(s, kmFromUser) {
   STATION.line = `${s.line}호선`;
   STATION.name = s.name;
   STATION.cluster = s.cluster;
+  STATION.poi = s.poi;
   document.getElementById('gps-station').textContent = s.name;
   document.getElementById('gps-dist').textContent =
     kmFromUser == null ? '관제' :
     kmFromUser < 1.0 ? `${Math.round(kmFromUser * 1000)}m` : `${kmFromUser.toFixed(1)}km`;
   document.getElementById('t-line').textContent = STATION.line;
   document.getElementById('t-cluster').textContent = model.CLUSTERS[s.cluster].label;
-  applyHour();   // 시각화 + 칸 상세 + sparkline 모두 갱신
+  applyHour();
   renderPicker();
+  // 라이브 ws 쿼리 재호출 — 도착정보/인구를 새 역으로 갱신
+  // TOPIS 는 "역" 없는 짧은 이름. citydata 는 POI 명 그대로.
+  if (window.LIVE && window.LIVE.setStation) {
+    window.LIVE.setStation(s.name, s.line, s.poi);
+  }
 }
 
 function renderPicker() {
@@ -502,9 +525,10 @@ function renderPicker() {
     row.innerHTML = `
       <span><b>${s.name}</b>${hotBadge}<span class="meta"> · ${lineLabel}</span></span>
       ${km ? `<span class="km">${km}</span>` : ''}`;
-    row.addEventListener('click', () => {
-      selectStation(s, s.km);
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();   // bubble up 막아 gps-tag re-toggle 방지
       document.getElementById('station-picker').classList.remove('open');
+      selectStation(s, s.km);
     });
     rows.appendChild(row);
   }
@@ -826,23 +850,70 @@ if (SR) {
     _toastTimer = setTimeout(() => toast.classList.remove('show'), 30000);
   }
 
+  // ───── 좌하단 디버그 바 (눈에 잘 보이도록) ─────
+  const VER = 'v3.1-debug';
+  const dbgEl = document.createElement('div');
+  dbgEl.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:99999;background:rgba(255,94,87,0.12);border:2px solid #ff5e57;border-radius:8px;padding:8px 14px;font:12px ui-monospace,Consolas,monospace;color:#fff;line-height:1.5;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.5);min-width:340px';
+  document.body.appendChild(dbgEl);
+  const _dbg = { ws:'init', sta:'잠실', sent:0, recv:0, last:'-' };
+  function updDbg() {
+    const c = _dbg.ws==='open' ? '#7dd3d3' : _dbg.ws==='connecting' ? '#f0b46a' : '#ff5e57';
+    dbgEl.innerHTML = `<span style="color:#ff5e57;font-weight:700">[DEBUG ${VER}]</span><br>` +
+      `WS:<b style="color:${c}">${_dbg.ws}</b>  STA:<b style="color:#7dd3d3">${_dbg.sta}</b>  TX:${_dbg.sent}  RX:${_dbg.recv}  last:${_dbg.last}`;
+  }
+  updDbg();
+
   function connect() {
     try { if (ws) ws.close(); } catch {}
+    _dbg.ws='connecting'; updDbg();
     ws = new WebSocket(wsUrl);
-    ws.onopen = () => { queryArr(); queryPop(); arrT = setInterval(queryArr, 20000); popT = setInterval(queryPop, 60000); };
+    ws.onopen = () => {
+      _dbg.ws='open'; updDbg();
+      queryArr(); queryPop();
+      arrT = setInterval(queryArr, 20000);
+      popT = setInterval(queryPop, 60000);
+    };
     ws.onmessage = (ev) => {
+      _dbg.recv++;
       try {
         const j = JSON.parse(ev.data);
+        _dbg.last = j.type || 'bev'; updDbg();
         if (j.type === 'arrival') applyArrival(j);
         else if (j.type === 'population') applyPpltn(j);
         else if (j.type === 'context') showContextToast(j);
         else applyBev(j);
-      } catch {}
+      } catch { _dbg.last='parse_err'; updDbg(); }
     };
-    ws.onclose = () => { if (arrT) clearInterval(arrT); if (popT) clearInterval(popT); setTimeout(connect, 3000); };
-    ws.onerror = () => {};
+    ws.onclose = () => { _dbg.ws='closed'; updDbg(); if (arrT) clearInterval(arrT); if (popT) clearInterval(popT); setTimeout(connect, 3000); };
+    ws.onerror = () => { _dbg.ws='error'; updDbg(); };
   }
+  function send(o) {
+    if (!ws || ws.readyState !== 1) { _dbg.last='WS_NOT_READY'; updDbg(); return false; }
+    try { ws.send(JSON.stringify(o)); _dbg.sent++; updDbg(); return true; } catch { return false; }
+  }
+  function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
+  function queryPop() { send({ type: 'population_query', poi: station.poi }); }
+
   connect();
+
+  window.LIVE = {
+    setStation(name, line, poi) {
+      station.name = name; station.line = line; station.poi = poi;
+      _dbg.sta = `${name}/${poi||'—'}`; updDbg();
+      lastPop = null;
+      document.getElementById('fc-arr-v').textContent = '—분';
+      document.getElementById('fc-arr-sub').textContent = `${name} 갱신 중...`;
+      document.getElementById('fc-pop-v').textContent = '—명';
+      document.getElementById('fc-pop-sub').textContent = `${poi || name} 갱신 중...`;
+      setCard('fc-arr', 'dim'); setCard('fc-pop', 'dim');
+      // 둘 다 한 번 호출. ws 끊겨있으면 1.5초 뒤 재시도.
+      const ok1 = queryArr();
+      const ok2 = queryPop();
+      if (!ok1 || !ok2) {
+        setTimeout(() => { queryArr(); queryPop(); }, 1500);
+      }
+    },
+  };
 })();
 </script>
 </body>

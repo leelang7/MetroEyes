@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>MetroEyes — Debug Console</title>
+<style>
+  body { margin:0; background:#04060a; color:#e8edf5;
+    font-family:"Pretendard","Inter","Malgun Gothic",system-ui,sans-serif;
+    font-size:13px; padding:14px 18px; line-height:1.5; }
+  h1 { margin:0 0 8px; font-size:16px; font-weight:600; letter-spacing:-0.3px; }
+  h1 .dot { display:inline-block; width:7px; height:7px; border-radius:50%;
+    background:#7dd3d3; margin-right:8px; vertical-align:middle;
+    box-shadow:0 0 10px rgba(125,211,211,0.6); }
+  h1 small { color:#6b768a; font-size:11px; font-weight:400; margin-left:8px;
+    text-transform:uppercase; letter-spacing:1.4px; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .panel { background:#0a0d14; border:1px solid rgba(255,255,255,0.07);
+    border-radius:10px; padding:12px 14px; }
+  .panel h2 { font-size:10px; letter-spacing:1.4px; text-transform:uppercase;
+    color:#6b768a; font-weight:600; margin:0 0 10px; }
+  .stat { display:flex; justify-content:space-between; padding:4px 0;
+    border-bottom:1px solid rgba(255,255,255,0.04); font-size:12px; }
+  .stat:last-child { border-bottom:none; }
+  .stat b { color:#fff; font-weight:500; font-variant-numeric:tabular-nums; }
+  .stat b.ok { color:#7dd3d3; }
+  .stat b.err { color:#ff5e57; }
+  .stat b.warn { color:#f0b46a; }
+  .controls { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  button, select, input { background:#0e1320; border:1px solid rgba(255,255,255,0.10);
+    color:#e8edf5; padding:5px 10px; border-radius:5px; font-size:12px;
+    font-family:inherit; cursor:pointer; }
+  button:hover { border-color:#7dd3d3; }
+  button.send { background:rgba(125,211,211,0.10); border-color:rgba(125,211,211,0.4); color:#7dd3d3; }
+  input { width:160px; cursor:text; }
+  pre { margin:0; padding:8px 10px; background:#04060a;
+    border:1px solid rgba(255,255,255,0.05); border-radius:6px;
+    font-family:"SF Mono","Consolas",monospace; font-size:11px;
+    line-height:1.5; max-height:380px; overflow:auto; white-space:pre-wrap;
+    word-break:break-all; }
+  pre b { color:#7dd3d3; font-weight:500; }
+  pre em { color:#f0b46a; font-style:normal; }
+  pre i { color:#ff5e57; font-style:normal; }
+  .url-bar { display:flex; gap:6px; margin-bottom:10px; align-items:center; }
+  .url-bar input { width:300px; }
+  .ws-led { width:10px; height:10px; border-radius:50%; background:#6b768a; transition:all 0.3s; }
+  .ws-led.connected { background:#7dd3d3; box-shadow:0 0 8px #7dd3d3; }
+  .ws-led.error { background:#ff5e57; box-shadow:0 0 8px #ff5e57; }
+  .ws-led.connecting { background:#f0b46a; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
+  .preset { font-size:11px; }
+</style>
+</head>
+<body>
+
+<h1>
+  <span class="dot"></span>MetroEyes Debug Console
+  <small>WS 직접 호출 / 응답 검증 / 라이브 트래픽</small>
+</h1>
+
+<div class="url-bar">
+  <span class="ws-led" id="led"></span>
+  <input id="ws-url" value="ws://localhost:8765">
+  <button onclick="connectWs()">Connect</button>
+  <button onclick="if(ws)ws.close()">Disconnect</button>
+  <span style="color:#6b768a; margin-left:auto;" id="status">disconnected</span>
+</div>
+
+<div class="row">
+  <!-- LEFT: stats + controls -->
+  <div>
+    <div class="panel">
+      <h2>📊 Stats</h2>
+      <div class="stat">WebSocket   <b id="s-ws" class="err">disconnected</b></div>
+      <div class="stat">Sent (req)  <b id="s-sent">0</b></div>
+      <div class="stat">Recv (msg)  <b id="s-recv">0</b></div>
+      <div class="stat">BEV frames  <b id="s-bev">0</b></div>
+      <div class="stat">Avg FPS     <b id="s-fps">—</b></div>
+      <div class="stat">Last error  <b id="s-err">—</b></div>
+    </div>
+
+    <div class="panel" style="margin-top:12px;">
+      <h2>🎯 직접 호출</h2>
+      <div class="controls">
+        <input id="poi" value="성수카페거리" placeholder="POI 명">
+        <button class="send" onclick="sendQuery('population_query', {poi: getPoi()})">population</button>
+        <button class="send" onclick="sendQuery('citydata_query', {poi: getPoi()})">citydata</button>
+        <button class="send" onclick="sendQuery('events_query', {poi: getPoi()})">events</button>
+      </div>
+      <div class="controls">
+        <input id="station" value="성수" placeholder="역명 (TOPIS)">
+        <input id="line" value="2" style="width:50px;" placeholder="호선">
+        <button class="send" onclick="sendQuery('arrival_query', {stationName: document.getElementById('station').value, line: parseInt(document.getElementById('line').value) || undefined})">arrival</button>
+      </div>
+      <div class="controls">
+        <span class="preset">프리셋:</span>
+        <button onclick="preset('성수카페거리','성수',2)">성수</button>
+        <button onclick="preset('서울숲공원','뚝섬',2)">서울숲</button>
+        <button onclick="preset('잠실역','잠실',2)">잠실</button>
+        <button onclick="preset('강남역','강남',2)">강남</button>
+        <button onclick="preset('홍대 관광특구','홍대입구',2)">홍대</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:12px;">
+      <h2>🔧 Raw 송신 (JSON)</h2>
+      <textarea id="raw" rows="4" style="width:100%; background:#0e1320; color:#e8edf5; border:1px solid rgba(255,255,255,0.10); border-radius:5px; padding:6px; font-family:'SF Mono',monospace; font-size:11px;">{"type":"population_query","poi":"성수카페거리"}</textarea>
+      <button class="send" onclick="sendRaw()" style="margin-top:6px;">Send Raw</button>
+      <button onclick="clearLog()">Clear Log</button>
+      <button onclick="document.getElementById('mute-bev').checked = !document.getElementById('mute-bev').checked">Toggle BEV</button>
+      <label style="font-size:11px; color:#6b768a;"><input type="checkbox" id="mute-bev" checked> BEV frame 숨김</label>
+    </div>
+  </div>
+
+  <!-- RIGHT: live traffic -->
+  <div>
+    <div class="panel">
+      <h2>📡 Live Traffic <span id="msg-count" style="color:#7dd3d3;">0</span></h2>
+      <pre id="log">대기 중... Connect 누르세요</pre>
+    </div>
+  </div>
+</div>
+
+<script>
+let ws = null;
+let stats = { sent:0, recv:0, bev:0, fpsSum:0, fpsN:0 };
+const logEl = document.getElementById('log');
+const led = document.getElementById('led');
+const statusEl = document.getElementById('status');
+
+function setLed(state) {
+  led.className = 'ws-led ' + state;
+  document.getElementById('s-ws').textContent = state;
+  document.getElementById('s-ws').className = state === 'connected' ? 'ok' : state === 'connecting' ? 'warn' : 'err';
+  statusEl.textContent = state;
+}
+
+function refreshStats() {
+  document.getElementById('s-sent').textContent = stats.sent;
+  document.getElementById('s-recv').textContent = stats.recv;
+  document.getElementById('s-bev').textContent = stats.bev;
+  document.getElementById('msg-count').textContent = stats.recv;
+  document.getElementById('s-fps').textContent = stats.fpsN > 0
+    ? (stats.fpsSum / stats.fpsN).toFixed(1) : '—';
+}
+
+function append(prefix, text, cls) {
+  const ts = new Date().toLocaleTimeString();
+  const line = `[${ts}] ${prefix} ${text}\n`;
+  logEl.innerHTML = line.replace(/^\[([^\]]+)\] (\S+)/,
+    (m, t, p) => `[<b>${t}</b>] <em>${p}</em>`) + logEl.innerHTML;
+  // 50줄 cap
+  const lines = logEl.innerHTML.split('\n');
+  if (lines.length > 60) logEl.innerHTML = lines.slice(0, 60).join('\n');
+}
+
+function connectWs() {
+  if (ws && ws.readyState === 1) ws.close();
+  const url = document.getElementById('ws-url').value;
+  setLed('connecting');
+  append('OPEN', url, '');
+  try {
+    ws = new WebSocket(url);
+  } catch (e) {
+    document.getElementById('s-err').textContent = e.message;
+    setLed('error');
+    return;
+  }
+  ws.onopen = () => {
+    setLed('connected');
+    append('OPEN', 'connected', '');
+  };
+  ws.onmessage = (ev) => {
+    stats.recv++;
+    let j = null;
+    try { j = JSON.parse(ev.data); } catch {}
+    if (j && j.tracks !== undefined) {
+      // BEV frame
+      stats.bev++;
+      if (typeof j.fps === 'number') { stats.fpsSum += j.fps; stats.fpsN++; }
+      if (!document.getElementById('mute-bev').checked) {
+        const tracks = (j.tracks || []).length;
+        append('BEV', `frame ${j.frame_idx} fps ${(j.fps||0).toFixed(1)} tracks ${tracks}`, '');
+      }
+    } else {
+      const t = (j && j.type) || 'unknown';
+      const summary = ev.data.substring(0, 250);
+      append(`RECV [${t}]`, summary, '');
+    }
+    refreshStats();
+  };
+  ws.onclose = () => { setLed('error'); append('CLOSE', '', ''); };
+  ws.onerror = (e) => {
+    document.getElementById('s-err').textContent = 'connection error';
+    setLed('error');
+    append('ERR', 'connection error', '');
+  };
+}
+
+function sendQuery(type, extra) {
+  if (!ws || ws.readyState !== 1) { append('ERR', 'not connected', ''); return; }
+  const msg = { type, ...extra };
+  ws.send(JSON.stringify(msg));
+  stats.sent++;
+  refreshStats();
+  append('SEND', JSON.stringify(msg), '');
+}
+
+function sendRaw() {
+  const txt = document.getElementById('raw').value.trim();
+  try {
+    const obj = JSON.parse(txt);
+    sendQuery(obj.type, obj);
+  } catch (e) {
+    append('ERR', 'invalid JSON: ' + e.message, '');
+  }
+}
+
+function preset(poi, station, line) {
+  document.getElementById('poi').value = poi;
+  document.getElementById('station').value = station;
+  document.getElementById('line').value = line;
+}
+
+function getPoi() { return document.getElementById('poi').value; }
+
+function clearLog() { logEl.innerHTML = ''; stats = { sent:0, recv:0, bev:0, fpsSum:0, fpsN:0 }; refreshStats(); }
+
+// 자동 host 분기
+(function () {
+  const auto = location.hostname.endsWith('github.io') || location.protocol === 'https:'
+    ? 'wss://app.allthatai.kr' : 'ws://localhost:8765';
+  document.getElementById('ws-url').value = auto;
+  setTimeout(connectWs, 500);
+})();
+</script>
+
+</body>
+</html>

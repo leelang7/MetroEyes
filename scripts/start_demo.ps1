@@ -15,8 +15,8 @@ param(
     [switch]$NoTunnel,
     [switch]$Visible,
     [switch]$IncludeStatic,
-    [string]$Model = "yolo11s.pt",
-    [int]$Imgsz = 1280,
+    [string]$Model = "yolo11n.pt",
+    [int]$Imgsz = 640,
     [double]$Conf = 0.18,
     [int]$Port = 8765,
     [string]$Video = "test\vtest.avi"

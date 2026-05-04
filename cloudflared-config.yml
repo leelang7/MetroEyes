@@ -3,7 +3,8 @@ credentials-file: C:\Users\leesc\.cloudflared\30f3e4a4-e310-4677-8b4d-c0f718e100
 
 ingress:
   - hostname: app.allthatai.kr
-    service: http://localhost:8765
+    service: http://127.0.0.1:8765   # IPv4 명시 (localhost는 [::1] 우선되어 IPv4 only listen 거부됨)
     originRequest:
       noTLSVerify: true
+      connectTimeout: 10s
   - service: http_status:404

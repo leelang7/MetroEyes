@@ -3,10 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>MetroEyes — 운영자 콘솔 · 버스</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
 </head>
 <body data-domain="bus">
+<script>
+// 자동 캐시 무효화 — sessionStorage 마커로 버전 다르면 1회 reload
+(function () {
+  const CUR = 'v3.1-debug-2026-05-04';
+  if (sessionStorage.getItem('me_ver_bus') !== CUR) {
+    sessionStorage.setItem('me_ver_bus', CUR);
+    const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
+    if (navType !== 'reload') location.reload();
+  }
+})();
+</script>
 <div class="domain-bar bus"></div>
 <header>
   <div class="brand">
@@ -574,6 +588,10 @@ function selectStop(s, kmFromUser) {
   document.getElementById('t-cluster').textContent = model.CLUSTERS[s.cluster].label;
   applyHour();
   renderPicker();
+  // 라이브 ws 쿼리 재호출 — 정류장 인구 새 POI 로 갱신
+  if (window.LIVE && window.LIVE.setStop) {
+    window.LIVE.setStop(s.short, s.poi);
+  }
 }
 function renderPicker() {
   const rows = document.getElementById('picker-rows');
@@ -592,9 +610,10 @@ function renderPicker() {
     row.innerHTML = `
       <span><b>${s.short}</b>${hot}<span class="meta"> · ${s.route}</span></span>
       ${km ? `<span class="km">${km}</span>` : ''}`;
-    row.addEventListener('click', () => {
-      selectStop(s, s.km);
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
       document.getElementById('station-picker').classList.remove('open');
+      selectStop(s, s.km);
     });
     rows.appendChild(row);
   }
@@ -795,10 +814,68 @@ if (SR) {
         else applyBev(j);
       } catch {}
     };
-    ws.onclose = () => { if (popT) clearInterval(popT); if (cdT) clearInterval(cdT); setTimeout(connect, 3000); };
-    ws.onerror = () => {};
+    ws.onclose = () => { _dbg.ws='closed'; updDbg(); if (popT) clearInterval(popT); if (cdT) clearInterval(cdT); setTimeout(connect, 3000); };
+    ws.onerror = () => { _dbg.ws='error'; updDbg(); };
   }
+
+  // ───── 좌하단 디버그 바 ─────
+  const VER = 'v3.1-debug';
+  const dbgEl = document.createElement('div');
+  dbgEl.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:99999;background:rgba(255,94,87,0.12);border:2px solid #ff5e57;border-radius:8px;padding:8px 14px;font:12px ui-monospace,Consolas,monospace;color:#fff;line-height:1.5;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.5);min-width:340px';
+  document.body.appendChild(dbgEl);
+  const _dbg = { ws:'init', sta:'잠실역', sent:0, recv:0, last:'-' };
+  function updDbg() {
+    const c = _dbg.ws==='open' ? '#7dd3d3' : _dbg.ws==='connecting' ? '#f0b46a' : '#ff5e57';
+    dbgEl.innerHTML = `<span style="color:#ff5e57;font-weight:700">[BUS DEBUG ${VER}]</span><br>` +
+      `WS:<b style="color:${c}">${_dbg.ws}</b>  POI:<b style="color:#7dd3d3">${_dbg.sta}</b>  TX:${_dbg.sent}  RX:${_dbg.recv}  last:${_dbg.last}`;
+  }
+  // ws.onmessage / send 에 dbg 카운터 hook
+  const _origMsg = ws ? ws.onmessage : null;
+  if (ws) {
+    ws.onmessage = (ev) => {
+      _dbg.recv++;
+      try { _dbg.last = (JSON.parse(ev.data).type) || 'bev'; } catch {}
+      updDbg();
+      if (_origMsg) _origMsg(ev);
+    };
+  }
+  const _origSend = send;
+  send = function(o) { _origSend(o); _dbg.sent++; updDbg(); };
+  updDbg();
+
   connect();
+  // (re-hook after re-connect)
+  setInterval(() => {
+    if (ws && ws.onmessage && !ws.onmessage._hooked) {
+      const orig = ws.onmessage;
+      ws.onmessage = (ev) => {
+        _dbg.recv++;
+        try { _dbg.last = (JSON.parse(ev.data).type) || 'bev'; } catch {}
+        updDbg();
+        orig(ev);
+      };
+      ws.onmessage._hooked = true;
+      _dbg.ws = ws.readyState === 1 ? 'open' : _dbg.ws;
+      updDbg();
+    }
+  }, 1000);
+
+  // 외부 selectStop() 가 호출 — 새 정류장 즉시 ws 재쿼리
+  window.LIVE = {
+    setStop(name, poi) {
+      stop.poi = poi;
+      _dbg.sta = `${name}/${poi}`; updDbg();
+      lastPop = null; lastCd = null;
+      document.getElementById('fc-pop-v').textContent = '—명';
+      document.getElementById('fc-pop-sub').textContent = `${poi} 갱신 중...`;
+      setCard('fc-pop', 'dim');
+      const ok1 = queryPop !== undefined && (queryPop(), true);
+      const ok2 = queryCitydata !== undefined && (queryCitydata(), true);
+      if (ws && ws.readyState !== 1) {
+        setTimeout(() => { queryPop(); queryCitydata(); }, 1500);
+      }
+    },
+  };
 })();
 </script>
 </body>
