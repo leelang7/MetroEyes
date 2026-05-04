@@ -77,14 +77,17 @@ def estimate_carload(df: pd.DataFrame) -> pd.DataFrame:
             headway = LINE_HEADWAY_MIN.get(line, 5.0)
             n_stations = max(1, sub["STTN"].nunique())
             trains_per_h = 60.0 / headway
-            # ON 만 사용 + 양방향 분리 (상행/하행)
-            # 시간당 노선 전체에서 차편 1 대당 받는 평균 승차 = on_total / (trains_per_h * 2)
-            per_train_ride = on_total / (trains_per_h * 2)
-            # 차편 안에서 머무는 평균 인원: 승차 후 평균 5정거장 머무름 가정 (n_stations / 6 정도)
-            avg_dwell_stations = max(2, n_stations / 8)  # 짧은 노선은 더 짧게
-            per_train_avg = per_train_ride * avg_dwell_stations / max(1, n_stations / trains_per_h)
+            # 단순 모델:
+            #   ON_h = 시간당 노선 전체 신규 승차 (ON 만)
+            #   양방향 차편 = trains_per_h × 2
+            #   1편당 신규 승차 = ON_h / (trains_per_h × 2)
+            #   평균 차내 인원 ≈ 신규 승차 × dwell_factor (체류 multiplier 2~3)
+            #   dwell_factor: 평균 체류 정거장 / 평균 신규 승차 정거장 ≈ 2.5
+            per_train_new = on_total / (trains_per_h * 2)
+            dwell = 2.5
+            per_train_avg = per_train_new * dwell
             per_car = per_train_avg / cars
-            occ = min(2.0, per_car / cap)  # cap 200% (만석 + 입석)
+            occ = min(1.5, per_car / cap)  # cap 150%
             rows.append({
                 "line": line, "hour": h,
                 "on_total": int(on_total), "off_total": int(off_total),

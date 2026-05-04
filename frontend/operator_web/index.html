@@ -97,10 +97,13 @@
 
   <section class="train-strip">
     <div class="train-strip-head">
-      <h2><b>2호선 잠실행 1234편성</b><span style="color: var(--muted)">10량 점유 BEV</span></h2>
+      <h2><b>2호선 잠실행 1234편성</b><span style="color: var(--muted)">10량 점유 BEV · 절전 모드 자동</span></h2>
       <div class="train-meta">
         <span class="pulse"></span>실시간 추론 · 60Hz
         <span id="phase-tag" class="phase-tag">운행 중</span>
+        <span class="power-save-tag" id="power-save-tag" title="점유 30% 미만 칸 자동 절전 — 공조 50% / 조명 70%">
+          <span class="ps-icon">⚡</span> 절전 <b id="ps-count">0</b>칸 · 절감 <b id="ps-kw">0</b>kW
+        </span>
       </div>
     </div>
     <canvas id="strip"></canvas>
@@ -277,7 +280,20 @@ function drawStrip(occs, selectedIdx) {
     ctx.fillStyle = (i === selectedIdx) ? '#e8edf5' : '#8e98ac';
     const pct = `${Math.round(o * 100)}%`;
     ctx.fillText(pct, x + carW / 2 - ctx.measureText(pct).width / 2, yTop + carH + 26);
+    // 절전 표시 — 점유 < 30% 칸
+    if (o < 0.30) {
+      ctx.fillStyle = 'rgba(167,139,250,0.85)';   // 보라 (절전)
+      ctx.font = '600 12px sans-serif';
+      ctx.fillText('⚡', x + carW / 2 - 5, yTop + 14);
+    }
   }
+  // 절전 카운트 + 절감 kW 추정 (한 칸 평균 12kW * 30% = 3.6kW 절감)
+  const psCount = occs.filter(o => o < 0.30).length;
+  const psKw = (psCount * 3.6).toFixed(1);
+  const psEl = document.getElementById('ps-count'); if (psEl) psEl.textContent = psCount;
+  const psKwEl = document.getElementById('ps-kw'); if (psKwEl) psKwEl.textContent = psKw;
+  const psTag = document.getElementById('power-save-tag');
+  if (psTag) psTag.style.opacity = psCount > 0 ? '1' : '0.4';
 }
 
 // ============== UI ==============
