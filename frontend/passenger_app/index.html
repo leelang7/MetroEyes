@@ -925,6 +925,7 @@ const LIVE = (() => {
     if (gpsPulse) gpsPulse.classList.add('searching');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        _lastGps = { lat: pos.coords.latitude, lon: pos.coords.longitude };
         const r = nearest(pos.coords.latitude, pos.coords.longitude);
         curStation = r.station;
         const distLabel = r.km < 1.0 ? `${Math.round(r.km * 1000)}m` : `${r.km.toFixed(1)}km`;
@@ -935,7 +936,7 @@ const LIVE = (() => {
           gpsPulse.classList.add('locked');
           gpsPulse.title = `GPS 매칭 — 거리 ${distLabel}`;
         }
-        if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); }
+        if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); queryForecast(); }
       },
       (err) => {
         if (gpsPulse) {
@@ -967,26 +968,35 @@ const LIVE = (() => {
     if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); }
   }
 
+  // GPS 마지막 위치 (있으면 거리 정렬용)
+  let _lastGps = null;
   function renderModalList(filter) {
     const list = document.getElementById('modal-list');
     if (!list) return;
     list.innerHTML = '';
     const f = (filter || '').trim().toLowerCase();
-    let entries = stations.map(s => ({ ...s }));
+    let entries = stations.map(s => {
+      const ent = { ...s };
+      if (_lastGps) ent.km = haversineKm({lat:_lastGps.lat,lon:_lastGps.lon}, {lat:s.lat,lon:s.lon});
+      return ent;
+    });
     if (f) entries = entries.filter(s => s.name.toLowerCase().includes(f) || (s.poi||'').toLowerCase().includes(f));
-    // 핫스팟 우선, 그 다음 GPS 거리 (있으면)
-    entries.sort((a, b) => (b.hot?1:0) - (a.hot?1:0));
+    // GPS 있으면 거리 우선, 없으면 핫스팟 우선
+    if (_lastGps) entries.sort((a, b) => (a.km ?? 9999) - (b.km ?? 9999));
+    else entries.sort((a, b) => (b.hot?1:0) - (a.hot?1:0));
     for (const s of entries) {
       const row = document.createElement('div');
       const cur = curStation && s.name === curStation.name;
       row.className = 'modal-row' + (cur ? ' current' : '');
       const hot = s.hot ? '<span class="hot" title="인파 폭증 핫스팟">🔥</span>' : '';
       const lineLabel = s.line > 0 ? `${s.line}호선` : 'POI';
+      const km = s.km != null ? `<span class="km">${s.km < 1 ? Math.round(s.km*1000)+'m' : s.km.toFixed(1)+'km'}</span>` : '';
       row.innerHTML = `
         <span class="name"><b>${s.name}</b>${hot}<span class="meta">· ${lineLabel}</span></span>
+        ${km}
       `;
       row.addEventListener('click', () => {
-        setStation(s, null);
+        setStation(s, s.km);
         closeModal();
       });
       list.appendChild(row);
