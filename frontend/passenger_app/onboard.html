@@ -66,6 +66,16 @@
     </div>
   </section>
 
+  <section id="reward-card" hidden style="margin: 12px 14px; padding: 12px 14px; background: linear-gradient(135deg, rgba(16,185,129,.10), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.40); border-radius: 12px;">
+    <div style="font-size: 10px; color: #10b981; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;">🪙 누적 분산 보상</div>
+    <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; font-feature-settings: 'tnum';">
+      <span style="font-size: 22px; font-weight: 800; color: #fff;"><span id="rw-krw">0</span><span style="font-size: 12px; color: rgba(255,255,255,.6); font-weight: 500; margin-left: 2px;">원</span></span>
+      <span style="font-size: 13px; color: rgba(255,255,255,.85);">📍 <span id="rw-n" style="font-weight: 700;">0</span><span style="font-size: 10px; color: rgba(255,255,255,.55);">회 분산 액션</span></span>
+      <span style="font-size: 13px; color: rgba(255,255,255,.85);">⏱ <span id="rw-saved" style="font-weight: 700;">0</span><span style="font-size: 10px; color: rgba(255,255,255,.55);">%p 평균 한산</span></span>
+    </div>
+    <div id="rw-msg" style="font-size: 11px; color: rgba(255,255,255,.65); margin-top: 6px;"></div>
+  </section>
+
   <div class="alert" id="alert">임계 밀집 — 다음 정거장 알라이팅 시 분산 권고</div>
 
   <div class="demo-time">
@@ -123,6 +133,32 @@ canvas.className = cfg.bevCanvasClass;
 
 document.getElementById('t-car').textContent = cfg.label(idx);
 document.getElementById('t-line').textContent = cfg.line;
+
+// 누적 분산 보상 카드 렌더 (페이지 진입 시 1회 + window storage 변화 시)
+function renderRewardCard() {
+  let my = {};
+  try { my = JSON.parse(localStorage.getItem('metroeyes_my_impact') || '{}'); } catch {}
+  const card = document.getElementById('reward-card');
+  if (!card) return;
+  if (!my.n) { card.hidden = true; return; }
+  const krw = my.krw || 0;
+  const krwEl = document.getElementById('rw-krw');
+  const nEl = document.getElementById('rw-n');
+  const savedEl = document.getElementById('rw-saved');
+  const msgEl = document.getElementById('rw-msg');
+  if (krwEl) krwEl.textContent = krw.toLocaleString();
+  if (nEl) nEl.textContent = my.n;
+  const avgSaved = my.n > 0 ? Math.round(my.saved / my.n) : 0;
+  if (savedEl) savedEl.textContent = avgSaved;
+  if (msgEl) {
+    const minSaved = Math.round(my.saved * 0.25);  // 25분 통행 가정 × saved%/100 × 100 = saved*0.25분
+    const value = minSaved * 167;  // 한국교통연구원 167원/분
+    msgEl.textContent = `당신의 분산이 ~${minSaved}분 절감 / 사회적 가치 ₩${value.toLocaleString()} 환산 — 정책 ROI 기여`;
+  }
+  card.hidden = false;
+}
+renderRewardCard();
+window.addEventListener('storage', renderRewardCard);
 
 // 사용자 위치 — 차량 안 어딘가 (랜덤하지만 일관되게)
 const userPos = { x: 0.4, y: 0.5 };  // 0~1 of car interior
