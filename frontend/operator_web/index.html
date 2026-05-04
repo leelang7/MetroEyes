@@ -795,11 +795,50 @@ if (SR) {
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
   function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
   function queryPop() { send({ type: 'population_query', poi: station.poi }); }
+  // 인파 폭증 컨텍스트 toast (운영자 alert)
+  let _toastTimer = null;
+  function showContextToast(j) {
+    if (!j || !j.summary) return;
+    let toast = document.getElementById('ctx-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'ctx-toast'; toast.className = 'context-toast';
+      document.body.appendChild(toast);
+    }
+    const trigger = j.trigger || {};
+    const src = j.sources || {};
+    const newsHtml = (j.news || []).slice(0, 3).map(n =>
+      `<a href="${n.link}" target="_blank" rel="noopener">${(n.title || '').replace(/</g,'&lt;')}</a>`
+    ).join('');
+    toast.innerHTML = `
+      <div class="head">
+        <span class="tag">🔥 인파 폭증</span>
+        <span class="poi">${trigger.poi || j.poi || ''}</span>
+        <button class="close" aria-label="닫기">×</button>
+      </div>
+      <div class="summary">${(j.summary || '').replace(/</g,'&lt;')}</div>
+      ${newsHtml ? `<div class="news">${newsHtml}</div>` : ''}
+      <div class="source">${src.naver ? 'naver 뉴스' : 'sim'} · ${src.llm ? 'claude 요약' : 'rule'} · ${trigger.lvl || ''} · 약 ${(trigger.ppltn||0).toLocaleString()}명</div>
+    `;
+    toast.querySelector('.close').addEventListener('click', () => toast.classList.remove('show'));
+    requestAnimationFrame(() => toast.classList.add('show'));
+    if (_toastTimer) clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => toast.classList.remove('show'), 30000);
+  }
+
   function connect() {
     try { if (ws) ws.close(); } catch {}
     ws = new WebSocket(wsUrl);
     ws.onopen = () => { queryArr(); queryPop(); arrT = setInterval(queryArr, 20000); popT = setInterval(queryPop, 60000); };
-    ws.onmessage = (ev) => { try { const j = JSON.parse(ev.data); if (j.type === 'arrival') applyArrival(j); else if (j.type === 'population') applyPpltn(j); else applyBev(j); } catch {} };
+    ws.onmessage = (ev) => {
+      try {
+        const j = JSON.parse(ev.data);
+        if (j.type === 'arrival') applyArrival(j);
+        else if (j.type === 'population') applyPpltn(j);
+        else if (j.type === 'context') showContextToast(j);
+        else applyBev(j);
+      } catch {}
+    };
     ws.onclose = () => { if (arrT) clearInterval(arrT); if (popT) clearInterval(popT); setTimeout(connect, 3000); };
     ws.onerror = () => {};
   }

@@ -40,6 +40,16 @@
     <span class="source">서울 도시데이터</span>
   </div>
 
+  <!-- 인파 폭증 컨텍스트 카드 — 백엔드가 'type=context' broadcast 시 표시 -->
+  <div class="context-card" id="context-card" hidden>
+    <div class="ctx-head">
+      <span class="ctx-tag">🔥 인파 폭증 컨텍스트</span>
+      <span class="ctx-source" id="ctx-source">naver · llm</span>
+    </div>
+    <div class="ctx-summary" id="ctx-summary">—</div>
+    <div class="ctx-news" id="ctx-news"></div>
+  </div>
+
   <div class="context-chips" id="context-chips" hidden>
     <!-- 핵심 3개 (항상 노출) -->
     <span class="chip" id="chip-weather"><span class="ico">☁</span><b id="chip-weather-v">—°</b><span id="chip-weather-sub" style="margin-left: 4px;"></span></span>
@@ -602,6 +612,27 @@ const LIVE = (() => {
     }
   }
 
+  // 폭증 컨텍스트 (네이버 뉴스 + LLM)
+  function applyContext(j) {
+    const card = document.getElementById('context-card');
+    if (!j || !j.summary) { card.hidden = true; return; }
+    // 현재 보고 있는 역의 컨텍스트만 표시
+    if (j.poi && curStation && curStation.poi && j.poi !== curStation.poi) return;
+    document.getElementById('ctx-summary').textContent = j.summary;
+    const src = j.sources || {};
+    document.getElementById('ctx-source').textContent =
+      [src.naver ? 'naver' : 'sim', src.llm ? 'llm' : 'rule'].join(' · ');
+    const newsEl = document.getElementById('ctx-news');
+    newsEl.innerHTML = '';
+    for (const n of (j.news || []).slice(0, 3)) {
+      const a = document.createElement('a');
+      a.href = n.link || '#'; a.target = '_blank'; a.rel = 'noopener';
+      a.innerHTML = `${n.title}<span class="pub"> · ${(n.pubDate || '').substring(5, 16)}</span>`;
+      newsEl.appendChild(a);
+    }
+    card.hidden = false;
+  }
+
   // 인파 추세 — 분 단위 갱신 직전 값 보관해 증감 판정
   const _ppltnHistory = [];
   function applyPopulation(p) {
@@ -810,6 +841,7 @@ const LIVE = (() => {
         else if (j.type === 'population') { livePpltn = j; applyPopulation(j); }
         else if (j.type === 'citydata') { applyCitydata(j); }
         else if (j.type === 'events') { applyEvents(j); }
+        else if (j.type === 'context') { applyContext(j); }
         else if (j.type === 'impact_summary') {
           const c = document.getElementById('impact-counter');
           if (c) {

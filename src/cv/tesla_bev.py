@@ -26,6 +26,7 @@ import argparse
 import asyncio
 import base64
 import json
+import re
 import time
 from collections import deque
 
@@ -467,8 +468,115 @@ async def run_serve(args) -> None:
         for ws_c in stale:
             clients.discard(ws_c)
 
+    # === 인파 폭증 컨텍스트 캐시 (네이버 뉴스 + LLM) ===
+    context_cache: dict = {}    # poi → (ts, payload)
+    CONTEXT_TTL = 600.0         # 10분 — 뉴스는 자주 안 바뀜
+    ppltn_history: dict = {}    # poi → [(ts, mid)] — 폭증 추세 추적
+    PPLTN_HIST_MAX = 12
+
+    async def fetch_context_news(poi: str) -> dict:
+        """인파 폭증 시 자동 호출 — 네이버 뉴스/블로그 검색 + 옵셔널 LLM 요약.
+
+        흐름: citydata_ppltn 폭증 감지 → 이 함수 → "왜 붐비는지" 컨텍스트 broadcast.
+        키 없으면 graceful fallback (검색량 / 행사 데이터로 추정).
+        """
+        now = time.time()
+        cached = context_cache.get(poi)
+        if cached and now - cached[0] < CONTEXT_TTL:
+            return cached[1]
+        loop = asyncio.get_running_loop()
+
+        def _fetch_naver_news() -> list[dict]:
+            """네이버 검색 API — 최근 뉴스 5건."""
+            cid = os.environ.get("NAVER_CLIENT_ID", "")
+            csec = os.environ.get("NAVER_CLIENT_SECRET", "")
+            if not cid or not csec:
+                return []
+            try:
+                import urllib.request, urllib.parse, json as _json
+                # POI에서 행정동·랜드마크명 추출 (예: "성수카페거리" → "성수동")
+                query_parts = [poi]
+                if "성수" in poi: query_parts.append("성수동")
+                if "서울숲" in poi: query_parts.append("서울숲")
+                if "뚝섬" in poi: query_parts.append("뚝섬")
+                if "홍대" in poi: query_parts.append("홍대")
+                if "강남" in poi: query_parts.append("강남역")
+                query = " ".join(query_parts[:1]) + " 인파"
+                url = "https://openapi.naver.com/v1/search/news.json?" + urllib.parse.urlencode({
+                    "query": query, "display": 5, "sort": "date",
+                })
+                req = urllib.request.Request(url, headers={
+                    "X-Naver-Client-Id": cid,
+                    "X-Naver-Client-Secret": csec,
+                })
+                with urllib.request.urlopen(req, timeout=4) as resp:
+                    data = _json.loads(resp.read().decode("utf-8"))
+                items = []
+                for it in data.get("items", [])[:5]:
+                    # HTML 태그 제거
+                    title = re.sub(r"<[^>]+>", "", it.get("title", "")).replace("&quot;", '"').replace("&amp;", "&")
+                    desc = re.sub(r"<[^>]+>", "", it.get("description", ""))[:100]
+                    items.append({
+                        "title": title, "desc": desc,
+                        "link": it.get("link", ""), "pubDate": it.get("pubDate", ""),
+                    })
+                return items
+            except Exception:
+                return []
+
+        def _summarize_with_llm(news_items: list, poi: str, congest: str) -> str:
+            """Anthropic Claude 로 뉴스 핵심 요약 → '왜 붐비는지' 한 줄.
+            키 없으면 단순 키워드 추출 fallback."""
+            api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+            if not api_key or not news_items:
+                # Fallback: 헤드라인 1개 그대로
+                if news_items:
+                    return f"최근 뉴스: {news_items[0]['title'][:60]}"
+                return f"{poi} {congest} — 행사·날씨·환승 영향 가능"
+            try:
+                import urllib.request, json as _json
+                titles = "\n".join(f"- {it['title']}" for it in news_items[:5])
+                prompt = (f"{poi} 지역 인파가 '{congest}' 등급입니다. 다음 뉴스 헤드라인을 보고 "
+                          f"'왜 붐비는지' 한 줄로 답하세요 (40자 이내, 행사·시즌·이벤트 키워드 우선):\n{titles}")
+                req = urllib.request.Request(
+                    "https://api.anthropic.com/v1/messages",
+                    data=_json.dumps({
+                        "model": "claude-haiku-4-5",
+                        "max_tokens": 80,
+                        "messages": [{"role": "user", "content": prompt}],
+                    }).encode("utf-8"),
+                    headers={
+                        "x-api-key": api_key,
+                        "anthropic-version": "2023-06-01",
+                        "content-type": "application/json",
+                    },
+                )
+                with urllib.request.urlopen(req, timeout=6) as resp:
+                    j = _json.loads(resp.read().decode("utf-8"))
+                txt = j.get("content", [{}])[0].get("text", "").strip()
+                return txt[:80] if txt else news_items[0]["title"][:60]
+            except Exception:
+                return news_items[0]["title"][:60] if news_items else f"{poi} {congest}"
+
+        news = await loop.run_in_executor(None, _fetch_naver_news)
+        summary = await loop.run_in_executor(None, _summarize_with_llm, news, poi, "")
+        payload = {
+            "type": "context",
+            "poi": poi,
+            "fetched_at": now,
+            "summary": summary,
+            "news": news,
+            "sources": {
+                "naver": bool(news) and bool(os.environ.get("NAVER_CLIENT_ID")),
+                "llm":   bool(os.environ.get("ANTHROPIC_API_KEY")),
+            },
+        }
+        context_cache[poi] = (now, payload)
+        return payload
+
     async def fetch_population(poi: str) -> dict:
-        """서울 실시간 도시데이터 — POI 인구/혼잡도. 무료, 분 단위 갱신."""
+        """서울 실시간 도시데이터 — POI 인구/혼잡도. 무료, 분 단위 갱신.
+        폭증 감지 시 fetch_context_news() 자동 트리거 → broadcast."""
         now = time.time()
         cached = population_cache.get(poi)
         if cached and now - cached[0] < POPULATION_TTL:
@@ -504,6 +612,24 @@ async def run_serve(args) -> None:
             "error": raw.get("_error"),
         }
         population_cache[poi] = (now, payload)
+
+        # === 폭증 감지 → 컨텍스트 broadcast ===
+        mid = ((payload.get("ppltn_min") or 0) + (payload.get("ppltn_max") or 0)) / 2
+        if mid > 0:
+            hist = ppltn_history.setdefault(poi, [])
+            hist.append((now, mid))
+            if len(hist) > PPLTN_HIST_MAX: hist.pop(0)
+            # 폭증 = 붐빔 OR (약간 붐빔 + 직전 대비 +5% 상승)
+            lvl = payload.get("congest_lvl") or ""
+            surge = lvl == "붐빔"
+            if not surge and lvl == "약간 붐빔" and len(hist) >= 2:
+                prev = hist[-2][1]
+                surge = prev > 0 and (mid - prev) / prev > 0.05
+            if surge:
+                ctx = await fetch_context_news(poi)
+                ctx["trigger"] = {"poi": poi, "lvl": lvl, "ppltn": int(mid)}
+                # 모든 client 에 broadcast (시민/운영자 동시 수신)
+                asyncio.create_task(broadcast(json.dumps(ctx, ensure_ascii=False)))
         return payload
 
     def _haversine_km(lat1, lon1, lat2, lon2):
