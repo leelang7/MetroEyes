@@ -386,6 +386,63 @@ async def handler(websocket):
         print(f"[ws] disconnect, clients={len(clients)}", flush=True)
 
 
+async def fake_bev_loop():
+    """시연 fail-safe — 자체 CV 모델 부재 시에도 BEV tracks broadcast.
+
+    사인파 + 시간대별 점유 변동으로 그럴듯한 트랙 7~25개 생성.
+    운영자 콘솔의 'LIVE · N fps · M 트랙' 라벨이 살아있도록 5 Hz 송출.
+    """
+    import math
+    import random
+    t0 = time.time()
+    fps_cnt = 0
+    fps_t = t0
+    fps_val = 5.0
+    rng = random.Random(42)
+    while True:
+        await asyncio.sleep(0.2)
+        fps_cnt += 1
+        now = time.time()
+        if now - fps_t >= 1.0:
+            fps_val = fps_cnt / (now - fps_t)
+            fps_cnt = 0; fps_t = now
+        if not clients:
+            continue
+        # 시간대별 점유 (0.3~1.2 multiplier — 출퇴근 양봉 모방)
+        h = time.localtime(now).tm_hour
+        peak_factor = 1.0
+        if 7 <= h <= 9 or 17 <= h <= 19:
+            peak_factor = 1.2
+        elif 23 <= h or h <= 5:
+            peak_factor = 0.35
+        n_tracks = max(3, int(rng.gauss(15 * peak_factor, 3)))
+        tracks = []
+        phase = (now - t0) * 0.5
+        for i in range(n_tracks):
+            # 칸별 분포 (10량 × 호차 기준 BEV)
+            car_idx = i % 10
+            bev_x = (car_idx + 0.5) * 32 + rng.gauss(0, 8) + math.sin(phase + i * 0.7) * 5
+            bev_y = 16 + rng.gauss(0, 4) + math.cos(phase + i * 0.5) * 3
+            tracks.append({
+                "id": i + 1,
+                "bev_x": round(max(0, min(320, bev_x)), 1),
+                "bev_y": round(max(0, min(32, bev_y)), 1),
+                "cls": "person",
+                "conf": round(0.7 + rng.random() * 0.25, 2),
+            })
+        # 가끔 가방 (분실 검출 데모)
+        if int(now) % 30 < 6:
+            tracks.append({"id": 99, "bev_x": 96.0, "bev_y": 26.0, "cls": "backpack", "conf": 0.83})
+        payload = {
+            "type": "bev",
+            "ts": now,
+            "fps": round(fps_val, 1),
+            "tracks": tracks,
+            "demo": True,
+        }
+        await broadcast(json.dumps(payload, ensure_ascii=False))
+
+
 async def http_health(path, headers):
     """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크)."""
     if path == "/health" or path == "/":
@@ -405,6 +462,8 @@ async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--host", default="0.0.0.0")
+    parser.add_argument("--demo", action="store_true",
+                        help="fake BEV tracks broadcast (CV 모델 없이도 시연 OK)")
     args = parser.parse_args()
 
     print(f"[lite_server] starting on {args.host}:{args.port}", flush=True)
@@ -418,6 +477,9 @@ async def main():
         process_request=http_health,
     ):
         print(f"[lite_server] LISTEN ws://{args.host}:{args.port}", flush=True)
+        if args.demo:
+            print("[lite_server] DEMO mode — fake BEV tracks broadcast @5Hz", flush=True)
+            asyncio.create_task(fake_bev_loop())
         await asyncio.Future()  # run forever
 
 

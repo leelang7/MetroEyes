@@ -19,7 +19,7 @@
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
 (function () {
-  const CUR = 'v3.2-impact-2026-05-05';
+  const CUR = 'v3.3-decisionlog-2026-05-05';
   if (sessionStorage.getItem('me_ver') !== CUR) {
     sessionStorage.setItem('me_ver', CUR);
     // navigation type 1 = reload — loop 방지
@@ -176,6 +176,15 @@
           </div>
         </div>
         <div class="incident-list" id="incidents"></div>
+        <div id="auto-decision-log" style="margin: 10px 0 8px; padding: 8px 10px; background: rgba(125,211,211,0.04); border: 1px dashed rgba(125,211,211,.32); border-radius: 8px; font-size: 11px;">
+          <div style="font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;">🤖 자동 의사결정 로그 <span style="color: var(--accent); font-weight: 600;">사람 개입 0</span></div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+            <div title="빈 칸 자동 절전"><span style="color: var(--muted-2);">⚡ 절전</span> <b id="dlog-ps" style="color: var(--text);">0</b></div>
+            <div title="응급 30s+ 정지 알림"><span style="color: var(--muted-2);">🚨 응급</span> <b id="dlog-em" style="color: var(--text);">0</b></div>
+            <div title="분실물 자동 검출"><span style="color: var(--muted-2);">🎒 분실</span> <b id="dlog-lo" style="color: var(--text);">0</b></div>
+            <div title="자동 분산 안내 송출"><span style="color: var(--muted-2);">📢 분산</span> <b id="dlog-dp" style="color: var(--text);">0</b></div>
+          </div>
+        </div>
         <button class="tts-btn" id="ttsBtn">🔊 분산 안내 음성 송출</button>
         <div class="tts-lang">
           <button data-lang="ko" class="active">한</button>
@@ -298,6 +307,7 @@ function drawStrip(occs, selectedIdx) {
   const psKw = (psCount * 3.6).toFixed(1);
   const psEl = document.getElementById('ps-count'); if (psEl) psEl.textContent = psCount;
   const psKwEl = document.getElementById('ps-kw'); if (psKwEl) psKwEl.textContent = psKw;
+  const dlogPs = document.getElementById('dlog-ps'); if (dlogPs) dlogPs.textContent = psCount;
   const psTag = document.getElementById('power-save-tag');
   if (psTag) psTag.style.opacity = psCount > 0 ? '1' : '0.4';
 }
@@ -665,6 +675,8 @@ function renderIncidents() {
   document.getElementById('b-susp').textContent = '이상 ' + nS;
   document.getElementById('b-lost').textContent = '분실 ' + nL;
   document.getElementById('b-free').textContent = '무임 ' + nF;
+  const dEm = document.getElementById('dlog-em'); if (dEm) dEm.textContent = nE;
+  const dLo = document.getElementById('dlog-lo'); if (dLo) dLo.textContent = nL;
   // 활성 사고 (응급/이상/무임) 있으면 패널 펄스 + LED 활성
   const hasAlert = (nE + nS + nF) > 0;
   document.getElementById('safety-panel')?.classList.toggle('has-alert', hasAlert);
@@ -864,6 +876,17 @@ if (SR) {
     autoDispatchAnnounce(lvl);
   }
 
+  // 자동 의사결정 누적 카운터
+  const _autoLog = { ps: 0, em: 0, lo: 0, dp: 0 };
+  function bumpAutoLog(k) {
+    if (!(k in _autoLog)) return;
+    _autoLog[k]++;
+    const el = document.getElementById('dlog-' + k);
+    if (el) el.textContent = _autoLog[k];
+  }
+  // 외부 노출 — realbev/safety-features 모듈에서 호출 가능
+  window.MetroEyesAutoLog = bumpAutoLog;
+
   // 자동 분산 안내 (5분 throttle, '붐빔' 등급일 때만)
   let _lastAutoTts = 0;
   function autoDispatchAnnounce(lvl) {
@@ -871,6 +894,7 @@ if (SR) {
     const now = Date.now();
     if (now - _lastAutoTts < 5 * 60 * 1000) return;  // 5분 cooldown
     _lastAutoTts = now;
+    bumpAutoLog('dp');
     const occs = lastOccs;
     if (!occs || !occs.length) return;
     let mi = 0, mv = occs[0];
