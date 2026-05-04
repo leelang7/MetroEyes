@@ -479,7 +479,27 @@ a { color: inherit; text-decoration: none; }
   padding: 8px 12px; margin-top: -10px; margin-bottom: 10px;
   background: var(--panel); border: 1px solid var(--line);
   border-radius: 10px; font-size: 11px;
+  transition: all 0.3s;
 }
+/* 붐빔(인파 폭증) — 빨간 펄스 + 트렌드 화살표 */
+.ppltn-strip.crowd-surge {
+  background: linear-gradient(90deg, rgba(255,94,87,0.12), var(--panel));
+  border-color: rgba(255,94,87,0.4);
+  box-shadow: 0 0 16px rgba(255,94,87,0.18);
+  animation: surge-pulse 2.4s ease-in-out infinite;
+}
+@keyframes surge-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255,94,87,0.18); }
+  50%      { box-shadow: 0 0 22px rgba(255,94,87,0.40); }
+}
+.ppltn-strip .trend {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums;
+  margin-left: 4px;
+}
+.ppltn-strip .trend.up   { color: var(--crit); }
+.ppltn-strip .trend.down { color: var(--accent); }
+.ppltn-strip .trend.flat { color: var(--muted-2); }
 .ppltn-strip .icon { color: var(--accent); }
 .ppltn-strip .area { color: var(--muted); }
 .ppltn-strip .num {

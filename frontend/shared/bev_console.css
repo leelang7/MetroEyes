@@ -145,6 +145,10 @@ body[data-domain="arch"]    .brand .dot { background: var(--domain-arch);    box
 }
 .station-picker .picker-row:hover { background: rgba(255,255,255,0.04); }
 .station-picker .picker-row.current { background: rgba(125,211,211,0.10); color: var(--accent); }
+.station-picker .picker-row .hot-tag {
+  margin-left: 4px; font-size: 11px; vertical-align: middle;
+  filter: drop-shadow(0 0 4px rgba(255,94,87,0.55));
+}
 .station-picker .picker-row .meta { color: var(--muted); font-size: 11px; }
 .station-picker .picker-row .km {
   color: var(--accent); font-size: 11px;

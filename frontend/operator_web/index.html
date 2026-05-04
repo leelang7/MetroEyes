@@ -446,18 +446,21 @@ function drawCarSparkline(carIdx, currentHour) {
 
 // ============== 역 picker + GPS 매칭 (관제 시점 전환) ==============
 const STATION_LIST = [
-  { name: '잠실',     line: 2, lat: 37.5133, lon: 127.1000, cluster: 'hub' },
-  { name: '강남',     line: 2, lat: 37.4980, lon: 127.0276, cluster: 'office' },
-  { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244, cluster: 'hub' },
-  { name: '시청',     line: 2, lat: 37.5642, lon: 126.9778, cluster: 'office' },
-  { name: '서울역',   line: 1, lat: 37.5547, lon: 126.9707, cluster: 'hub' },
-  { name: '광화문',   line: 5, lat: 37.5717, lon: 126.9766, cluster: 'office' },
-  { name: '신촌',     line: 2, lat: 37.5556, lon: 126.9362, cluster: 'office' },
-  { name: '사당',     line: 2, lat: 37.4766, lon: 126.9817, cluster: 'resi' },
-  { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703, cluster: 'resi' },
-  { name: '종로3가',  line: 1, lat: 37.5717, lon: 126.9914, cluster: 'hub' },
-  { name: '여의도',   line: 5, lat: 37.5215, lon: 126.9243, cluster: 'office' },
-  { name: '노원',     line: 4, lat: 37.6543, lon: 127.0617, cluster: 'resi' },
+  { name: '잠실',     line: 2, lat: 37.5133, lon: 127.1000, cluster: 'hub',    poi: '잠실역' },
+  { name: '강남',     line: 2, lat: 37.4980, lon: 127.0276, cluster: 'office', poi: '강남역' },
+  { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244, cluster: 'hub',    poi: '홍대 관광특구' },
+  { name: '시청',     line: 2, lat: 37.5642, lon: 126.9778, cluster: 'office', poi: '광화문·덕수궁' },
+  { name: '서울역',   line: 1, lat: 37.5547, lon: 126.9707, cluster: 'hub',    poi: '서울역' },
+  { name: '광화문',   line: 5, lat: 37.5717, lon: 126.9766, cluster: 'office', poi: '광화문·덕수궁' },
+  { name: '신촌',     line: 2, lat: 37.5556, lon: 126.9362, cluster: 'office', poi: '신촌·이대역' },
+  { name: '사당',     line: 2, lat: 37.4766, lon: 126.9817, cluster: 'resi',   poi: '사당역' },
+  { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703, cluster: 'resi',   poi: '건대입구역' },
+  { name: '성수',     line: 2, lat: 37.5444, lon: 127.0557, cluster: 'hub',    poi: '성수카페거리', hot: true },
+  { name: '서울숲',   line: 0, lat: 37.5443, lon: 127.0374, cluster: 'hub',    poi: '서울숲공원',   hot: true },
+  { name: '뚝섬',     line: 2, lat: 37.5295, lon: 127.0708, cluster: 'hub',    poi: '뚝섬한강공원', hot: true },
+  { name: '종로3가',  line: 1, lat: 37.5717, lon: 126.9914, cluster: 'hub',    poi: '종로·청계 관광특구' },
+  { name: '여의도',   line: 5, lat: 37.5215, lon: 126.9243, cluster: 'office', poi: '여의도' },
+  { name: '노원',     line: 4, lat: 37.6543, lon: 127.0617, cluster: 'resi',   poi: '노원역' },
 ];
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371, toRad = d => d * Math.PI / 180;
@@ -494,8 +497,10 @@ function renderPicker() {
     const isCurrent = s.name === STATION.name;
     row.className = 'picker-row' + (isCurrent ? ' current' : '');
     const km = s.km != null ? (s.km < 1 ? `${Math.round(s.km * 1000)}m` : `${s.km.toFixed(1)}km`) : '';
+    const hotBadge = s.hot ? `<span class="hot-tag" title="인파 폭증 핫스팟">🔥</span>` : '';
+    const lineLabel = s.line > 0 ? `${s.line}호선` : 'POI';
     row.innerHTML = `
-      <span><b>${s.name}</b><span class="meta"> · ${s.line}호선</span></span>
+      <span><b>${s.name}</b>${hotBadge}<span class="meta"> · ${lineLabel}</span></span>
       ${km ? `<span class="km">${km}</span>` : ''}`;
     row.addEventListener('click', () => {
       selectStation(s, s.km);

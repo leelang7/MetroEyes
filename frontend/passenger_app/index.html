@@ -499,6 +499,10 @@ const LIVE = (() => {
     { name: '신촌', line: 2, lat: 37.5556, lon: 126.9362, poi: '신촌·이대역' },
     { name: '사당', line: 2, lat: 37.4766, lon: 126.9817, poi: '사당역' },
     { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703, poi: '건대입구역' },
+    // 성수동 라인 — 인파 폭증 핫스팟 (citydata_ppltn 분 단위)
+    { name: '성수', line: 2, lat: 37.5444, lon: 127.0557, poi: '성수카페거리', hot: true },
+    { name: '서울숲', line: 0, lat: 37.5443, lon: 127.0374, poi: '서울숲공원', hot: true },
+    { name: '뚝섬', line: 2, lat: 37.5295, lon: 127.0708, poi: '뚝섬한강공원', hot: true },
     { name: '김포공항', line: 5, lat: 37.5615, lon: 126.8014, poi: '김포공항' },
   ];
   function haversineKm(a, b) {
@@ -598,6 +602,8 @@ const LIVE = (() => {
     }
   }
 
+  // 인파 추세 — 분 단위 갱신 직전 값 보관해 증감 판정
+  const _ppltnHistory = [];
   function applyPopulation(p) {
     const strip = document.getElementById('ppltn-strip');
     if (!p || p.error || p.ppltn_max == null) { strip.hidden = true; return; }
@@ -614,6 +620,32 @@ const LIVE = (() => {
       lvl === '약간 붐빔' ? 'bit-busy' :
       lvl === '보통' ? 'normal' : 'relax'
     );
+    // 추세 — 직전 N분 평균과 비교해 +N% 표시
+    _ppltnHistory.push(mid);
+    if (_ppltnHistory.length > 6) _ppltnHistory.shift();
+    let trendEl = document.getElementById('ppltn-trend');
+    if (!trendEl) {
+      trendEl = document.createElement('span');
+      trendEl.id = 'ppltn-trend';
+      trendEl.className = 'trend flat';
+      lvlEl.parentNode.insertBefore(trendEl, lvlEl.nextSibling);
+    }
+    if (_ppltnHistory.length >= 2) {
+      const prev = _ppltnHistory[_ppltnHistory.length - 2];
+      const delta = mid - prev;
+      const pctDelta = prev > 0 ? Math.round((delta / prev) * 100) : 0;
+      if (Math.abs(pctDelta) < 3) {
+        trendEl.className = 'trend flat'; trendEl.textContent = '· 안정';
+      } else if (pctDelta > 0) {
+        trendEl.className = 'trend up'; trendEl.textContent = `↑ ${pctDelta}%`;
+      } else {
+        trendEl.className = 'trend down'; trendEl.textContent = `↓ ${Math.abs(pctDelta)}%`;
+      }
+    }
+    // 인파 폭증 시 시각 강조 — 붐빔 + 상승 추세
+    const surge = lvl === '붐빔' || (lvl === '약간 붐빔' && _ppltnHistory.length >= 2 &&
+                                      mid > _ppltnHistory[_ppltnHistory.length - 2] * 1.05);
+    strip.classList.toggle('crowd-surge', surge);
     strip.hidden = false;
   }
 

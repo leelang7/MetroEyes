@@ -540,15 +540,18 @@ function drawBusSparkline(busIdx, currentHour) {
 
 // ============== 정류장 picker + GPS 매칭 ==============
 const STOP_LIST = [
-  { name: '잠실역.7번출구',    short: '잠실역',     route: '간선 142', lat: 37.5133, lon: 127.1003, cluster: 'hub' },
-  { name: '강남역.11번출구',   short: '강남역',     route: '광역 9408', lat: 37.4980, lon: 127.0276, cluster: 'office' },
-  { name: '홍대입구역.9번출구', short: '홍대입구',   route: '간선 271',  lat: 37.5572, lon: 126.9244, cluster: 'hub' },
-  { name: '시청역.6번출구',    short: '시청',       route: '간선 162',  lat: 37.5642, lon: 126.9778, cluster: 'office' },
-  { name: '서울역.버스환승',   short: '서울역',     route: '광역 9714', lat: 37.5547, lon: 126.9707, cluster: 'hub' },
-  { name: '광화문.교보문고',   short: '광화문',     route: '간선 401',  lat: 37.5717, lon: 126.9766, cluster: 'office' },
-  { name: '신촌오거리',        short: '신촌',       route: '간선 753',  lat: 37.5556, lon: 126.9362, cluster: 'office' },
-  { name: '사당역.4번출구',    short: '사당',       route: '간선 4318', lat: 37.4766, lon: 126.9817, cluster: 'resi' },
-  { name: '건대입구역.6번출구', short: '건대입구',   route: '간선 240',  lat: 37.5403, lon: 127.0703, cluster: 'resi' },
+  { name: '잠실역.7번출구',    short: '잠실역',     route: '간선 142', lat: 37.5133, lon: 127.1003, cluster: 'hub',    poi: '잠실역' },
+  { name: '강남역.11번출구',   short: '강남역',     route: '광역 9408', lat: 37.4980, lon: 127.0276, cluster: 'office', poi: '강남역' },
+  { name: '홍대입구역.9번출구', short: '홍대입구',   route: '간선 271',  lat: 37.5572, lon: 126.9244, cluster: 'hub',    poi: '홍대 관광특구' },
+  { name: '시청역.6번출구',    short: '시청',       route: '간선 162',  lat: 37.5642, lon: 126.9778, cluster: 'office', poi: '광화문·덕수궁' },
+  { name: '서울역.버스환승',   short: '서울역',     route: '광역 9714', lat: 37.5547, lon: 126.9707, cluster: 'hub',    poi: '서울역' },
+  { name: '광화문.교보문고',   short: '광화문',     route: '간선 401',  lat: 37.5717, lon: 126.9766, cluster: 'office', poi: '광화문·덕수궁' },
+  { name: '신촌오거리',        short: '신촌',       route: '간선 753',  lat: 37.5556, lon: 126.9362, cluster: 'office', poi: '신촌·이대역' },
+  { name: '사당역.4번출구',    short: '사당',       route: '간선 4318', lat: 37.4766, lon: 126.9817, cluster: 'resi',   poi: '사당역' },
+  { name: '건대입구역.6번출구', short: '건대입구',   route: '간선 240',  lat: 37.5403, lon: 127.0703, cluster: 'resi',   poi: '건대입구역' },
+  { name: '성수카페거리',       short: '성수',       route: '간선 121',  lat: 37.5444, lon: 127.0557, cluster: 'hub',    poi: '성수카페거리', hot: true },
+  { name: '서울숲.거꾸로분수',   short: '서울숲',     route: '지선 2014', lat: 37.5443, lon: 127.0374, cluster: 'hub',    poi: '서울숲공원',   hot: true },
+  { name: '뚝섬한강공원',       short: '뚝섬',       route: '간선 410',  lat: 37.5295, lon: 127.0708, cluster: 'hub',    poi: '뚝섬한강공원', hot: true },
 ];
 function busHaversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371, toRad = d => d * Math.PI / 180;
@@ -585,8 +588,9 @@ function renderPicker() {
     const isCurrent = s.name === ROUTE.stop;
     row.className = 'picker-row' + (isCurrent ? ' current' : '');
     const km = s.km != null ? (s.km < 1 ? `${Math.round(s.km * 1000)}m` : `${s.km.toFixed(1)}km`) : '';
+    const hot = s.hot ? `<span class="hot-tag" title="인파 폭증 핫스팟">🔥</span>` : '';
     row.innerHTML = `
-      <span><b>${s.short}</b><span class="meta"> · ${s.route}</span></span>
+      <span><b>${s.short}</b>${hot}<span class="meta"> · ${s.route}</span></span>
       ${km ? `<span class="km">${km}</span>` : ''}`;
     row.addEventListener('click', () => {
       selectStop(s, s.km);
