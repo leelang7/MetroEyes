@@ -233,6 +233,7 @@
   <span style="color: var(--muted);">ROI <b id="plk-roi" style="color: var(--good);">—x</b></span>
   <span style="color: var(--muted); border-left: 1px solid var(--line); padding-left: 14px;">σ 라이브 <b id="plk-sigma" style="color: var(--warn);">—%</b></span>
   <span style="color: var(--muted);">피크 <b id="plk-peak" style="color: var(--warn);">—%</b></span>
+  <span style="color: var(--muted); border-left: 1px solid var(--line); padding-left: 14px;">차등 <b id="plk-tier-basic" style="color: #7dd3d3;">0</b>/<b id="plk-tier-od" style="color: #a78bfa;">0</b>/<b id="plk-tier-tp" style="color: #f59e0b;">0</b></span>
   <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s + /api/v1/dispersion 12s</span>
 </div>
 <script>
@@ -335,6 +336,12 @@
       document.getElementById('plk-min').textContent = Math.round(im.saved_min_total).toLocaleString();
       document.getElementById('plk-val').textContent = fmt(im.value_won);
       document.getElementById('plk-roi').textContent = im.roi_x ? Math.round(im.roi_x) + 'x' : '—x';
+      // tier 분포 chip
+      if (im.tier_counts) {
+        document.getElementById('plk-tier-basic').textContent = (im.tier_counts.basic || 0).toLocaleString();
+        document.getElementById('plk-tier-od').textContent = (im.tier_counts.od || 0).toLocaleString();
+        document.getElementById('plk-tier-tp').textContent = (im.tier_counts.transfer || 0).toLocaleString();
+      }
       document.getElementById('pitch-live-kpi').hidden = false;
       // 라이브 응답률 추정 표시 (slider 옆)
       if (im.est_response_rate != null) {
