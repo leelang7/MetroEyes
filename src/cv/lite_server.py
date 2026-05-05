@@ -483,10 +483,20 @@ async def fake_bev_loop():
         await broadcast(json.dumps(payload, ensure_ascii=False))
 
 
+CORS_HEADERS = [
+    ("access-control-allow-origin", "*"),
+    ("access-control-allow-methods", "GET, OPTIONS"),
+    ("access-control-allow-headers", "*"),
+    ("access-control-max-age", "86400"),
+]
+
+
 async def http_health(path, headers):
-    """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크) + API 호출 통계."""
+    """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크) + API 호출 통계 + CORS."""
+    # OPTIONS preflight (브라우저 fetch CORS)
+    if hasattr(headers, "get") and headers.get("access-control-request-method"):
+        return (204, CORS_HEADERS, b"")
     if path == "/health" or path == "/":
-        # API stats 직렬화 — avg_ms 계산
         api = {}
         for name, s in _api_stats.items():
             api[name] = {
@@ -497,17 +507,17 @@ async def http_health(path, headers):
                 "last_ts": s["last_ts"],
                 "error_rate": round(s["errors"] / max(1, s["calls"]), 3),
             }
-        return (200, [("content-type", "application/json")],
-                json.dumps({
-                    "ok": True, "mode": "lite",
-                    "keys": {
-                        "seoul": bool(SEOUL_KEY), "subway": bool(SUBWAY_KEY),
-                        "naver": bool(NAVER_ID), "anthropic": bool(ANTHROPIC_KEY),
-                    },
-                    "clients": len(clients),
-                    "impact": _build_impact_summary() if _impact_total["count"] > 0 else None,
-                    "api": api,
-                }).encode("utf-8"))
+        body = json.dumps({
+            "ok": True, "mode": "lite",
+            "keys": {
+                "seoul": bool(SEOUL_KEY), "subway": bool(SUBWAY_KEY),
+                "naver": bool(NAVER_ID), "anthropic": bool(ANTHROPIC_KEY),
+            },
+            "clients": len(clients),
+            "impact": _build_impact_summary() if _impact_total["count"] > 0 else None,
+            "api": api,
+        }).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     return None
 
 
