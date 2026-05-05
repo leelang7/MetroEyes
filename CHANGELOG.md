@@ -1,5 +1,17 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v4.6 — D-7 자동 모드 155 사이클 (2026-05-06 후속 IV)
+
+### 신규 (사이클 151~155) — 차등 보상 정책 backend 통합
+- **`_bonus_krw()`** — backend `impact_log` handler가 station 매칭으로 자동 차등 보상 가산
+  - 환승역 (`/api/v1/transfer_priority` TOP 5): +₩200 보너스
+  - OD 우선 (`/api/v1/od_asymmetry` TOP 5, 시각 AM/PM 자동): +₩100 보너스
+  - 일반: 기본 ₩200 (변동 없음)
+- **`tier_counts`** in `impact_summary` — basic/od/transfer 3 분포 누적 (실시간 broadcast)
+- **`fake_impact_seed_loop` station 가중치** — 정확한 STTN 명칭(삼성(무역센터)/충무로/연신내) 빈도 ↑ → 시연 모드에서 차등 보상 자동 발동
+- **admin 차등 보상 분포 카드** — 3색 비례 막대 (basic 7dd3d3 / od a78bfa / transfer f59e0b)
+- **pitch.html 헤더 차등 chip** — basic/od/transfer 3-color tabular nums 라이브 갱신
+
 ## v4.5 — D-7 자동 모드 150 사이클 milestone (2026-05-06 후속 III)
 
 ### 신규 (사이클 144~150)
