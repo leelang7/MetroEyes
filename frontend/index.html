@@ -113,6 +113,7 @@
     <span style="color: var(--muted);">절감 <b id="lk-min" style="color: var(--text);">0</b>분</span>
     <span style="color: var(--muted);">사회 <b id="lk-val" style="color: var(--text);">₩0</b></span>
     <span style="color: var(--muted);">ROI <b id="lk-roi" style="color: var(--good);">—x</b></span>
+    <span id="lk-stations" style="display: contents;"></span>
     <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s polling</span>
   </div>
   <script>
@@ -129,6 +130,12 @@
           document.getElementById('lk-min').textContent = Math.round(im.saved_min_total).toLocaleString();
           document.getElementById('lk-val').textContent = fmt(im.value_won);
           document.getElementById('lk-roi').textContent = im.roi_x ? Math.round(im.roi_x) + 'x' : '—x';
+          if (im.stations) {
+            const top = Object.entries(im.stations).sort((a,b)=>b[1]-a[1]).slice(0, 3);
+            const medals = ['🥇','🥈','🥉'];
+            document.getElementById('lk-stations').innerHTML = top.map(([n,c],i) =>
+              `<span style="padding: 2px 8px; background: rgba(125,211,211,.10); border: 1px solid var(--accent); border-radius: 999px; color: var(--text); font-size: 11px;">${medals[i]} ${n} <b style="color: var(--accent);">${c}</b></span>`).join('');
+          }
           document.getElementById('live-kpi').hidden = false;
         }
       } catch {}
