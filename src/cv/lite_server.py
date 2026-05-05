@@ -64,6 +64,47 @@ ppltn_history: dict[str, list] = {}        # poi → [(ts, mid)]
 context_cache: dict[str, tuple] = {}       # poi → (ts, payload)
 CONTEXT_TTL = 600.0
 
+# 차등 인센티브 정책 — OD 우선순위 +₩100 / 환승역 +₩200 (현 시각 AM/PM 자동)
+_priority_cache = {"od_arrival": None, "od_departure": None, "transfer": None, "loaded": False}
+
+def _load_priority_sets():
+    if _priority_cache["loaded"]:
+        return
+    try:
+        from pathlib import Path as _P
+        rep1 = _P(__file__).resolve().parent.parent.parent / "frontend" / "figs" / "od_asymmetry_report.json"
+        rep2 = _P(__file__).resolve().parent.parent.parent / "frontend" / "figs" / "transfer_stations_report.json"
+        if rep1.exists():
+            j = json.loads(rep1.read_text(encoding="utf-8"))
+            _priority_cache["od_arrival"] = {s["station"] for s in j.get("top_arrival", [])[:5]}
+            _priority_cache["od_departure"] = {s["station"] for s in j.get("top_departure", [])[:5]}
+        if rep2.exists():
+            j = json.loads(rep2.read_text(encoding="utf-8"))
+            am = {s["station"] for s in j.get("top_am_diff", [])[:5]}
+            pm = {s["station"] for s in j.get("top_pm_diff", [])[:5]}
+            _priority_cache["transfer"] = am | pm
+    except Exception:
+        pass
+    _priority_cache["loaded"] = True
+
+def _bonus_krw(station: str) -> int:
+    """역 이름 → 차등 보상 (환승역 우선)."""
+    if not station:
+        return 0
+    _load_priority_sets()
+    cur_h = time.localtime().tm_hour
+    is_am = 7 <= cur_h <= 11
+    is_pm = 17 <= cur_h <= 21
+    if not (is_am or is_pm):
+        return 0
+    tp_set = _priority_cache.get("transfer") or set()
+    if station in tp_set:
+        return 200   # 환승역 — 기본 200원에 +200 → 총 ₩400
+    od_set = _priority_cache.get("od_arrival" if is_am else "od_departure") or set()
+    if station in od_set:
+        return 100   # OD 우선순위 — 기본 200원에 +100 → 총 ₩300
+    return 0
+
 # 누적 임팩트 — impact_log 들어오면 합산 후 impact_summary broadcast
 _impact_total = {"count": 0, "saved_pct_sum": 0.0, "stations": {}, "krw_paid": 0,
                  "hourly": [0] * 24}  # 시간별 분산 액션 누적
@@ -441,11 +482,13 @@ async def handler(websocket):
                 }, ensure_ascii=False))
             elif t == "impact_log":
                 saved = float(req.get("saved_pct") or 0)
-                krw = int(req.get("krw") or 0)
+                raw_krw = int(req.get("krw") or 0)
+                st = req.get("station") or "?"
+                bonus = _bonus_krw(st)
+                krw = raw_krw + bonus
                 _impact_total["count"] += 1
                 _impact_total["saved_pct_sum"] += saved
                 _impact_total["krw_paid"] += krw
-                st = req.get("station") or "?"
                 _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
                 _impact_total["hourly"][time.localtime().tm_hour] += 1
                 await broadcast(json.dumps(_build_impact_summary(), ensure_ascii=False))
