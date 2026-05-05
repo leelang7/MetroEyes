@@ -214,6 +214,17 @@
   </div>
 </div>
 
+<div style="margin: 14px 0 0; padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;">
+  <div style="font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px;">ROI 응답률 곡선 — 0~80%</div>
+  <canvas id="roi-curve" width="900" height="180" style="width: 100%; height: 180px; background: rgba(255,255,255,.02); border-radius: 8px;"></canvas>
+  <div style="font-size: 10px; color: var(--muted); margin-top: 6px; display: flex; gap: 14px; flex-wrap: wrap;">
+    <span style="color: var(--accent);">━ 순 사회적 가치 (억/년)</span>
+    <span style="color: var(--good);">━ ROI 배수 (x10)</span>
+    <span style="color: var(--warn);">━ 정책 비용 (억/년)</span>
+    <span style="margin-left: auto; color: var(--text);">● 현재 슬라이더 위치</span>
+  </div>
+</div>
+
 <script>
 // ROI v3 시뮬레이터 (policy_roi_v3.py 와 일치하는 closed-form)
 function simulateROI(rate) {
@@ -258,8 +269,95 @@ slider.addEventListener('input', () => {
   const r = parseInt(slider.value, 10) / 100;
   respPct.textContent = slider.value;
   applyROI(r);
+  drawROICurve(r);
 });
+
+// ROI 곡선 그래프
+function drawROICurve(currentRate) {
+  const cv = document.getElementById('roi-curve');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = cv.width = cv.clientWidth * dpr;
+  const H = cv.height = cv.clientHeight * dpr;
+  ctx.scale(dpr, dpr);
+  const w = W / dpr, h = H / dpr;
+  ctx.clearRect(0, 0, w, h);
+
+  // 0~80% 81 샘플
+  const samples = [];
+  for (let i = 0; i <= 80; i++) samples.push({ rate: i/100, ...simulateROI(i/100) });
+  const xN = samples.length;
+
+  // y 정규화
+  const maxNet = Math.max(...samples.map(s => s.net));
+  const maxROI = Math.max(...samples.map(s => s.roi));
+  const maxCost = Math.max(...samples.map(s => s.cost));
+
+  const padL = 36, padR = 10, padT = 14, padB = 24;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+
+  // 격자
+  ctx.strokeStyle = 'rgba(255,255,255,.05)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + plotH * i / 4;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
+  }
+  for (let i = 0; i <= 8; i++) {
+    const x = padL + plotW * i / 8;
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + plotH); ctx.stroke();
+  }
+
+  // x축 응답률 라벨
+  ctx.fillStyle = 'rgba(255,255,255,.4)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= 8; i++) {
+    const x = padL + plotW * i / 8;
+    ctx.fillText((i*10) + '%', x, h - 8);
+  }
+
+  // 함수
+  function plot(values, color, scale) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    samples.forEach((s, i) => {
+      const x = padL + (i / (xN-1)) * plotW;
+      const y = padT + plotH - (s[values] / scale) * plotH;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  plot('net',  getCSS('--accent') || '#7dd3d3', maxNet);
+  plot('roi',  getCSS('--good')   || '#10b981', maxROI / 0.5);  // ROI 곡선 0.5 배율로 다른 곡선 가시
+  plot('cost', getCSS('--warn')   || '#f59e0b', maxNet);  // cost 도 net 스케일
+
+  // 현재 위치 마커
+  const idx = Math.round(currentRate * 100);
+  if (idx >= 0 && idx < xN) {
+    const s = samples[idx];
+    const x = padL + (idx / (xN-1)) * plotW;
+    const y = padT + plotH - (s.net / maxNet) * plotH;
+    ctx.fillStyle = getCSS('--text') || '#fff';
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = 'rgba(0,0,0,.6)';
+    ctx.fillRect(x - 60, y - 32, 120, 22);
+    ctx.fillStyle = getCSS('--accent') || '#7dd3d3';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${idx}% → ${s.net.toLocaleString()}억 / ${s.roi}x`, x, y - 18);
+  }
+}
+function getCSS(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
 applyROI(0.3);
+window.addEventListener('load', () => drawROICurve(0.3));
+window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/100));
 </script>
 
 <h2>시나리오 민감도 — 응답률 5단계</h2>
