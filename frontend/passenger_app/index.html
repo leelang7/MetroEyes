@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v3.9-i18n-a11y';
+  const CUR = 'v4.0-incident-sync';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -113,6 +113,10 @@
     <div id="impact-detail" style="font-size: 10px; color: var(--muted); margin-top: 4px;"></div>
   </div>
   <div id="my-reward-line" hidden style="margin: -6px 0 10px; padding: 8px 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.32); border-radius: 10px; font-size: 11px;"></div>
+  <div id="incident-notice" hidden role="alert" aria-live="polite" style="margin: 4px 0 10px; padding: 10px 14px; background: linear-gradient(135deg, rgba(239,68,68,.14), rgba(245,158,11,.06)); border: 1px solid rgba(239,68,68,.45); border-radius: 12px; font-size: 12px;">
+    <div style="font-weight: 700; color: #ef4444; margin-bottom: 4px;">🚨 인근 사고 알림 <span style="font-size: 9px; color: var(--muted); font-weight: 500; margin-left: 4px;">backend 동기화</span></div>
+    <div id="incident-notice-text" style="color: var(--text);">—</div>
+  </div>
 
   <div class="rain-banner" id="rain-banner" hidden>
     <span class="ico">🌧</span>
@@ -521,6 +525,36 @@ function renderRewardSummary(my) {
 }
 // 페이지 진입 시 1회 누적 표시
 window.addEventListener('DOMContentLoaded', () => renderRewardSummary());
+
+// backend 사고 알림 — 인근 응급/이상 시 시민에게 우회 안내
+function applyIncidentNotice(j) {
+  const el = document.getElementById('incident-notice');
+  const txt = document.getElementById('incident-notice-text');
+  if (!el || !txt) return;
+  const total = (j.emergency || 0) + (j.suspicious || 0) + (j.lost || 0);
+  if (total === 0 || !j.events || !j.events.length) {
+    el.hidden = true; return;
+  }
+  // 최근 1건 (5분 이내) 우선 표시
+  const now = Date.now() / 1000;
+  const fresh = j.events.filter(e => now - e.ts < 300);
+  if (!fresh.length) { el.hidden = true; return; }
+  const top = fresh[0];
+  const labels = {
+    emergency: { ko: '응급 상황', en: 'Emergency', zh: '紧急情况', ja: '緊急事態' },
+    suspicious: { ko: '이상 행동', en: 'Suspicious activity', zh: '异常行为', ja: '異常行動' },
+    lost: { ko: '분실물', en: 'Lost item', zh: '失物', ja: '遺失物' },
+    free_ride: { ko: '무임 의심', en: 'Fare evasion', zh: '逃票', ja: '無賃乗車' },
+  };
+  const lang = (typeof getI18nLang === 'function') ? getI18nLang() : 'ko';
+  const lblObj = labels[top.type] || {};
+  const lbl = lblObj[lang] || lblObj.ko || top.type;
+  txt.innerHTML = `<b>${lbl}</b> — ${top.msg || '대응 중'}<br><span style="font-size: 10px; color: var(--muted);">우회 경로 또는 다음 차 권고 · ${top.source}</span>`;
+  el.hidden = false;
+  // 5분 후 자동 hide
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.hidden = true; }, 5 * 60 * 1000);
+}
 
 function setMode(m) {
   if (mode === m) return;
@@ -1005,6 +1039,7 @@ const LIVE = (() => {
         else if (j.type === 'events') { applyEvents(j); }
         else if (j.type === 'context') { applyContext(j); }
         else if (j.type === 'surge_forecast') { applyForecast(j); }
+        else if (j.type === 'incident_summary') { applyIncidentNotice(j); }
         else if (j.type === 'impact_summary') {
           const c = document.getElementById('impact-counter');
           if (c) {
