@@ -12,7 +12,7 @@
 <script>
 // 자동 캐시 무효화 — sessionStorage 마커
 (function () {
-  const CUR = 'v4.0-eta-countdown';
+  const CUR = 'v4.1-i18n-onboard';
   if (sessionStorage.getItem('me_ver_onboard') !== CUR) {
     sessionStorage.setItem('me_ver_onboard', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -24,12 +24,12 @@
 <body>
 <div class="app">
   <header class="app-header">
-    <button class="back-btn" onclick="history.back()">← 뒤로</button>
+    <button class="back-btn" onclick="history.back()" data-i18n="back">← 뒤로</button>
     <div class="brand">
       <span class="dot"></span>MetroEyes<small>Onboard</small>
-      <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">오프라인</span></span>
+      <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label" data-i18n="live_off">오프라인</span></span>
     </div>
-    <span style="width: 50px"></span>
+    <button class="back-btn" id="lang-toggle" title="Language toggle" style="cursor: pointer; padding: 4px 8px; border: 1px solid var(--line);">🇰🇷</button>
   </header>
 
   <div class="topbar">
@@ -172,6 +172,32 @@ function renderRewardCard() {
 }
 renderRewardCard();
 window.addEventListener('storage', renderRewardCard);
+
+// ==== 4개 언어 페이지 텍스트 토글 (외국인 시민 포용) ====
+const I18N_ONBOARD = {
+  ko: { back: '← 뒤로', live_off: '오프라인', flag: '🇰🇷' },
+  en: { back: '← Back', live_off: 'Offline', flag: '🇺🇸' },
+  zh: { back: '← 返回', live_off: '离线', flag: '🇨🇳' },
+  ja: { back: '← 戻る', live_off: 'オフライン', flag: '🇯🇵' },
+};
+let _curOnLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+if (!I18N_ONBOARD[_curOnLang]) _curOnLang = 'ko';
+function applyOnboardI18n() {
+  const t = I18N_ONBOARD[_curOnLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = t.flag;
+  document.documentElement.lang = _curOnLang;
+}
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
+  const order = ['ko', 'en', 'zh', 'ja'];
+  _curOnLang = order[(order.indexOf(_curOnLang) + 1) % 4];
+  applyOnboardI18n();
+});
+window.addEventListener('DOMContentLoaded', applyOnboardI18n);
 
 // 도착 ETA 라이브 카운트다운 + 도착 시 보상 합계 메시지
 let _etaTimer = null;
