@@ -95,6 +95,34 @@ docker compose up -d
 **car-level BEV CV** + **distribution-rate tiered reward** + **backend cumulative live ROI** —
 3-axis integrated system where one citizen action = one operator KPI metric.
 
+## Open REST API v1 + OpenAPI 3.0
+
+backend `lite_server.py` exposes 7 endpoints — all CORS-enabled:
+
+| Endpoint | Response | Use |
+|---|---|---|
+| `GET /health` | system status (api/cv/incidents/msg) | health check |
+| `GET /api/v1/roi_curve` | 81 samples 0~80% ROI | external policy sim |
+| `GET /api/v1/impact` | cumulative redistribution impact | live KPI |
+| `GET /api/v1/incidents` | 4 incident counts + 30 events | live monitoring |
+| `GET /api/v1/dispersion` | static σ/peak/offpeak validation + live response-rate estimate | dispersion visualization |
+| `GET /api/v1/od_asymmetry` | current-hour AM/PM auto-match + top 5 priority stations | operator policy priority |
+| `GET /api/openapi.yaml` | OpenAPI 3.0 spec | Swagger/Redoc/Postman auto-import |
+
+```bash
+# Example: ROI curve fetch
+curl http://localhost:8765/api/v1/roi_curve | jq '.curve | map(select(.rate == 0.30))'
+
+# Example: Dispersion effect (static + live)
+curl -s http://localhost:8765/api/v1/dispersion | jq '{static: .static, live: .live}'
+
+# Example: Current-hour OD priority (AM 7~11 → arrival / PM 17~21 → departure)
+curl -s http://localhost:8765/api/v1/od_asymmetry | jq '{type: .priority_type, stations: .priority_stations | map(.station)}'
+
+# Example: Download OpenAPI 3.0 spec
+curl -o openapi.yaml http://localhost:8765/api/openapi.yaml
+```
+
 ## Run Policy ROI v3
 
 ```bash
