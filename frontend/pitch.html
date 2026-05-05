@@ -820,7 +820,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   분산 효과 σ 감소가 동일 응답률에서 <b>20% 추가 개선</b> 예상 (피크 평탄화 효과 직접적). backend가 자동 매칭 + tier_counts 라이브 broadcast.
 </p>
 
-<h2>시스템 흐름 — 5단계 양면 클로즈드 루프</h2>
+<h2>시스템 흐름 — 8단계 양면 클로즈드 루프 (차등 보상 통합)</h2>
 <div class="flow">
   <div class="flow-step">
     <span class="ico">📷</span>
@@ -837,15 +837,30 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <div class="lbl">자동 의사결정</div>
     <div class="src">절전·응급·분실·분산</div>
   </div>
+  <div class="flow-step" style="border-color: rgba(167,139,250,.40);">
+    <span class="ico">📍</span>
+    <div class="lbl">OD 우선순위 매칭</div>
+    <div class="src">/api/v1/od_asymmetry 시각 자동</div>
+  </div>
+  <div class="flow-step" style="border-color: rgba(245,158,11,.40);">
+    <span class="ico">🔀</span>
+    <div class="lbl">환승 흐름 식별</div>
+    <div class="src">/api/v1/transfer_priority TOP 5</div>
+  </div>
   <div class="flow-step">
     <span class="ico">📱</span>
-    <div class="lbl">시민 분산 액션</div>
-    <div class="src">5%p +100, 30%p +200원</div>
+    <div class="lbl">시민 차등 액션</div>
+    <div class="src">₩200/₩300/₩400 chip 라이브</div>
+  </div>
+  <div class="flow-step" style="border-color: rgba(16,185,129,.40);">
+    <span class="ico">💰</span>
+    <div class="lbl">backend 자동 가산</div>
+    <div class="src">_bonus_krw 매칭 → tier_counts</div>
   </div>
   <div class="flow-step">
     <span class="ico">📈</span>
     <div class="lbl">ROI 가시화</div>
-    <div class="src">krw / value_won 라이브</div>
+    <div class="src">krw / value_won / σ / tier 라이브</div>
   </div>
 </div>
 
