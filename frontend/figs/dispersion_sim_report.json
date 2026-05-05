@@ -1,0 +1,33 @@
+{
+  "response_rate": 0.3,
+  "disperse_fraction": 0.45,
+  "peak_hours": [
+    7,
+    8,
+    9,
+    17,
+    18,
+    19
+  ],
+  "metrics_before": {
+    "max": 463334.1071428571,
+    "min": 53066.857142857145,
+    "std": 129617.63112294272,
+    "peak_avg": 330483.51785714284,
+    "offpeak_avg": 185350.37087912092
+  },
+  "metrics_after": {
+    "max": 400784.0026785714,
+    "min": 62145.499999999985,
+    "std": 117939.53184871064,
+    "peak_avg": 285868.24294642854,
+    "offpeak_avg": 195646.20355082417
+  },
+  "sigma_reduction_pct": -9.009653372815746,
+  "peak_reduction_pct": -13.500000000000007,
+  "offpeak_lift_pct": 5.554794750541844,
+  "peak_offpeak_ratio_before": 1.7830205372109706,
+  "peak_offpeak_ratio_after": 1.4611489400670474,
+  "data_source": "data\\processed\\subway_time_202602.parquet",
+  "n_lines": 9
+}

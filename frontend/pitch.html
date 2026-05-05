@@ -618,6 +618,22 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <figcaption>그림 1 — 호선 9개 × 24시간 절감 분 매트릭스 (응답률 30%) · 출퇴근 양봉 + 만석 호선 우선</figcaption>
 </figure>
 
+<h2>실 데이터 분산 효과 — 평탄화 정량 검증</h2>
+<p>
+  ROI v3 의 응답률 30% 가정이 *실제로* 시간대 곡선을 어떻게 평탄화시키는지 직접 시뮬.
+  데이터 출처: <code>data/processed/subway_time_202602.parquet</code> · 1~9호선 일평균 승차 인원
+  (<code>HR_h_GET_ON_NOPE</code> 28일 평균).
+</p>
+<figure>
+  <img src="figs/dispersion_sim.png" alt="분산 정책 효과 — 실 데이터 시간대 곡선" loading="lazy">
+  <figcaption>그림 2 — 응답률 30% × 분산 가능 비율 45% 적용 시 σ <b>−9.0%</b>, 피크 평균 <b>−13.5%</b>,
+    비피크 평균 <b>+5.6%</b>. 피크/비피크 비율 1.78 → 1.46 (<b>−18%</b>) — 사고 회피·체감 혼잡 직접 개선.</figcaption>
+</figure>
+<figure>
+  <img src="figs/dispersion_sim_lines.png" alt="호선별 9개 패널 분산 효과" loading="lazy">
+  <figcaption>그림 3 — 호선별(1~9호선) 시간대 곡선 비교. 만석 호선(2/9호선)에서 평탄화 효과 가장 큼.</figcaption>
+</figure>
+
 <h2>시스템 흐름 — 5단계 양면 클로즈드 루프</h2>
 <div class="flow">
   <div class="flow-step">
