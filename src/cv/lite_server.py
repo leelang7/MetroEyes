@@ -687,6 +687,20 @@ async def http_health(path, headers):
     # OPTIONS preflight (브라우저 fetch CORS)
     if hasattr(headers, "get") and headers.get("access-control-request-method"):
         return (204, CORS_HEADERS, b"")
+    if path == "/api/v1/incidents":
+        body = json.dumps({
+            "ok": True,
+            "counts": {
+                "emergency": _incident_total["emergency"],
+                "suspicious": _incident_total["suspicious"],
+                "lost": _incident_total["lost"],
+                "free_ride": _incident_total["free_ride"],
+            },
+            "events": _incident_total["events"][:30],
+            "total": (_incident_total["emergency"] + _incident_total["suspicious"]
+                      + _incident_total["lost"] + _incident_total["free_ride"]),
+        }).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path == "/api/v1/impact":
         # /api/v1/impact — 누적 임팩트 JSON
         body = json.dumps({
@@ -720,6 +734,8 @@ async def http_health(path, headers):
             "<pre>fetch('/api/v1/roi_curve').then(r=&gt;r.json()).then(j=&gt;j.curve)</pre>"
             "<h2>GET <code>/api/v1/impact</code></h2>"
             "<p>실시간 누적 임팩트 (분산 액션 / krw / 시간대 / 역별)</p>"
+            "<h2>GET <code>/api/v1/incidents</code></h2>"
+            "<p>사고 누적 + 최근 30 events (응급/이상/분실/무임)</p>"
             "<h2>WebSocket <code>ws://host:8765</code></h2>"
             "<p>impact_log / incident_log / arrival_query / population_query / predict_surge 등</p>"
             "<table><tr><th>Type</th><th>Args</th><th>응답</th></tr>"
