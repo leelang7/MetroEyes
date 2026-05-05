@@ -148,6 +148,43 @@ paths:
                       peak_reduction_pct: { type: number }
                       offpeak_lift_pct: { type: number }
 
+  /api/v1/policy_summary:
+    get:
+      summary: 통합 정책 KPI — 정의 + 라이브 + 정적 EDA 단일 응답
+      description: |
+        Excel/Power BI/Tableau 같은 외부 BI 도구가 단일 폴링으로 모든 정책 KPI 임포트.
+        정책 정의(tier 4단), 라이브 impact (분산 액션 + tier 분포), 라이브 dispersion (응답률 비례 σ/peak 추정),
+        정적 EDA 검증값 (분산 시뮬 결과)을 단일 JSON으로 반환.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  current_hour: { type: integer }
+                  policy:
+                    type: object
+                    properties:
+                      tier_definition:
+                        type: object
+                        description: 차등 보상 4단 정의
+                      roi_at_30pct:
+                        type: object
+                        description: 응답률 30% 기준 ROI 정량값
+                  live_impact:
+                    $ref: '#/components/schemas/ImpactSummary'
+                  live_dispersion:
+                    type: object
+                    properties:
+                      estimated_response_rate: { type: number }
+                      sigma_reduction_pct: { type: number }
+                      peak_reduction_pct: { type: number }
+                  static_eda:
+                    type: object
+
   /api/v1/transfer_priority:
     get:
       summary: 환승역 호선 간 비대칭 차이 TOP 5 (현 시각 AM/PM)

@@ -1,5 +1,14 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v4.8 — D-7 자동 모드 165 사이클 milestone (2026-05-06 후속 VI)
+
+### 신규 (사이클 161~165) — 외부 BI 통합 + 발표 자료 일괄 갱신
+- **`/api/v1/policy_summary` 통합 endpoint** — 정책 4단 정의 + 라이브 impact + 라이브 dispersion + 정적 EDA 단일 JSON
+- **9 endpoint REST API** 완성 — Excel/Power BI/Tableau 단일 폴링으로 모든 KPI 임포트
+- **OpenAPI 3.0 spec 9 path** — Swagger/Redoc/Postman 자동 임포트 + ImpactSummary tier_counts schema
+- **발표 자료 5종 일괄 헤더 갱신** — SLIDES_DECK / ARCHITECTURE_VIEW / INNOVATION_TRIZ / PROPOSAL / SUBMISSION_GUIDE 누적 산출 6항목 명시
+- **mobile_app README 9 endpoint + 차등 보상 정책** — Flutter ↔ backend 통합 가이드
+
 ## v4.7 — D-7 자동 모드 160 사이클 milestone (2026-05-06 후속 V)
 
 ### 신규 (사이클 156~160) — 차등 보상 운영자 패리티 + 통합 가이드
