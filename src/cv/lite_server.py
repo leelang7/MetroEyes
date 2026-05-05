@@ -715,6 +715,47 @@ async def http_health(path, headers):
             },
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path == "/api/v1/dispersion":
+        # /api/v1/dispersion — 분산 정책 시뮬 결과 (실 parquet 검증값 + 라이브 응답률 추정 보정)
+        try:
+            from pathlib import Path as _P
+            rep = _P(__file__).resolve().parent.parent.parent / "frontend" / "figs" / "dispersion_sim_report.json"
+            base = {}
+            if rep.exists():
+                base = json.loads(rep.read_text(encoding="utf-8"))
+            # 라이브 응답률 추정 — _impact_total["count"] 가 응답한 시민 수
+            # 일평균 ON ~7M, 1% 응답이면 70,000명. 현재 count → 응답률 = count / 70000
+            live_count = _impact_total["count"]
+            est_rate = min(0.80, live_count / 70000) if live_count > 0 else 0.0
+            # 비례 스케일 — 실 검증값(30%) 대비
+            ratio = est_rate / 0.30 if est_rate > 0 else 0
+            sigma_drop_live = base.get("sigma_reduction_pct", 9.0) * ratio
+            peak_drop_live = base.get("peak_reduction_pct", 13.5) * ratio
+            offpeak_lift_live = base.get("offpeak_lift_pct", 5.6) * ratio
+            body = json.dumps({
+                "ok": True,
+                "static": {
+                    "model": "dispersion_sim @ rate=0.30",
+                    "sigma_reduction_pct": base.get("sigma_reduction_pct"),
+                    "peak_reduction_pct": base.get("peak_reduction_pct"),
+                    "offpeak_lift_pct": base.get("offpeak_lift_pct"),
+                    "peak_offpeak_ratio_before": base.get("peak_offpeak_ratio_before"),
+                    "peak_offpeak_ratio_after": base.get("peak_offpeak_ratio_after"),
+                    "n_lines": base.get("n_lines"),
+                    "data_source": base.get("data_source"),
+                },
+                "live": {
+                    "estimated_response_rate": round(est_rate, 4),
+                    "live_count": live_count,
+                    "sigma_reduction_pct": round(sigma_drop_live, 2),
+                    "peak_reduction_pct": round(peak_drop_live, 2),
+                    "offpeak_lift_pct": round(offpeak_lift_live, 2),
+                },
+            }).encode("utf-8")
+            return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+        except Exception as e:
+            return (500, [("content-type", "application/json")] + CORS_HEADERS,
+                    json.dumps({"ok": False, "error": str(e)}).encode("utf-8"))
     if path == "/api/docs":
         body = (
             "<!doctype html><html><head><meta charset='utf-8'>"
@@ -736,6 +777,8 @@ async def http_health(path, headers):
             "<p>실시간 누적 임팩트 (분산 액션 / krw / 시간대 / 역별)</p>"
             "<h2>GET <code>/api/v1/incidents</code></h2>"
             "<p>사고 누적 + 최근 30 events (응급/이상/분실/무임)</p>"
+            "<h2>GET <code>/api/v1/dispersion</code></h2>"
+            "<p>분산 정책 시뮬 — 실 parquet σ/peak/offpeak 검증값 + 라이브 응답률 비례 추정</p>"
             "<h2>GET <code>/api/openapi.yaml</code></h2>"
             "<p>표준 OpenAPI 3.0 spec — Swagger / Redoc / Postman 임포트 가능</p>"
             "<h2>WebSocket <code>ws://host:8765</code></h2>"

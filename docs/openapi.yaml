@@ -117,6 +117,37 @@ paths:
                       $ref: '#/components/schemas/IncidentEvent'
                   total: { type: integer }
 
+  /api/v1/dispersion:
+    get:
+      summary: 분산 정책 시뮬 — 실 parquet 검증 + 라이브 응답률 보정
+      description: |
+        실 데이터(`subway_time_202602.parquet` 1~9호선 28일 평균)에서 산출된 정적 σ/peak/offpeak 검증값과
+        실시간 시민 분산 액션 누적(`_impact_total`)에서 추정한 응답률 비례 라이브 추정값을 함께 반환.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  static:
+                    type: object
+                    properties:
+                      model: { type: string }
+                      sigma_reduction_pct: { type: number }
+                      peak_reduction_pct: { type: number }
+                      offpeak_lift_pct: { type: number }
+                  live:
+                    type: object
+                    properties:
+                      estimated_response_rate: { type: number }
+                      live_count: { type: integer }
+                      sigma_reduction_pct: { type: number }
+                      peak_reduction_pct: { type: number }
+                      offpeak_lift_pct: { type: number }
+
   /api/docs:
     get:
       summary: API 문서 HTML

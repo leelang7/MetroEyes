@@ -107,6 +107,36 @@
       </div>
     </div>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(16,185,129,.06)); border-color: rgba(125,211,211,.30);">
+      <h2>📈 분산 효과 (live + 실 데이터 검증)</h2>
+      <div style="font-size: 10px; color: var(--muted); letter-spacing: 1.0px; margin-bottom: 6px;">실 parquet 검증 (rate=30%)</div>
+      <div class="stat">σ 표준편차       <b id="dp-sigma-static" class="warn">−9.0%</b></div>
+      <div class="stat">피크 평균        <b id="dp-peak-static" class="warn">−13.5%</b></div>
+      <div class="stat">비피크 평균      <b id="dp-off-static" class="ok">+5.6%</b></div>
+      <div class="stat">피크/비피크 비율 <b id="dp-ratio-static">1.78 → 1.46</b></div>
+      <div style="font-size: 10px; color: var(--accent); letter-spacing: 1.0px; margin: 8px 0 6px;">실시간 추정 (응답률 비례)</div>
+      <div class="stat">추정 응답률      <b id="dp-rate-live">—%</b></div>
+      <div class="stat">σ 라이브        <b id="dp-sigma-live">—%</b></div>
+      <div class="stat">피크 라이브      <b id="dp-peak-live">—%</b></div>
+    </div>
+<script>
+(async function pollDispersion() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.live) {
+        const rate = (j.live.estimated_response_rate * 100).toFixed(2);
+        document.getElementById('dp-rate-live').textContent = rate + '%';
+        document.getElementById('dp-sigma-live').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
+        document.getElementById('dp-peak-live').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
+      }
+    }
+  } catch {}
+  setTimeout(pollDispersion, 10000);
+})();
+</script>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(16,185,129,.04));">
       <h2>🎯 Live Impact (impact_summary)</h2>
       <div class="stat">분산 액션      <b id="im-cnt" class="ok">0</b></div>
