@@ -60,6 +60,8 @@ docker compose up -d
 ```
 → backend `:8765` + frontend `:5173` 즉시 기동. `.env` 자동 로드. 어떤 환경에서도 동일 검증.
 
+**발표 영상 5분 캡처 가이드**: [`docs/RECORDING_GUIDE.md`](docs/RECORDING_GUIDE.md) — 10단 시퀀스 + OBS 설정 + 한국어 멘트.
+
 **완전한 실데이터 흐름**:
 1. 백엔드: `.venv\Scripts\python.exe -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --imgsz 1280 --conf 0.18`
 2. 영상 피더: `.venv\Scripts\python.exe scripts\feed_video.py`
