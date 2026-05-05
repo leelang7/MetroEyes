@@ -624,6 +624,28 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   데이터 출처: <code>data/processed/subway_time_202602.parquet</code> · 1~9호선 일평균 승차 인원
   (<code>HR_h_GET_ON_NOPE</code> 28일 평균).
 </p>
+<div class="kpi-grid" style="margin: 14px 0;">
+  <div class="kpi" style="border-left: 3px solid #ff5e57;">
+    <div class="lbl">σ 표준편차</div>
+    <div class="val" style="color: #ff5e57;">−9.0<small>%</small></div>
+    <div style="font-size: 11px; color: var(--muted);">129,618 → 117,940</div>
+  </div>
+  <div class="kpi" style="border-left: 3px solid #f59e0b;">
+    <div class="lbl">피크 평균 감소</div>
+    <div class="val" style="color: #f59e0b;">−13.5<small>%</small></div>
+    <div style="font-size: 11px; color: var(--muted);">7,8,9 / 17,18,19시</div>
+  </div>
+  <div class="kpi" style="border-left: 3px solid #10b981;">
+    <div class="lbl">비피크 평균 증가</div>
+    <div class="val" style="color: #10b981;">+5.6<small>%</small></div>
+    <div style="font-size: 11px; color: var(--muted);">5~23시 비피크 시간대</div>
+  </div>
+  <div class="kpi" style="border-left: 3px solid #7dd3d3;">
+    <div class="lbl">피크/비피크 비율</div>
+    <div class="val" style="color: #7dd3d3;">1.78 → 1.46</div>
+    <div style="font-size: 11px; color: var(--muted);">−18% (체감 혼잡 직접 개선)</div>
+  </div>
+</div>
 <figure>
   <img src="figs/dispersion_sim.png" alt="분산 정책 효과 — 실 데이터 시간대 곡선" loading="lazy">
   <figcaption>그림 2 — 응답률 30% × 분산 가능 비율 45% 적용 시 σ <b>−9.0%</b>, 피크 평균 <b>−13.5%</b>,
@@ -697,13 +719,14 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
   </div>
   <div class="card">
-    <h3>🔌 오픈 REST API v1</h3>
+    <h3>🔌 오픈 REST API v1 + OpenAPI 3.0</h3>
     <ul style="font-size: 12px;">
       <li><code>GET /health</code> — 시스템 상태 (api/cv/incidents/msg)</li>
       <li><code>GET /api/v1/roi_curve</code> — 0~80% 81 샘플 ROI</li>
       <li><code>GET /api/v1/impact</code> — 누적 분산 임팩트</li>
       <li><code>GET /api/v1/incidents</code> — 사고 timeline</li>
       <li><code>GET /api/docs</code> — 자동 HTML 명세</li>
+      <li><code>GET /api/openapi.yaml</code> — <b>OpenAPI 3.0 spec</b> (Swagger/Redoc/Postman 임포트)</li>
       <li>모두 CORS 허용 — 외부 도구 (curl/Postman/Excel) 통합</li>
     </ul>
   </div>
