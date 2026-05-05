@@ -121,6 +121,7 @@
         <div class="stat" style="display:block;"><span style="color:#7dd3d3;">분실</span> <b id="ic-lo">0</b></div>
         <div class="stat" style="display:block;"><span style="color:#a78bfa;">무임</span> <b id="ic-fr">0</b></div>
       </div>
+      <canvas id="ic-bar" width="540" height="40" style="width:100%; height:40px; margin-top: 8px; background:#04060a; border:1px solid rgba(255,255,255,.05); border-radius:6px;"></canvas>
       <div id="ic-recent" style="margin-top: 8px; font-size: 10px; color: var(--muted);">최근 이벤트 없음</div>
     </div>
 
@@ -462,6 +463,36 @@ async function pollHealth() {
     if (ic) {
       ev('ic-em', ic.emergency); ev('ic-su', ic.suspicious);
       ev('ic-lo', ic.lost); ev('ic-fr', ic.free_ride);
+      // 비율 막대 — 4 type 누적 가로 바
+      const cv = document.getElementById('ic-bar');
+      if (cv) {
+        const ctx = cv.getContext('2d');
+        const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight;
+        ctx.clearRect(0, 0, W, H);
+        const total = (ic.emergency || 0) + (ic.suspicious || 0) + (ic.lost || 0) + (ic.free_ride || 0);
+        if (total > 0) {
+          const segs = [
+            { v: ic.emergency, c: '#ff5e57', label: '응급' },
+            { v: ic.suspicious, c: '#f0b46a', label: '이상' },
+            { v: ic.lost, c: '#7dd3d3', label: '분실' },
+            { v: ic.free_ride, c: '#a78bfa', label: '무임' },
+          ];
+          let x = 0;
+          segs.forEach(s => {
+            const w = (s.v / total) * W;
+            ctx.fillStyle = s.c; ctx.fillRect(x, 0, w, H);
+            if (w > 36) {
+              ctx.fillStyle = '#04060a'; ctx.font = '10px sans-serif';
+              ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+              ctx.fillText(`${s.label} ${s.v}`, x + w/2, H/2);
+            }
+            x += w;
+          });
+        } else {
+          ctx.fillStyle = 'rgba(255,255,255,.1)';
+          ctx.fillRect(0, 0, W, H);
+        }
+      }
       const recent = document.getElementById('ic-recent');
       if (recent && ic.recent && ic.recent.length) {
         recent.innerHTML = ic.recent.map(e => {
