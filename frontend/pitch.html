@@ -1227,15 +1227,21 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <div><a href="passenger_app/index.html">📱 시민 PWA</a> → 권장 칸 CTA 클릭 → +200원 보상 toast → onboard 누적 카드</div>
     <div style="color: var(--warn); font-weight: 700;">5.</div>
     <div><a href="admin.html">🛠 Debug Console</a> → Live Impact 카드 7 KPI + 메시지 sparkline 60초 → 백엔드 전체 가시</div>
+    <div style="color: var(--warn); font-weight: 700;">6.</div>
+    <div><a id="api-curl-link" href="" target="_blank">🔌 9 REST endpoint</a> — <code>curl http://localhost:8765/api/v1/policy_summary</code> 한 줄로 정책 4단 + EDA + 라이브 통합 JSON</div>
   </div>
 </div>
+<script>
+document.getElementById('api-curl-link').href = (location.protocol === 'https:'
+  ? `https://${location.host}` : `http://localhost:8765`) + '/api/docs';
+</script>
 
 <footer>
   ⓒ 2026 MetroEyes (SubwayBEV). 데이터: 서울 열린데이터광장 / TOPIS / data.go.kr · 모델: YOLO11n + BoT-SORT · LLM: Claude Haiku 4.5
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 본선 출품 D-8
   <br>
-  <span style="color: var(--accent);">자동 모드 100+ 사이클 누적</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
+  <span style="color: var(--accent);">자동 모드 v5.2 — 185+ 사이클 누적</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
 </footer>
 
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
