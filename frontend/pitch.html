@@ -475,12 +475,13 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
   </div>
   <div class="card">
-    <h3>🛠 시연 신뢰성 (D-day fail-safe)</h3>
+    <h3>🛠 시연 신뢰성 (D-day fail-safe 5중)</h3>
     <ul>
       <li><code>--demo</code> 모드 — CV 모델 없이도 BEV 트랙 5Hz broadcast</li>
-      <li>▶︎ 시연 인젝터 — 30초 5종 이벤트 자동 발생 (운영자/버스/광고)</li>
-      <li>4-패널 통합 시연 페이지 (운영자 + 시민 + 광고 + 실카메라)</li>
+      <li>▶︎ 시연 인젝터 — 30s 5종 이벤트 (운영자/버스/실카메라/광고) progress bar</li>
+      <li>4-패널 통합 시연 페이지 + 5분 자동 시퀀스 + sticky progress bar</li>
       <li>backend 신규 클라이언트 join 시 즉시 누적 summary 전송</li>
+      <li>admin ▶︎ 단일 클릭 — backend 만 켜져 있어도 5종 송신 가능</li>
     </ul>
   </div>
   <div class="card">
