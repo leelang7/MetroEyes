@@ -71,6 +71,19 @@ IMPACT_VALUE_PER_MIN = 167      # 혼잡 1분 당 사회적 비용 추정 (원) 
 # 운영자 콘솔에 표시할 일평균 통행 (서울교통공사 2024) — 응답률 추정 기준
 DAILY_RIDERS_BASELINE = 7_000_000
 
+# 외부 API 호출 통계 — admin /health 가 폴링
+_api_stats: dict[str, dict] = {}  # name → {calls, errors, last_ms, avg_ms, last_ts}
+
+def _api_track(name: str, started: float, error: bool = False):
+    """API 호출 시간 + 성공/실패 통계 누적."""
+    elapsed_ms = (time.time() - started) * 1000.0
+    s = _api_stats.setdefault(name, {"calls": 0, "errors": 0, "total_ms": 0.0, "last_ms": 0.0, "last_ts": 0.0})
+    s["calls"] += 1
+    if error: s["errors"] += 1
+    s["total_ms"] += elapsed_ms
+    s["last_ms"] = elapsed_ms
+    s["last_ts"] = time.time()
+
 
 # ============== HTTP helpers ==============
 
@@ -158,7 +171,9 @@ async def fetch_population(poi: str) -> dict:
     if not SEOUL_KEY:
         return {"type": "population", "poi": poi, "error": "SEOUL_OPENDATA_API_KEY 미설정"}
     url = f"http://openapi.seoul.go.kr:8088/{SEOUL_KEY}/json/citydata_ppltn/1/5/{urllib.parse.quote(poi)}"
+    _t0 = time.time()
     raw = await asyncio.get_event_loop().run_in_executor(None, http_get, url)
+    _api_track("citydata_ppltn", _t0, error=bool(raw.get("_error")))
     val = raw.get("SeoulRtd.citydata_ppltn") if isinstance(raw, dict) else None
     if isinstance(val, list):
         rows = val
@@ -190,7 +205,9 @@ async def fetch_arrival(station: str, line: int | None) -> dict:
         return {"type": "arrival", "station": station, "items": [], "simulated": True,
                 "error": "SEOUL_SUBWAY_ARRIVAL_KEY 미설정"}
     url = f"http://swopenapi.seoul.go.kr/api/subway/{SUBWAY_KEY}/json/realtimeStationArrival/0/8/{urllib.parse.quote(station)}"
+    _t0 = time.time()
     raw = await asyncio.get_event_loop().run_in_executor(None, http_get, url)
+    _api_track("realtimeStationArrival", _t0, error=bool(raw.get("_error")))
     items = []
     arr = raw.get("realtimeArrivalList") if isinstance(raw, dict) else None
     if isinstance(arr, list):
@@ -244,8 +261,12 @@ async def fetch_context_news(poi: str) -> dict:
     if cached and time.time() - cached[0] < CONTEXT_TTL:
         return cached[1]
     loop = asyncio.get_event_loop()
+    _t0 = time.time()
     news = await loop.run_in_executor(None, _naver_news, poi)
+    _api_track("naver_news", _t0, error=not news)
+    _t1 = time.time()
     summary = await loop.run_in_executor(None, _claude_summarize, news, poi)
+    _api_track("claude_summary", _t1, error=not summary)
     payload = {
         "type": "context", "poi": poi, "fetched_at": time.time(),
         "summary": summary, "news": news,
@@ -463,8 +484,19 @@ async def fake_bev_loop():
 
 
 async def http_health(path, headers):
-    """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크)."""
+    """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크) + API 호출 통계."""
     if path == "/health" or path == "/":
+        # API stats 직렬화 — avg_ms 계산
+        api = {}
+        for name, s in _api_stats.items():
+            api[name] = {
+                "calls": s["calls"],
+                "errors": s["errors"],
+                "last_ms": round(s["last_ms"], 1),
+                "avg_ms": round(s["total_ms"] / max(1, s["calls"]), 1),
+                "last_ts": s["last_ts"],
+                "error_rate": round(s["errors"] / max(1, s["calls"]), 3),
+            }
         return (200, [("content-type", "application/json")],
                 json.dumps({
                     "ok": True, "mode": "lite",
@@ -473,6 +505,8 @@ async def http_health(path, headers):
                         "naver": bool(NAVER_ID), "anthropic": bool(ANTHROPIC_KEY),
                     },
                     "clients": len(clients),
+                    "impact": _build_impact_summary() if _impact_total["count"] > 0 else None,
+                    "api": api,
                 }).encode("utf-8"))
     return None
 
