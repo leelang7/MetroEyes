@@ -212,7 +212,16 @@
     <a href="passenger_app/index.html">📱 시민 앱</a>
     <a href="admin.html">📊 디버그</a>
     <a href="demo.html" class="demo">🎬 통합 시연</a>
+    <a id="api-docs-link" href="" target="_blank" title="REST API 명세 (CORS 허용)" style="background: linear-gradient(135deg, rgba(167,139,250,.20), rgba(125,211,211,.10)); border-color: rgba(167,139,250,.55); color: #a78bfa; font-weight: 700;">🔌 API</a>
   </div>
+<script>
+// /api/docs 링크 자동 도출 (host 기반)
+(function(){
+  const apiDocsURL = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/api/docs';
+  document.getElementById('api-docs-link').href = apiDocsURL;
+})();
+</script>
 </header>
 <main>
 

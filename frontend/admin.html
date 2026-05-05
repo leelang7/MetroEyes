@@ -57,6 +57,7 @@
 <h1>
   <span class="dot"></span>MetroEyes Debug Console
   <small>WS 직접 호출 / 응답 검증 / 라이브 트래픽 / 임팩트 모니터링</small>
+  <a id="api-docs-link" href="" target="_blank" style="float: right; padding: 3px 10px; background: linear-gradient(135deg, rgba(167,139,250,.20), rgba(125,211,211,.10)); border: 1px solid rgba(167,139,250,.55); color: #a78bfa; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; letter-spacing: .3px; margin-top: 2px; margin-left: 6px;">🔌 API docs</a>
   <a href="pitch.html" style="float: right; padding: 3px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; letter-spacing: .3px; margin-top: 2px; margin-left: 6px;">📊 정책 보고</a>
   <a href="demo.html" style="float: right; padding: 3px 10px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; letter-spacing: .3px; margin-top: 2px;">🎬 통합 시연</a>
 </h1>
@@ -569,6 +570,14 @@ async function pollHealth() {
 }
 pollHealth();
 setInterval(pollHealth, 5000);
+
+// /api/docs 링크 자동 도출
+(function(){
+  const apiDocsURL = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/api/docs';
+  const el = document.getElementById('api-docs-link');
+  if (el) el.href = apiDocsURL;
+})();
 
 // 자동 host 분기
 (function () {
