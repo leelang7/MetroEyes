@@ -62,6 +62,14 @@ docker compose up -d
 
 **발표 영상 5분 캡처 가이드**: [`docs/RECORDING_GUIDE.md`](docs/RECORDING_GUIDE.md) — 10단 시퀀스 + OBS 설정 + 한국어 멘트.
 
+**발표 자료 6종**:
+- [`docs/SLIDES.html`](docs/SLIDES.html) — 한쇼 16:9 슬라이드 (PDF 출력 가능)
+- [`docs/SLIDES_DECK.md`](docs/SLIDES_DECK.md) — 슬라이드 텍스트 (한쇼 복붙용)
+- [`docs/PROPOSAL.md`](docs/PROPOSAL.md) — 1차 제안서 본문
+- [`docs/INNOVATION_TRIZ.md`](docs/INNOVATION_TRIZ.md) — TRIZ 6 모순 분석
+- [`docs/ARCHITECTURE_VIEW.html`](docs/ARCHITECTURE_VIEW.html) — 시스템 4 계층 다이어그램
+- [`docs/SUBMISSION_GUIDE.md`](docs/SUBMISSION_GUIDE.md) — 1차 접수 체크리스트
+
 **완전한 실데이터 흐름**:
 1. 백엔드: `.venv\Scripts\python.exe -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --imgsz 1280 --conf 0.18`
 2. 영상 피더: `.venv\Scripts\python.exe scripts\feed_video.py`
