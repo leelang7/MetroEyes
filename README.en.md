@@ -49,6 +49,8 @@ backend incident broadcast → citizen route avoidance notice. **5-stage two-sid
 - ✅ **A* + K-means(K=4) + Hungarian 1:1 exit matching** for emergency evacuation (cost reduction vs single-exit baseline quantified)
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman auto-import
 
+**5-min presentation video capture guide**: [`docs/RECORDING_GUIDE.md`](docs/RECORDING_GUIDE.md) — 10-stage sequence + OBS settings + Korean narration.
+
 ## Quickstart (Demo without CV model)
 
 ```bash
