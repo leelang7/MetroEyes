@@ -98,14 +98,35 @@
 </style>
 </head>
 <body>
-  <div class="brand">
+  <div class="brand" style="position: relative;">
     <h1>MetroEyes</h1>
     <div class="tag">SubwayBEV · 2026 Seoul Big Data</div>
+    <button id="lang-toggle" style="position: absolute; top: 0; right: 0; padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">🇰🇷 KO</button>
   </div>
-  <div class="lede">
+  <div class="lede" id="lede-text">
     <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의 통합 시스템<br>
     응답률 30% 가정 시 사회적 가치 <b>1,393억/년</b> · ROI <b>347x</b>
   </div>
+<script>
+const I18N_HUB = {
+  ko: {
+    lede: '<b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의 통합 시스템<br>응답률 30% 가정 시 사회적 가치 <b>1,393억/년</b> · ROI <b>347x</b>',
+    btn: '🇰🇷 KO',
+  },
+  en: {
+    lede: '<b>Subway/Bus BEV CV</b> + <b>real-time city data</b> + <b>citizen redistribution incentives</b> integrated system<br>At 30% response rate: social value <b>₩139.3B/yr</b> · ROI <b>347x</b>',
+    btn: '🇺🇸 EN',
+  },
+};
+let _curHubLang = 'ko';
+document.getElementById('lang-toggle').addEventListener('click', () => {
+  _curHubLang = _curHubLang === 'ko' ? 'en' : 'ko';
+  const t = I18N_HUB[_curHubLang];
+  document.getElementById('lede-text').innerHTML = t.lede;
+  document.getElementById('lang-toggle').textContent = t.btn;
+  document.documentElement.lang = _curHubLang;
+});
+</script>
 
   <div id="live-kpi" hidden style="margin: -10px 0 24px; padding: 10px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; display: flex; gap: 18px; flex-wrap: wrap; align-items: baseline; font-size: 12px; font-feature-settings: 'tnum';">
     <span style="color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;">🟢 라이브</span>
