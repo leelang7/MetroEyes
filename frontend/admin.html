@@ -107,6 +107,34 @@
       </div>
     </div>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border-color: rgba(167,139,250,.30);">
+      <h2>📍 OD 우선순위 (현 시각 자동 매칭)</h2>
+      <div id="od-rationale-admin" style="font-size: 11px; color: var(--muted); margin-bottom: 8px;">—</div>
+      <div id="od-list-admin" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+    </div>
+<script>
+(async function pollODAdmin() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/od_asymmetry', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.priority_stations && j.priority_stations.length > 0) {
+        document.getElementById('od-rationale-admin').textContent = j.rationale;
+        const isDep = j.priority_type === 'departure';
+        const sl = document.getElementById('od-list-admin');
+        sl.innerHTML = j.priority_stations.map(s => {
+          const ratio = isDep
+            ? (s.on / Math.max(1, s.off)).toFixed(1) + 'x ON'
+            : (s.off / Math.max(1, s.on)).toFixed(1) + 'x OFF';
+          return `<span style="padding: 4px 10px; background: ${isDep ? 'rgba(16,185,129,.18)' : 'rgba(255,94,87,.18)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.45)' : 'rgba(255,94,87,.45)'}; border-radius: 6px; font-size: 11px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station}<br><em style="opacity:.7;font-style:normal;font-size:9px;">${ratio}</em></span>`;
+        }).join('');
+      }
+    }
+  } catch {}
+  setTimeout(pollODAdmin, 60000);
+})();
+</script>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(16,185,129,.06)); border-color: rgba(125,211,211,.30);">
       <h2>📈 분산 효과 (live + 실 데이터 검증)</h2>
       <div style="font-size: 10px; color: var(--muted); letter-spacing: 1.0px; margin-bottom: 6px;">실 parquet 검증 (rate=30%)</div>
