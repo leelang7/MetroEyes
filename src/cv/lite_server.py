@@ -533,6 +533,48 @@ async def fake_impact_seed_loop():
             except Exception: pass
 
 
+async def fake_incident_seed_loop():
+    """--demo 모드 — 5분마다 무작위 incident 1건 자동 발생.
+
+    시연 중 끊임없이 사고가 발생하는 라이브 환경 시뮬.
+    """
+    import random
+    rng = random.Random(13)
+    TYPES = [
+        ("free_ride", "med", "무임 의심 — 카드 미스캔", 0.30),
+        ("lost", "low", "분실 가방 — BoT-SORT 12초+ 무인", 0.25),
+        ("emergency", "high", "응급 — 30초+ 정지 + AED 거리", 0.10),
+        ("suspicious", "high", "이상행동 — 환승 통로 군집", 0.15),
+        ("free_ride", "med", "자동 분산 안내 송출 — 만석", 0.20),
+    ]
+    while True:
+        await asyncio.sleep(300 + rng.uniform(-60, 60))   # 5분 ± 1분
+        ev_type, sev, msg, _ = rng.choice(TYPES)
+        if ev_type in _incident_total:
+            _incident_total[ev_type] += 1
+        event = {
+            "ts": time.time(),
+            "type": ev_type, "severity": sev,
+            "msg": msg + " (자동 시뮬)",
+            "source": "demo-auto",
+        }
+        _incident_total["events"].insert(0, event)
+        if len(_incident_total["events"]) > INCIDENT_KEEP:
+            _incident_total["events"] = _incident_total["events"][:INCIDENT_KEEP]
+        if clients:
+            try:
+                summary = {
+                    "type": "incident_summary",
+                    "emergency": _incident_total["emergency"],
+                    "suspicious": _incident_total["suspicious"],
+                    "lost": _incident_total["lost"],
+                    "free_ride": _incident_total["free_ride"],
+                    "events": _incident_total["events"][:8],
+                }
+                await broadcast(json.dumps(summary, ensure_ascii=False))
+            except Exception: pass
+
+
 async def fake_bev_loop():
     """시연 fail-safe — 자체 CV 모델 부재 시에도 BEV tracks broadcast.
 
@@ -677,8 +719,10 @@ async def main():
                 {"ts": now - 720, "type": "lost", "severity": "low", "msg": "분실 — 환승 통로 우산 무인", "source": "demo-seed"},
             ]
             print("[seed] 4 warm incident seeds (admin timeline 즉시 라이브)", flush=True)
+            print("[lite_server] DEMO mode — fake_incident_seed_loop 5분마다 자동 사고", flush=True)
             asyncio.create_task(fake_bev_loop())
             asyncio.create_task(fake_impact_seed_loop())
+            asyncio.create_task(fake_incident_seed_loop())
         await asyncio.Future()  # run forever
 
 
