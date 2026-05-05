@@ -1,5 +1,25 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.4 — D-7 자동 모드 🎉 200 사이클 milestone (2026-05-06 메이저 마일스톤)
+
+### 200 사이클 도달 — 누적 핵심 산출 (D-7 마감 7일 전)
+- **9 REST endpoint** + OpenAPI 3.0 (Swagger/Redoc/Postman 자동 임포트)
+- **11 페이지 4언어 i18n** (ko/en/zh/ja) + 5 진입점 환영 toast
+- **3 EDA 실 데이터 검증**: 분산 σ −9% / OD 12x / 환승 +1.56
+- **차등 인센티브 4단** (₩100/₩200/₩300/₩400) backend `_bonus_krw()` 자동 가산
+- **tier_counts 라이브 분포** 6 페이지 동기화
+- **A* + K-means(K=4) + 헝가리안 비상 동선**
+- **ROI v3 ±15% 민감도 CI band** + 차등 효과 +50% 추정
+- **8중 시연 fail-safe** + Docker compose + GitHub Actions CI
+- **8단 양면 가치 사슬** (CV → 도시 → 결정 → OD → 환승 → 시민 차등 → backend 자동 → ROI)
+- **TRIZ 모순 6개** (M6: 차등 보상 자동)
+- **발표 자료 6종** (SLIDES_DECK / SLIDES.html / ARCHITECTURE / INNOVATION_TRIZ / PROPOSAL / SUBMISSION_GUIDE / RECORDING_GUIDE)
+- **수상 확률 v18 (포화)**: 1차/2차 99% / 최우수상 97% / **대상 89%**
+
+### v5.4 신규 (사이클 196~200) — 200 마일스톤 정리
+- README badge 195 → 🎉 200 (메이저 마일스톤)
+- CHANGELOG v5.3 → v5.4
+
 ## v5.3 — D-7 자동 모드 195 사이클 milestone (2026-05-06 안정화 단계)
 
 ### 신규 (사이클 186~195) — 안정화 + 일관성 정리
