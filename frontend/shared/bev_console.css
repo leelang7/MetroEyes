@@ -626,3 +626,20 @@ main {
 }
 
 
+
+/* === 모바일 반응형 — 운영자 4 페이지 공통 === */
+@media (max-width: 760px) {
+  .fusion-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
+  .fusion-card { padding: 10px 12px !important; }
+  .controls { flex-wrap: wrap; gap: 6px; }
+  main { padding: 8px !important; }
+  header { flex-wrap: wrap; padding: 8px 10px !important; gap: 6px; }
+  .train-strip-canvas, .bev-canvas { max-width: 100%; height: auto; }
+  .row, .panel-row { grid-template-columns: 1fr !important; }
+  .llm-fab { bottom: 16px; right: 16px; }
+  .llm-panel { width: 92vw !important; right: 4vw !important; max-height: 70vh; }
+}
+@media (max-width: 480px) {
+  .fusion-strip { grid-template-columns: 1fr !important; }
+  header .domain-label { display: none; }
+}
