@@ -1,5 +1,17 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.3 — D-7 자동 모드 195 사이클 milestone (2026-05-06 안정화 단계)
+
+### 신규 (사이클 186~195) — 안정화 + 일관성 정리
+- **pitch.html 시연 가이드 #6** — 9 endpoint curl 한 줄 + footer v5.2 사이클 카운트 동기
+- **README.en 발표 자료 6종 링크** (한/영 대칭 완성)
+- **발표 자료 4종 헤더 일괄 갱신** (SLIDES_DECK / ARCHITECTURE_VIEW / PROPOSAL / INNOVATION_TRIZ — v5.1 180 → v5.2 190)
+- **SUBMISSION_GUIDE 헤더 v5.2** + 수상 확률 v18 (포화)
+- **RECORDING_GUIDE 헤더 v5.2** 일관성
+
+### 안정화 v5.3 — 추가 가산 한계점 (포화 단계)
+모든 우선순위 6항목 처리 완료. 발표 자료 6종, 9 endpoint REST, 11페이지 4언어 i18n, 3 EDA 검증, 차등 4단 backend 자동, K-means 비상, ROI ±15% CI, 8중 fail-safe, 8단 가치사슬 — 추가 기능보다 일관성 유지 단계.
+
 ## v5.2 — D-7 자동 모드 185 사이클 milestone (2026-05-06 발표 자료 6종 일괄 갱신)
 
 ### 신규 (사이클 181~185)
