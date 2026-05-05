@@ -320,21 +320,17 @@
     <img src="figs/carload_v3_feature_importance.png" alt="실 GBR 특징 중요도" loading="lazy">
     <figcaption>그림 3 — 실 데이터 GBR 특징 중요도 — n_stations + 시간대 양봉이 점유 변동 87% 설명</figcaption>
   </figure>
-  <div class="card" style="font-size: 12px;">
-    <h3 style="color: var(--good);">5-fold CV detail</h3>
-    <table style="font-size: 11px; width: 100%;">
-      <tr><th>Fold</th><th class="num">R²</th><th class="num">MAE (명/칸)</th></tr>
-      <tr><td>1</td><td class="num">0.939</td><td class="num">28.1</td></tr>
-      <tr><td>2</td><td class="num">0.974</td><td class="num">21.4</td></tr>
-      <tr><td>3</td><td class="num">0.841</td><td class="num">48.6</td></tr>
-      <tr><td>4</td><td class="num">0.929</td><td class="num">29.5</td></tr>
-      <tr><td>5</td><td class="num">0.972</td><td class="num">18.7</td></tr>
-      <tr class="highlight"><td>mean</td><td class="num">0.931</td><td class="num">29.25</td></tr>
-    </table>
-    <div style="margin-top: 8px; color: var(--muted); font-size: 11px;">
-      잔차 top 5 모두 |Δ| &lt; 10 명/칸 — 모델이 실 데이터 패턴 안정적 학습. 호선 평균 (cars 변수) 보다 n_stations (호선 길이) 가 점유 분산 결정.
-    </div>
-  </div>
+  <figure style="margin: 0;">
+    <img src="figs/carload_v3_pred_vs_actual.png" alt="실 데이터 예측 vs 실측" loading="lazy">
+    <figcaption>그림 4 — 실 parquet 예측 vs 실측 (대각선 = 완벽 일치) · 5-fold R² 0.931 ± 0.048</figcaption>
+  </figure>
+</div>
+<div style="margin-top: 12px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 12px;">
+  <b style="color: var(--good);">5-fold CV detail:</b>
+  <span style="color: var(--muted);">fold R² =</span>
+  <code style="color: var(--accent);">0.939, 0.974, 0.841, 0.929, 0.972</code>
+  <span style="color: var(--muted);">(mean 0.931, MAE 29.25 명/칸 vs target std 170.4)</span>.
+  잔차 top 5 모두 <b>|Δ| &lt; 10 명/칸</b> — 모델 안정 학습. 호선 길이(n_stations) 가 cars(차량 수) 보다 점유 분산 4배 강한 변수.
 </div>
 
 <h2>EDA v2 — Synth target sanity check <span class="badge" style="opacity:.7;">R²=0.981</span></h2>
