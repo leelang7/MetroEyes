@@ -4,7 +4,7 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/Social_Value-%E2%82%A9139.3B%2Fyr-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/Auto_Cycles-110-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/Auto_Cycles-125-a78bfa.svg)](CHANGELOG.md)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"As Tesla sees the road as BEV, MetroEyes sees the entire urban transit network."*
@@ -28,16 +28,17 @@
 A single citizen action (₩200 reward) → backend krw accumulation → operator console live ROI x →
 backend incident broadcast → citizen route avoidance notice. **5-stage two-sided closed loop**.
 
-## 90+ Auto Cycles Accumulated (D-8, 2026-05-13 deadline)
+## 125 Auto Cycles Accumulated (D-7, 2026-05-13 deadline)
 
 - ✅ **Two-sided value chain 5 stages** (citizen → backend → operator → backend → citizen)
-- ✅ **Demo fail-safe 6 layers**: `--demo` + 30s injector + 5min sticky bar + backend join summary + admin click + warm seed
-- ✅ **4 languages** (ko/en/zh/ja) + Web Speech API + ARIA accessibility
+- ✅ **Demo fail-safe 8 layers**: `--demo` + 30s injector + 5min sticky bar + backend join summary + admin click + warm seed + Docker compose + GitHub Actions CI
+- ✅ **4 languages** (ko/en/zh/ja) **11-page parity** (4 operator + 2 citizen + 5 meta) + Web Speech + ARIA
 - ✅ **Mobile responsive** (4 operator + ads + citizen PWA) + safe-area-inset
-- ✅ **EDA v3** real CardSubwayTime parquet GBR R²=0.931 + ROI interactive slider + curve graph
-- ✅ **10 pages integrated** (index/demo/pitch/admin + operator 4 + PWA 2)
-- ✅ **PDF print-friendly** pitch.html + FAQ 5 + Global comparison (London/Tokyo/Singapore)
-- ✅ **6 pages live KPI** unified (impact/sparkline/hotspot chip)
+- ✅ **EDA v3** GBR R²=0.931 + **Dispersion EDA** (σ −9% / peak −13.5% / off-peak +5.6% verified on real data)
+- ✅ **11 pages integrated** + ROI interactive slider + **±15% sensitivity CI band**
+- ✅ **PDF print-friendly** pitch.html + FAQ 5 + Global comparison + dispersion 4-KPI cards
+- ✅ **A* + K-means(K=4) + Hungarian 1:1 exit matching** for emergency evacuation (cost reduction vs single-exit baseline quantified)
+- ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman auto-import
 
 ## Quickstart (Demo without CV model)
 

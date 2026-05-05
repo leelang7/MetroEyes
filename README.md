@@ -4,7 +4,7 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-110회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-125회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
@@ -22,14 +22,16 @@
 
 **진입**: [`frontend/index.html`](frontend/index.html) — 8장 카드 허브 (📊 정책 보고 / 🎬 통합 시연 / 🚇 운영자 / 📱 시민 / 🛠 디버그)
 
-**자동 60 사이클 누적 결과** (D-8, 5/13 마감):
+**자동 125 사이클 누적 결과** (D-7, 5/13 마감):
 - ✅ 양면 가치 사슬 5단계 (시민 분산 → backend krw → 운영자 ROI → backend incident → 시민 알림)
-- ✅ 시연 fail-safe **6중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭 + fake impact seed (양봉 시뮬 자동 누적)
-- ✅ 다국어 4개 (ko/en/zh/ja) + Web Speech API 음성 안내 + ARIA 접근성
+- ✅ 시연 fail-safe **8중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭 + fake impact seed + Docker compose + GitHub Actions CI
+- ✅ 다국어 4개 (ko/en/zh/ja) **11 페이지 패리티** (운영자 4 + 시민 2 + 메타 5) + Web Speech + ARIA
 - ✅ 모바일 반응형 (운영자 4 + 광고 + 시민 PWA) + safe-area-inset
-- ✅ EDA v3 실 parquet GBR R²=0.931 + ROI 인터랙티브 슬라이더 + 곡선 그래프
-- ✅ 10 페이지 통합 (index/demo/pitch/admin + 운영자 4 + PWA 2)
-- ✅ pitch.html PDF 인쇄 친화 (📄 버튼) + FAQ 5개 + 글로벌 비교 (런던/도쿄/싱가포르)
+- ✅ EDA v3 실 parquet GBR R²=0.931 + **분산 효과 EDA** (σ −9% / 피크 −13.5% / 비피크 +5.6% 실 데이터 검증)
+- ✅ 11 페이지 통합 + ROI 인터랙티브 슬라이더 + **±15% 민감도 CI band**
+- ✅ pitch.html PDF 인쇄 친화 + FAQ 5개 + 글로벌 비교 + 분산 효과 4-KPI
+- ✅ **비상 동선 K-means(K=4) + 헝가리안 1:1 출구 매칭** (단일 출구 baseline 대비 cost 절감 정량화)
+- ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman 자동 임포트
 
 ---
 

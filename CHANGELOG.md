@@ -1,5 +1,20 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v4.2 — D-7 자동 모드 125 사이클 (2026-05-06)
+
+### 신규 (사이클 111~125)
+- **i18n 4언어 11 페이지 패리티** — 운영자 4 + 시민 2 + 메타 5 (pitch/index/demo/admin/op-subway/op-bus/op-realcam/op-ad + PWA index/onboard)
+- **K-means(K=4) + 헝가리안 1:1 출구 매칭** — A* 단일 best 출구 추천 → 4그룹 분산 최적화 (단일 출구 baseline 대비 cost 절감 정량화)
+- **ROI v3 ±15% 민감도 CI band** — 보수/기본/낙관 3 시나리오 동시 표시, 인센티브 비용 제외 통근/안전/광고 변동
+- **분산 정책 EDA 실 데이터 검증** — `subway_time_202602.parquet` 1~9호선 28일 평균 위에 30%×45% 분산 시뮬:
+  - σ 표준편차 129,618 → 117,940 (**−9.0%**)
+  - 피크 평균(7~9, 17~19시) **−13.5%**
+  - 비피크 평균 **+5.6%**
+  - 피크/비피크 비율 1.78 → 1.46 (**−18%**)
+- **OpenAPI 3.0 spec** (`docs/openapi.yaml` + `/api/openapi.yaml` endpoint) — Swagger/Redoc/Postman 자동 임포트
+- **Matplotlib Malgun Gothic 자동 적용** — 한글 폰트 fallback 체인 (Windows/macOS/Linux)
+- **pitch.html 분산 효과 4-KPI 카드** + 그림 2,3 (호선별 9패널) 추가
+
 ## v4.0 — D-8 자동 모드 60 사이클 (2026-05-05)
 
 ### 양면 가치 사슬 5단계 클로즈드 루프
