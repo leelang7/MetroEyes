@@ -4,7 +4,7 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/Social_Value-%E2%82%A9139.3B%2Fyr-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/Auto_Cycles-210-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/Auto_Cycles-215-a78bfa.svg)](CHANGELOG.md)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"As Tesla sees the road as BEV, MetroEyes sees the entire urban transit network."*
