@@ -492,12 +492,17 @@ async def fake_impact_seed_loop():
     """
     import random
     rng = random.Random(7)
-    STATIONS = ["성수카페거리", "강남역", "잠실역", "서울숲", "홍대 관광특구"]
+    STATIONS = [
+        "성수카페거리", "강남역", "홍대 관광특구",  # hot
+        "잠실역", "서울숲", "건대입구역", "서울역",  # medium
+        "신촌·이대역", "광화문·덕수궁", "여의도", "남산공원", "뚝섬한강공원",  # low
+    ]
+    STATION_WEIGHTS = [3.5, 3.0, 2.8, 1.8, 1.5, 1.2, 1.5, 1.0, 1.0, 0.8, 0.6, 0.7]
     # Warm seed — 시작 즉시 12건 누적 + hourly 분포 양봉 형태 (지난 24h 시뮬)
     for _ in range(12):
         sv = rng.choices([7, 12, 22, 35, 5], weights=[0.25, 0.30, 0.25, 0.10, 0.10])[0]
         krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
-        st = rng.choice(STATIONS)
+        st = rng.choices(STATIONS, weights=STATION_WEIGHTS)[0]
         h_seed = rng.choices(list(range(24)),
                              weights=[0.5, 0.3, 0.2, 0.2, 0.3, 0.8, 1.5, 4.0, 7.0, 4.5, 2.5, 2.0,
                                       2.5, 2.5, 2.5, 2.5, 3.0, 5.0, 7.0, 4.5, 2.5, 2.0, 1.0, 0.6])[0]
@@ -520,7 +525,7 @@ async def fake_impact_seed_loop():
         # 분산률 차등
         sv = rng.choices([7, 12, 22, 35, 5], weights=[0.25, 0.30, 0.25, 0.10, 0.10])[0]
         krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
-        st = rng.choice(STATIONS)
+        st = rng.choices(STATIONS, weights=STATION_WEIGHTS)[0]
         # 누적
         _impact_total["count"] += 1
         _impact_total["saved_pct_sum"] += sv
