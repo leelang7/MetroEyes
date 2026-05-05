@@ -2092,6 +2092,74 @@ function drawPathOverlay(paths, exits, best, worst) {
   ctx.fillText('클릭으로 닫기', W - 80, 22);
 }
 
+// K-means(K=4) 군중 분할 — 한 출구로 몰리지 않게 4그룹으로 사전 분산
+function kmeans4(persons, iters = 12) {
+  if (persons.length < 4) {
+    return persons.map((p, i) => ({ x: p.bev_x, y: p.bev_y, members: [p], gid: i }));
+  }
+  // init: 4사분면 자기 자리 (편향 회피)
+  let centers = [
+    { x: 0.25, y: 0.25 }, { x: 0.75, y: 0.25 },
+    { x: 0.25, y: 0.75 }, { x: 0.75, y: 0.75 },
+  ];
+  let assign = new Array(persons.length).fill(0);
+  for (let it = 0; it < iters; it++) {
+    // assign
+    for (let i = 0; i < persons.length; i++) {
+      let bk = -1, bd = Infinity;
+      for (let k = 0; k < 4; k++) {
+        const d = (persons[i].bev_x - centers[k].x) ** 2 + (persons[i].bev_y - centers[k].y) ** 2;
+        if (d < bd) { bd = d; bk = k; }
+      }
+      assign[i] = bk;
+    }
+    // update
+    const sums = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];   // sx,sy,n
+    for (let i = 0; i < persons.length; i++) {
+      const k = assign[i];
+      sums[k][0] += persons[i].bev_x; sums[k][1] += persons[i].bev_y; sums[k][2] += 1;
+    }
+    for (let k = 0; k < 4; k++) {
+      if (sums[k][2] > 0) {
+        centers[k] = { x: sums[k][0] / sums[k][2], y: sums[k][1] / sums[k][2] };
+      }
+    }
+  }
+  const groups = [];
+  for (let k = 0; k < 4; k++) {
+    const members = persons.filter((_, i) => assign[i] === k);
+    if (members.length > 0) groups.push({ ...centers[k], members, gid: k });
+  }
+  return groups;
+}
+
+// 헝가리안 1:1 매칭 (4×4) — 그룹 → 출구 비용 최소
+function assign1to1(groups, exits, costMatrix) {
+  // 4! = 24 순열 brute force
+  const perms = [];
+  const ids = exits.map((_, i) => i);
+  const permute = (arr, start = 0) => {
+    if (start === arr.length - 1) { perms.push([...arr]); return; }
+    for (let i = start; i < arr.length; i++) {
+      [arr[start], arr[i]] = [arr[i], arr[start]];
+      permute(arr, start + 1);
+      [arr[start], arr[i]] = [arr[i], arr[start]];
+    }
+  };
+  permute(ids);
+  let best = null, bestSum = Infinity;
+  for (const p of perms) {
+    let s = 0;
+    for (let g = 0; g < groups.length; g++) {
+      const c = costMatrix[g][p[g]];
+      if (c == null || c === Infinity) { s = Infinity; break; }
+      s += c * groups[g].members.length;   // 인원수 가중
+    }
+    if (s < bestSum) { bestSum = s; best = p; }
+  }
+  return best;
+}
+
 document.getElementById('evac-btn').addEventListener('click', () => {
   const persons = _lastTracksForEvac;
   const result = document.getElementById('evac-result');
@@ -2106,39 +2174,76 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     { id: 'SW', label: '남서 출구', tx: 0.10, ty: 0.90 },
     { id: 'SE', label: '남동 출구', tx: 0.90, ty: 0.90 },
   ];
-  // 군중 중심점 = 평균 위치 (사람들이 출발)
-  const cx = persons.reduce((s,p) => s + p.bev_x, 0) / persons.length;
-  const cy = persons.reduce((s,p) => s + p.bev_y, 0) / persons.length;
-  const sx = Math.max(0, Math.min(GRID_N-1, Math.floor(cx * GRID_N)));
-  const sy = Math.max(0, Math.min(GRID_N-1, Math.floor(cy * GRID_N)));
 
-  const paths = {};
-  let best = null, worst = null;
-  for (const ex of exits) {
-    const ex_gx = Math.floor(ex.tx * GRID_N);
-    const ex_gy = Math.floor(ex.ty * GRID_N);
-    const r = aStar(cost, sx, sy, ex_gx, ex_gy);
-    paths[ex.id] = r;
-    if (r) {
-      if (!best || r.cost < paths[best.id].cost) best = ex;
-      if (!worst || r.cost > paths[worst.id].cost) worst = ex;
+  // K-means 4그룹 분할
+  const groups = kmeans4(persons);
+
+  // costMatrix[group][exit]
+  const cm = [];
+  const pathCache = {};
+  for (let g = 0; g < groups.length; g++) {
+    cm.push([]);
+    const sx = Math.max(0, Math.min(GRID_N-1, Math.floor(groups[g].x * GRID_N)));
+    const sy = Math.max(0, Math.min(GRID_N-1, Math.floor(groups[g].y * GRID_N)));
+    for (let e = 0; e < exits.length; e++) {
+      const ex_gx = Math.floor(exits[e].tx * GRID_N);
+      const ex_gy = Math.floor(exits[e].ty * GRID_N);
+      const r = aStar(cost, sx, sy, ex_gx, ex_gy);
+      cm[g].push(r ? r.cost : Infinity);
+      pathCache[`${g}_${e}`] = r;
     }
   }
-  if (!best) {
+
+  const matching = assign1to1(groups, exits, cm);
+  if (!matching) {
     result.innerHTML = `<span style="color:#ff5e57">⚠ 경로 없음 — 그리드 차단</span>`;
     return;
   }
-  const savePct = (((paths[worst.id].cost - paths[best.id].cost) / paths[worst.id].cost) * 100).toFixed(0);
+
+  // 분산된 결과 → paths(출구별), 그룹별 best 매핑
+  const paths = {};
+  const groupExit = {};   // gid → exit
+  let totalDispCost = 0, baselineCost = 0;
+  for (let g = 0; g < groups.length; g++) {
+    const eIdx = matching[g];
+    const ex = exits[eIdx];
+    paths[ex.id] = pathCache[`${g}_${eIdx}`];
+    groupExit[groups[g].gid] = { exit: ex, members: groups[g].members.length, cost: cm[g][eIdx] };
+    totalDispCost += cm[g][eIdx] * groups[g].members.length;
+    // baseline = 만약 모두 가장 가까운 best 1개 출구로 갔다면
+    let bMin = Infinity;
+    for (let e = 0; e < exits.length; e++) bMin = Math.min(bMin, cm[g][e]);
+    baselineCost += bMin * groups[g].members.length;
+  }
+  // single-exit baseline: 모두 한 출구로 → 출구당 cost × 인원
+  let singleExitCost = Infinity;
+  for (let e = 0; e < exits.length; e++) {
+    let s = 0;
+    for (let g = 0; g < groups.length; g++) s += cm[g][e] * groups[g].members.length;
+    if (s < singleExitCost) singleExitCost = s;
+  }
+  const distributedSavePct = singleExitCost > 0
+    ? (((singleExitCost - totalDispCost) / singleExitCost) * 100).toFixed(0)
+    : 0;
+
+  // best/worst — 분산 매칭에서 cost min/max
+  const sortedGroups = Object.values(groupExit).sort((a, b) => a.cost - b.cost);
+  const best = sortedGroups[0].exit;
+  const worst = sortedGroups[sortedGroups.length - 1].exit;
+
+  const summary = sortedGroups
+    .map(ge => `${ge.exit.label.replace(' 출구', '')} ${ge.members}명`)
+    .join(' · ');
+
   result.innerHTML = `
-    <span style="color:#7dd3d3; font-weight:600;">▶ ${best.label}</span>
-    <span style="color:#fff;"> (cost ${paths[best.id].cost.toFixed(1)}, ${persons.length}명)</span>
+    <span style="color:#7dd3d3; font-weight:600;">▶ 4-출구 분산</span>
+    <span style="color:#fff; font-size:11px;">${summary}</span>
     &nbsp;|&nbsp;
-    <span style="color:#ff5e57">▼ ${worst.label} 회피</span>
-    <span style="color:var(--muted)">(cost ${paths[worst.id].cost.toFixed(1)}, ${savePct}% 절감)</span>
-    &nbsp;|&nbsp;<span style="color:#f0b46a">A* 그리드 ${GRID_N}x${GRID_N}</span>
+    <span style="color:#10b981">vs 단일 출구 ${distributedSavePct}% 절감</span>
+    &nbsp;|&nbsp;<span style="color:#f0b46a">A*+K-means ${GRID_N}×${GRID_N}</span>
   `;
   drawPathOverlay(paths, exits, best, worst);
-  diagEl.append(`[EVAC A*] ${best.label} cost=${paths[best.id].cost.toFixed(1)} / ${worst.label} cost=${paths[worst.id].cost.toFixed(1)} / ${persons.length}명\n`);
+  diagEl.append(`[EVAC A*+K-means] ${summary} / 분산 cost=${totalDispCost.toFixed(1)} / 단일출구 ${singleExitCost.toFixed(1)} / 절감 ${distributedSavePct}%\n`);
 });
 </script>
 
