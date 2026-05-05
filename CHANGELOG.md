@@ -1,5 +1,15 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v4.7 — D-7 자동 모드 160 사이클 milestone (2026-05-06 후속 V)
+
+### 신규 (사이클 156~160) — 차등 보상 운영자 패리티 + 통합 가이드
+- **운영자 4 페이지 tier 분포 chip 통일** — 지하철/버스/실카메라/광고 모두 헤더 (basic/od/transfer 8s 폴링)
+- **OpenAPI ImpactSummary tier_counts schema** — 외부 도구 자동 임포트 가능
+- **pitch.html 차등 효과 +50% 추정 박스** — 정책 강화 효과 정량 표현
+- **mobile_app README 8 endpoint + 차등 보상 정책** — Flutter ↔ backend 통합 가이드 완성
+- **운영자 4 페이지 헤더 통합**: 분산 효과 (σ/피크) + tier 분포 (basic/od/transfer) 동시 표시
+- **차등 보상 5 페이지 동기화**: admin / pitch / op-subway / op-bus / op-realcam / op-ad
+
 ## v4.6 — D-7 자동 모드 155 사이클 (2026-05-06 후속 IV)
 
 ### 신규 (사이클 151~155) — 차등 보상 정책 backend 통합
