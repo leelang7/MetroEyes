@@ -34,6 +34,28 @@
     <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
     <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
     <button id="demo-trigger" title="시연 시나리오 30초 자동 재생" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
+    <span id="bus-live-kpi" hidden class="tag" style="margin-left: 8px; background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.45);">
+      <span style="color: #10b981; font-weight: 700; font-size: 9px; letter-spacing: 1.2px;">🟢 LIVE</span>
+      <b id="bus-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 9px; color: var(--muted);">분산</em>
+      <b id="bus-kpi-roi" style="margin-left: 6px;">—</b><em style="font-size: 9px; color: var(--muted);">x ROI</em>
+    </span>
+<script>
+(async function pollBusKPI() {
+  const url = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    const j = await r.json();
+    const im = j.impact;
+    if (im && im.total_count > 0) {
+      document.getElementById('bus-kpi-cnt').textContent = im.total_count.toLocaleString();
+      document.getElementById('bus-kpi-roi').textContent = im.roi_x ? Math.round(im.roi_x) : '—';
+      document.getElementById('bus-live-kpi').hidden = false;
+    }
+  } catch {}
+  setTimeout(pollBusKPI, 8000);
+})();
+</script>
   </div>
   <div class="controls">
     <span class="tag gps-tag" id="gps-tag" title="GPS 자동 매칭 + 클릭 시 다른 정류장 선택">
