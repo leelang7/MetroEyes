@@ -1200,6 +1200,40 @@ const LIVE = (() => {
   if (modalBg) modalBg.addEventListener('click', closeModal);
   const search = document.getElementById('modal-search');
   if (search) search.addEventListener('input', e => renderModalList(e.target.value));
+
+  // ESC/↑↓/Enter 키보드 단축키 (데스크톱 시연 용)
+  document.addEventListener('keydown', e => {
+    const m = document.getElementById('station-modal');
+    if (!m || m.hidden) return;
+    if (e.key === 'Escape') { closeModal(); e.preventDefault(); return; }
+    const list = document.querySelector('#station-modal .station-list');
+    if (!list) return;
+    const rows = Array.from(list.querySelectorAll('.station-row'));
+    if (!rows.length) return;
+    const cur = rows.findIndex(r => r.classList.contains('kbd-focus'));
+    if (e.key === 'ArrowDown') {
+      rows.forEach(r => r.classList.remove('kbd-focus'));
+      const next = (cur + 1) % rows.length;
+      rows[next].classList.add('kbd-focus'); rows[next].scrollIntoView({ block: 'nearest' });
+      e.preventDefault();
+    } else if (e.key === 'ArrowUp') {
+      rows.forEach(r => r.classList.remove('kbd-focus'));
+      const prev = (cur - 1 + rows.length) % rows.length;
+      rows[prev].classList.add('kbd-focus'); rows[prev].scrollIntoView({ block: 'nearest' });
+      e.preventDefault();
+    } else if (e.key === 'Enter' && document.activeElement !== search) {
+      const focused = list.querySelector('.station-row.kbd-focus');
+      if (focused) focused.click();
+      e.preventDefault();
+    }
+  });
+  // 스타일 동적 주입
+  (function () {
+    if (document.getElementById('pwa-kbd-style')) return;
+    const s = document.createElement('style'); s.id = 'pwa-kbd-style';
+    s.textContent = '.station-row.kbd-focus { background: rgba(125,211,211,.18) !important; outline: 1px solid var(--accent); outline-offset: -1px; }';
+    document.head.appendChild(s);
+  })();
   const gpsBtn = document.getElementById('modal-gps');
   if (gpsBtn) gpsBtn.addEventListener('click', () => {
     closeModal();
