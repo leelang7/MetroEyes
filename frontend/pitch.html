@@ -611,6 +611,17 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
   </div>
   <div class="card">
+    <h3>🔌 오픈 REST API v1</h3>
+    <ul style="font-size: 12px;">
+      <li><code>GET /health</code> — 시스템 상태 (api/cv/incidents/msg)</li>
+      <li><code>GET /api/v1/roi_curve</code> — 0~80% 81 샘플 ROI</li>
+      <li><code>GET /api/v1/impact</code> — 누적 분산 임팩트</li>
+      <li><code>GET /api/v1/incidents</code> — 사고 timeline</li>
+      <li><code>GET /api/docs</code> — 자동 HTML 명세</li>
+      <li>모두 CORS 허용 — 외부 도구 (curl/Postman/Excel) 통합</li>
+    </ul>
+  </div>
+  <div class="card">
     <h3>🔗 양면 가치 사슬</h3>
     <ul>
       <li>시민 분산 → backend krw 누적 → 운영자 콘솔 정책 비용 + ROIx 라이브</li>
