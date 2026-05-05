@@ -994,6 +994,16 @@ if (SR) {
     const labels = { emergency: '응급', suspicious: '이상행동', lost: '분실물', free_ride: '무임 의심' };
     const lbl = labels[ev.type] || ev.type;
     if (ev.severity === 'high') maybeAlertBanner(`${lbl} — ${ev.msg}`, 'crit');
+    // backend 동기화 — 다른 탭/페이지에 broadcast
+    try {
+      if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
+        window.LIVE_WS.send(JSON.stringify({
+          type: 'incident_log',
+          ev_type: ev.type, severity: ev.severity, msg: ev.msg,
+          source: 'operator-subway-demo',
+        }));
+      }
+    } catch {}
   }
   document.getElementById('demo-trigger')?.addEventListener('click', () => {
     const btn = document.getElementById('demo-trigger');

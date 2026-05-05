@@ -218,6 +218,15 @@ const sim = BEVEngine.createSim({
     if (incidentsLog.length > 30) incidentsLog.length = 30;
     SF.pushToast(toastStack, ev);
     renderIncidents();
+    try {
+      if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
+        window.LIVE_WS.send(JSON.stringify({
+          type: 'incident_log',
+          ev_type: ev.type, severity: ev.severity, msg: ev.msg,
+          source: 'operator-bus',
+        }));
+      }
+    } catch {}
   },
 });
 
@@ -467,6 +476,15 @@ function injectIncidentBus(ev) {
   if (incidentsLog.length > 30) incidentsLog.length = 30;
   if (window.SafetyFeatures && SF.pushToast) SF.pushToast(toastStack, ev);
   renderIncidents();
+  try {
+    if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
+      window.LIVE_WS.send(JSON.stringify({
+        type: 'incident_log',
+        ev_type: ev.type, severity: ev.severity, msg: ev.msg,
+        source: 'operator-bus-demo',
+      }));
+    }
+  } catch {}
 }
 document.getElementById('demo-trigger')?.addEventListener('click', () => {
   const btn = document.getElementById('demo-trigger');
@@ -826,6 +844,7 @@ if (SR) {
   function connect() {
     try { if (ws) ws.close(); } catch {}
     ws = new WebSocket(wsUrl);
+    window.LIVE_WS = ws;
     ws.onopen = () => {
       queryPop(); queryCitydata();
       popT = setInterval(queryPop, 60000);

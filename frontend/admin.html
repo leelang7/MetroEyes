@@ -93,6 +93,17 @@
       <div class="stat">응답률 추정     <b id="im-rate">—%</b></div>
     </div>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(239,68,68,.08), rgba(245,158,11,.04));">
+      <h2>🚨 사고 누적 <span style="color: var(--muted); font-weight: 400;">(incident_log 동기화)</span></h2>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 11px;">
+        <div class="stat" style="display:block;"><span style="color:#ff5e57;">응급</span> <b id="ic-em">0</b></div>
+        <div class="stat" style="display:block;"><span style="color:#f0b46a;">이상</span> <b id="ic-su">0</b></div>
+        <div class="stat" style="display:block;"><span style="color:#7dd3d3;">분실</span> <b id="ic-lo">0</b></div>
+        <div class="stat" style="display:block;"><span style="color:#a78bfa;">무임</span> <b id="ic-fr">0</b></div>
+      </div>
+      <div id="ic-recent" style="margin-top: 8px; font-size: 10px; color: var(--muted);">최근 이벤트 없음</div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(239,68,68,.06), rgba(125,211,211,.04));">
       <h2>📷 CV 메트릭 <span style="color: var(--muted); font-weight: 400;">(BEV broadcast)</span></h2>
       <div class="stat">FPS         <b id="cv-fps" class="ok">—</b></div>
@@ -343,6 +354,23 @@ async function pollHealth() {
       .replace(/^wss:\/\//, 'https://').replace(/^ws:\/\//, 'http://') + '/health';
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();
+    // 사고 누적 갱신
+    const ic = j.incidents;
+    const ev = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    if (ic) {
+      ev('ic-em', ic.emergency); ev('ic-su', ic.suspicious);
+      ev('ic-lo', ic.lost); ev('ic-fr', ic.free_ride);
+      const recent = document.getElementById('ic-recent');
+      if (recent && ic.recent && ic.recent.length) {
+        recent.innerHTML = ic.recent.map(e => {
+          const ago = Math.round(Date.now()/1000 - e.ts);
+          const labels = { emergency:'🚨응급', suspicious:'⚠️이상', lost:'🎒분실', free_ride:'💳무임' };
+          return `<div style="padding: 2px 0;">${labels[e.type]||e.type} <span style="color:#fff;">${e.msg}</span> <span style="color:var(--muted-2); font-size:9px;">${e.source} · ${ago}s ago</span></div>`;
+        }).join('');
+      }
+    } else {
+      ['ic-em','ic-su','ic-lo','ic-fr'].forEach(id => ev(id, '0'));
+    }
     // CV 메트릭 갱신
     const cv = j.cv;
     const fmtCV = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
