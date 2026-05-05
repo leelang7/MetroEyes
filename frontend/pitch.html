@@ -206,6 +206,7 @@
 <body>
 <header>
   <div class="brand">MetroEyes 정책 보고<small>분산 운임 인센티브 — ROI v3 정량 분석</small></div>
+  <button id="lang-toggle" style="padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;" title="언어 토글 (Korean / English)">🇰🇷 KO</button>
   <div class="nav">
     <a href="operator_web/index.html">🚇 운영자</a>
     <a href="passenger_app/index.html">📱 시민 앱</a>
@@ -295,8 +296,8 @@
 })();
 </script>
 
-<h1>시민 분산 한 번에 <span class="accent">+200원</span>, 사회적 가치 <span class="accent">1,393억/년</span></h1>
-<p class="lede">
+<h1 id="hero-h1">시민 분산 한 번에 <span class="accent">+200원</span>, 사회적 가치 <span class="accent">1,393억/년</span></h1>
+<p class="lede" id="hero-lede">
   MetroEyes (코드명 SubwayBEV) 는 <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의
   3-축 통합 시스템입니다. 본 보고서는 <b>정책 ROI v3</b> 모델 (호선 9개 × 시간 24시간 매트릭스) 을 통한
   분산 운임 정책의 정량 효과 분석을 제공합니다.
@@ -304,6 +305,29 @@
   <span class="badge">자체 CV BEV</span>
   <span class="badge">양면 클로즈드 루프</span>
 </p>
+<script>
+const I18N_PITCH = {
+  ko: {
+    h1: '시민 분산 한 번에 <span class="accent">+200원</span>, 사회적 가치 <span class="accent">1,393억/년</span>',
+    lede: 'MetroEyes (코드명 SubwayBEV) 는 <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의 3-축 통합 시스템입니다. 본 보고서는 <b>정책 ROI v3</b> 모델 (호선 9개 × 시간 24시간 매트릭스) 을 통한 분산 운임 정책의 정량 효과 분석을 제공합니다.<br><span class="badge">실데이터 9개 API</span><span class="badge">자체 CV BEV</span><span class="badge">양면 클로즈드 루프</span>',
+    btn: '🇰🇷 KO',
+  },
+  en: {
+    h1: 'One citizen action <span class="accent">+₩200</span>, Social value <span class="accent">₩139.3B/yr</span>',
+    lede: 'MetroEyes (codename SubwayBEV) is a 3-axis integrated system: <b>subway/bus BEV CV</b> + <b>real-time city data</b> + <b>citizen redistribution incentives</b>. This report presents quantitative analysis of distributed-fare policy via the <b>ROI v3</b> model (9 lines × 24 hours matrix).<br><span class="badge">9 public APIs</span><span class="badge">In-house CV BEV</span><span class="badge">Two-sided closed loop</span>',
+    btn: '🇺🇸 EN',
+  },
+};
+let _curLang = 'ko';
+document.getElementById('lang-toggle').addEventListener('click', () => {
+  _curLang = _curLang === 'ko' ? 'en' : 'ko';
+  const t = I18N_PITCH[_curLang];
+  document.getElementById('hero-h1').innerHTML = t.h1;
+  document.getElementById('hero-lede').innerHTML = t.lede;
+  document.getElementById('lang-toggle').textContent = t.btn;
+  document.documentElement.lang = _curLang;
+});
+</script>
 
 <h2>핵심 KPI <span style="font-size: 11px; color: var(--muted); font-weight: 500;">— 응답률 슬라이더로 라이브 갱신</span></h2>
 
