@@ -526,7 +526,8 @@ function renderRewardSummary(my) {
 // 페이지 진입 시 1회 누적 표시
 window.addEventListener('DOMContentLoaded', () => renderRewardSummary());
 
-// backend 사고 알림 — 인근 응급/이상 시 시민에게 우회 안내
+// backend 사고 알림 — 인근 응급/이상 시 시민에게 우회 안내 + 음성
+let _lastIncidentSpoken = 0;
 function applyIncidentNotice(j) {
   const el = document.getElementById('incident-notice');
   const txt = document.getElementById('incident-notice-text');
@@ -551,6 +552,25 @@ function applyIncidentNotice(j) {
   const lbl = lblObj[lang] || lblObj.ko || top.type;
   txt.innerHTML = `<b>${lbl}</b> — ${top.msg || '대응 중'}<br><span style="font-size: 10px; color: var(--muted);">우회 경로 또는 다음 차 권고 · ${top.source}</span>`;
   el.hidden = false;
+  // 음성 안내 — 응급/이상 + 5분 throttle
+  const isHigh = top.severity === 'high' || top.type === 'emergency' || top.type === 'suspicious';
+  if (isHigh && now * 1000 - _lastIncidentSpoken > 5 * 60 * 1000) {
+    _lastIncidentSpoken = now * 1000;
+    try {
+      if ('speechSynthesis' in window) {
+        const utterMap = {
+          ko: `인근 ${lbl} 발생. 우회 경로 또는 다음 차를 권고합니다.`,
+          en: `${lbl} nearby. Consider an alternative route or the next train.`,
+          zh: `附近发生${lbl}。建议绕道或乘下一班车。`,
+          ja: `近隣で${lbl}発生。迂回経路または次の電車を推奨します。`,
+        };
+        const u = new SpeechSynthesisUtterance(utterMap[lang] || utterMap.ko);
+        u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR';
+        u.volume = 0.7; u.rate = 1.0;
+        window.speechSynthesis.speak(u);
+      }
+    } catch {}
+  }
   // 5분 후 자동 hide
   clearTimeout(el._t);
   el._t = setTimeout(() => { el.hidden = true; }, 5 * 60 * 1000);
