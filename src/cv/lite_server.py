@@ -77,6 +77,10 @@ _api_stats: dict[str, dict] = {}  # name → {calls, errors, last_ms, avg_ms, la
 # CV 메트릭 — fake_bev_loop / 실 CV 둘 다 갱신
 _cv_metrics: dict = {"fps": 0.0, "tracks": 0, "frames": 0, "last_ts": 0.0, "demo": False}
 
+# 사고/이벤트 누적 — realbev/operator 가 incident_log 보내면 누적 + broadcast
+_incident_total = {"emergency": 0, "suspicious": 0, "lost": 0, "free_ride": 0, "events": []}
+INCIDENT_KEEP = 30  # 최근 30개만 유지
+
 def _api_track(name: str, started: float, error: bool = False):
     """API 호출 시간 + 성공/실패 통계 누적."""
     elapsed_ms = (time.time() - started) * 1000.0
@@ -418,6 +422,30 @@ async def handler(websocket):
                 st = req.get("station") or "?"
                 _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
                 await broadcast(json.dumps(_build_impact_summary(), ensure_ascii=False))
+            elif t == "incident_log":
+                # realbev / operator 가 응급·분실·이상·무임 검출 시 송신
+                ev_type = req.get("ev_type") or "unknown"
+                if ev_type in _incident_total:
+                    _incident_total[ev_type] += 1
+                event = {
+                    "ts": time.time(),
+                    "type": ev_type,
+                    "severity": req.get("severity") or "med",
+                    "msg": req.get("msg") or "",
+                    "source": req.get("source") or "?",  # realbev / operator-subway / operator-bus
+                }
+                _incident_total["events"].insert(0, event)
+                if len(_incident_total["events"]) > INCIDENT_KEEP:
+                    _incident_total["events"] = _incident_total["events"][:INCIDENT_KEEP]
+                summary = {
+                    "type": "incident_summary",
+                    "emergency": _incident_total["emergency"],
+                    "suspicious": _incident_total["suspicious"],
+                    "lost": _incident_total["lost"],
+                    "free_ride": _incident_total["free_ride"],
+                    "events": _incident_total["events"][:8],
+                }
+                await broadcast(json.dumps(summary, ensure_ascii=False))
             elif t == "predict_surge" and req.get("poi"):
                 # IDEA-7 24h 폭증 예측 — 과거 추세(ppltn_history) + 시간대 baseline + 행사 신호
                 payload = predict_surge(req["poi"], req.get("hours_ahead", 24))
@@ -526,6 +554,13 @@ async def http_health(path, headers):
             "impact": _build_impact_summary() if _impact_total["count"] > 0 else None,
             "api": api,
             "cv": _cv_metrics if _cv_metrics["frames"] > 0 else None,
+            "incidents": {
+                "emergency": _incident_total["emergency"],
+                "suspicious": _incident_total["suspicious"],
+                "lost": _incident_total["lost"],
+                "free_ride": _incident_total["free_ride"],
+                "recent": _incident_total["events"][:5],
+            } if (_incident_total["emergency"] + _incident_total["suspicious"] + _incident_total["lost"] + _incident_total["free_ride"]) > 0 else None,
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     return None

@@ -256,6 +256,16 @@ const sim = BEVEngine.createSim({
       const label = ({ emergency: '응급', suspicious: '이상행동', lost: '분실물', free_ride: '무임 의심' })[ev.type] || ev.type;
       if (typeof maybeAlertBanner === 'function') maybeAlertBanner(`${label} — ${ev.msg}`, 'crit');
     }
+    // backend 에 송신 → 다른 페이지/탭과 동기화
+    try {
+      if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
+        window.LIVE_WS.send(JSON.stringify({
+          type: 'incident_log',
+          ev_type: ev.type, severity: ev.severity, msg: ev.msg,
+          source: 'operator-subway',
+        }));
+      }
+    } catch {}
   },
 });
 
@@ -1074,6 +1084,7 @@ if (SR) {
     try { if (ws) ws.close(); } catch {}
     _dbg.ws='connecting'; updDbg();
     ws = new WebSocket(wsUrl);
+    window.LIVE_WS = ws;  // incident_log 송신용
     ws.onopen = () => {
       _dbg.ws='open'; updDbg();
       queryArr(); queryPop();
