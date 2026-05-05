@@ -145,9 +145,11 @@ const SCRIPT = [
   [0,     '🎬 잠실역 18시 — 평상 운영',                     null],
   [5000,  '📊 광고 단가 라이브 시연 — 12 POI 분 단위 변동',   () => clickInside('if-ad', 'demo-trigger')],
   [12000, '🚨 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s', () => clickInside('if-op', 'demo-trigger')],
-  [60000, '📱 시민 PWA — 분산 인센티브 보상 시연',           null],
-  [180000,'📈 임팩트 양면 가시화 — krw 누적 → ROI x',         null],
-  [240000,'⏱  5분 시연 종료 — 핵심 수치 검토 시간',           null],
+  [45000, '📷 실 카메라 BEV 시연 — 응급 골든타임 + AED 자동 안내', () => clickInside('if-cam', 'demo-trigger')],
+  [80000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200 차등)', null],
+  [120000,'🪙 backend krw 누적 → 운영자 ROI 라이브 갱신',     null],
+  [180000,'🚨 incident_summary broadcast → 모든 페이지 동기화', null],
+  [240000,'⏱  5분 시연 종료 — pitch.html ROI 슬라이더로 마무리', null],
 ];
 
 let started = false;
