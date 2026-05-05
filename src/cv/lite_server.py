@@ -65,7 +65,8 @@ context_cache: dict[str, tuple] = {}       # poi → (ts, payload)
 CONTEXT_TTL = 600.0
 
 # 누적 임팩트 — impact_log 들어오면 합산 후 impact_summary broadcast
-_impact_total = {"count": 0, "saved_pct_sum": 0.0, "stations": {}, "krw_paid": 0}
+_impact_total = {"count": 0, "saved_pct_sum": 0.0, "stations": {}, "krw_paid": 0,
+                 "hourly": [0] * 24}  # 시간별 분산 액션 누적
 IMPACT_AVG_TRIP_MIN = 25.0      # 평균 통행 시간 (분)
 IMPACT_VALUE_PER_MIN = 167      # 혼잡 1분 당 사회적 비용 추정 (원) — 한국교통연구원 혼잡비용 환산
 # 운영자 콘솔에 표시할 일평균 통행 (서울교통공사 2024) — 응답률 추정 기준
@@ -367,6 +368,8 @@ def _build_impact_summary() -> dict:
     est_response_rate = min(1.0, n * 1000 / DAILY_RIDERS_BASELINE) if n else 0.0
     policy_cost = _impact_total["krw_paid"] or 1
     roi_x = value_won / policy_cost if policy_cost else 0
+    # 시간대별 분산 액션 분포 (24h)
+    hourly = _impact_total.get("hourly", [0] * 24)
     return {
         "type": "impact_summary",
         "total_count": n,
@@ -377,6 +380,7 @@ def _build_impact_summary() -> dict:
         "krw_paid": _impact_total["krw_paid"],
         "est_response_rate": round(est_response_rate, 4),
         "roi_x": round(roi_x, 1),
+        "hourly": hourly,
     }
 
 
@@ -421,6 +425,7 @@ async def handler(websocket):
                 _impact_total["krw_paid"] += krw
                 st = req.get("station") or "?"
                 _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
+                _impact_total["hourly"][time.localtime().tm_hour] += 1
                 await broadcast(json.dumps(_build_impact_summary(), ensure_ascii=False))
             elif t == "incident_log":
                 # realbev / operator 가 응급·분실·이상·무임 검출 시 송신
