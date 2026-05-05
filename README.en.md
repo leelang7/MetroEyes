@@ -34,17 +34,18 @@
 A single citizen action (₩200 reward) → backend krw accumulation → operator console live ROI x →
 backend incident broadcast → citizen route avoidance notice. **5-stage two-sided closed loop**.
 
-## 149 Auto Cycles Accumulated (D-7, 2026-05-13 deadline)
+## 173 Auto Cycles Accumulated (D-7, 2026-05-13 deadline)
 
-- ✅ **Two-sided value chain 5 stages** (citizen → backend → operator → backend → citizen)
+- ✅ **Two-sided value chain 8 stages** (CV → city → decision → OD match → transfer match → citizen tiered → backend auto-bonus → ROI live)
 - ✅ **Demo fail-safe 8 layers**: `--demo` + 30s injector + 5min sticky bar + backend join summary + admin click + warm seed + Docker compose + GitHub Actions CI
 - ✅ **4 languages** (ko/en/zh/ja) **11-page parity** + Web Speech + ARIA + **5-page foreigner welcome toast**
 - ✅ **Mobile responsive** (4 operator + ads + citizen PWA) + safe-area-inset
 - ✅ **3 EDA real-data validations**: GBR R²=0.931 / Dispersion (σ −9% / peak −13.5%) / OD asymmetry (Samsung 12x) / Transfer (Chungmuro +1.56)
 - ✅ **11 pages integrated** + ROI interactive slider + **±15% sensitivity CI band**
-- ✅ **PDF print-friendly** pitch.html + FAQ 5 + Global comparison + dispersion 4-KPI cards
-- ✅ **Tiered incentive policy** — ₩100 (basic) / ₩200 (30%p tier) / ₩300 (OD priority) / ₩400 (transfer station)
+- ✅ **PDF print-friendly** pitch.html + FAQ 6 + Global comparison + dispersion 4-KPI cards
+- ✅ **Tiered incentive policy** — ₩100 / ₩200 / ₩300 (OD priority) / ₩400 (transfer station) **with backend auto-bonus**
 - ✅ **A* + K-means(K=4) + Hungarian** emergency evacuation — single-exit baseline cost reduction quantified
+- ✅ **9 REST endpoints** (health/roi_curve/impact/incidents/dispersion/od/transfer/policy_summary/openapi) + **OpenAPI 3.0 spec**
 - ✅ **A* + K-means(K=4) + Hungarian 1:1 exit matching** for emergency evacuation (cost reduction vs single-exit baseline quantified)
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman auto-import
 
