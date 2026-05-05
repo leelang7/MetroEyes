@@ -20,7 +20,7 @@
 
 **자동 60 사이클 누적 결과** (D-8, 5/13 마감):
 - ✅ 양면 가치 사슬 5단계 (시민 분산 → backend krw → 운영자 ROI → backend incident → 시민 알림)
-- ✅ 시연 fail-safe **5중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭
+- ✅ 시연 fail-safe **6중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭 + fake impact seed (양봉 시뮬 자동 누적)
 - ✅ 다국어 4개 (ko/en/zh/ja) + Web Speech API 음성 안내 + ARIA 접근성
 - ✅ 모바일 반응형 (운영자 4 + 광고 + 시민 PWA) + safe-area-inset
 - ✅ EDA v3 실 parquet GBR R²=0.931 + ROI 인터랙티브 슬라이더 + 곡선 그래프
