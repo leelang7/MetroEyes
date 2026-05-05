@@ -58,10 +58,11 @@
 - **MetroEyes**: 칸 단위 BEV + 분산률 차등 보상 + 양면 클로즈드 루프 (글로벌 최초)
 
 ### 자동 사이클 누적
-- 60 사이클 / 약 75 커밋
+- **99 사이클 / 약 120 커밋**
 - 1차 push 23 commits (5/5 13:30 사용자 승인)
-- 2차 push 대기 24 commits (사이클 39~62)
-- 다음 사이클: lite_server roll-up / pitch ko-en / dataset 추가 EDA
+- 2차 push 대기 60+ commits (사이클 39~99)
+- 추가 작업: 6 페이지 라이브 KPI 통일 / 핫스팟 chip / 시간대 sparkline / 사고 type 막대 / ko-en 토글 / REST API v1 (4 endpoint + /api/docs) / EDA air×subway / 자동 시뮬 (--demo warm seed)
+- 마감 D-8 (5/13)
 
 ---
 

@@ -4,7 +4,8 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-90회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-99회-a78bfa.svg)](CHANGELOG.md)
+[![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
@@ -221,6 +222,25 @@ python scripts/policy_roi_v3.py
 **v2 대비 진화**: 호선별 cap 도달도 (1호선 0.55 vs 9호선 1.10) 차등 + 출퇴근 응답률 비대칭 (8시 0.7 / 18시 1.0) + cap 평탄화 효과. 응답률 30% 시 v2 283억 → v3 **1,393억/년 (5x 정밀화)**.
 
 자세한 분석: [`frontend/pitch.html`](frontend/pitch.html) (한 페이지 정량 보고)
+
+---
+
+## 오픈 REST API v1
+
+backend `lite_server.py` 가 4 endpoint 제공 — CORS 허용:
+
+| Endpoint | 응답 | 용도 |
+|---|---|---|
+| `GET /health` | 시스템 상태 (api/cv/incidents/msg) | health check |
+| `GET /api/v1/roi_curve` | 0~80% 81 샘플 ROI | 정책 시뮬 외부 도구 |
+| `GET /api/v1/impact` | 누적 분산 임팩트 | 라이브 KPI |
+| `GET /api/v1/incidents` | 사고 4 카운트 + 30 events | 라이브 모니터링 |
+| `GET /api/docs` | 자동 HTML 명세 페이지 | curl/Postman/Swagger 대체 |
+
+```bash
+# 예시: ROI 곡선 fetch
+curl http://localhost:8765/api/v1/roi_curve | jq '.curve | map(select(.rate == 0.30))'
+```
 
 ---
 
