@@ -223,6 +223,10 @@
   <span style="color: var(--muted);">ROI <b id="plk-roi" style="color: var(--good);">—x</b></span>
   <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s polling</span>
 </div>
+<div id="plk-stations" hidden style="margin-bottom: 10px; padding: 6px 14px; background: rgba(125,211,211,.04); border: 1px solid var(--line); border-radius: 8px; font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+  <span style="color: var(--muted); font-size: 10px;">📍 핫스팟:</span>
+  <span id="plk-st-list" style="display: contents;"></span>
+</div>
 <div id="pitch-hourly" hidden style="margin-bottom: 14px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;">
   <div style="font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;">⏰ 시간대 분산 응답 분포 (라이브) — ROI v3 시간 비대칭 가설 실증</div>
   <canvas id="plk-hourly" width="900" height="60" style="width: 100%; height: 60px; background: rgba(255,255,255,.02); border-radius: 6px;"></canvas>
@@ -248,6 +252,18 @@
       document.getElementById('plk-val').textContent = fmt(im.value_won);
       document.getElementById('plk-roi').textContent = im.roi_x ? Math.round(im.roi_x) + 'x' : '—x';
       document.getElementById('pitch-live-kpi').hidden = false;
+      // top stations chip
+      if (im.stations && Object.keys(im.stations).length > 0) {
+        const sl = document.getElementById('plk-st-list');
+        if (sl) {
+          const top = Object.entries(im.stations).sort((a,b)=>b[1]-a[1]).slice(0, 3);
+          sl.innerHTML = top.map(([n, c], i) => {
+            const medals = ['🥇', '🥈', '🥉'];
+            return `<span style="padding: 2px 8px; background: rgba(125,211,211,.10); border: 1px solid var(--accent); border-radius: 999px; color: var(--text);">${medals[i]} ${n} <b style="color: var(--accent); margin-left: 2px;">${c}</b></span>`;
+          }).join('');
+          document.getElementById('plk-stations').hidden = false;
+        }
+      }
       // 시간대 분포
       if (im.hourly && Array.isArray(im.hourly) && im.hourly.some(v => v > 0)) {
         const cv = document.getElementById('plk-hourly');
