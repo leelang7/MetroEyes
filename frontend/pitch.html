@@ -252,6 +252,12 @@
       document.getElementById('plk-val').textContent = fmt(im.value_won);
       document.getElementById('plk-roi').textContent = im.roi_x ? Math.round(im.roi_x) + 'x' : '—x';
       document.getElementById('pitch-live-kpi').hidden = false;
+      // 라이브 응답률 추정 표시 (slider 옆)
+      if (im.est_response_rate != null) {
+        const pct = (im.est_response_rate * 100);
+        document.getElementById('live-rate-pct').textContent = pct < 1 ? pct.toFixed(2) : pct.toFixed(0);
+        document.getElementById('live-rate').hidden = false;
+      }
       // top stations chip
       if (im.stations && Object.keys(im.stations).length > 0) {
         const sl = document.getElementById('plk-st-list');
@@ -307,7 +313,10 @@
     <input type="range" min="0" max="80" value="30" step="1" id="resp-slider" style="flex: 1; min-width: 200px; accent-color: var(--accent);">
     <span style="font-size: 24px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right;"><span id="resp-pct">30</span>%</span>
   </div>
-  <div style="font-size: 11px; color: var(--muted); margin-top: 6px;">기준 30% = 현실적 중간 시나리오 (행동경제학 인센티브 응답률 평균). 0% = 인프라만 도입, 80% = 이상.</div>
+  <div style="font-size: 11px; color: var(--muted); margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap;">
+    <span>기준 30% = 현실적 중간 시나리오 (행동경제학 인센티브 응답률 평균). 0% = 인프라만 도입, 80% = 이상.</span>
+    <span id="live-rate" hidden style="margin-left: auto; padding: 2px 8px; background: rgba(16,185,129,.10); border: 1px solid rgba(16,185,129,.40); border-radius: 999px; color: #10b981; font-weight: 700;">🟢 라이브 추정 <span id="live-rate-pct">0</span>%</span>
+  </div>
 </div>
 
 <div class="kpi-grid">
