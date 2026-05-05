@@ -897,6 +897,16 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       <li>24h 폭증 예측 — 시간 baseline + hist_trend + hot 가중</li>
     </ul>
   </div>
+  <div class="card" style="border-color: rgba(245,158,11,.45); background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(167,139,250,.04));">
+    <h3>💰 차등 보상 자동 매칭 (글로벌 최초)</h3>
+    <ul>
+      <li><b>4단 차등 정책</b>: ₩100 (기본) / ₩200 (30%p) / ₩300 (OD 우선) / ₩400 (환승역)</li>
+      <li><b>backend 자동 가산</b>: <code>_bonus_krw()</code> 가 station 매칭 → 보상 즉시 가산 (시민 직접 입력 불필요)</li>
+      <li><b>tier_counts 라이브 분포</b>: basic/od/transfer 비례 막대 6 페이지 동기화</li>
+      <li><b>EDA 직접 매핑</b>: 그림 4(OD 12x) → ₩300 / 그림 5(환승 +1.56) → ₩400 정량 근거</li>
+      <li>런던/도쿄/싱가포르 모두 단일 정액 — MetroEyes 만 시간×역×비대칭 3차원 자동 차등</li>
+    </ul>
+  </div>
   <div class="card">
     <h3>🔌 오픈 REST API v1 + OpenAPI 3.0</h3>
     <ul style="font-size: 12px;">
