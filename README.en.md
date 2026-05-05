@@ -16,6 +16,12 @@
 **Headline KPIs (Policy ROI v3, 30% response rate)**:
 - Net social value **₩139.3B/yr** · ROI **347x** · Infra ₩400M (134 priority stations)
 - Saved time 473.4M min/yr · Cap flattening −0.66%p · Line 2 alone 157M min
+- **Tiered incentive 4 levels** (₩100/₩200/₩300/₩400) — backend auto-bonus, EDA-mapped
+
+**3 EDA real-data validations**:
+- **Dispersion**: σ −9.0% / peak avg −13.5% / off-peak +5.6% / ratio 1.78→1.46
+- **OD asymmetry**: Samsung(Trade Center) OFF/ON 12.4x (morning arrival) / City Hall ON/OFF 4.9x (evening departure)
+- **Transfer asymmetry**: Chungmuro Line 4 +0.56 vs Line 3 −1.00 (diff +1.56) / Yeonsinnae +1.44
 
 **Entry**: [`frontend/index.html`](frontend/index.html) — 8-card hub (📊 Policy Report / 🎬 Integrated Demo / 🚇 Operator / 📱 Citizen / 🛠 Debug)
 
