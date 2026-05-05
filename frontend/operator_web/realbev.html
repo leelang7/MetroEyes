@@ -160,14 +160,41 @@
   <div class="brand">
     <span class="dot"></span>MetroEyes<small>실 카메라 · 3D BEV</small>
     <span class="nav-sep">·</span>
-    <a href="index.html">🚇 지하철</a>
-    <a href="bus.html">🚌 버스</a>
-    <a href="realbev.html" class="active">📷 실 카메라</a>
-    <a href="ad_pricing.html">📺 디스플레이</a>
-    <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
+    <a href="index.html" data-i18n="nav_subway">🚇 지하철</a>
+    <a href="bus.html" data-i18n="nav_bus">🚌 버스</a>
+    <a href="realbev.html" class="active" data-i18n="nav_realcam">📷 실 카메라</a>
+    <a href="ad_pricing.html" data-i18n="nav_ads">📺 디스플레이</a>
+    <a href="../passenger_app/index.html" class="cta-citizen" data-i18n="nav_citizen">📱 시민 앱 →</a>
     <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
     <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
     <button id="demo-trigger" title="실 카메라 BEV 30초 응급/분실 시연 (backend 동기화)" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
+    <button id="lang-toggle" style="margin-left: 6px; padding: 2px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language">🇰🇷</button>
+<script>
+const I18N_OP_REALCAM = {
+  ko: { nav_subway: '🚇 지하철', nav_bus: '🚌 버스', nav_realcam: '📷 실 카메라', nav_ads: '📺 디스플레이', nav_citizen: '📱 시민 앱 →', flag: '🇰🇷' },
+  en: { nav_subway: '🚇 Subway', nav_bus: '🚌 Bus', nav_realcam: '📷 RealCam', nav_ads: '📺 Display', nav_citizen: '📱 Citizen →', flag: '🇺🇸' },
+  zh: { nav_subway: '🚇 地铁', nav_bus: '🚌 巴士', nav_realcam: '📷 实摄像', nav_ads: '📺 显示', nav_citizen: '📱 市民 →', flag: '🇨🇳' },
+  ja: { nav_subway: '🚇 地下鉄', nav_bus: '🚌 バス', nav_realcam: '📷 実カメラ', nav_ads: '📺 表示', nav_citizen: '📱 市民 →', flag: '🇯🇵' },
+};
+let _curRealLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+if (!I18N_OP_REALCAM[_curRealLang]) _curRealLang = 'ko';
+function applyRealcamI18n() {
+  const t = I18N_OP_REALCAM[_curRealLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (t[k]) el.textContent = t[k];
+  });
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = t.flag;
+  document.documentElement.lang = _curRealLang;
+}
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
+  const order = ['ko', 'en', 'zh', 'ja'];
+  _curRealLang = order[(order.indexOf(_curRealLang) + 1) % 4];
+  applyRealcamI18n();
+});
+window.addEventListener('DOMContentLoaded', applyRealcamI18n);
+</script>
     <span id="cam-live-kpi" hidden class="tag" style="margin-left: 8px; padding: 4px 10px; background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.45); color: #fff; border-radius: 6px; font-size: 11px;">
       <span style="color: #10b981; font-weight: 700; font-size: 9px; letter-spacing: 1.2px;">🟢 LIVE</span>
       <b id="cam-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 9px; opacity: .7;">분산</em>
