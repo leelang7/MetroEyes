@@ -1,0 +1,196 @@
+openapi: 3.0.3
+info:
+  title: MetroEyes API
+  description: |
+    MetroEyes (코드명 SubwayBEV) — 서울 지하철·버스 통합 운영 백엔드.
+    실시간 BEV CV + citydata 110 POI + 분산 운임 정책 ROI v3.
+
+    **모든 endpoint CORS 허용** (`Access-Control-Allow-Origin: *`) · 인증 불필요 (공공 데이터 + 시뮬).
+    프로덕션 배포 시 rate limit 추가 권장.
+  version: "1.0.0"
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  contact:
+    name: 2026 Seoul Big Data Competition
+    url: https://github.com/leelang7/SubwayBEV
+
+servers:
+  - url: https://app.allthatai.kr
+    description: 프로덕션 (Cloudflare → lite_server WSS)
+  - url: http://localhost:8765
+    description: 로컬 개발
+
+paths:
+  /health:
+    get:
+      summary: 전체 시스템 상태
+      description: keys / WS clients / 누적 impact / API 호출 통계 / CV 메트릭 / incidents / 분당 메시지 수.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/v1/roi_curve:
+    get:
+      summary: ROI v3 시뮬 곡선
+      description: 응답률 0~80% 81 샘플 closed-form 시뮬. pitch.html 인터랙티브 슬라이더와 동일 모델.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  model: { type: string, example: "ROI v3 closed-form" }
+                  samples: { type: integer, example: 81 }
+                  curve:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        rate: { type: number, format: float, description: 응답률 (0.0~0.8) }
+                        net: { type: integer, description: 순 가치 (억원/년) }
+                        roi_x: { type: number, description: ROI 배수 }
+                  interpretation:
+                    type: object
+
+  /api/v1/impact:
+    get:
+      summary: 실시간 누적 임팩트
+      description: 시민 PWA의 분산 액션 누적 — 인원 / 인센티브 krw / 시간대 분포 / 역별 분포 / ROI 추정.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  summary:
+                    $ref: '#/components/schemas/ImpactSummary'
+                  raw:
+                    type: object
+                    properties:
+                      count: { type: integer }
+                      krw_paid: { type: integer }
+                      saved_pct_sum: { type: number }
+                      stations:
+                        type: object
+                        additionalProperties: { type: integer }
+                      hourly:
+                        type: array
+                        items: { type: integer }
+                        minItems: 24
+                        maxItems: 24
+
+  /api/v1/incidents:
+    get:
+      summary: 사고 누적 + 최근 30 events
+      description: 응급 / 이상 행동 / 분실물 / 무임 승차 4종 카운트 + 최근 events 리스트.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  counts:
+                    type: object
+                    properties:
+                      emergency: { type: integer }
+                      suspicious: { type: integer }
+                      lost: { type: integer }
+                      free_ride: { type: integer }
+                  events:
+                    type: array
+                    maxItems: 30
+                    items:
+                      $ref: '#/components/schemas/IncidentEvent'
+                  total: { type: integer }
+
+  /api/docs:
+    get:
+      summary: API 문서 HTML
+      description: 사람이 읽기 위한 한국어 endpoint 가이드.
+      responses:
+        '200':
+          description: HTML
+          content:
+            text/html: { schema: { type: string } }
+
+  /api/openapi.yaml:
+    get:
+      summary: 본 OpenAPI 3.0 spec (YAML)
+      description: 표준 OpenAPI 3.0 명세 — Swagger / Redoc / Postman 자동 임포트 가능.
+      responses:
+        '200':
+          description: YAML
+          content:
+            application/x-yaml: { schema: { type: string } }
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        ok: { type: boolean }
+        version: { type: string, example: "1.4-impact-v3" }
+        keys:
+          type: object
+          properties:
+            seoul: { type: boolean }
+            bus_api: { type: boolean }
+        clients: { type: integer, description: WebSocket 동시 접속 수 }
+        impact:
+          $ref: '#/components/schemas/ImpactSummary'
+        api:
+          type: object
+          additionalProperties: { type: integer }
+        cv:
+          type: object
+          properties:
+            fps: { type: number, format: float }
+            tracks: { type: integer }
+            mode: { type: string, enum: [demo, real] }
+        incidents:
+          type: object
+        msg_per_min:
+          type: array
+          items: { type: integer }
+          maxItems: 60
+
+    ImpactSummary:
+      type: object
+      properties:
+        total_count: { type: integer, description: 분산 액션 누적 }
+        total_krw: { type: integer, description: 누적 인센티브 지급액 }
+        avg_saved_pct: { type: number, description: 평균 절감률 (%) }
+        roi_x: { type: number, description: 추정 ROI 배수 }
+        est_response_rate: { type: number, format: float }
+        top_station: { type: string, description: 최다 분산 역 }
+
+    IncidentEvent:
+      type: object
+      properties:
+        ts: { type: number, format: float, description: epoch seconds }
+        ev_type:
+          type: string
+          enum: [emergency, suspicious, lost, free_ride]
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        msg: { type: string }
+        source:
+          type: string
+          example: "operator/realbev"
+
+  securitySchemes: {}

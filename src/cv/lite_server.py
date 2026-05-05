@@ -736,6 +736,8 @@ async def http_health(path, headers):
             "<p>실시간 누적 임팩트 (분산 액션 / krw / 시간대 / 역별)</p>"
             "<h2>GET <code>/api/v1/incidents</code></h2>"
             "<p>사고 누적 + 최근 30 events (응급/이상/분실/무임)</p>"
+            "<h2>GET <code>/api/openapi.yaml</code></h2>"
+            "<p>표준 OpenAPI 3.0 spec — Swagger / Redoc / Postman 임포트 가능</p>"
             "<h2>WebSocket <code>ws://host:8765</code></h2>"
             "<p>impact_log / incident_log / arrival_query / population_query / predict_surge 등</p>"
             "<table><tr><th>Type</th><th>Args</th><th>응답</th></tr>"
@@ -748,6 +750,16 @@ async def http_health(path, headers):
             "</body></html>"
         ).encode("utf-8")
         return (200, [("content-type", "text/html; charset=utf-8")] + CORS_HEADERS, body)
+    if path == "/api/openapi.yaml":
+        try:
+            from pathlib import Path as _P
+            spec = _P(__file__).resolve().parent.parent.parent / "docs" / "openapi.yaml"
+            if spec.exists():
+                body = spec.read_bytes()
+                return (200, [("content-type", "application/x-yaml; charset=utf-8")] + CORS_HEADERS, body)
+        except Exception:
+            pass
+        return (404, [("content-type", "text/plain")] + CORS_HEADERS, b"openapi.yaml not found")
     if path == "/api/v1/roi_curve":
         body = json.dumps({
             "ok": True,

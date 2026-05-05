@@ -76,8 +76,20 @@ def main():
     try:
         import pandas as pd
         import matplotlib.pyplot as plt
+        import matplotlib.font_manager as fm
     except ImportError as e:
         raise SystemExit(f"필수 패키지 없음: {e}")
+
+    # 한글 폰트 자동 탐색 (Windows: Malgun Gothic / macOS: AppleGothic / Linux: NanumGothic)
+    candidates = ["Malgun Gothic", "AppleGothic", "NanumGothic", "Noto Sans KR"]
+    available = {f.name for f in fm.fontManager.ttflist}
+    chosen = next((c for c in candidates if c in available), None)
+    if chosen:
+        plt.rcParams["font.family"] = chosen
+        plt.rcParams["axes.unicode_minus"] = False
+        print(f"[font] {chosen} 사용")
+    else:
+        print("[font] 한글 폰트 없음 — DejaVu Sans (한글 박스로 표시될 수 있음)")
 
     df = pd.read_parquet(DATA)
     print(f"[load] {len(df):,}행 / {df['SBWY_ROUT_LN_NM'].nunique()}호선")
