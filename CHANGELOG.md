@@ -1,5 +1,11 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.2 — D-7 자동 모드 185 사이클 milestone (2026-05-06 발표 자료 6종 일괄 갱신)
+
+### 신규 (사이클 181~185)
+- **SLIDES_DECK / ARCHITECTURE_VIEW / INNOVATION_TRIZ / PROPOSAL / SUBMISSION_GUIDE 헤더 v5.1 일괄 갱신** — 9 endpoint + 8단 가치사슬 + tier 6P 동기화 + 영상 가이드
+- **README 발표 자료 6종 링크 정리** — 평가위원이 첫 진입에서 즉시 모든 자료 접근
+
 ## v5.1 — D-7 자동 모드 180 사이클 milestone (2026-05-06 발표 자료 완성)
 
 ### 신규 (사이클 176~180)
