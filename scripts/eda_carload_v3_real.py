@@ -196,7 +196,7 @@ def main():
         fig, ax = plt.subplots(figsize=(8, 6))
         ax.scatter(y, yhat, alpha=0.5, s=22, c="#7dd3d3", edgecolors="white", linewidth=0.3)
         m = max(y.max(), yhat.max())
-        ax.plot([0, m], [0, m], "--", color="rgba(255,255,255,.4)", alpha=0.4)
+        ax.plot([0, m], [0, m], "--", color="white", alpha=0.4)
         ax.set_xlabel("실측 per_car_load (명/칸)")
         ax.set_ylabel("GBR 예측")
         ax.set_title(f"실 parquet 예측 vs 실측 — R²={cv_r2.mean():.3f}, MAE {cv_mae.mean():.1f}")
