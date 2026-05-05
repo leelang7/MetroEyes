@@ -499,5 +499,38 @@ if ('serviceWorker' in navigator) {
   connect();
 })();
 </script>
+
+<!-- 외국인 탑승자 첫 방문 환영 toast (4언어 자동) -->
+<div id="ob-toast-onboard" hidden style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,rgba(125,211,211,.20),rgba(16,185,129,.10));border:1px solid rgba(125,211,211,.55);border-radius:14px;padding:14px 18px;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:ui-sans-serif,system-ui;color:#fff;line-height:1.5;font-size:13px;backdrop-filter:blur(10px)">
+  <div id="ob-text-onboard" style="margin-bottom:10px"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button id="ob-dismiss-onboard" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer">OK</button>
+  </div>
+</div>
+<script>
+(function () {
+  if (localStorage.getItem('me_onboard_seen')) return;
+  const OB = {
+    ko: '🚆 라이브 칸별 점유율 모니터. 한산한 칸으로 이동 시 +₩200 자동 적립.',
+    en: '🚆 Live per-car occupancy monitor. Move to a less crowded car to auto-earn ₩200.',
+    zh: '🚆 实时车厢占用率监视器。移至人少的车厢自动获得 ₩200。',
+    ja: '🚆 ライブ車両占有率モニター。空いている車両に移動すると自動で ₩200 獲得。',
+  };
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+  const txt = OB[lang] || OB.ko;
+  const t = document.getElementById('ob-toast-onboard');
+  const x = document.getElementById('ob-text-onboard');
+  if (!t || !x) return;
+  x.textContent = txt;
+  t.hidden = false;
+  document.getElementById('ob-dismiss-onboard')?.addEventListener('click', () => {
+    t.hidden = true;
+    localStorage.setItem('me_onboard_seen', '1');
+  });
+  setTimeout(() => {
+    if (!t.hidden) { t.hidden = true; localStorage.setItem('me_onboard_seen', '1'); }
+  }, 12000);
+})();
+</script>
 </body>
 </html>

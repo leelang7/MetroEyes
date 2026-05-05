@@ -231,8 +231,27 @@
   <span style="color: var(--muted);">절감 <b id="plk-min" style="color: var(--text);">0</b>분</span>
   <span style="color: var(--muted);">사회 <b id="plk-val" style="color: var(--text);">₩0</b></span>
   <span style="color: var(--muted);">ROI <b id="plk-roi" style="color: var(--good);">—x</b></span>
-  <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s polling</span>
+  <span style="color: var(--muted); border-left: 1px solid var(--line); padding-left: 14px;">σ 라이브 <b id="plk-sigma" style="color: var(--warn);">—%</b></span>
+  <span style="color: var(--muted);">피크 <b id="plk-peak" style="color: var(--warn);">—%</b></span>
+  <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s + /api/v1/dispersion 12s</span>
 </div>
+<script>
+(async function pollDispersionPitch() {
+  const url = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/dispersion';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.live && j.live.estimated_response_rate > 0) {
+        document.getElementById('plk-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
+        document.getElementById('plk-peak').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
+      }
+    }
+  } catch {}
+  setTimeout(pollDispersionPitch, 12000);
+})();
+</script>
 <div id="plk-stations" hidden style="margin-bottom: 10px; padding: 6px 14px; background: rgba(125,211,211,.04); border: 1px solid var(--line); border-radius: 8px; font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
   <span style="color: var(--muted); font-size: 10px;">📍 핫스팟:</span>
   <span id="plk-st-list" style="display: contents;"></span>
