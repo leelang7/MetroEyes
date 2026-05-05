@@ -715,6 +715,47 @@ async def http_health(path, headers):
             },
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path == "/api/v1/od_asymmetry":
+        # /api/v1/od_asymmetry — OD 비대칭 분석 결과 + 현 시각 우선 추천 역
+        try:
+            from pathlib import Path as _P
+            import time as _t
+            rep = _P(__file__).resolve().parent.parent.parent / "frontend" / "figs" / "od_asymmetry_report.json"
+            base = json.loads(rep.read_text(encoding="utf-8")) if rep.exists() else {}
+            # 현 시각 기반 우선순위
+            cur_h = _t.localtime().tm_hour
+            am_h = base.get("am_hour", 9)
+            pm_h = base.get("pm_hour", 19)
+            # AM 시간(7~11) → 출근 도착지 우선, PM(17~21) → 퇴근 출발지 우선
+            if 7 <= cur_h <= 11:
+                priority_type = "arrival"
+                priority_list = base.get("top_arrival", [])[:5]
+                rationale = f"현재 {cur_h}시 — 출근 도착지 핫스팟 (OFF >> ON)"
+            elif 17 <= cur_h <= 21:
+                priority_type = "departure"
+                priority_list = base.get("top_departure", [])[:5]
+                rationale = f"현재 {cur_h}시 — 퇴근 출발지 핫스팟 (ON >> OFF)"
+            else:
+                priority_type = "neutral"
+                priority_list = []
+                rationale = f"현재 {cur_h}시 — 비피크 시간대"
+            body = json.dumps({
+                "ok": True,
+                "current_hour": cur_h,
+                "priority_type": priority_type,
+                "priority_stations": priority_list,
+                "rationale": rationale,
+                "static": {
+                    "am_hour": am_h,
+                    "pm_hour": pm_h,
+                    "n_significant_stations": base.get("n_significant_stations"),
+                    "min_total_threshold": base.get("min_total_threshold"),
+                },
+            }).encode("utf-8")
+            return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+        except Exception as e:
+            return (500, [("content-type", "application/json")] + CORS_HEADERS,
+                    json.dumps({"ok": False, "error": str(e)}).encode("utf-8"))
     if path == "/api/v1/dispersion":
         # /api/v1/dispersion — 분산 정책 시뮬 결과 (실 parquet 검증값 + 라이브 응답률 추정 보정)
         try:
@@ -779,6 +820,8 @@ async def http_health(path, headers):
             "<p>사고 누적 + 최근 30 events (응급/이상/분실/무임)</p>"
             "<h2>GET <code>/api/v1/dispersion</code></h2>"
             "<p>분산 정책 시뮬 — 실 parquet σ/peak/offpeak 검증값 + 라이브 응답률 비례 추정</p>"
+            "<h2>GET <code>/api/v1/od_asymmetry</code></h2>"
+            "<p>OD 비대칭 — 현 시각(AM/PM) 자동 매칭 + 우선 분산 추천 역 TOP 5</p>"
             "<h2>GET <code>/api/openapi.yaml</code></h2>"
             "<p>표준 OpenAPI 3.0 spec — Swagger / Redoc / Postman 임포트 가능</p>"
             "<h2>WebSocket <code>ws://host:8765</code></h2>"

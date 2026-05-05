@@ -245,6 +245,7 @@ backend `lite_server.py` 가 6 endpoint 제공 — 모두 CORS 허용:
 | `GET /api/v1/impact` | 누적 분산 임팩트 | 라이브 KPI |
 | `GET /api/v1/incidents` | 사고 4 카운트 + 30 events | 라이브 모니터링 |
 | `GET /api/v1/dispersion` | σ/peak/offpeak 정적 검증 + 라이브 응답률 추정 | 분산 효과 시각화 |
+| `GET /api/v1/od_asymmetry` | 현 시각(AM/PM) 자동 매칭 + 우선 분산 추천 역 TOP 5 | 운영자 정책 우선순위 |
 | `GET /api/docs` | 자동 HTML 명세 페이지 | curl/Postman 대체 |
 | `GET /api/openapi.yaml` | OpenAPI 3.0 spec | Swagger/Redoc/Postman 자동 임포트 |
 

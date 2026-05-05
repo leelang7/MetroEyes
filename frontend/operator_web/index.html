@@ -125,6 +125,40 @@ window.addEventListener('DOMContentLoaded', applyOpI18n);
 </header>
 
 <main>
+<!-- 현 시각 분산 우선순위 미니 패널 (OD 비대칭 기반) -->
+<section id="od-priority-strip" hidden style="margin-bottom: 12px; padding: 10px 14px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border: 1px solid rgba(167,139,250,.40); border-radius: 10px;">
+  <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+    <span style="color: #a78bfa; font-weight: 700; font-size: 11px; letter-spacing: 1.4px;">📍 분산 우선순위</span>
+    <span id="od-rationale" style="color: var(--muted); font-size: 11px;">—</span>
+    <span id="od-stations" style="display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto;"></span>
+  </div>
+</section>
+<script>
+(async function pollODPriority() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/od_asymmetry', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.priority_stations && j.priority_stations.length > 0) {
+        document.getElementById('od-rationale').textContent = j.rationale;
+        const sl = document.getElementById('od-stations');
+        const isDep = j.priority_type === 'departure';
+        sl.innerHTML = j.priority_stations.map(s => {
+          const ratio = isDep
+            ? (s.on / Math.max(1, s.off)).toFixed(1) + 'x ON'
+            : (s.off / Math.max(1, s.on)).toFixed(1) + 'x OFF';
+          return `<span style="padding: 3px 9px; background: ${isDep ? 'rgba(16,185,129,.18)' : 'rgba(255,94,87,.18)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.45)' : 'rgba(255,94,87,.45)'}; border-radius: 999px; font-size: 11px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size:9px;">${ratio}</em></span>`;
+        }).join('');
+        document.getElementById('od-priority-strip').hidden = false;
+      } else {
+        document.getElementById('od-priority-strip').hidden = true;
+      }
+    }
+  } catch {}
+  setTimeout(pollODPriority, 60000);  // 1분 주기 (시각 변경 추적)
+})();
+</script>
+
   <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(5, 1fr); margin-bottom: 14px;">
     <div class="fusion-card dim" id="fc-cv" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
       <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">검출 인원 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">자체 CV</span></div>
