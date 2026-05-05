@@ -236,6 +236,43 @@
 
 <button class="cta" id="cta">탑승하기 <span class="arrow">→</span></button>
 
+<!-- 첫 방문 환영 toast — 4언어 자동 (외국인 친화) -->
+<div id="ob-toast" hidden style="position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,rgba(125,211,211,.18),rgba(16,185,129,.10));border:1px solid rgba(125,211,211,.55);border-radius:14px;padding:14px 18px;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:ui-sans-serif,system-ui;color:#fff;line-height:1.5;font-size:13px;backdrop-filter:blur(10px)">
+  <div id="ob-text" style="margin-bottom:10px"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button id="ob-dismiss" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer">OK</button>
+  </div>
+</div>
+<script>
+(function () {
+  if (localStorage.getItem('me_pwa_onboard_seen')) return;
+  const OB = {
+    ko: '👋 환영합니다! 한산한 칸 권장 + 분산 보상 +₩200/회. 우상단 🇰🇷 버튼으로 언어 변경.',
+    en: '👋 Welcome! Recommends less crowded cars + ₩200 reward per redistribution. Top-right 🇺🇸 button to change language.',
+    zh: '👋 欢迎！推荐人少的车厢 + 每次分散奖励 ₩200。右上角 🇨🇳 按钮切换语言。',
+    ja: '👋 ようこそ！空いている車両を推奨 + 分散1回ごとに ₩200報酬。右上 🇯🇵 ボタンで言語変更。',
+  };
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+  const txt = OB[lang] || OB.ko;
+  const t = document.getElementById('ob-toast');
+  const x = document.getElementById('ob-text');
+  if (!t || !x) return;
+  x.textContent = txt;
+  t.hidden = false;
+  document.getElementById('ob-dismiss')?.addEventListener('click', () => {
+    t.hidden = true;
+    localStorage.setItem('me_pwa_onboard_seen', '1');
+  });
+  // 12초 후 자동 dismiss (보상 알림)
+  setTimeout(() => {
+    if (!t.hidden) {
+      t.hidden = true;
+      localStorage.setItem('me_pwa_onboard_seen', '1');
+    }
+  }, 12000);
+})();
+</script>
+
 <script src="../shared/bev_engine.js"></script>
 <script src="../shared/safety_features.js"></script>
 <script src="../shared/llm_assistant.js"></script>
