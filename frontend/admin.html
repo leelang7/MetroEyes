@@ -366,6 +366,16 @@ function triggerDemoIncidents() {
     sendQuery('incident_log', { ev_type: type, severity: sev, msg, source: 'admin-demo' });
   }, delay));
   append('SEND', '시연 5종 시퀀스 시작 (20s)', '');
+  // progress 표시 — sticky 배지 24초
+  const pe = document.createElement('div');
+  pe.style.cssText = 'position:fixed;bottom:14px;right:14px;padding:8px 14px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;border-radius:999px;font-size:11px;font-weight:700;box-shadow:0 8px 24px rgba(239,68,68,.3);z-index:50;font-feature-settings:"tnum";';
+  pe.textContent = '🎬 시연 진행 중 24s';
+  document.body.appendChild(pe);
+  let left = 24;
+  const intv = setInterval(() => {
+    left--; pe.textContent = `🎬 시연 진행 중 ${left}s`;
+    if (left <= 0) { clearInterval(intv); pe.remove(); }
+  }, 1000);
 }
 
 // ====== /health polling — 외부 API health 카드 ======

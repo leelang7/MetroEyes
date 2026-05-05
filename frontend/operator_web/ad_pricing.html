@@ -371,13 +371,17 @@ function requestAllPois() {
 // ▶︎ 시연 모드 — 30초 동안 가짜 density 변동으로 단가 라이브 갱신 시연
 document.getElementById('demo-trigger')?.addEventListener('click', () => {
   const btn = document.getElementById('demo-trigger');
-  btn.disabled = true; btn.textContent = '시연 진행 중...'; btn.style.opacity = '.65';
+  btn.disabled = true; btn.style.opacity = '.65';
+  btn.style.position = 'relative'; btn.style.overflow = 'hidden';
+  btn.innerHTML = '시연 진행 중... <span id="demo-prog-ad" style="position:absolute;left:0;bottom:0;height:2px;width:0;background:#fff;transition:width .25s linear;"></span>';
   const t0 = Date.now();
   const T = 30000;
   const tick = () => {
     const dt = Date.now() - t0;
+    const p = document.getElementById('demo-prog-ad');
+    if (p) p.style.width = Math.min(100, dt / T * 100) + '%';
     if (dt > T) {
-      btn.disabled = false; btn.textContent = '▶︎ 시연 모드'; btn.style.opacity = '1';
+      btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1';
       return;
     }
     // POI 마다 사인파 + 랜덤 위상으로 0.3~1.0 변동 — 강남/홍대/성수 폭증 강조

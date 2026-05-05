@@ -2122,7 +2122,16 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     }
   }
   btn.addEventListener('click', () => {
-    btn.disabled = true; btn.textContent = '시연 진행 중...'; btn.style.opacity = '.65';
+    btn.disabled = true; btn.style.opacity = '.65';
+    btn.style.position = 'relative'; btn.style.overflow = 'hidden';
+    btn.innerHTML = '시연 진행 중... <span id="demo-prog-cam" style="position:absolute;left:0;bottom:0;height:2px;width:0;background:#fff;transition:width .25s linear;"></span>';
+    const T = 30000, t0 = Date.now();
+    const progT = setInterval(() => {
+      const dt = Date.now() - t0;
+      const p = document.getElementById('demo-prog-cam');
+      if (p) p.style.width = Math.min(100, dt / T * 100) + '%';
+      if (dt >= T) clearInterval(progT);
+    }, 250);
     // 운영자/index 와 같은 5종 시퀀스 (실 카메라 도메인 라벨)
     const seq = [
       { delay: 0,    type: 'free_ride',   sev: 'med',  msg: '실 카메라: 무임 의심 — 카드 미스캔' },
@@ -2135,8 +2144,9 @@ document.getElementById('evac-btn').addEventListener('click', () => {
       send({ type: 'incident_log', ev_type: type, severity: sev, msg, source: 'operator-realbev-demo' });
     }, delay));
     setTimeout(() => {
-      btn.disabled = false; btn.textContent = '▶︎ 시연 모드'; btn.style.opacity = '1';
-    }, 30000);
+      btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1';
+      clearInterval(progT);
+    }, T);
   });
 })();
 </script>

@@ -488,7 +488,16 @@ function injectIncidentBus(ev) {
 }
 document.getElementById('demo-trigger')?.addEventListener('click', () => {
   const btn = document.getElementById('demo-trigger');
-  btn.disabled = true; btn.textContent = '시연 진행 중...'; btn.style.opacity = '.65';
+  btn.disabled = true; btn.style.opacity = '.65';
+  btn.style.position = 'relative'; btn.style.overflow = 'hidden';
+  btn.innerHTML = '시연 진행 중... <span id="demo-prog-bus" style="position:absolute;left:0;bottom:0;height:2px;width:0;background:#fff;transition:width .25s linear;"></span>';
+  const T = 30000, t0 = Date.now();
+  const progT = setInterval(() => {
+    const dt = Date.now() - t0;
+    const p = document.getElementById('demo-prog-bus');
+    if (p) p.style.width = Math.min(100, dt / T * 100) + '%';
+    if (dt >= T) clearInterval(progT);
+  }, 250);
   const seq = [
     { delay: 0,    ev: { id: Date.now()+1, type: 'free_ride',  severity: 'med',  msg: '5번 좌석 무임 의심 — 카드 미스캔', ts: Date.now() } },
     { delay: 5000, ev: { id: Date.now()+2, type: 'lost',       severity: 'low',  msg: '뒷좌석 가방 12초+ 무인 — 분실 의심', ts: Date.now() } },
@@ -498,8 +507,9 @@ document.getElementById('demo-trigger')?.addEventListener('click', () => {
   ];
   seq.forEach(({ delay, ev }) => setTimeout(() => injectIncidentBus(ev), delay));
   setTimeout(() => {
-    btn.disabled = false; btn.textContent = '▶︎ 시연 모드'; btn.style.opacity = '1';
-  }, 30000);
+    btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1';
+    clearInterval(progT);
+  }, T);
 });
 
 let ttsLang = 'ko';
