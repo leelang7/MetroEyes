@@ -1150,7 +1150,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
 </div>
 
-<h2>FAQ — 예상 질문 5</h2>
+<h2>FAQ — 예상 질문 6</h2>
 <div class="row">
   <div class="card">
     <h3 style="color: var(--accent);">Q1. 응답률 30% 가정 근거는?</h3>
@@ -1188,6 +1188,15 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       ② 트랙은 <b style="color: var(--text);">익명 ID</b> + 좌표만 broadcast (얼굴/행동 인식 없음).
       ③ 응급/분실 검출 시에만 운영자에 알림 — 정원 30% 이하 절전은 0인 상태가 트리거.
       ④ Jetson Orin Nano on-device — 클라우드 전송 없음.
+    </p>
+  </div>
+  <div class="card" style="background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(167,139,250,.04)); border-color: rgba(245,158,11,.45);">
+    <h3 style="color: var(--warn);">Q6. 차등 보상 ₩100~₩400 산정 근거?</h3>
+    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+      ① <b style="color: var(--text);">기본 ₩200</b>: 분산률 30%p에 비례 (20분 통근 × 167원/분 × 6%p 효과).
+      ② <b style="color: var(--text);">OD 우선 +₩100 (₩300)</b>: 그림 4 — 출근 도착지 OFF/ON 12배 비대칭 (삼성/역삼/광화문) → 분산 효과 1.5배 가속.
+      ③ <b style="color: var(--text);">환승역 +₩200 (₩400)</b>: 그림 5 — 호선 간 비대칭 차이 +1.56 (충무로/연신내) → 양 호선 동시 절감 → 분산 가치 2배.
+      ④ backend <code>_bonus_krw()</code> 가 station 매칭 → 자동 가산 (시민 추가 행동 불필요).
     </p>
   </div>
 </div>
