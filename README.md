@@ -11,6 +11,15 @@
 
 **진입**: [`frontend/index.html`](frontend/index.html) — 8장 카드 허브 (📊 정책 보고 / 🎬 통합 시연 / 🚇 운영자 / 📱 시민 / 🛠 디버그)
 
+**자동 60 사이클 누적 결과** (D-8, 5/13 마감):
+- ✅ 양면 가치 사슬 5단계 (시민 분산 → backend krw → 운영자 ROI → backend incident → 시민 알림)
+- ✅ 시연 fail-safe **5중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭
+- ✅ 다국어 4개 (ko/en/zh/ja) + Web Speech API 음성 안내 + ARIA 접근성
+- ✅ 모바일 반응형 (운영자 4 + 광고 + 시민 PWA) + safe-area-inset
+- ✅ EDA v3 실 parquet GBR R²=0.931 + ROI 인터랙티브 슬라이더 + 곡선 그래프
+- ✅ 10 페이지 통합 (index/demo/pitch/admin + 운영자 4 + PWA 2)
+- ✅ pitch.html PDF 인쇄 친화 (📄 버튼) + FAQ 5개 + 글로벌 비교 (런던/도쿄/싱가포르)
+
 ---
 
 
