@@ -1,5 +1,26 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v4.3 — D-7 자동 모드 137 사이클 (2026-05-06 후속)
+
+### 신규 (사이클 126~137)
+- **OD 비대칭 EDA** (`scripts/eda_od_asymmetry.py`) — 1~9호선 28일 평균 위 ON/OFF 비대칭 지수 분석:
+  - 출근 도착 TOP 10: 삼성(무역센터)·역삼·광화문 OFF/ON **12x+**
+  - 퇴근 출발 TOP 10: 시청·삼성·광화문 ON/OFF **5x+**
+  - 134역 우선순위 모델의 정량 근거 → pitch.html 그림 4
+- **`/api/v1/dispersion` REST endpoint** — 정적 σ/peak/offpeak 검증값 + 라이브 응답률 비례 추정
+- **`/api/v1/od_asymmetry` REST endpoint** — 현 시각(AM 7~11 / PM 17~21) 자동 매칭 + 우선 분산 추천 역 TOP 5
+- **분산 효과 4 페이지 통일 표시**: 운영자 4 (지하철/버스/실카메라/광고) 헤더 dispersion 칩 (σ/피크 라이브)
+- **OD 우선순위 4 페이지 통일**: pitch / admin / op-subway / op-bus 라이브 chip (1분 폴링, 시각 자동 전환)
+- **demo.html 5분 시퀀스 220s 분산 효과 overlay** (실 데이터 plot + 4-KPI 5초 표시)
+- **PWA 외국인 환영 toast 4언어**: index + onboard 첫 방문자 자동 안내 (12s/OK 자동 dismiss)
+- **demo.html 외국인 평가위원 환영 toast 4언어** (15s/OK)
+- **pitch.html 분산 효과 4-KPI 카드** (σ −9% / 피크 −13.5% / 비피크 +5.6% / 비율 1.78→1.46)
+- **ROI v3 ±15% 민감도 CI band** — 보수/기본/낙관 3 시나리오 동시 표시
+- **K-means(K=4) + 헝가리안 비상 동선** — 단일 출구 baseline 대비 cost 절감 정량화
+- **OpenAPI 3.0 spec** (`docs/openapi.yaml` + `/api/openapi.yaml` 7 path) — Swagger/Redoc/Postman 자동 임포트
+- **Matplotlib Malgun Gothic 자동 적용** — 한글 폰트 fallback 체인 (Win/Mac/Linux)
+- **i18n 4언어 11 페이지 패리티** — 운영자 4 + 시민 2 + 메타 5
+
 ## v4.2 — D-7 자동 모드 125 사이클 (2026-05-06)
 
 ### 신규 (사이클 111~125)
