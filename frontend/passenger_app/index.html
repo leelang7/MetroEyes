@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v3.7-pitchlink';
+  const CUR = 'v3.8-headerbadge';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -26,6 +26,7 @@
     <div class="brand">
       <span class="dot"></span>MetroEyes<small>Citizen</small>
       <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">오프라인</span></span>
+      <span id="header-reward" hidden style="margin-left: 8px; padding: 3px 9px; background: linear-gradient(135deg, rgba(16,185,129,.20), rgba(16,185,129,.08)); border: 1px solid rgba(16,185,129,.45); color: #10b981; border-radius: 999px; font-size: 11px; font-weight: 700; font-feature-settings: 'tnum';" title="누적 분산 보상"><span style="margin-right: 3px;">🪙</span><span id="header-reward-krw">0</span><span style="font-size: 9px; opacity: .8;">원</span></span>
     </div>
     <a class="back-btn" href="../operator_web/index.html">관제 →</a>
     <a class="back-btn" href="../demo.html" title="4-패널 통합 시연" style="background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border-color: rgba(245,158,11,.55); color: #fbbf24;">🎬</a>
@@ -459,18 +460,32 @@ function showRewardToast(krw, savedPct) {
   }, 1300);
 }
 
-// 누적 보상/임팩트 요약 — 임팩트 카드 보강
+// 누적 보상/임팩트 요약 — 임팩트 카드 + 헤더 배지 동시 갱신
 function renderRewardSummary(my) {
   if (!my) {
     try { my = JSON.parse(localStorage.getItem('metroeyes_my_impact') || '{}'); } catch { my = {}; }
   }
+  // 임팩트 카드 라인
   const el = document.getElementById('my-reward-line');
-  if (!el) return;
-  if (!my.n) { el.hidden = true; return; }
+  // 헤더 배지
+  const hdr = document.getElementById('header-reward');
+  const hdrKrw = document.getElementById('header-reward-krw');
+  if (!my.n) {
+    if (el) el.hidden = true;
+    if (hdr) hdr.hidden = true;
+    return;
+  }
   const krw = my.krw || 0;
   const krwLabel = krw >= 10000 ? `₩${(krw/10000).toFixed(1)}만` : `₩${krw.toLocaleString()}`;
-  el.innerHTML = `<span style="color:#10b981;font-weight:800;">🪙 내 적립 ${krwLabel}</span> · <span style="color:var(--muted);">${my.n}회 분산 액션</span>`;
-  el.hidden = false;
+  if (el) {
+    el.innerHTML = `<span style="color:#10b981;font-weight:800;">🪙 내 적립 ${krwLabel}</span> · <span style="color:var(--muted);">${my.n}회 분산 액션</span>`;
+    el.hidden = false;
+  }
+  if (hdr && hdrKrw) {
+    hdrKrw.textContent = krw >= 10000 ? `${(krw/10000).toFixed(1)}만` : krw.toLocaleString();
+    hdr.hidden = false;
+    hdr.title = `누적 ${my.n}회 분산 액션 · 평균 -${Math.round((my.saved||0)/my.n)}%p 한산 · ${krwLabel} 적립`;
+  }
 }
 // 페이지 진입 시 1회 누적 표시
 window.addEventListener('DOMContentLoaded', () => renderRewardSummary());
