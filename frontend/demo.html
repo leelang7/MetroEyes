@@ -121,6 +121,25 @@
 </main>
 <div class="stage-banner" id="stage"></div>
 <script>
+// 헤더 라이브 KPI 8s 폴링 (index.html 패턴 동일)
+(async function pollDemoKPI() {
+  const url = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    const j = await r.json();
+    const im = j.impact;
+    if (im && im.total_count > 0) {
+      const scen = document.getElementById('scenario');
+      if (scen) {
+        const fmt = w => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
+        scen.innerHTML = `🟢 <b>라이브</b> · 분산 ${im.total_count}명 · ⏱${Math.round(im.saved_min_total)}분 · 💰${fmt(im.value_won)} · ROI ${Math.round(im.roi_x||0)}x`;
+      }
+    }
+  } catch {}
+  setTimeout(pollDemoKPI, 8000);
+})();
+
 const startBtn = document.getElementById('start');
 const timer = document.getElementById('timer');
 const stage = document.getElementById('stage');
