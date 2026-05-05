@@ -121,6 +121,38 @@
   </div>
 </main>
 <div class="stage-banner" id="stage"></div>
+
+<!-- 첫 방문 환영 toast (4언어) — 외국인 평가위원 친화 -->
+<div id="demo-welcome" hidden style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,rgba(125,211,211,.20),rgba(16,185,129,.10));border:1px solid rgba(125,211,211,.55);border-radius:14px;padding:14px 22px;max-width:520px;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:ui-sans-serif,system-ui;color:#fff;line-height:1.5;font-size:13px;backdrop-filter:blur(10px)">
+  <div id="dw-text" style="margin-bottom:10px"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button id="dw-ok" style="background:linear-gradient(135deg,#7dd3d3,#10b981);border:none;color:#04060a;padding:6px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">OK</button>
+  </div>
+</div>
+<script>
+(function () {
+  if (localStorage.getItem('me_demo_welcome_seen')) return;
+  const W = {
+    ko: '🎬 4-패널 동시 시연. ▶︎ <b>시연 시작</b> 누르면 5분 자동 재생. 우상단 🇰🇷 버튼으로 언어 변경.',
+    en: '🎬 4-panel simultaneous demo. Click ▶︎ <b>Start Demo</b> for 5-min auto-replay. Top-right 🇺🇸 button to change language.',
+    zh: '🎬 4面板同步演示。点击 ▶︎ <b>开始演示</b> 自动播放 5 分钟。右上角 🇨🇳 按钮切换语言。',
+    ja: '🎬 4パネル同時デモ。▶︎ <b>デモ開始</b> で5分自動再生。右上の 🇯🇵 ボタンで言語変更。',
+  };
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+  const t = document.getElementById('demo-welcome');
+  const x = document.getElementById('dw-text');
+  if (!t || !x) return;
+  x.innerHTML = W[lang] || W.ko;
+  t.hidden = false;
+  document.getElementById('dw-ok')?.addEventListener('click', () => {
+    t.hidden = true;
+    localStorage.setItem('me_demo_welcome_seen', '1');
+  });
+  setTimeout(() => {
+    if (!t.hidden) { t.hidden = true; localStorage.setItem('me_demo_welcome_seen', '1'); }
+  }, 15000);
+})();
+</script>
 <script>
 // ==== 4언어 토글 (외국인 시연 대비) ====
 const I18N_DEMO = {

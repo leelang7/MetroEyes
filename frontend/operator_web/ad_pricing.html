@@ -114,6 +114,29 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
       <b id="ad-kpi-cnt">0</b><em style="color: var(--muted); font-size: 9px;">분산</em>
       <span style="margin-left: 4px;"><b id="ad-kpi-roi">—</b><em style="color: var(--muted); font-size: 9px;">x ROI</em></span>
     </span>
+    <span id="ad-dispersion-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(167,139,250,.08)); border: 1px solid rgba(125,211,211,.45);">
+      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">📈 평탄화</span>
+      <span style="margin-left: 4px; color: var(--muted);">σ<b id="ad-dp-sigma" style="color: var(--text); margin-left:3px;">—%</b></span>
+      <span style="margin-left: 4px; color: var(--muted);">노출<b id="ad-dp-stable" style="color: var(--text); margin-left:3px;">—%</b></span>
+    </span>
+<script>
+// 광고주 컨텍스트: 분산 효과로 인한 시간대 노출 안정성 (1 - peak_drop ≈ 노출 변동 감소)
+(async function pollDispersionAd() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.live && j.live.estimated_response_rate > 0) {
+        document.getElementById('ad-dp-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
+        // 노출 안정성: σ 감소 → 시간대별 노출 변동성 감소
+        document.getElementById('ad-dp-stable').textContent = '+' + (-j.live.sigma_reduction_pct).toFixed(1) + '%';
+        document.getElementById('ad-dispersion-pill').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollDispersionAd, 12000);
+})();
+</script>
   </div>
 <script>
 (async function pollAdKPI() {

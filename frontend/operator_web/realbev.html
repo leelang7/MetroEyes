@@ -200,6 +200,27 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       <b id="cam-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 9px; opacity: .7;">분산</em>
       <b id="cam-kpi-roi" style="margin-left: 6px;">—</b><em style="font-size: 9px; opacity: .7;">x ROI</em>
     </span>
+    <span id="cam-dispersion-pill" hidden class="tag" style="margin-left: 6px; padding: 4px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(167,139,250,.08)); border: 1px solid rgba(125,211,211,.45); color: #fff; border-radius: 6px; font-size: 11px;">
+      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">📈 분산효과</span>
+      <span style="margin-left: 4px;">σ<b id="cam-dp-sigma" style="margin-left:3px;">—%</b></span>
+      <span style="margin-left: 4px;">피크<b id="cam-dp-peak" style="margin-left:3px;">—%</b></span>
+    </span>
+<script>
+(async function pollDispersionCam() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.live && j.live.estimated_response_rate > 0) {
+        document.getElementById('cam-dp-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
+        document.getElementById('cam-dp-peak').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
+        document.getElementById('cam-dispersion-pill').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollDispersionCam, 12000);
+})();
+</script>
 <script>
 (async function pollCamKPI() {
   const url = (location.protocol === 'https:'
