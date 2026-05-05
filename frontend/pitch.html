@@ -696,6 +696,48 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
 </div>
 
+<h2>FAQ — 예상 질문 5</h2>
+<div class="row">
+  <div class="card">
+    <h3 style="color: var(--accent);">Q1. 응답률 30% 가정 근거는?</h3>
+    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+      행동경제학 인센티브 응답률 평균값입니다. 싱가포르 GP-S 시범사업(2018) 5%, 카카오 카풀 ~25%, T맵 친환경 운전 ~35% 사이의 중앙값.
+      슬라이더로 5%~70% 범위 모두 시뮬 가능 — <b style="color: var(--text);">5%만 응답해도 ROI 120x</b> 보장 (보수 시나리오).
+    </p>
+  </div>
+  <div class="card">
+    <h3 style="color: var(--accent);">Q2. 자체 CV가 왜 필요?</h3>
+    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+      공공 데이터 (CardSubway) 는 <b style="color: var(--text);">역 단위 합계</b>만 제공 — 같은 역에서 1호차/10호차의 분산 차이 미지원.
+      SK PUZZLE 칸별 실시간은 10분 지연. <b style="color: var(--text);">실시간 칸 단위 분산</b>은 자체 CV BEV (YOLO11n + BoT-SORT) 만 가능.
+    </p>
+  </div>
+  <div class="card">
+    <h3 style="color: var(--accent);">Q3. 1,393억 산출 근거?</h3>
+    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+      통근 1,183억 (절감 분 × 시간당 임금 15,000원) + 사고 회피 348억 + 광고 85억 + 에너지 58억 − 인센티브 282억.
+      <b style="color: var(--text);">한국교통연구원 혼잡비용 167원/분</b> 환산 — 외부 검증 가능. v3 호선별 cap 도달도 차등 모델로 v2 (283억) 대비 5배 정밀화.
+    </p>
+  </div>
+  <div class="card">
+    <h3 style="color: var(--accent);">Q4. 싱가포르 GP-S 실패 (5% 응답) 이유는?</h3>
+    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+      ① <b style="color: var(--text);">고정 25¢ 보상</b> (분산률 무관) → 행동 변화 동기 부족.
+      ② 카드 단위 (EZ-Link) 로 분산 효과 측정 — <b style="color: var(--text);">실시간 차량 단위 정보 없음</b>.
+      MetroEyes 는 분산률 5%p/15%p/30%p 차등 + 칸 단위 BEV 표시 → 사용자가 실제 더 한산한 칸을 즉시 확인.
+    </p>
+  </div>
+  <div class="card">
+    <h3 style="color: var(--accent);">Q5. 개인정보? 영상 보존?</h3>
+    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+      ① 카메라 → <b style="color: var(--text);">즉시 BEV 좌표로 변환</b>, 원본 영상 미저장 (엣지 inference).
+      ② 트랙은 <b style="color: var(--text);">익명 ID</b> + 좌표만 broadcast (얼굴/행동 인식 없음).
+      ③ 응급/분실 검출 시에만 운영자에 알림 — 정원 30% 이하 절전은 0인 상태가 트리거.
+      ④ Jetson Orin Nano on-device — 클라우드 전송 없음.
+    </p>
+  </div>
+</div>
+
 <h2>심사위원 시연 가이드</h2>
 <div class="card" style="background: var(--panel-2); border-color: var(--warn);">
   <div style="display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; font-size: 13px;">
