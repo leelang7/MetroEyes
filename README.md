@@ -45,6 +45,12 @@ python -m src.cv.lite_server --port 8765 --demo
 ```
 → fake BEV 트랙 5Hz broadcast + 모든 외부 API 라이브 호출 활성. 운영자 콘솔 → ▶︎ 시연 모드 30초 자동 재생.
 
+**한 줄 도커 (backend + frontend 통합)**:
+```bash
+docker compose up -d
+```
+→ backend `:8765` + frontend `:5173` 즉시 기동. `.env` 자동 로드. 어떤 환경에서도 동일 검증.
+
 **완전한 실데이터 흐름**:
 1. 백엔드: `.venv\Scripts\python.exe -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --imgsz 1280 --conf 0.18`
 2. 영상 피더: `.venv\Scripts\python.exe scripts\feed_video.py`

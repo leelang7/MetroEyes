@@ -48,6 +48,12 @@ python -m src.cv.lite_server --port 8765 --demo
 → Fake BEV tracks broadcast at 5Hz + automatic impact seed (warm 12 + 5-min auto incidents).
 All 10 pages immediately go live (KPI / sparkline / time-of-day distribution / incident timeline).
 
+**One-line Docker (backend + frontend)**:
+```bash
+docker compose up -d
+```
+→ backend `:8765` + frontend `:5173` instantly. `.env` auto-loaded. Identical verification in any environment.
+
 ## Full Real-Data Pipeline
 
 1. Backend (CV): `python -m src.cv.tesla_bev --port 8765 --model yolo11s.pt --imgsz 1280`
