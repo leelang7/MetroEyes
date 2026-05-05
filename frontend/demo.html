@@ -230,6 +230,28 @@ function clickInside(iframeId, btnId) {
   } catch (e) { /* cross-origin or not loaded */ }
 }
 
+// 환승 흐름 overlay — 4초 표시
+function showTransferOverlay() {
+  let ov = document.getElementById('transfer-overlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'transfer-overlay';
+    ov.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(4,6,10,0.96);border:2px solid #f59e0b;border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:780px;text-align:center;opacity:0;transition:opacity .35s';
+    ov.innerHTML = `
+      <div style="font:600 13px sans-serif;color:#f59e0b;letter-spacing:1.4px;margin-bottom:10px">🔀 환승역 호선 간 비대칭 — 37 환승역 분석</div>
+      <img src="figs/transfer_stations.png" alt="환승 흐름" style="max-width:740px;width:100%;border-radius:8px"/>
+      <div style="font:11px sans-serif;color:#fff;margin-top:10px;line-height:1.5">
+        <span style="color:#f59e0b">충무로 +1.56</span> ·
+        <span style="color:#f59e0b">연신내 +1.44</span> ·
+        분산 인센티브 환승역 집중 → 양 호선 동시 절감
+      </div>
+    `;
+    document.body.appendChild(ov);
+  }
+  ov.style.opacity = '1';
+  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5000);
+}
+
 // 분산 효과 결과 overlay — 4초 표시
 function showDispersionOverlay() {
   let ov = document.getElementById('dispersion-overlay');
@@ -263,7 +285,8 @@ const SCRIPT = [
   [120000,'🪙 backend krw 누적 → 운영자 ROI 라이브 갱신',     null],
   [180000,'🚨 incident_summary broadcast → 모든 페이지 동기화', null],
   [220000,'📈 실 데이터 분산 효과 — σ −9% / 피크 −13.5% / 비피크 +5.6%', showDispersionOverlay],
-  [240000,'⏱  5분 시연 종료 — pitch.html ROI 슬라이더로 마무리', null],
+  [232000,'🔀 환승역 비대칭 — 충무로 4호선 vs 3호선 +1.56 (분산 우선)', showTransferOverlay],
+  [248000,'⏱  5분 시연 종료 — pitch.html ROI 슬라이더로 마무리', null],
 ];
 
 let started = false;
