@@ -278,6 +278,13 @@ components:
         roi_x: { type: number, description: 추정 ROI 배수 }
         est_response_rate: { type: number, format: float }
         top_station: { type: string, description: 최다 분산 역 }
+        tier_counts:
+          type: object
+          description: 차등 보상 분포 (basic/od/transfer)
+          properties:
+            basic: { type: integer, description: 일반 분산 (₩200) }
+            od: { type: integer, description: OD 우선순위 역 (₩300) }
+            transfer: { type: integer, description: 환승역 (₩400) }
 
     IncidentEvent:
       type: object

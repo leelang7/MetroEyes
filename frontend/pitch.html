@@ -815,6 +815,10 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   ※ 시민 PWA에 차등 보상이 라이브로 표시됨 (📍 +₩300 / 🔀 +₩400 chip).
   /api/v1/od_asymmetry + /api/v1/transfer_priority 1분 폴링으로 자동 매칭 → 시간대마다 자연 전환.
 </p>
+<p style="font-size: 12px; color: var(--muted-2); padding: 10px 14px; background: rgba(245,158,11,.06); border-left: 3px solid var(--warn); border-radius: 4px;">
+  💡 <b style="color: var(--warn);">차등 보상 효과 추정</b>: OD/환승역 인센티브 차등화로 우선순위 역에서의 응답률 <b>+50%</b> 가속 →
+  분산 효과 σ 감소가 동일 응답률에서 <b>20% 추가 개선</b> 예상 (피크 평탄화 효과 직접적). backend가 자동 매칭 + tier_counts 라이브 broadcast.
+</p>
 
 <h2>시스템 흐름 — 5단계 양면 클로즈드 루프</h2>
 <div class="flow">
