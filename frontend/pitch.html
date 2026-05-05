@@ -503,6 +503,54 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
 </div>
 
+<h2>글로벌 분산 정책 비교</h2>
+<table>
+  <thead>
+    <tr>
+      <th>도시</th>
+      <th>정책</th>
+      <th>인센티브</th>
+      <th>측정 단위</th>
+      <th>한계</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>🇬🇧 런던</td>
+      <td>Off-Peak 운임 (~30% 할인)</td>
+      <td>고정 할인</td>
+      <td>역 단위 RFID 게이트</td>
+      <td>칸 단위 분산 미지원 · 시간 외 사용자 적용</td>
+    </tr>
+    <tr>
+      <td>🇯🇵 도쿄</td>
+      <td>Off-Peak 통근 패스 (Suica)</td>
+      <td>월 정액 할인</td>
+      <td>출퇴근 구간 통계</td>
+      <td>실시간 분산 안내 없음 · 패스 보유자만</td>
+    </tr>
+    <tr>
+      <td>🇸🇬 싱가포르</td>
+      <td>GP-S 시범 (2018) — 25¢ 보상</td>
+      <td>1회성 보상</td>
+      <td>EZ-Link 카드</td>
+      <td>실시간 칸 데이터 없음 · 응답률 낮음 (~5%)</td>
+    </tr>
+    <tr class="highlight">
+      <td>🇰🇷 <b>MetroEyes</b></td>
+      <td>분산률 차등 보상 (5%p +100, 30%p +200)</td>
+      <td><b>실시간 칸 단위</b></td>
+      <td>자체 CV BEV (정원 30%~150%)</td>
+      <td>응답률 30% 가정 시 <b style="color:var(--accent);">ROI 347x</b> · 양면 가시화</td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+  <b style="color: var(--text);">차별 핵심:</b> 런던/도쿄/싱가포르 모두 <b>역 단위</b> 통계 기반 시간 분산.
+  MetroEyes는 <b>칸 단위 BEV CV</b> + <b>분산률 차등 보상</b> + <b>backend 누적 ROI 라이브</b>로
+  3-축 통합 시스템 — 시민 행동 1건이 운영자 KPI 1수치로 즉시 반영되는 양면 클로즈드 루프.
+</p>
+
 <h2>1주차 EDA 발견 — 자체 CV 백엔드 명분</h2>
 <div class="row">
   <div class="card">
