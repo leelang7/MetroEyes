@@ -82,7 +82,29 @@
   <div class="controls">
     <span class="tag">데이터<b>citydata_ppltn 분 단위</b></span>
     <span class="tag">시장<b>지하철 광고 ~2,000억/년</b></span>
+    <span id="ad-live-kpi" hidden class="tag" style="background: linear-gradient(135deg, rgba(16,185,129,.15), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.4);">
+      <span style="color: #10b981; font-weight: 700; font-size: 9px; letter-spacing: 1.2px; margin-right: 4px;">🟢 LIVE</span>
+      <b id="ad-kpi-cnt">0</b><em style="color: var(--muted); font-size: 9px;">분산</em>
+      <span style="margin-left: 4px;"><b id="ad-kpi-roi">—</b><em style="color: var(--muted); font-size: 9px;">x ROI</em></span>
+    </span>
   </div>
+<script>
+(async function pollAdKPI() {
+  const url = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    const j = await r.json();
+    const im = j.impact;
+    if (im && im.total_count > 0) {
+      document.getElementById('ad-kpi-cnt').textContent = im.total_count.toLocaleString();
+      document.getElementById('ad-kpi-roi').textContent = im.roi_x ? Math.round(im.roi_x) : '—';
+      document.getElementById('ad-live-kpi').hidden = false;
+    }
+  } catch {}
+  setTimeout(pollAdKPI, 8000);
+})();
+</script>
 </header>
 
 <main>
