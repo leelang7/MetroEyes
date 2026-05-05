@@ -167,6 +167,7 @@
     <a href="../passenger_app/index.html" class="cta-citizen">📱 시민 앱 →</a>
     <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
     <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
+    <button id="demo-trigger" title="실 카메라 BEV 30초 응급/분실 시연 (backend 동기화)" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
   </div>
   <div class="controls">
     <span class="tag">파이프라인<b>Browser Cam → BG-sub → Three.js 3D BEV</b></span>
@@ -2090,6 +2091,54 @@ document.getElementById('evac-btn').addEventListener('click', () => {
   drawPathOverlay(paths, exits, best, worst);
   diagEl.append(`[EVAC A*] ${best.label} cost=${paths[best.id].cost.toFixed(1)} / ${worst.label} cost=${paths[worst.id].cost.toFixed(1)} / ${persons.length}명\n`);
 });
+</script>
+
+<script>
+// ▶︎ 실 카메라 시연 모드 — 30초 시퀀스 (backend incident_log 송신)
+// realbev ESM module 안에서 BEV 캔버스 inject 어려워, backend 통해 다른 페이지/탭 동기화로 데모
+(function () {
+  const btn = document.getElementById('demo-trigger');
+  if (!btn) return;
+  function findWS() {
+    // realbev 의 module-internal ws 변수에 접근 어려워, location 기반으로 자체 ws 1회 연결
+    if (window.LIVE_WS && window.LIVE_WS.readyState === 1) return window.LIVE_WS;
+    return null;
+  }
+  // realbev module 의 ws 변수가 window 에 노출 안 되어 있을 수 있어, 자체 short-lived ws 연결
+  let demoWS = null;
+  function ensureWS() {
+    if (demoWS && demoWS.readyState === 1) return demoWS;
+    const url = location.protocol === 'https:'
+      ? `wss://${location.host}` : `ws://localhost:8765`;
+    demoWS = new WebSocket(url);
+    return demoWS;
+  }
+  function send(o) {
+    const ws = findWS() || ensureWS();
+    if (ws.readyState === 1) {
+      try { ws.send(JSON.stringify(o)); } catch {}
+    } else if (ws.readyState === 0) {
+      ws.addEventListener('open', () => { try { ws.send(JSON.stringify(o)); } catch {} }, { once: true });
+    }
+  }
+  btn.addEventListener('click', () => {
+    btn.disabled = true; btn.textContent = '시연 진행 중...'; btn.style.opacity = '.65';
+    // 운영자/index 와 같은 5종 시퀀스 (실 카메라 도메인 라벨)
+    const seq = [
+      { delay: 0,    type: 'free_ride',   sev: 'med',  msg: '실 카메라: 무임 의심 — 카드 미스캔' },
+      { delay: 6000, type: 'lost',        sev: 'low',  msg: '실 카메라: 가방 12초+ 무인 — BoT-SORT 분실 검출' },
+      { delay: 13000, type: 'emergency',  sev: 'high', msg: '실 카메라: 30초+ 정지 + AED 28m — 응급 골든타임' },
+      { delay: 20000, type: 'suspicious', sev: 'high', msg: '실 카메라: 환승 통로 군집 이상' },
+      { delay: 26000, type: 'free_ride',  sev: 'med',  msg: '실 카메라: 자동 분산 안내 송출' },
+    ];
+    seq.forEach(({ delay, type, sev, msg }) => setTimeout(() => {
+      send({ type: 'incident_log', ev_type: type, severity: sev, msg, source: 'operator-realbev-demo' });
+    }, delay));
+    setTimeout(() => {
+      btn.disabled = false; btn.textContent = '▶︎ 시연 모드'; btn.style.opacity = '1';
+    }, 30000);
+  });
+})();
 </script>
 <script src="../shared/health_pill.js" defer></script>
 </body>
