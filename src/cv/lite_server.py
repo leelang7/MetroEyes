@@ -492,6 +492,20 @@ async def fake_impact_seed_loop():
     import random
     rng = random.Random(7)
     STATIONS = ["성수카페거리", "강남역", "잠실역", "서울숲", "홍대 관광특구"]
+    # Warm seed — 시작 즉시 12건 누적 + hourly 분포 양봉 형태 (지난 24h 시뮬)
+    for _ in range(12):
+        sv = rng.choices([7, 12, 22, 35, 5], weights=[0.25, 0.30, 0.25, 0.10, 0.10])[0]
+        krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
+        st = rng.choice(STATIONS)
+        h_seed = rng.choices(list(range(24)),
+                             weights=[0.5, 0.3, 0.2, 0.2, 0.3, 0.8, 1.5, 4.0, 7.0, 4.5, 2.5, 2.0,
+                                      2.5, 2.5, 2.5, 2.5, 3.0, 5.0, 7.0, 4.5, 2.5, 2.0, 1.0, 0.6])[0]
+        _impact_total["count"] += 1
+        _impact_total["saved_pct_sum"] += sv
+        _impact_total["krw_paid"] += krw
+        _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
+        _impact_total["hourly"][h_seed] += 1
+    print(f"[seed] 12 warm impact seeds 즉시 누적 — 첫 진입 KPI 라이브", flush=True)
     while True:
         # 양봉 가중치 계산
         h = time.localtime().tm_hour
