@@ -718,5 +718,36 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
 })();
 </script>
 
+<!-- 외국인 평가위원/운영자 첫 방문 환영 toast (4언어) -->
+<div id="admin-welcome" hidden style="position:fixed;bottom:20px;right:20px;z-index:9999;background:linear-gradient(135deg,rgba(125,211,211,.20),rgba(167,139,250,.10));border:1px solid rgba(125,211,211,.55);border-radius:14px;padding:14px 18px;max-width:420px;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:ui-sans-serif,system-ui;color:#fff;line-height:1.5;font-size:13px;backdrop-filter:blur(10px)">
+  <div id="aw-text" style="margin-bottom:10px"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button id="aw-ok" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer">OK</button>
+  </div>
+</div>
+<script>
+(function () {
+  if (localStorage.getItem('me_admin_welcome_seen')) return;
+  const W = {
+    ko: '🛠 Debug Console — backend WS 직접 호출 + /health 5s polling + 라이브 OD/환승/분산 카드 모두 동기화.',
+    en: '🛠 Debug Console — direct backend WS calls + /health 5s polling + live OD/transfer/dispersion cards all synced.',
+    zh: '🛠 调试控制台 — 直接调用后端 WS + /health 5秒轮询 + 实时 OD/换乘/分散 卡片全部同步。',
+    ja: '🛠 デバッグコンソール — backend WS 直接呼び出し + /health 5秒ポーリング + ライブ OD/乗換/分散 カード全同期。',
+  };
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+  const t = document.getElementById('admin-welcome');
+  const x = document.getElementById('aw-text');
+  if (!t || !x) return;
+  x.textContent = W[lang] || W.ko;
+  t.hidden = false;
+  document.getElementById('aw-ok')?.addEventListener('click', () => {
+    t.hidden = true;
+    localStorage.setItem('me_admin_welcome_seen', '1');
+  });
+  setTimeout(() => {
+    if (!t.hidden) { t.hidden = true; localStorage.setItem('me_admin_welcome_seen', '1'); }
+  }, 15000);
+})();
+</script>
 </body>
 </html>
