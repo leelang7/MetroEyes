@@ -6,6 +6,7 @@
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
 [![Cycles](https://img.shields.io/badge/자동_사이클-100회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
+[![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*

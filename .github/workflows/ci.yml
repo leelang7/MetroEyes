@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  python-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Syntax check (ast.parse all .py)
+        run: |
+          python -c "
+          import ast, pathlib, sys
+          errors = []
+          for p in pathlib.Path('.').rglob('*.py'):
+              if any(part in {'.venv', 'build', 'node_modules', 'outputs', '__pycache__'} for part in p.parts):
+                  continue
+              try: ast.parse(p.read_text(encoding='utf-8'))
+              except SyntaxError as e: errors.append(f'{p}: {e}')
+          if errors:
+              print('\n'.join(errors)); sys.exit(1)
+          print('✅ All Python syntax OK')
+          "
+
+  lite-server-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install minimal deps
+        run: pip install --no-cache-dir websockets
+      - name: Smoke test — import lite_server
+        run: |
+          python -c "import sys; sys.path.insert(0, '.'); from src.cv import lite_server; print('✅ lite_server import OK')"
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Dockerfile
+        run: docker build -t metroeyes:ci .
+      - name: Smoke run (5s)
+        run: |
+          docker run -d --name metroeyes-ci -p 8765:8765 metroeyes:ci
+          sleep 5
+          curl -fsS http://localhost:8765/health > /dev/null || (docker logs metroeyes-ci; exit 1)
+          docker stop metroeyes-ci
+          echo "✅ Docker /health OK"
+
+  frontend-html-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check frontend html files exist + non-empty
+        run: |
+          for f in frontend/index.html frontend/demo.html frontend/pitch.html frontend/admin.html frontend/operator_web/index.html frontend/operator_web/bus.html frontend/operator_web/realbev.html frontend/operator_web/ad_pricing.html frontend/passenger_app/index.html frontend/passenger_app/onboard.html; do
+            test -s "$f" || (echo "❌ Missing or empty: $f" && exit 1)
+          done
+          echo "✅ All 10 frontend pages exist + non-empty"
