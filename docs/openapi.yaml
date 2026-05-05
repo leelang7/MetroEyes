@@ -329,7 +329,14 @@ components:
         ts: { type: number, format: float, description: epoch seconds }
         ev_type:
           type: string
-          enum: [emergency, suspicious, lost, free_ride]
+          enum: [emergency, suspicious, lost, free_ride, priority_seat, bottleneck]
+          description: |
+            emergency: 응급 (30초+ 정지 + AED 거리)
+            suspicious: 이상행동 (환승 통로 군집)
+            lost: 분실물 (BoT-SORT 가방 12초+ 무인)
+            free_ride: 무임 의심 (카드 미스캔)
+            priority_seat: 임산부석 일반인 점유 (cycle 226 신규 — 칸 단위 BEV ROI)
+            bottleneck: 에스컬레이터/환승 통로 병목 (cycle 226 신규 — 정체 45초+)
         severity:
           type: string
           enum: [low, medium, high, critical]

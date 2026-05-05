@@ -897,6 +897,27 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       <li>24h 폭증 예측 — 시간 baseline + hist_trend + hot 가중</li>
     </ul>
   </div>
+  <div class="card" style="border-color: rgba(167,139,250,.45); background: linear-gradient(135deg, rgba(167,139,250,.06), rgba(125,211,211,.04));">
+    <h3>👶 IDEA-7 임산부 배려석 점유 감지</h3>
+    <ul>
+      <li><b>칸 단위 BEV 좌표</b> 활용 — 칸 양 끝 임산부석 영역 ROI 정의 (분홍 배지 좌표)</li>
+      <li>30초+ 점유 + 임산부 동행 미감지 → <b>일반인 점유 의심</b> 자동 알림</li>
+      <li>차내 디스플레이 "분홍 좌석 비워주세요" 비강제 안내 송출</li>
+      <li>backend <code>incident_log {ev_type:'priority_seat'}</code> 누적 — 운영자 통계 + 정책 근거</li>
+      <li>지하철 임산부석 회피율 / 양보율 정량 데이터 — 서울시 최초 가능</li>
+    </ul>
+  </div>
+  <div class="card" style="border-color: rgba(255,94,87,.45); background: linear-gradient(135deg, rgba(255,94,87,.06), rgba(245,158,11,.04));">
+    <h3>🚪 IDEA-8 에스컬레이터/환승 통로 병목 감지</h3>
+    <ul>
+      <li><b>BEV 평면의 좁은 영역 (에스컬레이터 진입부 / 환승 계단)</b> ROI에서 정체 시간 측정</li>
+      <li>인원 밀도 평균 속도 < 0.3m/s 가 45초+ → <b>병목 자동 검출</b></li>
+      <li>디스플레이 "옆 출구 권장" + 운영자 콘솔 사고 알림 (red badge)</li>
+      <li>이태원 참사 같은 군중 밀집 사전 경고 — <b>다중 ROI 동시 감지</b></li>
+      <li>backend <code>incident_log {ev_type:'bottleneck'}</code> 누적 — 정체 hot-spot 통계</li>
+    </ul>
+  </div>
+
   <div class="card" style="border-color: rgba(245,158,11,.45); background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(167,139,250,.04));">
     <h3>💰 차등 보상 자동 매칭 (글로벌 최초)</h3>
     <ul>

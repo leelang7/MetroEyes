@@ -212,11 +212,13 @@
       <h2>🚨 사고 누적 <span style="color: var(--muted); font-weight: 400;">(incident_log 동기화)</span>
         <button onclick="triggerDemoIncidents()" style="float: right; padding: 2px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연</button>
       </h2>
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 11px;">
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; font-size: 11px;">
         <div class="stat" style="display:block;"><span style="color:#ff5e57;">응급</span> <b id="ic-em">0</b></div>
         <div class="stat" style="display:block;"><span style="color:#f0b46a;">이상</span> <b id="ic-su">0</b></div>
         <div class="stat" style="display:block;"><span style="color:#7dd3d3;">분실</span> <b id="ic-lo">0</b></div>
         <div class="stat" style="display:block;"><span style="color:#a78bfa;">무임</span> <b id="ic-fr">0</b></div>
+        <div class="stat" style="display:block;"><span style="color:#ec4899;">👶 임산부석</span> <b id="ic-ps">0</b></div>
+        <div class="stat" style="display:block;"><span style="color:#fbbf24;">🚪 병목</span> <b id="ic-bn">0</b></div>
       </div>
       <canvas id="ic-bar" width="540" height="40" style="width:100%; height:40px; margin-top: 8px; background:#04060a; border:1px solid rgba(255,255,255,.05); border-radius:6px;"></canvas>
       <div id="ic-recent" style="margin-top: 8px; font-size: 10px; color: var(--muted);">최근 이벤트 없음</div>
@@ -599,6 +601,7 @@ async function pollHealth() {
       } catch {}
       ev('ic-em', ic.emergency); ev('ic-su', ic.suspicious);
       ev('ic-lo', ic.lost); ev('ic-fr', ic.free_ride);
+      ev('ic-ps', ic.priority_seat || 0); ev('ic-bn', ic.bottleneck || 0);
       // 비율 막대 — 4 type 누적 가로 바
       const cv = document.getElementById('ic-bar');
       if (cv) {
@@ -638,7 +641,7 @@ async function pollHealth() {
         }).join('');
       }
     } else {
-      ['ic-em','ic-su','ic-lo','ic-fr'].forEach(id => ev(id, '0'));
+      ['ic-em','ic-su','ic-lo','ic-fr','ic-ps','ic-bn'].forEach(id => ev(id, '0'));
     }
     // 분당 메시지 sparkline (60분)
     if (j.msg_per_min && Array.isArray(j.msg_per_min)) drawMsgPerMin(j.msg_per_min);

@@ -121,7 +121,8 @@ _api_stats: dict[str, dict] = {}  # name → {calls, errors, last_ms, avg_ms, la
 _cv_metrics: dict = {"fps": 0.0, "tracks": 0, "frames": 0, "last_ts": 0.0, "demo": False}
 
 # 사고/이벤트 누적 — realbev/operator 가 incident_log 보내면 누적 + broadcast
-_incident_total = {"emergency": 0, "suspicious": 0, "lost": 0, "free_ride": 0, "events": []}
+_incident_total = {"emergency": 0, "suspicious": 0, "lost": 0, "free_ride": 0,
+                   "priority_seat": 0, "bottleneck": 0, "events": []}
 INCIDENT_KEEP = 30  # 최근 30개만 유지
 
 # 분당 메시지 통계 — 60분 deque
@@ -516,6 +517,8 @@ async def handler(websocket):
                     "suspicious": _incident_total["suspicious"],
                     "lost": _incident_total["lost"],
                     "free_ride": _incident_total["free_ride"],
+                    "priority_seat": _incident_total["priority_seat"],
+                    "bottleneck": _incident_total["bottleneck"],
                     "events": _incident_total["events"][:8],
                 }
                 await broadcast(json.dumps(summary, ensure_ascii=False))
@@ -610,11 +613,13 @@ async def fake_incident_seed_loop():
     import random
     rng = random.Random(13)
     TYPES = [
-        ("free_ride", "med", "무임 의심 — 카드 미스캔", 0.30),
-        ("lost", "low", "분실 가방 — BoT-SORT 12초+ 무인", 0.25),
+        ("free_ride", "med", "무임 의심 — 카드 미스캔", 0.20),
+        ("lost", "low", "분실 가방 — BoT-SORT 12초+ 무인", 0.20),
         ("emergency", "high", "응급 — 30초+ 정지 + AED 거리", 0.10),
-        ("suspicious", "high", "이상행동 — 환승 통로 군집", 0.15),
-        ("free_ride", "med", "자동 분산 안내 송출 — 만석", 0.20),
+        ("suspicious", "high", "이상행동 — 환승 통로 군집", 0.10),
+        ("priority_seat", "low", "임산부석 일반인 점유 — 배려 알림 송출", 0.15),
+        ("bottleneck", "med", "에스컬레이터 병목 — 정체 45초+ 우회 안내", 0.15),
+        ("free_ride", "med", "자동 분산 안내 송출 — 만석", 0.10),
     ]
     while True:
         await asyncio.sleep(300 + rng.uniform(-60, 60))   # 5분 ± 1분
@@ -638,6 +643,8 @@ async def fake_incident_seed_loop():
                     "suspicious": _incident_total["suspicious"],
                     "lost": _incident_total["lost"],
                     "free_ride": _incident_total["free_ride"],
+                    "priority_seat": _incident_total["priority_seat"],
+                    "bottleneck": _incident_total["bottleneck"],
                     "events": _incident_total["events"][:8],
                 }
                 await broadcast(json.dumps(summary, ensure_ascii=False))
@@ -758,10 +765,13 @@ async def http_health(path, headers):
                 "suspicious": _incident_total["suspicious"],
                 "lost": _incident_total["lost"],
                 "free_ride": _incident_total["free_ride"],
+                "priority_seat": _incident_total["priority_seat"],
+                "bottleneck": _incident_total["bottleneck"],
             },
             "events": _incident_total["events"][:30],
             "total": (_incident_total["emergency"] + _incident_total["suspicious"]
-                      + _incident_total["lost"] + _incident_total["free_ride"]),
+                      + _incident_total["lost"] + _incident_total["free_ride"]
+                      + _incident_total["priority_seat"] + _incident_total["bottleneck"]),
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path == "/api/v1/impact":
