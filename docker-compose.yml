@@ -1,0 +1,32 @@
+# MetroEyes — backend + frontend 정적 서버 통합
+# docker compose up -d → http://localhost:8765 (backend), http://localhost:5173 (frontend)
+version: "3.8"
+
+services:
+  backend:
+    build: .
+    image: metroeyes:latest
+    container_name: metroeyes-backend
+    ports:
+      - "8765:8765"
+    environment:
+      - SEOUL_OPENDATA_API_KEY=${SEOUL_OPENDATA_API_KEY:-}
+      - SEOUL_SUBWAY_ARRIVAL_KEY=${SEOUL_SUBWAY_ARRIVAL_KEY:-}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID:-}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    restart: unless-stopped
+    command: ["python", "-m", "src.cv.lite_server", "--port", "8765", "--host", "0.0.0.0", "--demo"]
+
+  frontend:
+    image: python:3.12-slim
+    container_name: metroeyes-frontend
+    working_dir: /frontend
+    volumes:
+      - ./frontend:/frontend:ro
+    ports:
+      - "5173:5173"
+    command: ["python", "-m", "http.server", "5173"]
+    depends_on:
+      - backend
+    restart: unless-stopped
