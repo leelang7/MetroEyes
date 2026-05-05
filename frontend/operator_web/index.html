@@ -100,6 +100,29 @@ window.addEventListener('DOMContentLoaded', applyOpI18n);
       <span style="opacity:.85;">σ<b id="op-dp-sigma" style="margin-left:3px;">—%</b></span>
       <span style="margin-left: 6px; opacity:.85;">피크<b id="op-dp-peak" style="margin-left:3px;">—%</b></span>
     </span>
+    <span class="tag tier-pill" id="tier-pill" hidden title="차등 보상 분포 — 일반/OD우선/환승역" style="background: linear-gradient(135deg, rgba(245,158,11,.14), rgba(167,139,250,.06)); border: 1px solid rgba(245,158,11,.35);">
+      <span style="font-size: 10px; color: #f59e0b; font-weight: 700; margin-right: 4px;">💰 차등</span>
+      <b id="op-tier-basic" style="color: #7dd3d3;">0</b><em style="opacity:.5;">/</em><b id="op-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="op-tier-tp" style="color: #f59e0b;">0</b>
+    </span>
+<script>
+window.addEventListener('message', () => {});
+(async function pollTierOp() {
+  try {
+    const r = await fetch('http://localhost:8765/health', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      const tc = j.impact && j.impact.tier_counts;
+      if (tc && (tc.basic + tc.od + tc.transfer) > 0) {
+        document.getElementById('op-tier-basic').textContent = (tc.basic || 0).toLocaleString();
+        document.getElementById('op-tier-od').textContent = (tc.od || 0).toLocaleString();
+        document.getElementById('op-tier-tp').textContent = (tc.transfer || 0).toLocaleString();
+        document.getElementById('tier-pill').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollTierOp, 8000);
+})();
+</script>
 <script>
 (async function pollDispersionOp() {
   try {
