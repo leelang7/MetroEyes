@@ -107,6 +107,30 @@
       </div>
     </div>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(245,158,11,.10), rgba(125,211,211,.04)); border-color: rgba(245,158,11,.30);">
+      <h2>🔀 환승 흐름 우세 (호선 간 비대칭)</h2>
+      <div id="tp-rationale" style="font-size: 11px; color: var(--muted); margin-bottom: 8px;">—</div>
+      <div id="tp-list" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+    </div>
+<script>
+(async function pollTransferPriority() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/transfer_priority', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.priority_stations && j.priority_stations.length > 0) {
+        document.getElementById('tp-rationale').textContent = j.rationale;
+        const sl = document.getElementById('tp-list');
+        sl.innerHTML = j.priority_stations.map(s => {
+          return `<span style="padding: 4px 10px; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.45); border-radius: 6px; font-size: 11px; color: #f59e0b; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size:9px;">+${s.diff.toFixed(2)}</em><br><em style="opacity:.6;font-style:normal;font-size:9px;">${s.max_line} ↔ ${s.min_line}</em></span>`;
+        }).join('');
+      }
+    }
+  } catch {}
+  setTimeout(pollTransferPriority, 60000);
+})();
+</script>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border-color: rgba(167,139,250,.30);">
       <h2>📍 OD 우선순위 (현 시각 자동 매칭)</h2>
       <div id="od-rationale-admin" style="font-size: 11px; color: var(--muted); margin-bottom: 8px;">—</div>

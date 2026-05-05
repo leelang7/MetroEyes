@@ -715,6 +715,41 @@ async def http_health(path, headers):
             },
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path == "/api/v1/transfer_priority":
+        # /api/v1/transfer_priority — 환승역 호선 간 비대칭 차이 TOP 5 (현 시각 AM/PM)
+        try:
+            from pathlib import Path as _P
+            import time as _t
+            rep = _P(__file__).resolve().parent.parent.parent / "frontend" / "figs" / "transfer_stations_report.json"
+            base = json.loads(rep.read_text(encoding="utf-8")) if rep.exists() else {}
+            cur_h = _t.localtime().tm_hour
+            if 7 <= cur_h <= 11:
+                priority_type = "am_transfer"
+                priority_list = base.get("top_am_diff", [])[:5]
+                rationale = f"현재 {cur_h}시 — 출근 환승 흐름 우세 (호선 간 비대칭 차이)"
+            elif 17 <= cur_h <= 21:
+                priority_type = "pm_transfer"
+                priority_list = base.get("top_pm_diff", [])[:5]
+                rationale = f"현재 {cur_h}시 — 퇴근 환승 흐름 우세 (호선 간 비대칭 차이)"
+            else:
+                priority_type = "neutral"
+                priority_list = []
+                rationale = f"현재 {cur_h}시 — 비피크 시간대"
+            body = json.dumps({
+                "ok": True,
+                "current_hour": cur_h,
+                "priority_type": priority_type,
+                "priority_stations": priority_list,
+                "rationale": rationale,
+                "static": {
+                    "n_transfer_stations": base.get("n_transfer_stations"),
+                    "data_source": "subway_time_202602.parquet (1~9호선 28일 평균, 환승역 37개)",
+                },
+            }).encode("utf-8")
+            return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+        except Exception as e:
+            return (500, [("content-type", "application/json")] + CORS_HEADERS,
+                    json.dumps({"ok": False, "error": str(e)}).encode("utf-8"))
     if path == "/api/v1/od_asymmetry":
         # /api/v1/od_asymmetry — OD 비대칭 분석 결과 + 현 시각 우선 추천 역
         try:
@@ -822,6 +857,8 @@ async def http_health(path, headers):
             "<p>분산 정책 시뮬 — 실 parquet σ/peak/offpeak 검증값 + 라이브 응답률 비례 추정</p>"
             "<h2>GET <code>/api/v1/od_asymmetry</code></h2>"
             "<p>OD 비대칭 — 현 시각(AM/PM) 자동 매칭 + 우선 분산 추천 역 TOP 5</p>"
+            "<h2>GET <code>/api/v1/transfer_priority</code></h2>"
+            "<p>환승역 호선 간 비대칭 차이 TOP 5 — 환승 흐름 우세 + 분산 후보 (현 시각 AM/PM 자동)</p>"
             "<h2>GET <code>/api/openapi.yaml</code></h2>"
             "<p>표준 OpenAPI 3.0 spec — Swagger / Redoc / Postman 임포트 가능</p>"
             "<h2>WebSocket <code>ws://host:8765</code></h2>"
