@@ -66,6 +66,27 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
       <b id="bus-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 9px; color: var(--muted);">분산</em>
       <b id="bus-kpi-roi" style="margin-left: 6px;">—</b><em style="font-size: 9px; color: var(--muted);">x ROI</em>
     </span>
+    <span id="bus-dispersion-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(167,139,250,.08)); border: 1px solid rgba(125,211,211,.45);">
+      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">📈 분산효과</span>
+      <span style="margin-left: 4px;">σ<b id="bus-dp-sigma" style="margin-left:3px;">—%</b></span>
+      <span style="margin-left: 4px;">피크<b id="bus-dp-peak" style="margin-left:3px;">—%</b></span>
+    </span>
+<script>
+(async function pollDispersionBus() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.live && j.live.estimated_response_rate > 0) {
+        document.getElementById('bus-dp-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
+        document.getElementById('bus-dp-peak').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
+        document.getElementById('bus-dispersion-pill').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollDispersionBus, 12000);
+})();
+</script>
 <script>
 (async function pollBusKPI() {
   const url = (location.protocol === 'https:'
