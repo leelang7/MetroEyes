@@ -26,6 +26,12 @@
     display: flex; align-items: center; gap: 16px; padding: 8px 16px; height: 44px;
     background: linear-gradient(135deg, rgba(125,211,211,0.10), rgba(20,20,26,0.85));
     border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  #demo-bar {
+    position: absolute; left: 0; bottom: 0; height: 2px; width: 0;
+    background: linear-gradient(90deg, var(--accent), #38bdf8);
+    transition: width .25s linear; box-shadow: 0 0 8px var(--accent);
   }
   header .brand { font-size: 14px; font-weight: 800; letter-spacing: .8px; color: var(--accent); }
   header .brand small { display: block; font-size: 9px; letter-spacing: 1.2px; color: var(--muted); font-weight: 500; }
@@ -91,6 +97,7 @@
   <div class="scenario" id="scenario">▶︎ <b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span></div>
   <div class="timer" id="timer">00:00</div>
   <button id="start">▶︎ 시연 시작</button>
+  <div id="demo-bar"></div>
 </header>
 <main>
   <div class="panel">
@@ -166,16 +173,19 @@ startBtn.addEventListener('click', () => {
       if (act) try { act(); } catch {}
     }, ms);
   });
-  // timer
+  // timer + progress bar
   const tk = setInterval(() => {
     const dt = Date.now() - t0;
     timer.textContent = fmtT(dt);
+    const bar = document.getElementById('demo-bar');
+    if (bar) bar.style.width = Math.min(100, dt / (5*60*1000) * 100) + '%';
     if (dt > 5 * 60 * 1000) {
       clearInterval(tk);
       startBtn.disabled = false;
       startBtn.textContent = '▶︎ 다시 재생';
       started = false;
       scen.innerHTML = '✅ <b>시연 종료</b> — 다시 재생 또는 개별 패널 자유 조작';
+      if (bar) setTimeout(() => bar.style.width = '0', 1500);
     }
   }, 250);
 });
