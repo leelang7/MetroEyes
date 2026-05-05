@@ -262,6 +262,33 @@
   <span id="pitch-od-rationale" style="color: var(--muted); font-size: 10px;">—</span>
   <span id="pitch-od-list" style="display: contents;"></span>
 </div>
+<!-- 환승 흐름 우세 chip (라이브 1분 폴링) -->
+<div id="pitch-tp-strip" hidden style="margin-bottom: 10px; padding: 6px 14px; background: linear-gradient(135deg, rgba(245,158,11,.08), rgba(125,211,211,.03)); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+  <span style="color: #f59e0b; font-size: 10px; font-weight: 700; letter-spacing: 1.0px;">🔀 환승 흐름:</span>
+  <span id="pitch-tp-rationale" style="color: var(--muted); font-size: 10px;">—</span>
+  <span id="pitch-tp-list" style="display: contents;"></span>
+</div>
+<script>
+(async function pollTransferPitch() {
+  const url = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/transfer_priority';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.priority_stations && j.priority_stations.length > 0) {
+        document.getElementById('pitch-tp-rationale').textContent = j.rationale;
+        const sl = document.getElementById('pitch-tp-list');
+        sl.innerHTML = j.priority_stations.slice(0, 5).map(s =>
+          `<span style="padding: 2px 7px; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.40); border-radius: 999px; font-size: 10px; color: #f59e0b; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size:9px;">+${s.diff.toFixed(2)}</em></span>`
+        ).join('');
+        document.getElementById('pitch-tp-strip').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollTransferPitch, 60000);
+})();
+</script>
 <script>
 (async function pollODPitch() {
   const url = (location.protocol === 'https:'

@@ -148,6 +148,41 @@ paths:
                       peak_reduction_pct: { type: number }
                       offpeak_lift_pct: { type: number }
 
+  /api/v1/transfer_priority:
+    get:
+      summary: 환승역 호선 간 비대칭 차이 TOP 5 (현 시각 AM/PM)
+      description: |
+        환승역(1~9호선 중복역 37곳)의 호선 간 ON/OFF 비대칭 *차이* 가 큰 환승 흐름 우세 역.
+        AM에는 출근 환승 우세 TOP 5, PM에는 퇴근 환승 우세 TOP 5 반환.
+        분산 인센티브를 환승역에 집중하면 양 호선 동시 피크 절감 가능.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  current_hour: { type: integer }
+                  priority_type:
+                    type: string
+                    enum: [am_transfer, pm_transfer, neutral]
+                  priority_stations:
+                    type: array
+                    maxItems: 5
+                    items:
+                      type: object
+                      properties:
+                        station: { type: string }
+                        n_lines: { type: integer }
+                        diff: { type: number }
+                        max_line: { type: string }
+                        max_asym: { type: number }
+                        min_line: { type: string }
+                        min_asym: { type: number }
+                  rationale: { type: string }
+
   /api/v1/od_asymmetry:
     get:
       summary: OD 비대칭 — 현 시각 자동 매칭 + 우선 분산 추천 역

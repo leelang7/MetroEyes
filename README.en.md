@@ -107,6 +107,7 @@ backend `lite_server.py` exposes 7 endpoints — all CORS-enabled:
 | `GET /api/v1/incidents` | 4 incident counts + 30 events | live monitoring |
 | `GET /api/v1/dispersion` | static σ/peak/offpeak validation + live response-rate estimate | dispersion visualization |
 | `GET /api/v1/od_asymmetry` | current-hour AM/PM auto-match + top 5 priority stations | operator policy priority |
+| `GET /api/v1/transfer_priority` | transfer-station inter-line asymmetry diff top 5 (current AM/PM) | transfer-flow policy |
 | `GET /api/openapi.yaml` | OpenAPI 3.0 spec | Swagger/Redoc/Postman auto-import |
 
 ```bash
