@@ -87,27 +87,28 @@ def _load_priority_sets():
         pass
     _priority_cache["loaded"] = True
 
-def _bonus_krw(station: str) -> int:
-    """역 이름 → 차등 보상 (환승역 우선)."""
+def _bonus_krw(station: str) -> tuple[int, str]:
+    """역 이름 → (보상 가산, tier name). tier ∈ {basic, od, transfer}"""
     if not station:
-        return 0
+        return 0, "basic"
     _load_priority_sets()
     cur_h = time.localtime().tm_hour
     is_am = 7 <= cur_h <= 11
     is_pm = 17 <= cur_h <= 21
     if not (is_am or is_pm):
-        return 0
+        return 0, "basic"
     tp_set = _priority_cache.get("transfer") or set()
     if station in tp_set:
-        return 200   # 환승역 — 기본 200원에 +200 → 총 ₩400
+        return 200, "transfer"   # 환승역 — 기본 200원에 +200 → 총 ₩400
     od_set = _priority_cache.get("od_arrival" if is_am else "od_departure") or set()
     if station in od_set:
-        return 100   # OD 우선순위 — 기본 200원에 +100 → 총 ₩300
-    return 0
+        return 100, "od"   # OD 우선순위 — 기본 200원에 +100 → 총 ₩300
+    return 0, "basic"
 
 # 누적 임팩트 — impact_log 들어오면 합산 후 impact_summary broadcast
 _impact_total = {"count": 0, "saved_pct_sum": 0.0, "stations": {}, "krw_paid": 0,
-                 "hourly": [0] * 24}  # 시간별 분산 액션 누적
+                 "hourly": [0] * 24,
+                 "tier_counts": {"basic": 0, "od": 0, "transfer": 0}}  # 차등 보상 분포
 IMPACT_AVG_TRIP_MIN = 25.0      # 평균 통행 시간 (분)
 IMPACT_VALUE_PER_MIN = 167      # 혼잡 1분 당 사회적 비용 추정 (원) — 한국교통연구원 혼잡비용 환산
 # 운영자 콘솔에 표시할 일평균 통행 (서울교통공사 2024) — 응답률 추정 기준
@@ -443,6 +444,7 @@ def _build_impact_summary() -> dict:
         "roi_x": round(roi_x, 1),
         "hourly": hourly,
         "stations": dict(sorted(_impact_total["stations"].items(), key=lambda x: -x[1])[:8]),
+        "tier_counts": dict(_impact_total.get("tier_counts", {})),
     }
 
 
@@ -484,13 +486,14 @@ async def handler(websocket):
                 saved = float(req.get("saved_pct") or 0)
                 raw_krw = int(req.get("krw") or 0)
                 st = req.get("station") or "?"
-                bonus = _bonus_krw(st)
+                bonus, tier = _bonus_krw(st)
                 krw = raw_krw + bonus
                 _impact_total["count"] += 1
                 _impact_total["saved_pct_sum"] += saved
                 _impact_total["krw_paid"] += krw
                 _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
                 _impact_total["hourly"][time.localtime().tm_hour] += 1
+                _impact_total["tier_counts"][tier] = _impact_total["tier_counts"].get(tier, 0) + 1
                 await broadcast(json.dumps(_build_impact_summary(), ensure_ascii=False))
             elif t == "incident_log":
                 # realbev / operator 가 응급·분실·이상·무임 검출 시 송신
@@ -555,8 +558,10 @@ async def fake_impact_seed_loop():
     # Warm seed — 시작 즉시 12건 누적 + hourly 분포 양봉 형태 (지난 24h 시뮬)
     for _ in range(12):
         sv = rng.choices([7, 12, 22, 35, 5], weights=[0.25, 0.30, 0.25, 0.10, 0.10])[0]
-        krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
+        raw_krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
         st = rng.choices(STATIONS, weights=STATION_WEIGHTS)[0]
+        bonus, tier = _bonus_krw(st)
+        krw = raw_krw + bonus
         h_seed = rng.choices(list(range(24)),
                              weights=[0.5, 0.3, 0.2, 0.2, 0.3, 0.8, 1.5, 4.0, 7.0, 4.5, 2.5, 2.0,
                                       2.5, 2.5, 2.5, 2.5, 3.0, 5.0, 7.0, 4.5, 2.5, 2.0, 1.0, 0.6])[0]
@@ -565,6 +570,7 @@ async def fake_impact_seed_loop():
         _impact_total["krw_paid"] += krw
         _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
         _impact_total["hourly"][h_seed] += 1
+        _impact_total["tier_counts"][tier] = _impact_total["tier_counts"].get(tier, 0) + 1
     print(f"[seed] 12 warm impact seeds 즉시 누적 — 첫 진입 KPI 라이브", flush=True)
     while True:
         # 양봉 가중치 계산
@@ -578,14 +584,17 @@ async def fake_impact_seed_loop():
         await asyncio.sleep(interval + rng.uniform(-2, 2))
         # 분산률 차등
         sv = rng.choices([7, 12, 22, 35, 5], weights=[0.25, 0.30, 0.25, 0.10, 0.10])[0]
-        krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
+        raw_krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
         st = rng.choices(STATIONS, weights=STATION_WEIGHTS)[0]
+        bonus, tier = _bonus_krw(st)
+        krw = raw_krw + bonus
         # 누적
         _impact_total["count"] += 1
         _impact_total["saved_pct_sum"] += sv
         _impact_total["krw_paid"] += krw
         _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
         _impact_total["hourly"][h] += 1
+        _impact_total["tier_counts"][tier] = _impact_total["tier_counts"].get(tier, 0) + 1
         # broadcast (클라이언트 있을 때만)
         if clients:
             try:

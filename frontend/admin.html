@@ -189,6 +189,14 @@
 })();
 </script>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(125,211,211,.04)); border-color: rgba(245,158,11,.20);">
+      <h2>💰 차등 보상 분포 (tier_counts)</h2>
+      <div class="stat" style="display:block;"><span style="color:#7dd3d3;">📍 일반</span> <b id="tier-basic">0</b></div>
+      <div class="stat" style="display:block;"><span style="color:#a78bfa;">🌅 OD 우선 (+₩100)</span> <b id="tier-od">0</b></div>
+      <div class="stat" style="display:block;"><span style="color:#f59e0b;">🔀 환승역 (+₩200)</span> <b id="tier-transfer">0</b></div>
+      <div id="tier-bar" style="margin-top: 8px; height: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; display: flex;"></div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(16,185,129,.04));">
       <h2>🎯 Live Impact (impact_summary)</h2>
       <div class="stat">분산 액션      <b id="im-cnt" class="ok">0</b></div>
@@ -410,6 +418,21 @@ function applyImpactCard(j) {
   document.getElementById('im-rate').textContent = j.est_response_rate != null
     ? `${(j.est_response_rate*100).toFixed(2)}%` : '—%';
   if (j.hourly && Array.isArray(j.hourly)) drawHourlySpark(j.hourly);
+  // tier counts (차등 보상 분포)
+  if (j.tier_counts) {
+    const tc = j.tier_counts;
+    document.getElementById('tier-basic').textContent = (tc.basic || 0).toLocaleString();
+    document.getElementById('tier-od').textContent = (tc.od || 0).toLocaleString();
+    document.getElementById('tier-transfer').textContent = (tc.transfer || 0).toLocaleString();
+    const total = (tc.basic || 0) + (tc.od || 0) + (tc.transfer || 0);
+    if (total > 0) {
+      const bar = document.getElementById('tier-bar');
+      bar.innerHTML = `
+        <div style="background: #7dd3d3; width: ${(tc.basic/total*100).toFixed(1)}%;" title="일반 ${tc.basic}"></div>
+        <div style="background: #a78bfa; width: ${(tc.od/total*100).toFixed(1)}%;" title="OD ${tc.od}"></div>
+        <div style="background: #f59e0b; width: ${(tc.transfer/total*100).toFixed(1)}%;" title="환승 ${tc.transfer}"></div>`;
+    }
+  }
   // top stations
   if (j.stations) {
     const el = document.getElementById('im-stations');
