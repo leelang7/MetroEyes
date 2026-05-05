@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v3.8-headerbadge';
+  const CUR = 'v3.9-i18n-a11y';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -103,7 +103,7 @@
     <span class="chip more-chip" id="chip-road" hidden><span class="ico">🛣</span>도로 <b id="chip-road-v">—</b>km/h</span>
   </div>
 
-  <div id="impact-counter" hidden style="margin: -2px 0 10px; padding: 10px 12px; background: linear-gradient(135deg, var(--accent-soft), rgba(125,211,211,.05)); border: 1px solid var(--accent); border-radius: 12px; font-feature-settings: 'tnum';">
+  <div id="impact-counter" hidden role="region" aria-label="시민 분산 누적 임팩트" aria-live="polite" style="margin: -2px 0 10px; padding: 10px 12px; background: linear-gradient(135deg, var(--accent-soft), rgba(125,211,211,.05)); border: 1px solid var(--accent); border-radius: 12px; font-feature-settings: 'tnum';">
     <div style="font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: .5px; margin-bottom: 4px;">🎯 시민 분산 임팩트 (누적)</div>
     <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: baseline;">
       <span style="font-size: 18px; font-weight: 800; color: var(--text);"><span id="impact-count">—</span><span style="font-size: 11px; color: var(--muted); font-weight: 600; margin-left: 2px;">명</span></span>
@@ -215,7 +215,7 @@
     <div class="answer" id="aAnswer"></div>
   </section>
 
-  <div class="alert" id="alert">임계 밀집 — 다음 차 +3분 대기 권고</div>
+  <div class="alert" id="alert" role="alert" aria-live="assertive">임계 밀집 — 다음 차 +3분 대기 권고</div>
 
   <div class="a11y-toggle">
     <span class="label">약자 모드 (큰 글씨 · 음성 안내 · 휠체어/유아차 동선)</span>
@@ -440,16 +440,48 @@ function applyAll() {
   };
 }
 
-// 인센티브 보상 toast — 분산 액션 → 즉각 시각 피드백
+// 다국어 메시지 — navigator.language 기반 ko/en/zh/ja
+const I18N_REWARD = {
+  ko: { title: '분산 보상', sub: (p) => `권장 칸 평균보다 ${p}%p 한산 선택` },
+  en: { title: 'Reward earned', sub: (p) => `${p}%p less crowded than average` },
+  zh: { title: '分散奖励', sub: (p) => `比推荐车厢平均空 ${p}%p` },
+  ja: { title: '分散ボーナス', sub: (p) => `推奨車両の平均より ${p}%p 空いている` },
+};
+function getI18nLang() {
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+  return I18N_REWARD[lang] ? lang : 'ko';
+}
+
+// 인센티브 보상 toast — 분산 액션 → 즉각 시각 피드백 + aria-live + 다국어
 function showRewardToast(krw, savedPct) {
+  const lang = getI18nLang();
+  const t18 = I18N_REWARD[lang];
   let t = document.getElementById('reward-toast');
   if (!t) {
     t = document.createElement('div');
     t.id = 'reward-toast';
+    t.setAttribute('role', 'status');
+    t.setAttribute('aria-live', 'polite');
+    t.setAttribute('aria-atomic', 'true');
     t.style.cssText = 'position:fixed;left:50%;top:30%;transform:translateX(-50%) scale(.85);padding:18px 24px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:18px;font-weight:800;font-size:18px;box-shadow:0 12px 36px rgba(16,185,129,.45);z-index:9999;text-align:center;opacity:0;transition:opacity .25s,transform .25s cubic-bezier(.2,1.4,.4,1);pointer-events:none;';
     document.body.appendChild(t);
   }
-  t.innerHTML = `<div style="font-size:32px;margin-bottom:6px;">🪙</div><div>+₩${krw.toLocaleString()} 분산 보상</div><div style="font-size:11px;font-weight:600;opacity:.85;margin-top:4px;">권장 칸 평균보다 ${savedPct}%p 한산 선택</div>`;
+  t.innerHTML = `<div style="font-size:32px;margin-bottom:6px;" aria-hidden="true">🪙</div><div>+₩${krw.toLocaleString()} ${t18.title}</div><div style="font-size:11px;font-weight:600;opacity:.85;margin-top:4px;">${t18.sub(savedPct)}</div>`;
+  // Web Speech API — 분산 보상 음성 안내 (조용히, 짧게)
+  try {
+    if ('speechSynthesis' in window) {
+      const utterMap = {
+        ko: `${krw}원 분산 보상`,
+        en: `Reward ${krw} won earned`,
+        zh: `分散奖励 ${krw} 韩元`,
+        ja: `${krw}ウォン分散ボーナス`,
+      };
+      const u = new SpeechSynthesisUtterance(utterMap[lang] || utterMap.ko);
+      u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang];
+      u.volume = 0.6; u.rate = 1.1;
+      window.speechSynthesis.speak(u);
+    }
+  } catch {}
   requestAnimationFrame(() => {
     t.style.opacity = '1';
     t.style.transform = 'translateX(-50%) scale(1)';
