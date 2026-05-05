@@ -9,6 +9,8 @@
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
 
+🇺🇸 [English README](README.en.md)
+
 **라이브 데모 (외부 고정 URL)**: https://leelang7.github.io/MetroEyes/
 > 너 PC backend(ngrok 영구 도메인)에 자동 wss 연결. PC 켜둔 상태에서 누구든 접속하면 LIVE.
 
