@@ -603,9 +603,54 @@ document.getElementById('gps-tag').addEventListener('click', e => {
   if (e.target.closest('.station-picker')) return;  // 내부 클릭은 무시
   const picker = document.getElementById('station-picker');
   picker.classList.toggle('open');
-  if (picker.classList.contains('open')) renderPicker();
+  if (picker.classList.contains('open')) {
+    renderPicker();
+    // 첫 행 highlight
+    setTimeout(() => {
+      const first = picker.querySelector('.picker-row');
+      if (first) first.classList.add('kbd-focus');
+    }, 30);
+  }
   e.stopPropagation();
 });
+
+// 키보드 단축키 — picker 열렸을 때 ESC/↑↓/Enter
+document.addEventListener('keydown', (e) => {
+  const picker = document.getElementById('station-picker');
+  if (!picker || !picker.classList.contains('open')) return;
+  if (e.key === 'Escape') {
+    picker.classList.remove('open'); e.preventDefault(); return;
+  }
+  const rows = Array.from(picker.querySelectorAll('.picker-row'));
+  if (!rows.length) return;
+  const cur = rows.findIndex(r => r.classList.contains('kbd-focus'));
+  if (e.key === 'ArrowDown') {
+    rows.forEach(r => r.classList.remove('kbd-focus'));
+    const next = (cur + 1) % rows.length;
+    rows[next].classList.add('kbd-focus');
+    rows[next].scrollIntoView({ block: 'nearest' });
+    e.preventDefault();
+  } else if (e.key === 'ArrowUp') {
+    rows.forEach(r => r.classList.remove('kbd-focus'));
+    const prev = (cur - 1 + rows.length) % rows.length;
+    rows[prev].classList.add('kbd-focus');
+    rows[prev].scrollIntoView({ block: 'nearest' });
+    e.preventDefault();
+  } else if (e.key === 'Enter') {
+    const focused = picker.querySelector('.picker-row.kbd-focus');
+    if (focused) focused.click();
+    e.preventDefault();
+  }
+});
+
+// kbd-focus 스타일 동적 주입
+(function injectKbdStyle() {
+  if (document.getElementById('kbd-focus-style')) return;
+  const s = document.createElement('style');
+  s.id = 'kbd-focus-style';
+  s.textContent = '.picker-row.kbd-focus { background: rgba(125,211,211,.18) !important; outline: 1px solid var(--accent); outline-offset: -1px; }';
+  document.head.appendChild(s);
+})();
 document.addEventListener('click', e => {
   if (!e.target.closest('#gps-tag')) {
     document.getElementById('station-picker').classList.remove('open');
