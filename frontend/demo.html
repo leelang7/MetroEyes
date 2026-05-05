@@ -92,8 +92,9 @@
 </head>
 <body>
 <header>
-  <div class="brand">MetroEyes 통합 시연<small>SubwayBEV — 운영자 + 시민 + 디스플레이 양면 가치 사슬</small></div>
+  <div class="brand" id="brand-text">MetroEyes 통합 시연<small id="brand-sub">SubwayBEV — 운영자 + 시민 + 디스플레이 양면 가치 사슬</small></div>
   <a href="pitch.html" style="padding: 4px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
+  <button id="lang-toggle" style="padding: 4px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language toggle">🇰🇷</button>
   <div class="scenario" id="scenario">▶︎ <b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span></div>
   <div class="timer" id="timer">00:00</div>
   <button id="start">▶︎ 시연 시작</button>
@@ -121,6 +122,37 @@
 </main>
 <div class="stage-banner" id="stage"></div>
 <script>
+// ==== 4언어 토글 (외국인 시연 대비) ====
+const I18N_DEMO = {
+  ko: { brand: 'MetroEyes 통합 시연', sub: 'SubwayBEV — 운영자 + 시민 + 디스플레이 양면 가치 사슬', start: '▶︎ 시연 시작', startBody: '<b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span>', flag: '🇰🇷' },
+  en: { brand: 'MetroEyes Integrated Demo', sub: 'SubwayBEV — Operator + Citizen + Display Two-sided Value Chain', start: '▶︎ Start Demo', startBody: 'Click <b>Start Demo</b> to auto-replay 5-min full flow. <span style="opacity:.65;">(Jamsil 18:00 → surge → redistribute → reward → live ads)</span>', flag: '🇺🇸' },
+  zh: { brand: 'MetroEyes 综合演示', sub: 'SubwayBEV — 运营者 + 市民 + 显示器 双向价值链', start: '▶︎ 开始演示', startBody: '点击 <b>开始演示</b> 自动播放 5 分钟全流程。', flag: '🇨🇳' },
+  ja: { brand: 'MetroEyes 統合デモ', sub: 'SubwayBEV — オペレーター + 市民 + ディスプレイ 双方向価値連鎖', start: '▶︎ デモ開始', startBody: '<b>デモ開始</b>ボタンで 5 分全体フロー自動再生。', flag: '🇯🇵' },
+};
+let _curDemoLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+if (!I18N_DEMO[_curDemoLang]) _curDemoLang = 'ko';
+function applyDemoI18n() {
+  const t = I18N_DEMO[_curDemoLang];
+  const brand = document.getElementById('brand-text');
+  const sub = document.getElementById('brand-sub');
+  if (brand) brand.firstChild.nodeValue = t.brand;
+  if (sub) sub.textContent = t.sub;
+  const startBtn = document.getElementById('start');
+  if (startBtn && (startBtn.textContent.indexOf('진행') === -1 && startBtn.textContent.indexOf('Demo') === -1 && startBtn.textContent.indexOf('演示') === -1)) {
+    startBtn.textContent = t.start;
+  }
+  const scen = document.getElementById('scenario');
+  if (scen && !window._demoStarted) scen.innerHTML = '▶︎ ' + t.startBody;
+  document.getElementById('lang-toggle').textContent = t.flag;
+  document.documentElement.lang = _curDemoLang;
+}
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
+  const order = ['ko', 'en', 'zh', 'ja'];
+  _curDemoLang = order[(order.indexOf(_curDemoLang) + 1) % 4];
+  applyDemoI18n();
+});
+window.addEventListener('DOMContentLoaded', applyDemoI18n);
+
 // 헤더 라이브 KPI 8s 폴링 (index.html 패턴 동일)
 (async function pollDemoKPI() {
   const url = (location.protocol === 'https:'
