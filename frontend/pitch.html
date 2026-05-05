@@ -1084,13 +1084,26 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 <h2>결론 — 한 줄로</h2>
 <div class="card hi" style="background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(16,185,129,.06)); border: 1px solid rgba(125,211,211,.45); padding: 24px;">
   <div style="font-size: 17px; line-height: 1.7; color: var(--text);">
-    <b style="color: var(--accent);">시민 한 사람의 분산 액션 ₩200</b> →
-    backend 누적 → <b style="color: var(--good);">운영자 정책 비용 ₩X / ROI x 라이브</b> →
+    <b style="color: var(--accent);">시민 한 사람의 분산 액션 ₩200~₩400 (자동 차등)</b> →
+    backend 자동 가산 → <b style="color: var(--good);">운영자 정책 비용 ₩X / ROI x 라이브 + tier 분포</b> →
     응답률 30% 시 <b style="color: var(--accent);">사회적 가치 1,393억/년</b>.
     <br>
     <span style="font-size: 13px; color: var(--muted); display: block; margin-top: 10px;">
-      "혼잡은 가만히 있어도 비용. 분산은 가만히 있어도 자산." — 칸 단위 BEV 가시화 + 시민 인센티브 클로즈드 루프 + 정책 ROI 정량화.
+      "혼잡은 가만히 있어도 비용. 분산은 가만히 있어도 자산." — 칸 단위 BEV 가시화 + 시민 차등 인센티브 클로즈드 루프 + 정책 ROI 정량화.
     </span>
+  </div>
+</div>
+
+<div style="margin-top: 14px; padding: 14px 18px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(245,158,11,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 12px;">
+  <div style="font-size: 12px; color: #a78bfa; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px;">🎯 v5.0 정책 통합 milestone (D-7, 175 사이클)</div>
+  <div style="font-size: 13px; line-height: 1.7; color: var(--muted);">
+    <b style="color: var(--text);">설계</b> (4단 차등 정책 정의) →
+    <b style="color: var(--text);">EDA</b> (3 실 데이터 검증: 분산 σ −9% / OD 12x / 환승 +1.56) →
+    <b style="color: var(--text);">backend</b> (<code>_bonus_krw()</code> 자동 가산 + tier_counts 라이브) →
+    <b style="color: var(--text);">UI</b> (6 페이지 분포 chip + 시민 PWA 4언어) →
+    <b style="color: var(--text);">BI</b> (9 endpoint REST + OpenAPI 3.0).
+    <br>
+    <span style="color: var(--text); font-weight: 600;">→ 전 영역 일관성 완성. 글로벌 최초 시간×역×비대칭 3차원 자동 차등.</span>
   </div>
 </div>
 
