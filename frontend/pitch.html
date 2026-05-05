@@ -675,6 +675,18 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <figcaption>그림 3 — 호선별(1~9호선) 시간대 곡선 비교. 만석 호선(2/9호선)에서 평탄화 효과 가장 큼.</figcaption>
 </figure>
 
+<h2>OD 비대칭 — 정책 우선순위 인사이트</h2>
+<p>
+  같은 역이라도 시간대마다 ON/OFF 비율이 극단적으로 비대칭. 비대칭 지수
+  <code>(OFF − ON) / 총합</code> 가 큰 역 = 출근 *도착지*, 작은 역 = 퇴근 *출발지*.
+  분산 인센티브를 비대칭이 큰 역의 핵심 시간대에 집중하면 ROI 추가 ↑.
+</p>
+<figure>
+  <img src="figs/od_asymmetry.png" alt="출근 도착 / 퇴근 출발 TOP 10" loading="lazy">
+  <figcaption>그림 4 — <b>출근 도착지 TOP 10</b> (삼성·역삼·광화문 OFF/ON 10x+) vs
+    <b>퇴근 출발지 TOP 10</b> (시청·삼성·광화문 ON/OFF 4~5x). 134역 우선순위 모델의 정량 근거.</figcaption>
+</figure>
+
 <h2>시스템 흐름 — 5단계 양면 클로즈드 루프</h2>
 <div class="flow">
   <div class="flow-step">
