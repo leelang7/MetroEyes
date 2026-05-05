@@ -326,10 +326,21 @@ const I18N_PITCH = {
     lede: 'MetroEyes (codename SubwayBEV) is a 3-axis integrated system: <b>subway/bus BEV CV</b> + <b>real-time city data</b> + <b>citizen redistribution incentives</b>. This report presents quantitative analysis of distributed-fare policy via the <b>ROI v3</b> model (9 lines × 24 hours matrix).<br><span class="badge">9 public APIs</span><span class="badge">In-house CV BEV</span><span class="badge">Two-sided closed loop</span>',
     btn: '🇺🇸 EN',
   },
+  zh: {
+    h1: '市民分散一次 <span class="accent">+₩200</span>, 社会价值 <span class="accent">₩1393亿/年</span>',
+    lede: 'MetroEyes (代号 SubwayBEV) 是 3 轴综合系统: <b>地铁/巴士 BEV CV</b> + <b>实时城市数据</b> + <b>市民分散激励</b>。本报告通过 <b>政策 ROI v3</b> 模型 (9 条线路 × 24 小时矩阵) 提供分散票价政策的定量效果分析。<br><span class="badge">9 个公共 API</span><span class="badge">自有 CV BEV</span><span class="badge">双向闭环</span>',
+    btn: '🇨🇳 ZH',
+  },
+  ja: {
+    h1: '市民分散1件 <span class="accent">+₩200</span>, 社会的価値 <span class="accent">₩1,393億/年</span>',
+    lede: 'MetroEyes (コードネーム SubwayBEV) は <b>地下鉄/バス BEV CV</b> + <b>リアルタイム都市データ</b> + <b>市民分散インセンティブ</b> の 3 軸統合システムです。本報告書は <b>政策 ROI v3</b> モデル (9 路線 × 24 時間マトリックス) による分散運賃政策の定量効果分析を提供します。<br><span class="badge">9 公共 API</span><span class="badge">自社 CV BEV</span><span class="badge">双方向クローズドループ</span>',
+    btn: '🇯🇵 JA',
+  },
 };
 let _curLang = 'ko';
 document.getElementById('lang-toggle').addEventListener('click', () => {
-  _curLang = _curLang === 'ko' ? 'en' : 'ko';
+  const order = ['ko', 'en', 'zh', 'ja'];
+  _curLang = order[(order.indexOf(_curLang) + 1) % 4];
   const t = I18N_PITCH[_curLang];
   document.getElementById('hero-h1').innerHTML = t.h1;
   document.getElementById('hero-lede').innerHTML = t.lede;
