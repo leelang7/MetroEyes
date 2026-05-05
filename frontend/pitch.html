@@ -223,6 +223,16 @@
   <span style="color: var(--muted);">ROI <b id="plk-roi" style="color: var(--good);">—x</b></span>
   <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s polling</span>
 </div>
+<div id="pitch-hourly" hidden style="margin-bottom: 14px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;">
+  <div style="font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;">⏰ 시간대 분산 응답 분포 (라이브) — ROI v3 시간 비대칭 가설 실증</div>
+  <canvas id="plk-hourly" width="900" height="60" style="width: 100%; height: 60px; background: rgba(255,255,255,.02); border-radius: 6px;"></canvas>
+  <div style="display: flex; gap: 12px; font-size: 9px; color: var(--muted-2); margin-top: 4px;">
+    <span>05시</span>
+    <span style="color:#f59e0b;">● 양봉 8/18시 강조</span>
+    <span style="color:#7dd3d3;">● 일반 시간</span>
+    <span style="margin-left: auto;">23시</span>
+  </div>
+</div>
 <script>
 (async function pollPitchKPI() {
   const url = (location.protocol === 'https:'
@@ -238,6 +248,25 @@
       document.getElementById('plk-val').textContent = fmt(im.value_won);
       document.getElementById('plk-roi').textContent = im.roi_x ? Math.round(im.roi_x) + 'x' : '—x';
       document.getElementById('pitch-live-kpi').hidden = false;
+      // 시간대 분포
+      if (im.hourly && Array.isArray(im.hourly) && im.hourly.some(v => v > 0)) {
+        const cv = document.getElementById('plk-hourly');
+        if (cv) {
+          const ctx = cv.getContext('2d');
+          const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight;
+          ctx.clearRect(0, 0, W, H);
+          const max = Math.max(1, ...im.hourly);
+          const barW = W / 24;
+          im.hourly.forEach((v, h) => {
+            const bh = (v / max) * (H - 4) + 2;
+            ctx.fillStyle = (h === 8 || h === 18) ? '#f59e0b' : '#7dd3d3';
+            ctx.globalAlpha = v > 0 ? 0.85 : 0.15;
+            ctx.fillRect(h * barW + 1, H - bh, barW - 2, bh);
+          });
+          ctx.globalAlpha = 1.0;
+          document.getElementById('pitch-hourly').hidden = false;
+        }
+      }
     }
   } catch {}
   setTimeout(pollPitchKPI, 8000);
