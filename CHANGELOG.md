@@ -1,5 +1,12 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.1 — D-7 자동 모드 180 사이클 milestone (2026-05-06 발표 자료 완성)
+
+### 신규 (사이클 176~180)
+- **pitch.html 결론 v5.0 milestone 박스** — 설계→EDA→backend→UI→BI 5단 일관성 강조
+- **`docs/RECORDING_GUIDE.md` 신규** — 우선순위 #6 발표 영상 5분 풀 캡처 가이드 (10단 시퀀스 + OBS 설정 + 한국어 멘트 + 체크리스트)
+- **README ko/en RECORDING_GUIDE 링크** — 첫 진입에서 즉시 접근
+
 ## v5.0 — D-7 자동 모드 175 사이클 milestone (2026-05-06 정책 통합 완성)
 
 ### v5.0 메이저 버전 — 차등 보상 정책 8단 완전 통합
