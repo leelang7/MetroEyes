@@ -94,7 +94,9 @@
     </div>
 
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(239,68,68,.08), rgba(245,158,11,.04));">
-      <h2>🚨 사고 누적 <span style="color: var(--muted); font-weight: 400;">(incident_log 동기화)</span></h2>
+      <h2>🚨 사고 누적 <span style="color: var(--muted); font-weight: 400;">(incident_log 동기화)</span>
+        <button onclick="triggerDemoIncidents()" style="float: right; padding: 2px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연</button>
+      </h2>
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 11px;">
         <div class="stat" style="display:block;"><span style="color:#ff5e57;">응급</span> <b id="ic-em">0</b></div>
         <div class="stat" style="display:block;"><span style="color:#f0b46a;">이상</span> <b id="ic-su">0</b></div>
@@ -346,6 +348,25 @@ function drawSpark() {
 }
 setInterval(sparkTick, 1000);
 drawSpark();
+
+// ====== 시연 트리거 — admin 단독으로 5종 incident_log 송신 (backend 동기화) ======
+function triggerDemoIncidents() {
+  if (!ws || ws.readyState !== 1) {
+    append('ERR', '시연 — ws not connected', '');
+    return;
+  }
+  const seq = [
+    { delay: 0,    type: 'free_ride',  sev: 'med',  msg: 'admin 시연: 무임 의심' },
+    { delay: 4000, type: 'lost',       sev: 'low',  msg: 'admin 시연: 분실 BoT-SORT' },
+    { delay: 9000, type: 'emergency',  sev: 'high', msg: 'admin 시연: 응급 + AED 28m' },
+    { delay: 14000, type: 'suspicious', sev: 'high', msg: 'admin 시연: 환승 통로 군집' },
+    { delay: 19000, type: 'free_ride', sev: 'med',  msg: 'admin 시연: 자동 분산 안내' },
+  ];
+  seq.forEach(({ delay, type, sev, msg }) => setTimeout(() => {
+    sendQuery('incident_log', { ev_type: type, severity: sev, msg, source: 'admin-demo' });
+  }, delay));
+  append('SEND', '시연 5종 시퀀스 시작 (20s)', '');
+}
 
 // ====== /health polling — 외부 API health 카드 ======
 async function pollHealth() {
