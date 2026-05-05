@@ -1,5 +1,25 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v4.5 — D-7 자동 모드 150 사이클 milestone (2026-05-06 후속 III)
+
+### 신규 (사이클 144~150)
+- **admin.html 4언어 환영 toast** — 외국인 운영자/평가위원 첫 방문 자동 안내 (5 진입점 통일: index/demo/PWA index/PWA onboard/admin)
+- **PWA 환승역 보너스 chip 4언어** — +₩400 차등 보상 라이브 표시
+- **pitch.html 차등 인센티브 정책 표** — ₩100 (기본) / ₩200 (30%p) / ₩300 (OD 우선) / ₩400 (환승역) 4단계 + EDA 그림 4·5 매핑
+- **demo.html 5분 시퀀스 232s 환승 흐름 overlay** — 충무로 +1.56 plot 5초 표시 (분산 효과 220s + 환승 232s 2단 데이터 검증 시연)
+- **SUBMISSION_GUIDE D-7 상태 헤더** — 145 사이클 / 8 endpoint / 수상 확률 v10
+- **README ko/en 통일** — 3 EDA 검증 + 차등 인센티브 + 5 진입 환영 + A*+K-means 모두 반영
+
+### 누적 핵심 산출 (150 사이클)
+- 8 REST endpoint + OpenAPI 3.0 spec
+- 11 페이지 4언어 i18n + 5 진입점 환영 toast
+- 3 EDA 실 데이터 검증 (분산 효과 / OD 비대칭 / 환승역)
+- ROI v3 ±15% 민감도 CI band + 차등 4단 인센티브
+- A* + K-means(K=4) + 헝가리안 비상 동선
+- 8중 시연 fail-safe + Docker compose + GitHub Actions CI
+- pitch.html 5 figure (정책 매트릭스 / EDA 호선×시간 / 분산 곡선 / 호선 9패널 / OD TOP10 / 환승역 TOP10)
+- 양면 가치 사슬 5단계 클로즈드 루프
+
 ## v4.4 — D-7 자동 모드 143 사이클 (2026-05-06 후속 II)
 
 ### 신규 (사이클 138~143)
