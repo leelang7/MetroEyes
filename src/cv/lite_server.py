@@ -665,6 +665,18 @@ async def main():
         if args.demo:
             print("[lite_server] DEMO mode — fake BEV tracks broadcast @5Hz", flush=True)
             print("[lite_server] DEMO mode — fake impact seed (양봉 시뮬 분산 액션 자동 누적)", flush=True)
+            # incident warm seed — 시작 즉시 4건 (다양한 type)
+            _incident_total["emergency"] = 1
+            _incident_total["lost"] = 2
+            _incident_total["free_ride"] = 1
+            now = time.time()
+            _incident_total["events"] = [
+                {"ts": now - 60, "type": "lost", "severity": "low", "msg": "분실 BoT-SORT — 4호차 가방 12초 무인", "source": "demo-seed"},
+                {"ts": now - 240, "type": "emergency", "severity": "high", "msg": "응급 골든타임 — 7호차 30초+ 정지 (AED 28m)", "source": "demo-seed"},
+                {"ts": now - 480, "type": "free_ride", "severity": "med", "msg": "무임 의심 — 6호차 태그 미스캔", "source": "demo-seed"},
+                {"ts": now - 720, "type": "lost", "severity": "low", "msg": "분실 — 환승 통로 우산 무인", "source": "demo-seed"},
+            ]
+            print("[seed] 4 warm incident seeds (admin timeline 즉시 라이브)", flush=True)
             asyncio.create_task(fake_bev_loop())
             asyncio.create_task(fake_impact_seed_loop())
         await asyncio.Future()  # run forever
