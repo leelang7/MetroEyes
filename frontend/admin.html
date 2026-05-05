@@ -56,7 +56,8 @@
 
 <h1>
   <span class="dot"></span>MetroEyes Debug Console
-  <small>WS 직접 호출 / 응답 검증 / 라이브 트래픽 / 임팩트 모니터링</small>
+  <small id="debug-sub">WS 직접 호출 / 응답 검증 / 라이브 트래픽 / 임팩트 모니터링</small>
+  <button id="lang-toggle" style="float: right; padding: 3px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 2px; margin-left: 6px;">🇰🇷 KO</button>
   <a id="api-docs-link" href="" target="_blank" style="float: right; padding: 3px 10px; background: linear-gradient(135deg, rgba(167,139,250,.20), rgba(125,211,211,.10)); border: 1px solid rgba(167,139,250,.55); color: #a78bfa; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; letter-spacing: .3px; margin-top: 2px; margin-left: 6px;">🔌 API docs</a>
   <a href="pitch.html" style="float: right; padding: 3px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; letter-spacing: .3px; margin-top: 2px; margin-left: 6px;">📊 정책 보고</a>
   <a href="demo.html" style="float: right; padding: 3px 10px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; letter-spacing: .3px; margin-top: 2px;">🎬 통합 시연</a>
@@ -600,6 +601,23 @@ function showAdminToast(msg, level) {
     }
   } catch {}
 }
+
+// 4언어 토글
+const I18N_ADMIN = {
+  ko: { sub: 'WS 직접 호출 / 응답 검증 / 라이브 트래픽 / 임팩트 모니터링', btn: '🇰🇷 KO' },
+  en: { sub: 'Direct WS call / Response validation / Live traffic / Impact monitoring', btn: '🇺🇸 EN' },
+  zh: { sub: 'WS 直接调用 / 响应验证 / 实时流量 / 影响监控', btn: '🇨🇳 ZH' },
+  ja: { sub: 'WS 直接呼出 / 応答検証 / ライブトラフィック / インパクト監視', btn: '🇯🇵 JA' },
+};
+let _curAdmLang = 'ko';
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
+  const order = ['ko', 'en', 'zh', 'ja'];
+  _curAdmLang = order[(order.indexOf(_curAdmLang) + 1) % 4];
+  const t = I18N_ADMIN[_curAdmLang];
+  document.getElementById('debug-sub').textContent = t.sub;
+  document.getElementById('lang-toggle').textContent = t.btn;
+  document.documentElement.lang = _curAdmLang;
+});
 
 // /api/docs 링크 자동 도출
 (function(){
