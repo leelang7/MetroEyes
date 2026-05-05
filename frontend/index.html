@@ -117,10 +117,19 @@ const I18N_HUB = {
     lede: '<b>Subway/Bus BEV CV</b> + <b>real-time city data</b> + <b>citizen redistribution incentives</b> integrated system<br>At 30% response rate: social value <b>₩139.3B/yr</b> · ROI <b>347x</b>',
     btn: '🇺🇸 EN',
   },
+  zh: {
+    lede: '<b>地铁/巴士 BEV CV</b> + <b>实时城市数据</b> + <b>市民分散激励</b> 综合系统<br>响应率 30% 时社会价值 <b>₩1393亿/年</b> · ROI <b>347x</b>',
+    btn: '🇨🇳 ZH',
+  },
+  ja: {
+    lede: '<b>地下鉄/バス BEV CV</b> + <b>リアルタイム都市データ</b> + <b>市民分散インセンティブ</b> 統合システム<br>応答率 30% 時 社会的価値 <b>₩1,393億/年</b> · ROI <b>347x</b>',
+    btn: '🇯🇵 JA',
+  },
 };
 let _curHubLang = 'ko';
 document.getElementById('lang-toggle').addEventListener('click', () => {
-  _curHubLang = _curHubLang === 'ko' ? 'en' : 'ko';
+  const order = ['ko', 'en', 'zh', 'ja'];
+  _curHubLang = order[(order.indexOf(_curHubLang) + 1) % 4];
   const t = I18N_HUB[_curHubLang];
   document.getElementById('lede-text').innerHTML = t.lede;
   document.getElementById('lang-toggle').textContent = t.btn;
