@@ -715,6 +715,17 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <b>퇴근 출발지 TOP 10</b> (시청·삼성·광화문 ON/OFF 4~5x). 134역 우선순위 모델의 정량 근거.</figcaption>
 </figure>
 
+<h2>환승역 호선 간 비대칭 — 환승 흐름 정책 후보</h2>
+<p>
+  환승역 (1~9호선 중복역 37곳)에서 호선 간 ON/OFF 비대칭 *차이* 가 큰 경우 = 환승 흐름 우세 방향.
+  단일 호선 역보다 환승역에서 분산 인센티브를 주면 한 정거장 일찍 환승 → 양 호선 모두 피크 절감.
+</p>
+<figure>
+  <img src="figs/transfer_stations.png" alt="환승역 호선 간 비대칭 차이 TOP 10" loading="lazy">
+  <figcaption>그림 5 — <b>충무로 4호선 +0.56 vs 3호선 −1.00</b> (AM 09시 출근 도착 흐름 4호선 압도적),
+    연신내 3호선 vs 6호선 / 동대문 4호선 vs 1호선. 환승역 분산 인센티브 우선순위.</figcaption>
+</figure>
+
 <h2>시스템 흐름 — 5단계 양면 클로즈드 루프</h2>
 <div class="flow">
   <div class="flow-step">
