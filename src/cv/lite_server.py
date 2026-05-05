@@ -687,6 +687,51 @@ async def http_health(path, headers):
     # OPTIONS preflight (브라우저 fetch CORS)
     if hasattr(headers, "get") and headers.get("access-control-request-method"):
         return (204, CORS_HEADERS, b"")
+    if path == "/api/v1/impact":
+        # /api/v1/impact — 누적 임팩트 JSON
+        body = json.dumps({
+            "ok": True,
+            "summary": _build_impact_summary() if _impact_total["count"] > 0 else None,
+            "raw": {
+                "count": _impact_total["count"],
+                "krw_paid": _impact_total["krw_paid"],
+                "saved_pct_sum": _impact_total["saved_pct_sum"],
+                "stations": dict(_impact_total["stations"]),
+                "hourly": list(_impact_total["hourly"]),
+            },
+        }).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path == "/api/docs":
+        body = (
+            "<!doctype html><html><head><meta charset='utf-8'>"
+            "<title>MetroEyes API</title>"
+            "<style>body{font-family:'Noto Sans KR',sans-serif;max-width:760px;margin:30px auto;padding:0 20px;background:#0a0a0e;color:#e8e8ee;line-height:1.6}"
+            "h1{color:#7dd3d3}h2{color:#10b981;border-bottom:1px solid rgba(125,211,211,.18);padding-bottom:6px;margin-top:28px}"
+            "code{background:#14141a;padding:2px 8px;border-radius:4px;color:#f59e0b;font-size:13px}"
+            "pre{background:#14141a;padding:14px;border-radius:8px;overflow:auto}"
+            "table{border-collapse:collapse;width:100%}td,th{padding:6px 10px;border-bottom:1px solid #2a2a36;text-align:left}"
+            "</style></head><body>"
+            "<h1>MetroEyes API v1</h1>"
+            "<p>모든 endpoint CORS 허용 (<code>Access-Control-Allow-Origin: *</code>) · GET only</p>"
+            "<h2>GET <code>/health</code></h2>"
+            "<p>전체 시스템 상태 (keys / clients / impact / api / cv / incidents / msg_per_min)</p>"
+            "<h2>GET <code>/api/v1/roi_curve</code></h2>"
+            "<p>ROI v3 closed-form 시뮬 — 81 샘플 (응답률 0~80%)</p>"
+            "<pre>fetch('/api/v1/roi_curve').then(r=&gt;r.json()).then(j=&gt;j.curve)</pre>"
+            "<h2>GET <code>/api/v1/impact</code></h2>"
+            "<p>실시간 누적 임팩트 (분산 액션 / krw / 시간대 / 역별)</p>"
+            "<h2>WebSocket <code>ws://host:8765</code></h2>"
+            "<p>impact_log / incident_log / arrival_query / population_query / predict_surge 등</p>"
+            "<table><tr><th>Type</th><th>Args</th><th>응답</th></tr>"
+            "<tr><td>population_query</td><td>poi</td><td>{type:'population', congest_lvl, ppltn}</td></tr>"
+            "<tr><td>arrival_query</td><td>stationName, line</td><td>{type:'arrival', items}</td></tr>"
+            "<tr><td>impact_log</td><td>station, car, saved_pct, krw</td><td>broadcast impact_summary</td></tr>"
+            "<tr><td>incident_log</td><td>ev_type, severity, msg, source</td><td>broadcast incident_summary</td></tr>"
+            "</table>"
+            "<p style='margin-top:30px;color:#8a8a96;font-size:12px'>License: Apache 2.0 · 2026 Seoul Big Data</p>"
+            "</body></html>"
+        ).encode("utf-8")
+        return (200, [("content-type", "text/html; charset=utf-8")] + CORS_HEADERS, body)
     if path == "/api/v1/roi_curve":
         body = json.dumps({
             "ok": True,
