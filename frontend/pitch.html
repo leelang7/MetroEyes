@@ -163,6 +163,44 @@
     text-align: center; color: var(--muted-2); font-size: 11px;
   }
   footer code { background: rgba(255,255,255,.04); padding: 1px 6px; border-radius: 3px; color: var(--accent); }
+
+  /* === 인쇄 / PDF 친화 (Ctrl+P / 📄 버튼) === */
+  @media print {
+    html, body { background: white !important; color: #14141a !important; }
+    header { display: none !important; }
+    main { max-width: none; padding: 8mm; }
+    h1, h2, h3, b { color: #14141a !important; }
+    .lede, .sub, .muted, .card ul, footer { color: #444 !important; }
+    .kpi, .card, .panel, table, figure {
+      background: white !important; border: 1px solid #ccc !important; box-shadow: none !important;
+      page-break-inside: avoid;
+    }
+    .kpi.hi, .card.hi {
+      background: #f4fbfa !important; border-color: #7dd3d3 !important;
+    }
+    .accent, h2, .kpi .val, .kpi .lbl, h3 { color: #0a8a8a !important; }
+    th { background: #eef9f9 !important; color: #0a8a8a !important; }
+    .badge { background: #e8f7f7 !important; color: #0a8a8a !important; border: 1px solid #7dd3d3 !important; }
+    a { color: #0a8a8a !important; text-decoration: underline; }
+    figure img { max-width: 100% !important; }
+    canvas, button, input[type="range"], #resp-slider { display: none !important; }
+    #roi-curve, .controls { display: none !important; }
+    .demo, .pitch, .nav { display: none !important; }
+    h2 { border-bottom: 2px solid #7dd3d3 !important; }
+    /* 페이지 brk */
+    h2 { page-break-before: auto; page-break-after: avoid; }
+    .row, .kpi-grid { page-break-inside: avoid; }
+  }
+  /* PDF 버튼 (인쇄 모드 외에서만 표시) */
+  .print-btn {
+    position: fixed; bottom: 24px; right: 24px; z-index: 50;
+    padding: 10px 16px; background: var(--panel); border: 1px solid var(--accent);
+    color: var(--accent); border-radius: 999px; font-size: 12px; font-weight: 700;
+    cursor: pointer; box-shadow: 0 8px 24px rgba(125,211,211,.15);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .print-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(125,211,211,.30); }
+  @media print { .print-btn { display: none !important; } }
 </style>
 </head>
 <body>
@@ -631,6 +669,8 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 본선 출품 D-8
 </footer>
+
+<button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
 
 </main>
 </body>
