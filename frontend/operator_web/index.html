@@ -133,6 +133,33 @@ window.addEventListener('DOMContentLoaded', applyOpI18n);
     <span id="od-stations" style="display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto;"></span>
   </div>
 </section>
+<!-- 환승 흐름 우세 패널 -->
+<section id="op-tp-strip" hidden style="margin-bottom: 12px; padding: 10px 14px; background: linear-gradient(135deg, rgba(245,158,11,.10), rgba(125,211,211,.04)); border: 1px solid rgba(245,158,11,.40); border-radius: 10px;">
+  <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+    <span style="color: #f59e0b; font-weight: 700; font-size: 11px; letter-spacing: 1.4px;">🔀 환승 흐름</span>
+    <span id="op-tp-rationale" style="color: var(--muted); font-size: 11px;">—</span>
+    <span id="op-tp-list" style="display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto;"></span>
+  </div>
+</section>
+<script>
+(async function pollOpTransfer() {
+  try {
+    const r = await fetch('http://localhost:8765/api/v1/transfer_priority', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.priority_stations && j.priority_stations.length > 0) {
+        document.getElementById('op-tp-rationale').textContent = j.rationale;
+        const sl = document.getElementById('op-tp-list');
+        sl.innerHTML = j.priority_stations.map(s =>
+          `<span style="padding: 3px 9px; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.45); border-radius: 999px; font-size: 11px; color: #f59e0b; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size:9px;">+${s.diff.toFixed(2)} ${s.max_line}↔${s.min_line}</em></span>`
+        ).join('');
+        document.getElementById('op-tp-strip').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollOpTransfer, 60000);
+})();
+</script>
 <script>
 (async function pollODPriority() {
   try {

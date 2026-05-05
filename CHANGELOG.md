@@ -1,5 +1,20 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v4.4 — D-7 자동 모드 143 사이클 (2026-05-06 후속 II)
+
+### 신규 (사이클 138~143)
+- **시민 PWA OD 우선순위 chip 4언어** — 외국인 시민이 현 시각 권장 분산 역을 즉시 확인 (+₩300 보너스 표시)
+- **진입 허브 OD chip + 시민 PWA + pitch + admin + 운영자 = 6 페이지** OD 비대칭 라이브 동기화
+- **환승역 분석 EDA** (`scripts/eda_transfer_stations.py`) — 1~9호선 37개 환승역 호선 간 비대칭 차이 TOP 10:
+  - **충무로 4호선 +0.56 vs 3호선 −1.00** (diff 1.56) — AM 09시 4호선 출근 도착 압도적
+  - 연신내 3호선 vs 6호선 / 동대문 4호선 vs 1호선
+  - pitch.html 그림 5
+- **`/api/v1/transfer_priority` REST endpoint** — 환승 흐름 우세 TOP 5 (현 시각 AM/PM 자동)
+- **8 endpoint REST API 완성** (health/roi/impact/incident/dispersion/od/transfer/openapi)
+- **OpenAPI 3.0 spec 8 path** — Swagger/Redoc/Postman 자동 임포트
+- **운영자 + admin + pitch 4 페이지에 환승 흐름 chip** — 분산 인센티브를 환승역에 집중하면 양 호선 동시 절감
+- **README.md + README.en.md** REST API 8 endpoint 갱신 + curl 4 예시 균형
+
 ## v4.3 — D-7 자동 모드 137 사이클 (2026-05-06 후속)
 
 ### 신규 (사이클 126~137)
