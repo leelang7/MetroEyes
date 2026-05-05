@@ -753,6 +753,62 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     연신내 3호선 vs 6호선 / 동대문 4호선 vs 1호선. 환승역 분산 인센티브 우선순위.</figcaption>
 </figure>
 
+<h2>차등 인센티브 정책 — 3단 보상 모델</h2>
+<p>
+  EDA 결과를 정책 인센티브 차등화로 직접 반영. 일반 분산보다 우선순위 역에서 분산하면 보상 ↑,
+  환승역에서 분산하면 양 호선 동시 절감 → 보상 ↑↑.
+</p>
+<table>
+  <thead>
+    <tr>
+      <th>분산 유형</th>
+      <th>조건</th>
+      <th class="num">기본 보상</th>
+      <th class="num">우선순위 가산</th>
+      <th class="num">총 보상</th>
+      <th>근거 (EDA)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>📍 일반 분산</td>
+      <td>5%p 이상 한산 칸 선택</td>
+      <td class="num">+₩100</td>
+      <td class="num">—</td>
+      <td class="num"><b>₩100</b></td>
+      <td>분산 시뮬 σ −9% (전체)</td>
+    </tr>
+    <tr class="highlight">
+      <td>📍 일반 분산 (30%p)</td>
+      <td>30%p 이상 한산 칸</td>
+      <td class="num">+₩100</td>
+      <td class="num">+₩100</td>
+      <td class="num"><b>₩200</b></td>
+      <td>분산률 차등 (기본 정책)</td>
+    </tr>
+    <tr>
+      <td>🌅 OD 우선순위 역</td>
+      <td>현 시각 출근 도착지 / 퇴근 출발지 TOP 5</td>
+      <td class="num">+₩200</td>
+      <td class="num">+₩100</td>
+      <td class="num"><b>₩300</b></td>
+      <td>그림 4 (삼성 12x / 시청 5x)</td>
+    </tr>
+    <tr class="highlight" style="background: linear-gradient(135deg, rgba(245,158,11,.10), rgba(125,211,211,.04));">
+      <td>🔀 환승역 + 우선순위</td>
+      <td>환승역 OD 또는 환승 흐름 TOP 5</td>
+      <td class="num">+₩200</td>
+      <td class="num">+₩200</td>
+      <td class="num"><b>₩400</b></td>
+      <td>그림 5 (충무로 +1.56 / 연신내 +1.44)</td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-size: 12px; color: var(--muted);">
+  ※ 시민 PWA에 차등 보상이 라이브로 표시됨 (📍 +₩300 / 🔀 +₩400 chip).
+  /api/v1/od_asymmetry + /api/v1/transfer_priority 1분 폴링으로 자동 매칭 → 시간대마다 자연 전환.
+</p>
+
 <h2>시스템 흐름 — 5단계 양면 클로즈드 루프</h2>
 <div class="flow">
   <div class="flow-step">
