@@ -652,11 +652,58 @@ CORS_HEADERS = [
 ]
 
 
+def _simulate_roi_curve(samples: int = 81) -> list:
+    """ROI v3 closed-form curve — 0~80% 응답률 N 샘플."""
+    KRW_HOUR = 15000
+    out = []
+    for i in range(samples):
+        r = (i / max(1, samples - 1)) * 0.80
+        min_saved = 1577 * r  # M분 — pitch.html simulateROI 동일 보간
+        commute = (min_saved * 1e6 / 60) * KRW_HOUR / 1e8
+        safety = 500 * (0.4 + r * 0.6) * 1.3
+        ad = 120 * (0.5 + r * 0.7)
+        energy = 150 * r * 1.3
+        incentive = 7e6 * 250 * r * 0.45 * 100 / 1e8
+        total = commute + safety + ad + energy
+        net = total - incentive
+        infra = 134 * 3_000_000 / 1e8
+        roi = net / infra if infra > 0 else 0
+        out.append({
+            "rate": round(r, 4),
+            "min_saved_m": round(min_saved, 1),
+            "commute_b": round(commute, 1),
+            "safety_b": round(safety, 1),
+            "ad_b": round(ad, 1),
+            "energy_b": round(energy, 1),
+            "incentive_b": round(incentive, 1),
+            "net_b": round(net, 1),
+            "roi_x": round(roi, 1),
+        })
+    return out
+
+
 async def http_health(path, headers):
-    """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크) + API 호출 통계 + CORS."""
+    """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크) + API 호출 통계 + CORS + ROI 곡선."""
     # OPTIONS preflight (브라우저 fetch CORS)
     if hasattr(headers, "get") and headers.get("access-control-request-method"):
         return (204, CORS_HEADERS, b"")
+    if path == "/api/v1/roi_curve":
+        body = json.dumps({
+            "ok": True,
+            "model": "ROI v3 closed-form",
+            "samples": 81,
+            "curve": _simulate_roi_curve(81),
+            "interpretation": {
+                "scenarios": {
+                    "very_conservative_5pct": "응답 5% — ROI ~120x",
+                    "conservative_15pct": "응답 15% — ROI ~211x",
+                    "mid_30pct": "응답 30% — ROI ~347x (현실적 중간)",
+                    "optimistic_50pct": "응답 50% — ROI ~528x",
+                    "ideal_70pct": "응답 70% — ROI ~709x",
+                },
+            },
+        }).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path == "/health" or path == "/":
         api = {}
         for name, s in _api_stats.items():
