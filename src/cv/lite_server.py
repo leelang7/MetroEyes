@@ -401,6 +401,7 @@ def _build_impact_summary() -> dict:
         "est_response_rate": round(est_response_rate, 4),
         "roi_x": round(roi_x, 1),
         "hourly": hourly,
+        "stations": dict(sorted(_impact_total["stations"].items(), key=lambda x: -x[1])[:8]),
     }
 
 

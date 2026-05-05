@@ -92,6 +92,11 @@
       </div>
     </div>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(167,139,250,.04));">
+      <h2>📍 분산 액션 Top 8 역 <span style="color: var(--muted); font-weight: 400;">(stations)</span></h2>
+      <div id="im-stations" style="font-size: 11px; color: var(--muted-2);">데이터 대기 중...</div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(125,211,211,.04));">
       <h2>⏰ 시간대 분산 응답 분포 <span style="color: var(--muted); font-weight: 400;">(24h)</span></h2>
       <canvas id="hourly-spark" width="540" height="80" style="width:100%; height:80px; background:#04060a; border:1px solid rgba(255,255,255,.05); border-radius:6px;"></canvas>
@@ -321,6 +326,22 @@ function applyImpactCard(j) {
   document.getElementById('im-rate').textContent = j.est_response_rate != null
     ? `${(j.est_response_rate*100).toFixed(2)}%` : '—%';
   if (j.hourly && Array.isArray(j.hourly)) drawHourlySpark(j.hourly);
+  // top stations
+  if (j.stations) {
+    const el = document.getElementById('im-stations');
+    if (el) {
+      const entries = Object.entries(j.stations).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      const max = entries[0] ? entries[0][1] : 1;
+      el.innerHTML = entries.map(([name, n]) => {
+        const w = (n / max * 100).toFixed(0);
+        return `<div style="display: grid; grid-template-columns: 110px 1fr 30px; gap: 8px; align-items: center; padding: 2px 0;">
+          <span style="color: var(--text);">${name}</span>
+          <div style="height: 8px; background: rgba(255,255,255,.04); border-radius: 4px; overflow: hidden;"><div style="width: ${w}%; height: 100%; background: linear-gradient(90deg, var(--accent), #38bdf8);"></div></div>
+          <b style="color: var(--accent); text-align: right;">${n}</b>
+        </div>`;
+      }).join('') || '<span>데이터 없음</span>';
+    }
+  }
 }
 
 function drawMsgPerMin(buckets) {
