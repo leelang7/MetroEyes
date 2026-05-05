@@ -561,6 +561,64 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   v3 가 신뢰할 만한 검증.
 </p>
 
+<h2>결론 — 한 줄로</h2>
+<div class="card hi" style="background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(16,185,129,.06)); border: 1px solid rgba(125,211,211,.45); padding: 24px;">
+  <div style="font-size: 17px; line-height: 1.7; color: var(--text);">
+    <b style="color: var(--accent);">시민 한 사람의 분산 액션 ₩200</b> →
+    backend 누적 → <b style="color: var(--good);">운영자 정책 비용 ₩X / ROI x 라이브</b> →
+    응답률 30% 시 <b style="color: var(--accent);">사회적 가치 1,393억/년</b>.
+    <br>
+    <span style="font-size: 13px; color: var(--muted); display: block; margin-top: 10px;">
+      "혼잡은 가만히 있어도 비용. 분산은 가만히 있어도 자산." — 칸 단위 BEV 가시화 + 시민 인센티브 클로즈드 루프 + 정책 ROI 정량화.
+    </span>
+  </div>
+</div>
+
+<h2>향후 발전 로드맵</h2>
+<div class="row">
+  <div class="card">
+    <h3>📅 단기 (3개월)</h3>
+    <ul>
+      <li>2호선 환승 허브 5역 파일럿 — Jetson Orin Nano 카메라 4대/역</li>
+      <li>실 보상 결제 연동 (Tmoney 마일리지 또는 지자체 포인트)</li>
+      <li>응급/분실 알림 → 역 직원 모바일 푸시 (현장 대응 평균 30초 단축 목표)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>📅 중기 (6개월)</h3>
+    <ul>
+      <li>모든 환승 허브 85역 + 운영자 통합 관제센터 라이브</li>
+      <li>버스 연계 — 환승 시 분산 보상 합산 (지하철 + 버스 양방향)</li>
+      <li>호선별 cap 평탄화 -0.66%p → -2%p 측정 (실 데이터 검증)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>📅 장기 (1년+)</h3>
+    <ul>
+      <li>전 296역 확대 — 인프라 9억 (296×3M) → ROI 200x 유지</li>
+      <li>광역 BIS 연계 (수도권 GTX·광역버스) — 환승 패턴 학습</li>
+      <li>다른 광역시 적용 (부산·대구·인천 — 호선 차등 모델 전이)</li>
+      <li>오픈소스 일부 공개 — 다른 도시 BEV 시스템 표준화</li>
+    </ul>
+  </div>
+</div>
+
+<h2>심사위원 시연 가이드</h2>
+<div class="card" style="background: var(--panel-2); border-color: var(--warn);">
+  <div style="display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; font-size: 13px;">
+    <div style="color: var(--warn); font-weight: 700;">1.</div>
+    <div>이 페이지 상단 <b>응답률 슬라이더</b> 0~80% 이동 → 4 KPI + 곡선 라이브 갱신 확인</div>
+    <div style="color: var(--warn); font-weight: 700;">2.</div>
+    <div>nav 우상단 <a href="demo.html">🎬 통합 시연</a> → ▶︎ 시연 시작 클릭 → 5분 4-패널 자동 재생</div>
+    <div style="color: var(--warn); font-weight: 700;">3.</div>
+    <div><a href="operator_web/index.html">🚇 운영자 콘솔</a> → ▶︎ 시연 모드 30초 → 무임/분실/응급/이상/분산 5종 자동 발생</div>
+    <div style="color: var(--warn); font-weight: 700;">4.</div>
+    <div><a href="passenger_app/index.html">📱 시민 PWA</a> → 권장 칸 CTA 클릭 → +200원 보상 toast → onboard 누적 카드</div>
+    <div style="color: var(--warn); font-weight: 700;">5.</div>
+    <div><a href="admin.html">🛠 Debug Console</a> → Live Impact 카드 7 KPI + 메시지 sparkline 60초 → 백엔드 전체 가시</div>
+  </div>
+</div>
+
 <footer>
   ⓒ 2026 MetroEyes (SubwayBEV). 데이터: 서울 열린데이터광장 / TOPIS / data.go.kr · 모델: YOLO11n + BoT-SORT · LLM: Claude Haiku 4.5
   <br>
