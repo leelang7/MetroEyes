@@ -591,7 +591,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
   </div>
   <div class="card">
-    <h3>🛠 시연 신뢰성 (D-day fail-safe 6중)</h3>
+    <h3>🛠 시연 신뢰성 (D-day fail-safe 8중)</h3>
     <ul>
       <li><code>--demo</code> 모드 — CV 모델 없이도 BEV 트랙 5Hz broadcast</li>
       <li>▶︎ 시연 인젝터 — 30s 5종 이벤트 (운영자/버스/실카메라/광고) progress bar</li>
@@ -599,6 +599,8 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       <li>backend 신규 클라이언트 join 시 즉시 누적 summary 전송</li>
       <li>admin ▶︎ 단일 클릭 — backend 만 켜져 있어도 5종 송신 가능</li>
       <li><code>--demo</code> 자동 impact seed — 양봉 시뮬 분산 액션 누적 (피크 8건/분)</li>
+      <li><code>docker compose up -d</code> 한 줄 — backend + frontend 동시 기동, .env 자동</li>
+      <li>GitHub Actions CI — 4 jobs (syntax + lite_server import + Docker build + 10 페이지)</li>
     </ul>
   </div>
   <div class="card">
