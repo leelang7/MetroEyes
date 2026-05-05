@@ -393,25 +393,30 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
     <span style="color: var(--accent);">━ 순 사회적 가치 (억/년)</span>
     <span style="color: var(--good);">━ ROI 배수 (x10)</span>
     <span style="color: var(--warn);">━ 정책 비용 (억/년)</span>
+    <span style="color: rgba(125,211,211,.55);">▓ ±15% 민감도 (보수/낙관 CI)</span>
     <span style="margin-left: auto; color: var(--text);">● 현재 슬라이더 위치</span>
+  </div>
+  <div id="ci-summary" style="margin-top: 8px; padding: 8px 12px; background: rgba(125,211,211,.04); border: 1px solid rgba(125,211,211,.20); border-radius: 6px; font-size: 11px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap;">
+    <span>응답률 <b id="ci-rate" style="color: var(--text);">30%</b> 시나리오:</span>
+    <span style="color: var(--warn);">보수 −15%: <b id="ci-low">—</b>억 / <b id="ci-low-roi">—</b>x</span>
+    <span style="color: var(--accent);">기본: <b id="ci-mid">—</b>억 / <b id="ci-mid-roi">—</b>x</span>
+    <span style="color: var(--good);">낙관 +15%: <b id="ci-high">—</b>억 / <b id="ci-high-roi">—</b>x</span>
+    <span style="margin-left: auto; color: var(--muted);" id="ci-band">밴드 폭 ±—억</span>
   </div>
 </div>
 
 <script>
 // ROI v3 시뮬레이터 (policy_roi_v3.py 와 일치하는 closed-form)
-function simulateROI(rate) {
+// mult: 보수(0.85) / 기본(1.0) / 낙관(1.15) — 통근 가치/안전/광고 동시 ±15% 민감도
+function simulateROI(rate, mult = 1.0) {
   const DAILY = 7_000_000, WORKDAYS = 250, KRW_HOUR = 15000;
-  // demand sum × 호선 cap × 응답률 (단순화)
-  // policy_roi_v3 결과 보간: rate 0.3 → 1393억, 0.5 → 2122억, 0.7 → 2851억
-  // 선형 + 인센티브 비용 (response × 0.45 × 100원) 비례
   const r = rate;
-  // 절감 분/년 (M)
-  const minSaved = 1577 * r;  // 0.3 → 473M, 0.7 → 1104M
-  const commute = (minSaved * 1e6 / 60) * KRW_HOUR / 1e8;
-  const safety = 500 * (0.4 + r * 0.6) * (1 + 0.3);
-  const ad = 120 * (0.5 + r * 0.7);
-  const energy = 150 * r * 1.3;
-  const incentive = 7e6 * 250 * r * 0.45 * 100 / 1e8;
+  const minSaved = 1577 * r;
+  const commute = (minSaved * 1e6 / 60) * KRW_HOUR / 1e8 * mult;
+  const safety = 500 * (0.4 + r * 0.6) * (1 + 0.3) * mult;
+  const ad = 120 * (0.5 + r * 0.7) * mult;
+  const energy = 150 * r * 1.3 * mult;
+  const incentive = 7e6 * 250 * r * 0.45 * 100 / 1e8;   // 인센티브 비용은 ±15% 무관 (정책 고정값)
   const total = commute + safety + ad + energy;
   const net = total - incentive;
   const stations = 134;
@@ -427,13 +432,28 @@ function simulateROI(rate) {
   };
 }
 function applyROI(rate) {
-  const r = simulateROI(rate);
+  const r = simulateROI(rate, 1.0);
+  const rLow = simulateROI(rate, 0.85);
+  const rHigh = simulateROI(rate, 1.15);
   document.getElementById('kpi-net').textContent = r.net.toLocaleString();
   document.getElementById('kpi-roi').textContent = r.roi.toLocaleString();
   document.getElementById('kpi-min').textContent = r.minSaved;
   document.getElementById('kpi-cost').textContent = r.cost.toLocaleString();
   document.getElementById('kpi-infra').textContent = r.infra;
   document.getElementById('kpi-stations').textContent = r.stations;
+  // CI 시나리오 갱신
+  const ciRate = document.getElementById('ci-rate');
+  if (ciRate) {
+    ciRate.textContent = (rate * 100).toFixed(0) + '%';
+    document.getElementById('ci-low').textContent = rLow.net.toLocaleString();
+    document.getElementById('ci-low-roi').textContent = rLow.roi.toLocaleString();
+    document.getElementById('ci-mid').textContent = r.net.toLocaleString();
+    document.getElementById('ci-mid-roi').textContent = r.roi.toLocaleString();
+    document.getElementById('ci-high').textContent = rHigh.net.toLocaleString();
+    document.getElementById('ci-high-roi').textContent = rHigh.roi.toLocaleString();
+    const bandWidth = (rHigh.net - rLow.net) / 2;
+    document.getElementById('ci-band').textContent = `밴드 폭 ±${bandWidth.toLocaleString()}억`;
+  }
 }
 const slider = document.getElementById('resp-slider');
 const respPct = document.getElementById('resp-pct');
@@ -456,13 +476,19 @@ function drawROICurve(currentRate) {
   const w = W / dpr, h = H / dpr;
   ctx.clearRect(0, 0, w, h);
 
-  // 0~80% 81 샘플
+  // 0~80% 81 샘플 — 기본/보수/낙관 3 시나리오
   const samples = [];
-  for (let i = 0; i <= 80; i++) samples.push({ rate: i/100, ...simulateROI(i/100) });
+  const samplesLow = [];
+  const samplesHigh = [];
+  for (let i = 0; i <= 80; i++) {
+    samples.push({ rate: i/100, ...simulateROI(i/100, 1.0) });
+    samplesLow.push({ rate: i/100, ...simulateROI(i/100, 0.85) });
+    samplesHigh.push({ rate: i/100, ...simulateROI(i/100, 1.15) });
+  }
   const xN = samples.length;
 
-  // y 정규화
-  const maxNet = Math.max(...samples.map(s => s.net));
+  // y 정규화 — 낙관까지 포함해 스케일 결정 (CI band 잘리지 않게)
+  const maxNet = Math.max(...samplesHigh.map(s => s.net));
   const maxROI = Math.max(...samples.map(s => s.roi));
   const maxCost = Math.max(...samples.map(s => s.cost));
 
@@ -502,6 +528,37 @@ function drawROICurve(currentRate) {
     });
     ctx.stroke();
   }
+  // ★ 민감도 ±15% CI band — net 곡선 위/아래 영역 fill (보수/낙관)
+  ctx.fillStyle = 'rgba(125,211,211,.10)';
+  ctx.beginPath();
+  samplesHigh.forEach((s, i) => {
+    const x = padL + (i / (xN-1)) * plotW;
+    const y = padT + plotH - (s.net / maxNet) * plotH;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  for (let i = samplesLow.length - 1; i >= 0; i--) {
+    const s = samplesLow[i];
+    const x = padL + (i / (xN-1)) * plotW;
+    const y = padT + plotH - (s.net / maxNet) * plotH;
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fill();
+  // 보수/낙관 점선 가이드
+  ctx.strokeStyle = 'rgba(125,211,211,.35)';
+  ctx.setLineDash([3, 3]);
+  ctx.lineWidth = 1;
+  for (const arr of [samplesLow, samplesHigh]) {
+    ctx.beginPath();
+    arr.forEach((s, i) => {
+      const x = padL + (i / (xN-1)) * plotW;
+      const y = padT + plotH - (s.net / maxNet) * plotH;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
   plot('net',  getCSS('--accent') || '#7dd3d3', maxNet);
   plot('roi',  getCSS('--good')   || '#10b981', maxROI / 0.5);  // ROI 곡선 0.5 배율로 다른 곡선 가시
   plot('cost', getCSS('--warn')   || '#f59e0b', maxNet);  // cost 도 net 스케일
