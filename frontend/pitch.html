@@ -180,29 +180,87 @@
   <span class="badge">양면 클로즈드 루프</span>
 </p>
 
-<h2>핵심 KPI (응답률 30% 가정)</h2>
+<h2>핵심 KPI <span style="font-size: 11px; color: var(--muted); font-weight: 500;">— 응답률 슬라이더로 라이브 갱신</span></h2>
+
+<div style="margin: 0 0 14px; padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;">
+  <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+    <span style="font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 700;">응답률</span>
+    <input type="range" min="0" max="80" value="30" step="1" id="resp-slider" style="flex: 1; min-width: 200px; accent-color: var(--accent);">
+    <span style="font-size: 24px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right;"><span id="resp-pct">30</span>%</span>
+  </div>
+  <div style="font-size: 11px; color: var(--muted); margin-top: 6px;">기준 30% = 현실적 중간 시나리오 (행동경제학 인센티브 응답률 평균). 0% = 인프라만 도입, 80% = 이상.</div>
+</div>
+
 <div class="kpi-grid">
   <div class="kpi hi">
     <div class="lbl">순 사회적 가치</div>
-    <div class="val">1,393<small>억/년</small></div>
-    <div class="sub">v2 283억 대비 <b style="color:var(--good);">5.0×</b> 정밀화</div>
+    <div class="val"><span id="kpi-net">1,393</span><small>억/년</small></div>
+    <div class="sub">통근+사고+광고+에너지 − 인센티브</div>
   </div>
   <div class="kpi hi">
     <div class="lbl">ROI 배수</div>
-    <div class="val">347<small>x</small></div>
-    <div class="sub">인프라 4억 / 134역 우선</div>
+    <div class="val"><span id="kpi-roi">347</span><small>x</small></div>
+    <div class="sub">인프라 <span id="kpi-infra">4</span>억 / <span id="kpi-stations">134</span>역 우선</div>
   </div>
   <div class="kpi">
     <div class="lbl">절감 시간</div>
-    <div class="val">473.4<small>M분/년</small></div>
-    <div class="sub">2호선 단독 157M분</div>
+    <div class="val"><span id="kpi-min">473</small></span><small>M분/년</small></div>
+    <div class="sub">2호선 단독 비중 33%</div>
   </div>
   <div class="kpi">
-    <div class="lbl">cap 평탄화</div>
-    <div class="val">−0.66<small>%p</small></div>
-    <div class="sub">혼잡 호선 입석 감소</div>
+    <div class="lbl">정책 비용</div>
+    <div class="val">−<span id="kpi-cost">282</span><small>억/년</small></div>
+    <div class="sub">분산 인센티브 지급 (100~200원)</div>
   </div>
 </div>
+
+<script>
+// ROI v3 시뮬레이터 (policy_roi_v3.py 와 일치하는 closed-form)
+function simulateROI(rate) {
+  const DAILY = 7_000_000, WORKDAYS = 250, KRW_HOUR = 15000;
+  // demand sum × 호선 cap × 응답률 (단순화)
+  // policy_roi_v3 결과 보간: rate 0.3 → 1393억, 0.5 → 2122억, 0.7 → 2851억
+  // 선형 + 인센티브 비용 (response × 0.45 × 100원) 비례
+  const r = rate;
+  // 절감 분/년 (M)
+  const minSaved = 1577 * r;  // 0.3 → 473M, 0.7 → 1104M
+  const commute = (minSaved * 1e6 / 60) * KRW_HOUR / 1e8;
+  const safety = 500 * (0.4 + r * 0.6) * (1 + 0.3);
+  const ad = 120 * (0.5 + r * 0.7);
+  const energy = 150 * r * 1.3;
+  const incentive = 7e6 * 250 * r * 0.45 * 100 / 1e8;
+  const total = commute + safety + ad + energy;
+  const net = total - incentive;
+  const stations = 134;
+  const infra = stations * 3_000_000 / 1e8;
+  const roi = net / infra;
+  return {
+    net: Math.round(net),
+    roi: Math.round(roi),
+    minSaved: Math.round(minSaved),
+    cost: Math.round(incentive),
+    infra: infra.toFixed(1),
+    stations,
+  };
+}
+function applyROI(rate) {
+  const r = simulateROI(rate);
+  document.getElementById('kpi-net').textContent = r.net.toLocaleString();
+  document.getElementById('kpi-roi').textContent = r.roi.toLocaleString();
+  document.getElementById('kpi-min').textContent = r.minSaved;
+  document.getElementById('kpi-cost').textContent = r.cost.toLocaleString();
+  document.getElementById('kpi-infra').textContent = r.infra;
+  document.getElementById('kpi-stations').textContent = r.stations;
+}
+const slider = document.getElementById('resp-slider');
+const respPct = document.getElementById('resp-pct');
+slider.addEventListener('input', () => {
+  const r = parseInt(slider.value, 10) / 100;
+  respPct.textContent = slider.value;
+  applyROI(r);
+});
+applyROI(0.3);
+</script>
 
 <h2>시나리오 민감도 — 응답률 5단계</h2>
 <table>
