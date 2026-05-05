@@ -82,6 +82,25 @@ _cv_metrics: dict = {"fps": 0.0, "tracks": 0, "frames": 0, "last_ts": 0.0, "demo
 _incident_total = {"emergency": 0, "suspicious": 0, "lost": 0, "free_ride": 0, "events": []}
 INCIDENT_KEEP = 30  # 최근 30개만 유지
 
+# 분당 메시지 통계 — 60분 deque
+import collections
+_msg_minute_buckets: collections.deque = collections.deque(maxlen=60)
+_current_minute = {"ts": 0, "ws_msgs": 0, "api_calls": 0}
+
+def _bump_msg_bucket(kind: str):
+    """분당 ws/api 메시지 카운트 누적."""
+    now = int(time.time() // 60)
+    if _current_minute["ts"] != now:
+        if _current_minute["ts"] != 0:
+            _msg_minute_buckets.append(dict(_current_minute))
+        _current_minute["ts"] = now
+        _current_minute["ws_msgs"] = 0
+        _current_minute["api_calls"] = 0
+    if kind == "ws":
+        _current_minute["ws_msgs"] += 1
+    elif kind == "api":
+        _current_minute["api_calls"] += 1
+
 def _api_track(name: str, started: float, error: bool = False):
     """API 호출 시간 + 성공/실패 통계 누적."""
     elapsed_ms = (time.time() - started) * 1000.0
@@ -91,6 +110,7 @@ def _api_track(name: str, started: float, error: bool = False):
     s["total_ms"] += elapsed_ms
     s["last_ms"] = elapsed_ms
     s["last_ts"] = time.time()
+    _bump_msg_bucket("api")
 
 
 # ============== HTTP helpers ==============
@@ -395,6 +415,7 @@ async def handler(websocket):
         pass
     try:
         async for msg in websocket:
+            _bump_msg_bucket("ws")
             try:
                 req = json.loads(msg)
             except Exception:
@@ -566,6 +587,7 @@ async def http_health(path, headers):
                 "free_ride": _incident_total["free_ride"],
                 "recent": _incident_total["events"][:5],
             } if (_incident_total["emergency"] + _incident_total["suspicious"] + _incident_total["lost"] + _incident_total["free_ride"]) > 0 else None,
+            "msg_per_min": list(_msg_minute_buckets) + [dict(_current_minute)] if _current_minute["ts"] else list(_msg_minute_buckets),
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     return None
