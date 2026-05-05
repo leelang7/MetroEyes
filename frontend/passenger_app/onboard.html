@@ -160,6 +160,56 @@ function renderRewardCard() {
 renderRewardCard();
 window.addEventListener('storage', renderRewardCard);
 
+// 도착 ETA 라이브 카운트다운 + 도착 시 보상 합계 메시지
+let _etaTimer = null;
+function startEtaCountdown(seconds) {
+  if (_etaTimer) clearInterval(_etaTimer);
+  let remaining = seconds;
+  const fmt = (s) => {
+    if (s <= 0) return '도착';
+    const m = Math.floor(s / 60), sec = s % 60;
+    if (m === 0) return `${sec}초`;
+    return `${m}분 ${String(sec).padStart(2, '0')}초`;
+  };
+  function tick() {
+    const el = document.getElementById('next-eta');
+    if (!el) { clearInterval(_etaTimer); return; }
+    el.textContent = fmt(remaining);
+    if (remaining <= 30 && remaining > 0) {
+      el.style.color = '#ef4444';
+      el.style.fontWeight = '800';
+    }
+    if (remaining <= 0) {
+      clearInterval(_etaTimer);
+      el.innerHTML = '<span style="color: #10b981; font-weight: 800;">✅ 도착</span>';
+      // 도착 시 누적 보상 안내
+      try {
+        const my = JSON.parse(localStorage.getItem('metroeyes_my_impact') || '{}');
+        if (my.n) {
+          const krw = my.krw || 0;
+          const lang = (navigator.language || 'ko').slice(0, 2);
+          const msg = {
+            ko: `${cfg.nextStop(hour)} 도착. 누적 ${krw.toLocaleString()}원 적립 중`,
+            en: `Arrived at ${cfg.nextStop(hour)}. Total ${krw.toLocaleString()} won earned`,
+            zh: `到达 ${cfg.nextStop(hour)}。累计 ${krw} 韩元`,
+            ja: `${cfg.nextStop(hour)} 到着。累計 ${krw} ウォン`,
+          }[lang] || `${cfg.nextStop(hour)} 도착. 누적 ${krw.toLocaleString()}원 적립`;
+          if ('speechSynthesis' in window) {
+            const u = new SpeechSynthesisUtterance(msg);
+            u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR';
+            u.volume = 0.6; u.rate = 1.0;
+            window.speechSynthesis.speak(u);
+          }
+        }
+      } catch {}
+      return;
+    }
+    remaining--;
+  }
+  tick();
+  _etaTimer = setInterval(tick, 1000);
+}
+
 // 사용자 위치 — 차량 안 어딘가 (랜덤하지만 일관되게)
 const userPos = { x: 0.4, y: 0.5 };  // 0~1 of car interior
 
@@ -228,6 +278,8 @@ function applyHour() {
     delta < 0 ? `${delta}%p · 약 ${Math.round(Math.abs(delta) * 0.4)}명 하차` : `+${delta}%p`;
   document.getElementById('next-station').innerHTML =
     `다음: <b style="color: var(--fg)">${cfg.nextStop(hour)}</b> · <span id="next-eta">2분 30초</span> 후`;
+  // 도착 ETA 라이브 카운트다운 시작 (4분 전 → 0)
+  startEtaCountdown(240);
 
   const tr = cfg.transfer();
   document.getElementById('transfer').querySelector('.head').textContent = tr.head;
