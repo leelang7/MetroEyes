@@ -119,6 +119,28 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
       <span style="margin-left: 4px; color: var(--muted);">σ<b id="ad-dp-sigma" style="color: var(--text); margin-left:3px;">—%</b></span>
       <span style="margin-left: 4px; color: var(--muted);">노출<b id="ad-dp-stable" style="color: var(--text); margin-left:3px;">—%</b></span>
     </span>
+    <span id="ad-tier-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(245,158,11,.14), rgba(167,139,250,.06)); border: 1px solid rgba(245,158,11,.35);">
+      <span style="color: #f59e0b; font-size: 10px; font-weight: 700;">💰 차등</span>
+      <b id="ad-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="ad-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="ad-tier-tp" style="color: #f59e0b;">0</b>
+    </span>
+<script>
+(async function pollAdTier() {
+  try {
+    const r = await fetch('http://localhost:8765/health', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      const tc = j.impact && j.impact.tier_counts;
+      if (tc && (tc.basic + tc.od + tc.transfer) > 0) {
+        document.getElementById('ad-tier-basic').textContent = (tc.basic || 0).toLocaleString();
+        document.getElementById('ad-tier-od').textContent = (tc.od || 0).toLocaleString();
+        document.getElementById('ad-tier-tp').textContent = (tc.transfer || 0).toLocaleString();
+        document.getElementById('ad-tier-pill').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollAdTier, 8000);
+})();
+</script>
 <script>
 // 광고주 컨텍스트: 분산 효과로 인한 시간대 노출 안정성 (1 - peak_drop ≈ 노출 변동 감소)
 (async function pollDispersionAd() {

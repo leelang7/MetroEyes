@@ -205,6 +205,28 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       <span style="margin-left: 4px;">σ<b id="cam-dp-sigma" style="margin-left:3px;">—%</b></span>
       <span style="margin-left: 4px;">피크<b id="cam-dp-peak" style="margin-left:3px;">—%</b></span>
     </span>
+    <span id="cam-tier-pill" hidden class="tag" style="margin-left: 6px; padding: 4px 10px; background: linear-gradient(135deg, rgba(245,158,11,.14), rgba(167,139,250,.06)); border: 1px solid rgba(245,158,11,.35); color: #fff; border-radius: 6px; font-size: 11px;">
+      <span style="color: #f59e0b; font-size: 10px; font-weight: 700;">💰 차등</span>
+      <b id="cam-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="cam-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="cam-tier-tp" style="color: #f59e0b;">0</b>
+    </span>
+<script>
+(async function pollCamTier() {
+  try {
+    const r = await fetch('http://localhost:8765/health', { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      const tc = j.impact && j.impact.tier_counts;
+      if (tc && (tc.basic + tc.od + tc.transfer) > 0) {
+        document.getElementById('cam-tier-basic').textContent = (tc.basic || 0).toLocaleString();
+        document.getElementById('cam-tier-od').textContent = (tc.od || 0).toLocaleString();
+        document.getElementById('cam-tier-tp').textContent = (tc.transfer || 0).toLocaleString();
+        document.getElementById('cam-tier-pill').hidden = false;
+      }
+    }
+  } catch {}
+  setTimeout(pollCamTier, 8000);
+})();
+</script>
 <script>
 (async function pollDispersionCam() {
   try {
