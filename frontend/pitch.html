@@ -215,6 +215,35 @@
 </header>
 <main>
 
+<div id="pitch-live-kpi" hidden style="margin-bottom: 14px; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; font-size: 12px; font-feature-settings: 'tnum';">
+  <span style="color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;">🟢 라이브</span>
+  <span style="color: var(--muted);">분산 <b id="plk-cnt" style="color: var(--text);">0</b>명</span>
+  <span style="color: var(--muted);">절감 <b id="plk-min" style="color: var(--text);">0</b>분</span>
+  <span style="color: var(--muted);">사회 <b id="plk-val" style="color: var(--text);">₩0</b></span>
+  <span style="color: var(--muted);">ROI <b id="plk-roi" style="color: var(--good);">—x</b></span>
+  <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s polling</span>
+</div>
+<script>
+(async function pollPitchKPI() {
+  const url = (location.protocol === 'https:'
+    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    const j = await r.json();
+    const im = j.impact;
+    if (im && im.total_count > 0) {
+      const fmt = w => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
+      document.getElementById('plk-cnt').textContent = im.total_count.toLocaleString();
+      document.getElementById('plk-min').textContent = Math.round(im.saved_min_total).toLocaleString();
+      document.getElementById('plk-val').textContent = fmt(im.value_won);
+      document.getElementById('plk-roi').textContent = im.roi_x ? Math.round(im.roi_x) + 'x' : '—x';
+      document.getElementById('pitch-live-kpi').hidden = false;
+    }
+  } catch {}
+  setTimeout(pollPitchKPI, 8000);
+})();
+</script>
+
 <h1>시민 분산 한 번에 <span class="accent">+200원</span>, 사회적 가치 <span class="accent">1,393억/년</span></h1>
 <p class="lede">
   MetroEyes (코드명 SubwayBEV) 는 <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의
