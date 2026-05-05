@@ -1,5 +1,28 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.0 — D-7 자동 모드 175 사이클 milestone (2026-05-06 정책 통합 완성)
+
+### v5.0 메이저 버전 — 차등 보상 정책 8단 완전 통합
+정책 설계 → EDA 검증 → backend 자동 가산 → UI 라이브 → 외부 BI 통합까지 전 영역 일관성 완성.
+
+### 신규 (사이클 171~175)
+- **INNOVATION_TRIZ M6 모순 추가** — 차등 보상 자동 매칭 (TRIZ #15 동적성 + #25 자기 서비스)
+- **README ko/en 핵심 KPI 강화** — 차등 4단 + 3 EDA 정량 결과 (한/영 일관성)
+- **README.en 173 cycles 누적 결과** + 9 endpoint REST + 8단 가치사슬 + FAQ 6
+- **CHANGELOG v5.0 메이저** — 정책 통합 완성 milestone
+
+### v5.0 누적 핵심 산출 (175 사이클)
+- **9 REST endpoint + OpenAPI 3.0** (외부 BI 단일 폴링)
+- **11 페이지 4언어 i18n** + 5 진입점 환영 toast
+- **3 EDA 실 데이터 검증** (분산 / OD / 환승)
+- **차등 보상 4단 정책** (₩100/₩200/₩300/₩400) + backend `_bonus_krw()` 자동 가산
+- **tier_counts 라이브 분포** 6 페이지 동기화 (admin / pitch / 운영자 4)
+- **A* + K-means(K=4) + 헝가리안** 비상 동선
+- **ROI v3 ±15% 민감도 CI band** + 차등 효과 +50% 추정
+- **8중 시연 fail-safe** (--demo + 인젝터 + 5min sticky + join summary + admin click + warm seed + Docker + GitHub Actions CI)
+- **8단 양면 가치 사슬** (CV → 도시 → 결정 → OD 매칭 → 환승 매칭 → 시민 차등 → backend 자동 → ROI)
+- **TRIZ 모순 6개** (M6: 차등 보상 자동)
+
 ## v4.9 — D-7 자동 모드 170 사이클 milestone (2026-05-06 후속 VII)
 
 ### 신규 (사이클 166~170) — 정책 통합 가치 사슬 + FAQ 보강
