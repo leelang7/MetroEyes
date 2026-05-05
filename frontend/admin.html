@@ -82,6 +82,16 @@
       <div class="stat">Last error  <b id="s-err">—</b></div>
     </div>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(167,139,250,.06), rgba(125,211,211,.04));">
+      <h2>⏱ 분당 메시지 (60분) <span style="color: var(--muted); font-weight: 400;">(/health.msg_per_min)</span></h2>
+      <canvas id="msg-min-spark" width="540" height="80" style="width:100%; height:80px; background:#04060a; border:1px solid rgba(255,255,255,.05); border-radius:6px;"></canvas>
+      <div style="display: flex; gap: 12px; font-size: 9px; color: var(--muted-2); margin-top: 4px;">
+        <span style="color:#7dd3d3;">━ ws</span>
+        <span style="color:#a78bfa;">━ api</span>
+        <span style="margin-left:auto;">60분 deque</span>
+      </div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(125,211,211,.04));">
       <h2>⏰ 시간대 분산 응답 분포 <span style="color: var(--muted); font-weight: 400;">(24h)</span></h2>
       <canvas id="hourly-spark" width="540" height="80" style="width:100%; height:80px; background:#04060a; border:1px solid rgba(255,255,255,.05); border-radius:6px;"></canvas>
@@ -312,6 +322,37 @@ function applyImpactCard(j) {
   if (j.hourly && Array.isArray(j.hourly)) drawHourlySpark(j.hourly);
 }
 
+function drawMsgPerMin(buckets) {
+  const cv = document.getElementById('msg-min-spark'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight;
+  ctx.clearRect(0, 0, W, H);
+  // 60분 padding (없는 분은 0)
+  const arr = new Array(60).fill(null).map((_, i) => buckets[i] || { ws_msgs: 0, api_calls: 0 });
+  const maxWs = Math.max(1, ...arr.map(b => b.ws_msgs || 0));
+  const maxApi = Math.max(1, ...arr.map(b => b.api_calls || 0));
+  const max = Math.max(maxWs, maxApi);
+  function plot(values, color) {
+    ctx.strokeStyle = color; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    arr.forEach((b, i) => {
+      const x = (i / (arr.length - 1)) * W;
+      const v = values(b);
+      const y = H - (v / max) * (H - 4) - 2;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  // 격자
+  ctx.strokeStyle = 'rgba(255,255,255,.04)'; ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const y = H * i / 4;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  plot(b => b.ws_msgs || 0, '#7dd3d3');
+  plot(b => b.api_calls || 0, '#a78bfa');
+}
+
 function drawHourlySpark(hourly) {
   const cv = document.getElementById('hourly-spark'); if (!cv) return;
   const ctx = cv.getContext('2d');
@@ -432,6 +473,8 @@ async function pollHealth() {
     } else {
       ['ic-em','ic-su','ic-lo','ic-fr'].forEach(id => ev(id, '0'));
     }
+    // 분당 메시지 sparkline (60분)
+    if (j.msg_per_min && Array.isArray(j.msg_per_min)) drawMsgPerMin(j.msg_per_min);
     // CV 메트릭 갱신
     const cv = j.cv;
     const fmtCV = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
