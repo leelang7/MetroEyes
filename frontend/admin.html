@@ -483,6 +483,14 @@ async function pollHealth() {
     const ic = j.incidents;
     const ev = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     if (ic) {
+      // 새 응급/이상 사고 toast (이전과 비교)
+      try {
+        const prev = window._prevIncEm || 0, prevSu = window._prevIncSu || 0;
+        if (ic.emergency > prev || ic.suspicious > prevSu) {
+          showAdminToast(ic.emergency > prev ? '🚨 응급 사고 발생' : '⚠ 이상 행동 감지', 'crit');
+        }
+        window._prevIncEm = ic.emergency; window._prevIncSu = ic.suspicious;
+      } catch {}
       ev('ic-em', ic.emergency); ev('ic-su', ic.suspicious);
       ev('ic-lo', ic.lost); ev('ic-fr', ic.free_ride);
       // 비율 막대 — 4 type 누적 가로 바
@@ -570,6 +578,28 @@ async function pollHealth() {
 }
 pollHealth();
 setInterval(pollHealth, 5000);
+
+// admin toast (응급/이상 알림)
+function showAdminToast(msg, level) {
+  let t = document.getElementById('admin-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'admin-toast';
+    t.style.cssText = 'position:fixed;top:20px;right:20px;padding:14px 22px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:#fff;border-radius:14px;font-weight:800;font-size:14px;box-shadow:0 12px 36px rgba(239,68,68,.45);z-index:9999;opacity:0;transition:opacity .25s,transform .25s;transform:translateX(20px);';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(0)'; });
+  clearTimeout(t._h);
+  t._h = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; }, 4000);
+  // 브라우저 탭에 시각 알림
+  try {
+    if (document.title.indexOf('🚨') === -1) {
+      document.title = '🚨 ' + document.title;
+      setTimeout(() => { document.title = document.title.replace('🚨 ', ''); }, 8000);
+    }
+  } catch {}
+}
 
 // /api/docs 링크 자동 도출
 (function(){
