@@ -1,0 +1,26 @@
+# MetroEyes — Docker build context 최적화
+.git
+.github
+.venv
+__pycache__
+*.pyc
+*.pyo
+build
+node_modules
+outputs
+data/raw
+data/processed
+*.parquet
+*.csv
+mobile_app/build
+mobile_app/.dart_tool
+*.log
+.env
+.env.example
+notebooks
+tests
+docs
+*.md
+LICENSE
+.gitignore
+.dockerignore

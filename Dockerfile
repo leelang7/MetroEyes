@@ -18,5 +18,9 @@ ENV PYTHONUNBUFFERED=1
 # 8765 포트 노출
 EXPOSE 8765
 
+# Health check — /health endpoint 30초 간격
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD python -c "import urllib.request, sys; urllib.request.urlopen('http://localhost:8765/health', timeout=2); sys.exit(0)" || exit 1
+
 # 기본 실행 — --demo 모드로 시작 (CV 없이 BEV 5Hz + warm seed + 5분 자동 incident)
 CMD ["python", "-m", "src.cv.lite_server", "--port", "8765", "--host", "0.0.0.0", "--demo"]
