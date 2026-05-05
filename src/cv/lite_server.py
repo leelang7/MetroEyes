@@ -778,6 +778,49 @@ async def http_health(path, headers):
             },
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path == "/api/v1/policy_summary":
+        # 모든 정책 KPI 통합 — 단일 endpoint로 외부 도구 (Excel/Power BI) 폴링 효율화
+        try:
+            from pathlib import Path as _P
+            import time as _t
+            cur_h = _t.localtime().tm_hour
+            # 정적 EDA 결과
+            disp_path = _P(__file__).resolve().parent.parent.parent / "frontend" / "figs" / "dispersion_sim_report.json"
+            disp = json.loads(disp_path.read_text(encoding="utf-8")) if disp_path.exists() else {}
+            # 라이브 임팩트 + tier
+            im = _build_impact_summary() if _impact_total["count"] > 0 else None
+            est_rate = (im or {}).get("est_response_rate", 0)
+            ratio = est_rate / 0.30 if est_rate > 0 else 0
+            body = json.dumps({
+                "ok": True,
+                "current_hour": cur_h,
+                "policy": {
+                    "tier_definition": {
+                        "basic": {"krw": 200, "condition": "30%p 이상 한산 칸"},
+                        "od": {"krw": 300, "condition": "현 시각 OD 우선순위 역 + 분산"},
+                        "transfer": {"krw": 400, "condition": "환승역 + 분산 (양 호선 동시 절감)"},
+                    },
+                    "roi_at_30pct": {"net_yearly_won": 139_300_000_000, "roi_x": 347, "infra_won": 400_000_000},
+                },
+                "live_impact": im,
+                "live_dispersion": {
+                    "estimated_response_rate": round(est_rate, 4),
+                    "sigma_reduction_pct": round(disp.get("sigma_reduction_pct", 9.0) * ratio, 2),
+                    "peak_reduction_pct": round(disp.get("peak_reduction_pct", 13.5) * ratio, 2),
+                },
+                "static_eda": {
+                    "dispersion_sim": {
+                        "sigma_reduction_pct": disp.get("sigma_reduction_pct"),
+                        "peak_reduction_pct": disp.get("peak_reduction_pct"),
+                        "offpeak_lift_pct": disp.get("offpeak_lift_pct"),
+                    },
+                    "data_source": "subway_time_202602.parquet 1~9호선 28일 평균",
+                },
+            }).encode("utf-8")
+            return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+        except Exception as e:
+            return (500, [("content-type", "application/json")] + CORS_HEADERS,
+                    json.dumps({"ok": False, "error": str(e)}).encode("utf-8"))
     if path == "/api/v1/transfer_priority":
         # /api/v1/transfer_priority — 환승역 호선 간 비대칭 차이 TOP 5 (현 시각 AM/PM)
         try:
@@ -922,6 +965,8 @@ async def http_health(path, headers):
             "<p>OD 비대칭 — 현 시각(AM/PM) 자동 매칭 + 우선 분산 추천 역 TOP 5</p>"
             "<h2>GET <code>/api/v1/transfer_priority</code></h2>"
             "<p>환승역 호선 간 비대칭 차이 TOP 5 — 환승 흐름 우세 + 분산 후보 (현 시각 AM/PM 자동)</p>"
+            "<h2>GET <code>/api/v1/policy_summary</code></h2>"
+            "<p><b>통합 KPI</b> — 정책 정의(tier 4단) + 라이브 impact + 라이브 dispersion + 정적 EDA 단일 응답 (Excel/Power BI 폴링 효율)</p>"
             "<h2>GET <code>/api/openapi.yaml</code></h2>"
             "<p>표준 OpenAPI 3.0 spec — Swagger / Redoc / Postman 임포트 가능</p>"
             "<h2>WebSocket <code>ws://host:8765</code></h2>"
