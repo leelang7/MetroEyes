@@ -483,6 +483,42 @@ async def handler(websocket):
         print(f"[ws] disconnect, clients={len(clients)}", flush=True)
 
 
+async def fake_impact_seed_loop():
+    """--demo 모드 — 시뮬 시민 분산 액션 자동 누적.
+
+    양봉 시간 (8/18) 가중치로 자동 impact_log 생성 → 첫 진입 시 KPI/sparkline 즉시 표시.
+    1분당 평균 3건 (피크 8건, 야간 1건) 시뮬 발생.
+    """
+    import random
+    rng = random.Random(7)
+    STATIONS = ["성수카페거리", "강남역", "잠실역", "서울숲", "홍대 관광특구"]
+    while True:
+        # 양봉 가중치 계산
+        h = time.localtime().tm_hour
+        if h in (7, 8, 9, 17, 18, 19): rate = 8.0      # 피크
+        elif h in (10, 11, 12, 13, 14, 15, 16, 20, 21, 22): rate = 3.0  # 보통
+        elif h in (5, 6, 23): rate = 1.5
+        else: rate = 0.4   # 새벽
+        # 1분당 rate 건 → 60초 / rate 간격
+        interval = max(8, 60.0 / rate)
+        await asyncio.sleep(interval + rng.uniform(-2, 2))
+        # 분산률 차등
+        sv = rng.choices([7, 12, 22, 35, 5], weights=[0.25, 0.30, 0.25, 0.10, 0.10])[0]
+        krw = 200 if sv >= 30 else 150 if sv >= 15 else 100 if sv >= 5 else 0
+        st = rng.choice(STATIONS)
+        # 누적
+        _impact_total["count"] += 1
+        _impact_total["saved_pct_sum"] += sv
+        _impact_total["krw_paid"] += krw
+        _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
+        _impact_total["hourly"][h] += 1
+        # broadcast (클라이언트 있을 때만)
+        if clients:
+            try:
+                await broadcast(json.dumps(_build_impact_summary(), ensure_ascii=False))
+            except Exception: pass
+
+
 async def fake_bev_loop():
     """시연 fail-safe — 자체 CV 모델 부재 시에도 BEV tracks broadcast.
 
@@ -614,7 +650,9 @@ async def main():
         print(f"[lite_server] LISTEN ws://{args.host}:{args.port}", flush=True)
         if args.demo:
             print("[lite_server] DEMO mode — fake BEV tracks broadcast @5Hz", flush=True)
+            print("[lite_server] DEMO mode — fake impact seed (양봉 시뮬 분산 액션 자동 누적)", flush=True)
             asyncio.create_task(fake_bev_loop())
+            asyncio.create_task(fake_impact_seed_loop())
         await asyncio.Future()  # run forever
 
 
