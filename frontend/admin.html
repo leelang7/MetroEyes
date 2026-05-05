@@ -93,6 +93,15 @@
       <div class="stat">응답률 추정     <b id="im-rate">—%</b></div>
     </div>
 
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(239,68,68,.06), rgba(125,211,211,.04));">
+      <h2>📷 CV 메트릭 <span style="color: var(--muted); font-weight: 400;">(BEV broadcast)</span></h2>
+      <div class="stat">FPS         <b id="cv-fps" class="ok">—</b></div>
+      <div class="stat">트랙 수      <b id="cv-tracks">—</b></div>
+      <div class="stat">누적 프레임  <b id="cv-frames">—</b></div>
+      <div class="stat">마지막 갱신  <b id="cv-stale">—</b></div>
+      <div class="stat">모드         <b id="cv-mode">—</b></div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(125,211,211,.04));">
       <h2>🌐 외부 API Health <span style="color: var(--muted); font-weight: 400;">(/health 5s polling)</span></h2>
       <div id="api-health-grid" style="display: grid; gap: 4px; font-size: 11px;">
@@ -334,6 +343,19 @@ async function pollHealth() {
       .replace(/^wss:\/\//, 'https://').replace(/^ws:\/\//, 'http://') + '/health';
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();
+    // CV 메트릭 갱신
+    const cv = j.cv;
+    const fmtCV = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    if (cv) {
+      fmtCV('cv-fps', cv.fps + ' fps');
+      fmtCV('cv-tracks', cv.tracks);
+      fmtCV('cv-frames', cv.frames.toLocaleString());
+      const stale = Math.round(Date.now()/1000 - cv.last_ts);
+      fmtCV('cv-stale', stale + 's ago');
+      fmtCV('cv-mode', cv.demo ? '🎬 demo (fake BEV)' : '🔴 실 CV');
+    } else {
+      ['cv-fps','cv-tracks','cv-frames','cv-stale','cv-mode'].forEach(id => fmtCV(id, '—'));
+    }
     const grid = document.getElementById('api-health-grid');
     if (!grid) return;
     const apis = j.api || {};

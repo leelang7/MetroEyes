@@ -74,6 +74,9 @@ DAILY_RIDERS_BASELINE = 7_000_000
 # 외부 API 호출 통계 — admin /health 가 폴링
 _api_stats: dict[str, dict] = {}  # name → {calls, errors, last_ms, avg_ms, last_ts}
 
+# CV 메트릭 — fake_bev_loop / 실 CV 둘 다 갱신
+_cv_metrics: dict = {"fps": 0.0, "tracks": 0, "frames": 0, "last_ts": 0.0, "demo": False}
+
 def _api_track(name: str, started: float, error: bool = False):
     """API 호출 시간 + 성공/실패 통계 누적."""
     elapsed_ms = (time.time() - started) * 1000.0
@@ -480,6 +483,12 @@ async def fake_bev_loop():
             "tracks": tracks,
             "demo": True,
         }
+        # CV 메트릭 갱신
+        _cv_metrics["fps"] = round(fps_val, 1)
+        _cv_metrics["tracks"] = len(tracks)
+        _cv_metrics["frames"] += 1
+        _cv_metrics["last_ts"] = now
+        _cv_metrics["demo"] = True
         await broadcast(json.dumps(payload, ensure_ascii=False))
 
 
@@ -516,6 +525,7 @@ async def http_health(path, headers):
             "clients": len(clients),
             "impact": _build_impact_summary() if _impact_total["count"] > 0 else None,
             "api": api,
+            "cv": _cv_metrics if _cv_metrics["frames"] > 0 else None,
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     return None
