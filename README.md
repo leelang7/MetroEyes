@@ -252,6 +252,15 @@ backend `lite_server.py` 가 6 endpoint 제공 — 모두 CORS 허용:
 ```bash
 # 예시: ROI 곡선 fetch
 curl http://localhost:8765/api/v1/roi_curve | jq '.curve | map(select(.rate == 0.30))'
+
+# 예시: 분산 효과 정적 검증 + 라이브 추정
+curl -s http://localhost:8765/api/v1/dispersion | jq '{static: .static, live: .live}'
+
+# 예시: 현 시각 OD 우선순위 (AM 7~11 → 출근 도착 / PM 17~21 → 퇴근 출발)
+curl -s http://localhost:8765/api/v1/od_asymmetry | jq '{type: .priority_type, stations: .priority_stations | map(.station)}'
+
+# 예시: OpenAPI 3.0 spec 다운로드
+curl -o openapi.yaml http://localhost:8765/api/openapi.yaml
 ```
 
 ---

@@ -73,6 +73,42 @@
     <span class="source">서울 도시데이터</span>
   </div>
 
+  <!-- OD 우선순위 chip — 현 시각 자동 (시민 시점: 분산하면 보상 ↑) -->
+  <div id="pwa-od-chip" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(167,139,250,.16), rgba(125,211,211,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 10px; font-size: 12px; color: #fff;">
+    <span style="color: #a78bfa; font-weight: 700; font-size: 10px; letter-spacing: 1.0px; margin-right: 4px;">📍 오늘 우선 분산</span>
+    <span id="pwa-od-text" style="color: var(--muted-2);">—</span>
+    <span style="float: right; padding: 1px 6px; background: rgba(16,185,129,.18); border: 1px solid rgba(16,185,129,.45); border-radius: 999px; color: #10b981; font-size: 10px; font-weight: 600;">+₩300 보너스</span>
+  </div>
+<script>
+(async function pollODPwa() {
+  try {
+    const url = (location.protocol === 'https:'
+      ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/od_asymmetry';
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.priority_stations && j.priority_stations.length > 0) {
+        const stations = j.priority_stations.slice(0, 3).map(s => s.station).join(' · ');
+        const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+        const PFX = {
+          ko: { arrival: '출근 도착 핫스팟 — 미리 한 정거장 내리면', departure: '퇴근 출발 핫스팟 — 시간을 늦추면' },
+          en: { arrival: 'Morning arrival hotspots — get off one station early for', departure: 'Evening departure hotspots — delay departure for' },
+          zh: { arrival: '早晨到达热点 — 提前一站下车', departure: '晚高峰出发热点 — 延后出发' },
+          ja: { arrival: '通勤到着ホットスポット — 一駅手前で降車で', departure: '退勤出発ホットスポット — 出発を遅らせて' },
+        };
+        const dict = PFX[lang] || PFX.ko;
+        const isDep = j.priority_type === 'departure';
+        if (j.priority_type !== 'neutral') {
+          document.getElementById('pwa-od-text').textContent = `${stations} — ${isDep ? dict.departure : dict.arrival}`;
+          document.getElementById('pwa-od-chip').hidden = false;
+        }
+      }
+    }
+  } catch {}
+  setTimeout(pollODPwa, 60000);
+})();
+</script>
+
   <!-- 24h 폭증 예측 카드 — predict_surge 응답 -->
   <div class="forecast-card" id="forecast-card" hidden>
     <div class="fc-head">
