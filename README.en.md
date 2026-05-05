@@ -51,6 +51,14 @@ backend incident broadcast → citizen route avoidance notice. **5-stage two-sid
 
 **5-min presentation video capture guide**: [`docs/RECORDING_GUIDE.md`](docs/RECORDING_GUIDE.md) — 10-stage sequence + OBS settings + Korean narration.
 
+**Presentation materials (6 docs)**:
+- [`docs/SLIDES.html`](docs/SLIDES.html) — Hancom 16:9 slides (PDF exportable)
+- [`docs/SLIDES_DECK.md`](docs/SLIDES_DECK.md) — slide texts (Hancom copy-paste)
+- [`docs/PROPOSAL.md`](docs/PROPOSAL.md) — primary proposal body
+- [`docs/INNOVATION_TRIZ.md`](docs/INNOVATION_TRIZ.md) — TRIZ 6 contradictions analysis
+- [`docs/ARCHITECTURE_VIEW.html`](docs/ARCHITECTURE_VIEW.html) — 4-layer system diagram
+- [`docs/SUBMISSION_GUIDE.md`](docs/SUBMISSION_GUIDE.md) — primary submission checklist
+
 ## Quickstart (Demo without CV model)
 
 ```bash
