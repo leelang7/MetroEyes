@@ -1,5 +1,21 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.9 — D-6 IDEA-9 도착 알림 (2026-05-07 cycle 286-289)
+
+### 사용자 요청 반영 — 노이즈 캔슬링·이어폰·청각 약자 배려
+- **IDEA-9 도착 알림 다중 모달리티** (cycle 286): 시민 폰이 GPS로 도착지 자기 추출 → 4중 모달리티 동시 발사
+  * Web Vibration API 햅틱 (이어폰 사용자도 진동 인지)
+  * Web Audio API sine beep (외부 파일 X — 800Hz/1200Hz 짧은 펄스)
+  * SpeechSynthesis 4언어 (ko-KR/en-US/zh-CN/ja-JP) — "X역 도착, 하차하세요"
+  * 시각 banner flash (scale + shadow)
+- **3단 임계값**: 안전 거리(>1.5km) → 곧 도착(≤1.5km, 60초 cooldown) → 도착(≤600m, 30초 cooldown)
+- **TRIZ M8 모순 신설** (cycle 287): 도착 안내 도달도(#27) vs 방송 의존도(#36)
+  * 추천 원리: #2 추출 + #5 통합 + #25 자기 서비스 + #28 기계 시스템 대체
+- **pitch IDEA-9 카드 + FAQ Q8** (cycle 288):
+  * 청각 장애인 42만 + 노이즈 캔슬링 1,200만 잠재 사용자 시장
+  * 장애인차별금지법 / 교통약자법 등 접근성 제도와 직접 연결
+- **PWA v4.1 → v4.2-dest-arrival-alert**
+
 ## v5.8 — D-7 🎉 285 사이클 milestone (2026-05-06)
 
 ### 285 사이클 도달 — substantive 진척 단계 (D-7)

@@ -3,7 +3,7 @@
 > SLIDES.html 의 시각 디자인을 한쇼에서 재구성할 때 참조.
 > **개인정보 금지** — 팀명(MetroEyes) / 성명(이상철)만 표지에 기재.
 >
-> **D-7 (2026-05-06) 자동 모드 v5.7 — 261 사이클 누적 산출**:
+> **D-6 (2026-05-07) 자동 모드 v5.9 — 289 사이클 누적 산출**:
 > - **9 REST endpoint** + OpenAPI 3.0 spec (외부 BI 단일 폴링)
 > - 11 페이지 4언어(ko/en/zh/ja) i18n + 5 진입점 환영 toast
 > - 3 EDA 실 데이터 검증 (분산 σ −9% / OD 비대칭 12x / 환승역 +1.56)
@@ -12,6 +12,7 @@
 > - 8중 시연 fail-safe + Docker compose + GitHub Actions CI
 > - **8단 양면 가치 사슬** (CV → 도시 → 결정 → OD → 환승 → 시민 차등 → backend 자동 → ROI)
 > - **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (cycle 226 칸 단위 BEV ROI 응용)
+> - **IDEA-9 도착 알림 4중 모달리티** (cycle 286 — 노이즈 캔슬링/이어폰/청각 약자 배려)
 > - 발표 영상 5분 풀 캡처 가이드 (`docs/RECORDING_GUIDE.md`)
 
 ---
