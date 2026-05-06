@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.1-i18n-page';
+  const CUR = 'v4.2-dest-arrival-alert';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -49,12 +49,24 @@
     <div class="time" id="ctx-time">18:22</div>
   </div>
 
-  <!-- 역 picker 모달 (시민 수동 선택) -->
+  <!-- 도착 알림 banner (도착지 설정 시 표시 — 노이즈 캔슬링/이어폰 사용자 배려) -->
+  <div id="dest-banner" hidden style="margin: 6px 14px 0; padding: 10px 14px; background: linear-gradient(135deg, rgba(16,185,129,.20), rgba(125,211,211,.10)); border: 1px solid rgba(16,185,129,.55); border-radius: 12px; display: flex; align-items: center; gap: 10px; font-size: 13px;">
+    <span style="font-size: 18px;">🔔</span>
+    <div style="flex: 1; min-width: 0;">
+      <div style="font-size: 10px; letter-spacing: 1.1px; color: #10b981; font-weight: 700;" id="dest-label">도착 알림 ON</div>
+      <div style="color: #fff; font-weight: 600;" id="dest-name">강남역</div>
+      <div style="color: var(--muted-2); font-size: 11px;" id="dest-status">GPS 추적 중...</div>
+    </div>
+    <button id="dest-clear" style="background: rgba(255,94,87,.18); border: 1px solid rgba(255,94,87,.45); color: #ff8a8a; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;">해제</button>
+  </div>
+  <button id="dest-trigger" style="display: block; margin: 6px 14px 0; padding: 8px 14px; background: rgba(167,139,250,.10); border: 1px dashed rgba(167,139,250,.40); border-radius: 10px; color: #a78bfa; font-size: 12px; font-weight: 600; cursor: pointer; width: calc(100% - 28px); text-align: left;" data-i18n="dest_set">🔔 도착지 설정 — 노이즈 캔슬링·이어폰 사용 시 도착 알림</button>
+
+  <!-- 역 picker 모달 (시민 수동 선택, mode: 'cur' 또는 'dest') -->
   <div class="station-modal" id="station-modal" hidden>
     <div class="modal-bg" id="modal-bg"></div>
     <div class="modal-panel">
       <div class="modal-head">
-        <span>역 선택</span>
+        <span id="modal-title">역 선택</span>
         <button class="modal-close" id="modal-close" aria-label="닫기">×</button>
       </div>
       <input class="modal-search" id="modal-search" placeholder="역 이름 검색..." autocomplete="off">
@@ -1372,15 +1384,23 @@ const LIVE = (() => {
         ${km}
       `;
       row.addEventListener('click', () => {
-        setStation(s, s.km);
+        if (_modalMode === 'dest') {
+          setDestination(s);
+        } else {
+          setStation(s, s.km);
+        }
         closeModal();
       });
       list.appendChild(row);
     }
   }
-  function openModal() {
+  let _modalMode = 'cur';   // 'cur' = 현재역, 'dest' = 도착지
+  function openModal(mode = 'cur') {
     const m = document.getElementById('station-modal');
     if (!m) return;
+    _modalMode = mode;
+    const title = document.getElementById('modal-title');
+    if (title) title.textContent = mode === 'dest' ? '도착지 선택' : '역 선택';
     m.hidden = false;
     renderModalList('');
     setTimeout(() => { const i = document.getElementById('modal-search'); if (i) i.focus(); }, 100);
@@ -1401,6 +1421,193 @@ const LIVE = (() => {
   if (modalBg) modalBg.addEventListener('click', closeModal);
   const search = document.getElementById('modal-search');
   if (search) search.addEventListener('input', e => renderModalList(e.target.value));
+
+  // ───── 도착지 알림 (노이즈 캔슬링 / 이어폰 / 영상 시청 시 도착 못 듣는 경우) ─────
+  let destStation = null;
+  let _destPollId = null;
+  let _destAlertedAt = 0;   // 중복 알림 방지
+  const DEST_ARRIVAL_M = 600;     // 600m 이내 = 도착 알림
+  const DEST_NEAR_M = 1500;       // 1.5km 이내 = 곧 도착 안내
+  const DEST_POLL_MS = 20000;     // 20초마다 GPS 갱신
+
+  const DEST_TR = {
+    label_on:    { ko: '도착 알림 ON',     en: 'Arrival alert ON',    zh: '到站提醒 已开启', ja: '到着アラート ON' },
+    tracking:    { ko: 'GPS 추적 중...',   en: 'Tracking via GPS...', zh: 'GPS 跟踪中...',  ja: 'GPS で追跡中...' },
+    far:         { ko: (km) => `약 ${km}km 남음 — 안전 거리`,
+                   en: (km) => `~${km}km remaining — safe distance`,
+                   zh: (km) => `还有约 ${km}km — 安全距离`,
+                   ja: (km) => `残り約 ${km}km — 安全距離` },
+    near:        { ko: (m) => `🔔 곧 도착 — ${m}m 남음`,
+                   en: (m) => `🔔 Approaching — ${m}m`,
+                   zh: (m) => `🔔 即将到达 — 还有 ${m}m`,
+                   ja: (m) => `🔔 まもなく到着 — ${m}m` },
+    arriving:    { ko: '🚉 도착! 하차하세요',
+                   en: '🚉 Arrived! Please exit',
+                   zh: '🚉 到达！请下车',
+                   ja: '🚉 到着！降車してください' },
+    no_gps:      { ko: 'GPS 권한 없음 — 알림 불가',
+                   en: 'No GPS permission — alert disabled',
+                   zh: 'GPS 权限缺失 — 无法提醒',
+                   ja: 'GPS 権限なし — アラート不可' },
+  };
+
+  function _getLang() {
+    const lang = (typeof _curPageLang === 'string' ? _curPageLang : (navigator.language || 'ko').slice(0,2).toLowerCase());
+    return ['ko','en','zh','ja'].includes(lang) ? lang : 'ko';
+  }
+
+  function setDestination(s) {
+    destStation = s;
+    const banner = document.getElementById('dest-banner');
+    const trigger = document.getElementById('dest-trigger');
+    if (banner) banner.hidden = false;
+    if (trigger) trigger.style.display = 'none';
+    const L = _getLang();
+    document.getElementById('dest-label').textContent = DEST_TR.label_on[L];
+    document.getElementById('dest-name').textContent = `${s.name}${s.line > 0 ? ` (${s.line}호선)` : ''}`;
+    document.getElementById('dest-status').textContent = DEST_TR.tracking[L];
+    _destAlertedAt = 0;
+    startDestPoll();
+  }
+
+  function clearDestination() {
+    destStation = null;
+    const banner = document.getElementById('dest-banner');
+    const trigger = document.getElementById('dest-trigger');
+    if (banner) banner.hidden = true;
+    if (trigger) trigger.style.display = 'block';
+    stopDestPoll();
+  }
+
+  function startDestPoll() {
+    stopDestPoll();
+    pollDestOnce();
+    _destPollId = setInterval(pollDestOnce, DEST_POLL_MS);
+  }
+  function stopDestPoll() {
+    if (_destPollId) { clearInterval(_destPollId); _destPollId = null; }
+  }
+
+  function pollDestOnce() {
+    if (!destStation) return;
+    if (!navigator.geolocation) {
+      const el = document.getElementById('dest-status');
+      if (el) el.textContent = DEST_TR.no_gps[_getLang()];
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (!destStation) return;
+        const km = haversineKm(
+          { lat: pos.coords.latitude, lon: pos.coords.longitude },
+          { lat: destStation.lat, lon: destStation.lon }
+        );
+        const m = Math.round(km * 1000);
+        const L = _getLang();
+        const status = document.getElementById('dest-status');
+        if (m <= DEST_ARRIVAL_M) {
+          if (status) status.textContent = DEST_TR.arriving[L];
+          fireArrivalAlert('arriving');
+        } else if (m <= DEST_NEAR_M) {
+          if (status) status.textContent = DEST_TR.near[L](m);
+          fireArrivalAlert('near');
+        } else {
+          if (status) status.textContent = DEST_TR.far[L](km.toFixed(1));
+        }
+      },
+      () => {
+        const el = document.getElementById('dest-status');
+        if (el) el.textContent = DEST_TR.no_gps[_getLang()];
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 5000 }
+    );
+  }
+
+  function fireArrivalAlert(level) {
+    const now = Date.now();
+    // 'arriving' 은 30초 1회만, 'near' 는 60초 1회만
+    const cooldown = level === 'arriving' ? 30000 : 60000;
+    if (now - _destAlertedAt < cooldown) return;
+    _destAlertedAt = now;
+
+    // 1) 햅틱 (Web Vibration API) — 이어폰 사용자도 진동으로 인지
+    try {
+      if (navigator.vibrate) {
+        navigator.vibrate(level === 'arriving' ? [200, 100, 200, 100, 400] : [100, 80, 100]);
+      }
+    } catch {}
+
+    // 2) Web Audio API beep (외부 오디오 파일 X — 5kHz 짧은 sine)
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) {
+        const ac = new Ctx();
+        const osc = ac.createOscillator();
+        const g = ac.createGain();
+        osc.frequency.value = level === 'arriving' ? 1200 : 800;
+        osc.type = 'sine';
+        osc.connect(g); g.connect(ac.destination);
+        g.gain.setValueAtTime(0.18, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.6);
+        osc.start();
+        osc.stop(ac.currentTime + 0.6);
+        // arriving 은 두 번 반복
+        if (level === 'arriving') {
+          setTimeout(() => {
+            const osc2 = ac.createOscillator();
+            const g2 = ac.createGain();
+            osc2.frequency.value = 1200;
+            osc2.type = 'sine';
+            osc2.connect(g2); g2.connect(ac.destination);
+            g2.gain.setValueAtTime(0.18, ac.currentTime);
+            g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.6);
+            osc2.start(); osc2.stop(ac.currentTime + 0.6);
+          }, 700);
+        }
+      }
+    } catch {}
+
+    // 3) Speech Synthesis — 4언어 음성 안내 (이어폰 통과)
+    try {
+      if (window.speechSynthesis && destStation) {
+        const L = _getLang();
+        const phrase = level === 'arriving'
+          ? { ko: `${destStation.name}역 도착. 하차하세요`,
+              en: `Arrived at ${destStation.name} station. Please exit`,
+              zh: `已到达 ${destStation.name} 站，请下车`,
+              ja: `${destStation.name}駅に到着しました。降車してください` }[L]
+          : { ko: `잠시 후 ${destStation.name}역 도착`,
+              en: `Approaching ${destStation.name} station`,
+              zh: `即将到达 ${destStation.name} 站`,
+              ja: `まもなく ${destStation.name}駅 に到着します` }[L];
+        const u = new SpeechSynthesisUtterance(phrase);
+        u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[L] || 'ko-KR';
+        u.rate = 0.95; u.volume = 0.95;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }
+    } catch {}
+
+    // 4) 시각 flash — banner 강조 효과
+    const banner = document.getElementById('dest-banner');
+    if (banner) {
+      banner.style.transition = 'transform .3s, box-shadow .3s';
+      const oldShadow = banner.style.boxShadow;
+      banner.style.boxShadow = level === 'arriving'
+        ? '0 0 0 4px rgba(16,185,129,.55), 0 0 24px rgba(16,185,129,.45)'
+        : '0 0 0 3px rgba(245,158,11,.50)';
+      banner.style.transform = 'scale(1.02)';
+      setTimeout(() => {
+        banner.style.boxShadow = oldShadow;
+        banner.style.transform = 'scale(1)';
+      }, 1500);
+    }
+  }
+
+  const destTrigger = document.getElementById('dest-trigger');
+  if (destTrigger) destTrigger.addEventListener('click', () => openModal('dest'));
+  const destClear = document.getElementById('dest-clear');
+  if (destClear) destClear.addEventListener('click', clearDestination);
 
   // ESC/↑↓/Enter 키보드 단축키 (데스크톱 시연 용)
   document.addEventListener('keydown', e => {
