@@ -668,7 +668,7 @@ function applyIncidentNotice(j) {
   const el = document.getElementById('incident-notice');
   const txt = document.getElementById('incident-notice-text');
   if (!el || !txt) return;
-  const total = (j.emergency || 0) + (j.suspicious || 0) + (j.lost || 0);
+  const total = (j.emergency || 0) + (j.suspicious || 0) + (j.lost || 0) + (j.priority_seat || 0) + (j.bottleneck || 0);
   if (total === 0 || !j.events || !j.events.length) {
     el.hidden = true; return;
   }
@@ -682,6 +682,8 @@ function applyIncidentNotice(j) {
     suspicious: { ko: '이상 행동', en: 'Suspicious activity', zh: '异常行为', ja: '異常行動' },
     lost: { ko: '분실물', en: 'Lost item', zh: '失物', ja: '遺失物' },
     free_ride: { ko: '무임 의심', en: 'Fare evasion', zh: '逃票', ja: '無賃乗車' },
+    priority_seat: { ko: '👶 임산부석 양보 권유', en: '👶 Priority seat — please yield', zh: '👶 孕妇座位让座', ja: '👶 優先席 譲りましょう' },
+    bottleneck: { ko: '🚪 병목 — 옆 출구 권장', en: '🚪 Bottleneck — use side exit', zh: '🚪 拥堵 — 请走侧门', ja: '🚪 渋滞 — 側出口を' },
   };
   const lang = (typeof getI18nLang === 'function') ? getI18nLang() : 'ko';
   const lblObj = labels[top.type] || {};
