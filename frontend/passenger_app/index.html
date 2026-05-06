@@ -1299,7 +1299,7 @@ const LIVE = (() => {
     }
   }
 
-  // 역 선택 직후 OD/환승 보너스 안내 toast (3초)
+  // 역 선택 직후 OD/환승 보너스 안내 toast (3초, 4언어 ko/en/zh/ja)
   function showStationBonusToast(s) {
     let t = document.getElementById('station-bonus-toast');
     if (!t) {
@@ -1310,14 +1310,30 @@ const LIVE = (() => {
       t.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;backdrop-filter:blur(10px);box-shadow:0 4px 14px rgba(0,0,0,.45);transition:opacity .3s;opacity:0';
       document.body.appendChild(t);
     }
+    const lang = (typeof _curPageLang === 'string' ? _curPageLang : (navigator.language || 'ko').slice(0,2).toLowerCase());
+    const L = ['ko','en','zh','ja'].includes(lang) ? lang : 'ko';
+    const TR = {
+      transfer: {
+        ko: (n) => `🔀 ${n} — 환승 우선역 · 분산 시 <b>+₩400 보너스</b>`,
+        en: (n) => `🔀 ${n} — Transfer hub · redistribute for <b>+₩400 bonus</b>`,
+        zh: (n) => `🔀 ${n} — 换乘优先 · 分散即获 <b>+₩400 奖励</b>`,
+        ja: (n) => `🔀 ${n} — 乗換優先駅 · 分散で <b>+₩400 ボーナス</b>`,
+      },
+      od: {
+        ko: (n) => `📍 ${n} — OD 우선역 · 분산 시 <b>+₩300 보너스</b>`,
+        en: (n) => `📍 ${n} — OD priority · redistribute for <b>+₩300 bonus</b>`,
+        zh: (n) => `📍 ${n} — OD优先 · 分散即获 <b>+₩300 奖励</b>`,
+        ja: (n) => `📍 ${n} — OD優先駅 · 分散で <b>+₩300 ボーナス</b>`,
+      },
+    };
     if (s.transfer) {
       t.style.background = 'linear-gradient(135deg,rgba(245,158,11,.92),rgba(251,113,133,.78))';
       t.style.border = '1px solid rgba(245,158,11,.7)';
-      t.innerHTML = `🔀 ${s.name} — 환승 우선역 · 분산 시 <b>+₩400 보너스</b>`;
+      t.innerHTML = TR.transfer[L](s.name);
     } else if (s.od) {
       t.style.background = 'linear-gradient(135deg,rgba(167,139,250,.92),rgba(125,211,211,.65))';
       t.style.border = '1px solid rgba(167,139,250,.7)';
-      t.innerHTML = `📍 ${s.name} — OD 우선역 · 분산 시 <b>+₩300 보너스</b>`;
+      t.innerHTML = TR.od[L](s.name);
     }
     requestAnimationFrame(() => { t.style.opacity = '1'; });
     setTimeout(() => { t.style.opacity = '0'; }, 3000);
