@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.8-dest-test-button';
+  const CUR = 'v4.9-arrival-history';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1589,6 +1589,9 @@ const LIVE = (() => {
     const saved = _restoreActiveDest();
     if (saved && saved.name && saved.lat && saved.lon) {
       setDestination(saved);
+    } else {
+      // 복원할 활성 도착지 없을 때만 trigger 누적 배지 갱신
+      _updateDestTriggerBadge();
     }
   }, 600);
 
@@ -1601,6 +1604,47 @@ const LIVE = (() => {
     _releaseWakeLock();
     stopDestPoll();
     try { localStorage.removeItem(ACTIVE_DEST_KEY); } catch {}
+    _updateDestTriggerBadge();   // 누적 카운트 다시 표시
+  }
+
+  // 도착 알림 사용 히스토리 — 사회적 가치 정량 (오늘 N번 / 누적 M번)
+  const ARRIVAL_HISTORY_KEY = 'metroeyes_arrival_history';
+  function _logArrival(stationName) {
+    try {
+      const raw = localStorage.getItem(ARRIVAL_HISTORY_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      arr.push({ name: stationName, ts: Date.now() });
+      // 30일 이상 오래된 항목 정리
+      const cutoff = Date.now() - 30 * 24 * 3600 * 1000;
+      const fresh = arr.filter(e => e.ts > cutoff);
+      localStorage.setItem(ARRIVAL_HISTORY_KEY, JSON.stringify(fresh.slice(-200)));
+    } catch {}
+  }
+  function _getArrivalCounts() {
+    try {
+      const raw = localStorage.getItem(ARRIVAL_HISTORY_KEY);
+      if (!raw) return { today: 0, total: 0 };
+      const arr = JSON.parse(raw);
+      const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+      const today = arr.filter(e => e.ts >= startOfDay.getTime()).length;
+      return { today, total: arr.length };
+    } catch { return { today: 0, total: 0 }; }
+  }
+  function _updateDestTriggerBadge() {
+    const trigger = document.getElementById('dest-trigger');
+    if (!trigger) return;
+    const { today, total } = _getArrivalCounts();
+    if (total === 0) return;   // 사용 전이면 그대로
+    // 기존 트리거 텍스트 + 카운트 chip
+    if (!trigger.dataset.origText) trigger.dataset.origText = trigger.textContent;
+    const L = _getLang();
+    const usage = {
+      ko: ` · 오늘 ${today}번 / 누적 ${total}번`,
+      en: ` · Today ${today} / Total ${total}`,
+      zh: ` · 今天 ${today} / 累计 ${total}`,
+      ja: ` · 今日 ${today} / 累計 ${total}`,
+    }[L] || '';
+    trigger.textContent = trigger.dataset.origText + usage;
   }
 
   // 활성 도착지 persistence — 탭 새로고침 / PWA 재오픈 시 복원
@@ -1753,6 +1797,9 @@ const LIVE = (() => {
 
     // 5) 백그라운드 알림 (앱이 백그라운드/락 상태여도 시스템 알림 발생)
     if (destStation) _notifyArrival(level, destStation);
+
+    // 6) 사용 히스토리 — 도착 'arriving' 시에만 카운트 (curl 사용을 위한 사회적 가치 정량)
+    if (level === 'arriving' && destStation) _logArrival(destStation.name);
   }
 
   const destTrigger = document.getElementById('dest-trigger');
