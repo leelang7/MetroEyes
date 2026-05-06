@@ -1,5 +1,12 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.6 — D-7 🎉 250 사이클 milestone (2026-05-06)
+
+### 250 사이클 도달 (D-7 마감 7일 전)
+- v5.5 (228 사이클) 이후 → v5.6 (250 사이클)
+- IDEA-7/8 통합 후 안정화 단계 (사이클 229~250 footer 카운트 동기화)
+- **누적 핵심 산출**: 9 REST endpoint + 11 페이지 4언어 + 3 EDA + 차등 4단 + K-means + 8중 fail-safe + 8단 가치사슬 + IDEA-7/8 (priority_seat / bottleneck) + 발표 자료 6종 + 영상 가이드
+
 ## v5.5 — D-7 자동 모드 228 사이클 (2026-05-06 IDEA-7/8 신규)
 
 ### 사용자 요청 반영 — 칸 단위 BEV 활용 신규 IDEA 2종
