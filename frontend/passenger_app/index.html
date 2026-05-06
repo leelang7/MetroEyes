@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.7-dest-eta';
+  const CUR = 'v4.8-dest-test-button';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -57,6 +57,7 @@
       <div style="color: #fff; font-weight: 600;" id="dest-name">강남역</div>
       <div style="color: var(--muted-2); font-size: 11px;" id="dest-status">GPS 추적 중...</div>
     </div>
+    <button id="dest-test" style="background: rgba(125,211,211,.18); border: 1px solid rgba(125,211,211,.45); color: #7dd3d3; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;" title="도착 알림 미리 보기 (진동/소리/음성/시각 모두 테스트)" data-i18n="dest_test">🔔 테스트</button>
     <button id="dest-clear" style="background: rgba(255,94,87,.18); border: 1px solid rgba(255,94,87,.45); color: #ff8a8a; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;">해제</button>
   </div>
   <button id="dest-trigger" style="display: block; margin: 6px 14px 0; padding: 8px 14px; background: rgba(167,139,250,.10); border: 1px dashed rgba(167,139,250,.40); border-radius: 10px; color: #a78bfa; font-size: 12px; font-weight: 600; cursor: pointer; width: calc(100% - 28px); text-align: left;" data-i18n="dest_set">🔔 도착지 설정 — 노이즈 캔슬링·이어폰 사용 시 도착 알림</button>
@@ -1758,6 +1759,13 @@ const LIVE = (() => {
   if (destTrigger) destTrigger.addEventListener('click', () => openModal('dest'));
   const destClear = document.getElementById('dest-clear');
   if (destClear) destClear.addEventListener('click', clearDestination);
+  // 사전 테스트: 청각 약자/이어폰 사용자가 알림 동작 확인 — 도착 직전 강한 알림과 동일
+  const destTest = document.getElementById('dest-test');
+  if (destTest) destTest.addEventListener('click', () => {
+    if (!destStation) return;
+    _destAlertedAt = 0;   // cooldown 무시
+    fireArrivalAlert('arriving');
+  });
 
   // ESC/↑↓/Enter 키보드 단축키 (데스크톱 시연 용)
   document.addEventListener('keydown', e => {
