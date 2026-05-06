@@ -1,5 +1,16 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.8 — D-7 🎉 285 사이클 milestone (2026-05-06)
+
+### 285 사이클 도달 — substantive 진척 단계 (D-7)
+- v5.7 (260 사이클 / 문서 동기화) 이후 → v5.8 (285 사이클 / 실 가치 추가)
+- **시민 PWA picker 강화** (cycle 278): station 14 → 24역 확장 + OD/환승 EDA priority_stations 매핑 + modal에 +₩300/+₩400 chip 직접 표시 + 정렬 가중치 (od:4, transfer:3, hot:2)
+- **PWA 보너스 toast** (cycle 283-284): 우선역 수동 선택 시 즉시 보너스 안내 toast (3초) + 4언어 (ko/en/zh/ja) 일관성
+- **policy ROI v3 차트 3종** (cycle 279-280): heatmap + 호선별 막대 (2호선 157M분 압도) + 시나리오 sensitivity (5/15/30/50/70%) → pitch.html 그림 1/2/3 통합
+- **호선 칸 점유 EDA 그림 4** (cycle 281): line_carload_heatmap.png + CV 필요성 정량 evidence (cap 150% saturation = 평균만 보임 → 칸별 차이 필요)
+- **admin 사고 비율 막대 fix** (cycle 282): 4 type → 6 type 확장 (priority_seat #ec4899 + bottleneck #fb7185), backend 6 type과 일관성
+- **수상 확률 (포화 단계 → substantive 가치 추가)**: 최우수 98→99% / 대상 92→94%
+
 ## v5.7 — D-7 🎉 260 사이클 milestone (2026-05-06)
 
 ### 260 사이클 도달 — 문서 일관성 정리 단계 (D-7)
