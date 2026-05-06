@@ -1,5 +1,23 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v5.5 — D-7 자동 모드 228 사이클 (2026-05-06 IDEA-7/8 신규)
+
+### 사용자 요청 반영 — 칸 단위 BEV 활용 신규 IDEA 2종
+- **IDEA-7 임산부석 점유 감지** (`priority_seat`):
+  - 칸 양 끝 분홍 좌석 ROI 좌표에 30초+ 점유 + 동행 미감지 → 일반인 점유 의심 알림
+  - 차내 디스플레이 비강제 양보 안내 송출
+  - **서울 지하철 임산부석 양보율 정량 데이터 부재 — MetroEyes가 첫 정책 근거**
+- **IDEA-8 에스컬레이터/환승 통로 병목** (`bottleneck`):
+  - BEV 평면 좁은 영역(에스컬레이터 진입부 / 환승 계단) ROI에서 평균 속도 < 0.3m/s 가 45초+ → 병목 검출
+  - 디스플레이 "옆 출구 권장" + 운영자 콘솔 사고 알림
+  - **2022 이태원 참사 같은 군중 밀집 사전 경고 가능**
+- **backend `_incident_total` 6 type** (emergency / suspicious / lost / free_ride + priority_seat / bottleneck)
+- **admin 사고 카드 4 → 6 분류 표시** (분홍/노랑 색상)
+- **pitch.html IDEA 카드 2개 + FAQ Q7 추가**
+- **INNOVATION_TRIZ M7 모순** — 약자 배려 vs 프라이버시 (TRIZ #2 추출 + #25 자기 서비스 + #28 기계 시스템)
+- **OpenAPI spec IncidentEvent enum 6종 확장**
+- **`--demo` fake_incident_seed_loop** — 7 type 가중치 (priority_seat / bottleneck 자동 시뮬)
+
 ## v5.4 — D-7 자동 모드 🎉 200 사이클 milestone (2026-05-06 메이저 마일스톤)
 
 ### 200 사이클 도달 — 누적 핵심 산출 (D-7 마감 7일 전)
