@@ -192,7 +192,7 @@ def main():
         json.dump(summary, f, ensure_ascii=False, indent=2)
     print(f"\n  >> {OUT / 'policy_roi_v3_report.json'}")
 
-    # heatmap
+    # heatmap + 추가 차트 2종 (호선별 절감, 시나리오 비교)
     try:
         import matplotlib
         import matplotlib.pyplot as plt
@@ -202,6 +202,8 @@ def main():
                 matplotlib.rcParams["font.family"] = name
                 matplotlib.rcParams["axes.unicode_minus"] = False
                 break
+
+        # 1) 호선×시간 heatmap
         fig, ax = plt.subplots(figsize=(13, 4.5))
         m = save / 1e6  # M분 단위
         im = ax.imshow(m, aspect="auto", cmap="YlOrRd")
@@ -216,7 +218,57 @@ def main():
         plt.tight_layout()
         png = OUT / "policy_roi_v3_matrix.png"
         plt.savefig(png, dpi=120)
+        plt.close(fig)
         print(f"  >> {png}")
+
+        # 2) 호선별 누적 절감 막대 차트 — 2호선 단독 압도성 가시화
+        per_line = save.sum(axis=1) / 1e6  # M분/년
+        fig2, ax2 = plt.subplots(figsize=(10, 4.5))
+        order = np.argsort(per_line)[::-1]
+        labels = [mid["lines"][i] for i in order]
+        values = [per_line[i] for i in order]
+        # 2호선만 강조 색상
+        colors = ["#a78bfa" if l == "2호선" else "#7dd3d3" for l in labels]
+        bars = ax2.bar(labels, values, color=colors, edgecolor="#0a0d12")
+        for b, v in zip(bars, values):
+            ax2.text(b.get_x() + b.get_width()/2, v + 2, f"{v:.0f}M", ha="center", fontsize=9, color="#222")
+        ax2.set_ylabel("연 절감 (M분)")
+        ax2.set_title(f"정책 ROI v3 - 호선별 연 절감 (응답률 30%, 총 {per_line.sum():.0f}M분)")
+        ax2.grid(axis="y", linestyle="--", alpha=0.3)
+        plt.tight_layout()
+        png2 = OUT / "policy_roi_v3_per_line.png"
+        plt.savefig(png2, dpi=120)
+        plt.close(fig2)
+        print(f"  >> {png2}")
+
+        # 3) 시나리오 비교 — 응답률 5~70% 따른 순 가치 / ROI
+        fig3, (ax3a, ax3b) = plt.subplots(1, 2, figsize=(12, 4.2))
+        rates = [r["behavior_response"] * 100 for r in results]
+        net_vals = [r["net_value_b"] for r in results]
+        rois = [r["roi_x"] for r in results]
+        ax3a.plot(rates, net_vals, "o-", color="#10b981", linewidth=2, markersize=8)
+        for x, y in zip(rates, net_vals):
+            ax3a.annotate(fmt_b(y), (x, y), textcoords="offset points", xytext=(0, 8), ha="center", fontsize=9)
+        ax3a.set_xlabel("응답률 (%)")
+        ax3a.set_ylabel("순 사회적 가치 (억/년)")
+        ax3a.set_title("응답률별 순 가치")
+        ax3a.grid(linestyle="--", alpha=0.3)
+        ax3a.axvspan(25, 35, alpha=0.12, color="#a78bfa", label="현실 추정 (30%)")
+        ax3a.legend(loc="lower right", fontsize=9)
+        ax3b.plot(rates, rois, "s-", color="#f59e0b", linewidth=2, markersize=8)
+        for x, y in zip(rates, rois):
+            ax3b.annotate(f"{y:.0f}x", (x, y), textcoords="offset points", xytext=(0, 8), ha="center", fontsize=9)
+        ax3b.set_xlabel("응답률 (%)")
+        ax3b.set_ylabel("ROI (배)")
+        ax3b.set_title("응답률별 ROI 배수")
+        ax3b.grid(linestyle="--", alpha=0.3)
+        ax3b.axvspan(25, 35, alpha=0.12, color="#a78bfa")
+        plt.suptitle("정책 ROI v3 - 시나리오 민감도 (5/15/30/50/70% 응답률)", fontsize=11)
+        plt.tight_layout()
+        png3 = OUT / "policy_roi_v3_scenarios.png"
+        plt.savefig(png3, dpi=120)
+        plt.close(fig3)
+        print(f"  >> {png3}")
     except ImportError:
         pass
 
