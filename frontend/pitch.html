@@ -699,6 +699,16 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <figcaption>그림 1 — 호선 9개 × 24시간 절감 분 매트릭스 (응답률 30%) · 출퇴근 양봉 + 만석 호선 우선</figcaption>
 </figure>
 
+<figure>
+  <img src="figs/policy_roi_v3_per_line.png" alt="호선별 연 절감 막대" loading="lazy">
+  <figcaption>그림 2 — 호선별 연 절감 분 (응답률 30%, 총 473M분/년) · <b style="color:#a78bfa;">2호선 단독 157M분</b>이 전체의 33% — 도시철도 1순위 정책 표적</figcaption>
+</figure>
+
+<figure>
+  <img src="figs/policy_roi_v3_scenarios.png" alt="응답률별 sensitivity" loading="lazy">
+  <figcaption>그림 3 — 시나리오 민감도 (응답률 5/15/30/50/70%) · 좌: 순 사회적 가치, 우: ROI 배수 · <b style="color:#a78bfa;">30% 가정은 보수적 중간값</b> (Singapore GP-S 5% × MetroEyes 차등 6배 = 30%)</figcaption>
+</figure>
+
 <h2>실 데이터 분산 효과 — 평탄화 정량 검증</h2>
 <p>
   ROI v3 의 응답률 30% 가정이 *실제로* 시간대 곡선을 어떻게 평탄화시키는지 직접 시뮬.
@@ -1273,7 +1283,7 @@ document.getElementById('api-curl-link').href = (location.protocol === 'https:'
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 본선 출품 D-7
   <br>
-  <span style="color: var(--accent);">자동 모드 v5.7 — 279+ 사이클 (ROI v3 차트 3종 — heatmap + 호선별 + sensitivity)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
+  <span style="color: var(--accent);">자동 모드 v5.7 — 280+ 사이클 🎉 (ROI v3 차트 3종 pitch 통합)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
 </footer>
 
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
