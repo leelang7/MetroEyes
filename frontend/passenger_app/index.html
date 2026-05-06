@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.6-dest-persistence';
+  const CUR = 'v4.7-dest-eta';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1456,14 +1456,14 @@ const LIVE = (() => {
   const DEST_TR = {
     label_on:    { ko: '도착 알림 ON',     en: 'Arrival alert ON',    zh: '到站提醒 已开启', ja: '到着アラート ON' },
     tracking:    { ko: 'GPS 추적 중...',   en: 'Tracking via GPS...', zh: 'GPS 跟踪中...',  ja: 'GPS で追跡中...' },
-    far:         { ko: (km) => `약 ${km}km 남음 — 안전 거리`,
-                   en: (km) => `~${km}km remaining — safe distance`,
-                   zh: (km) => `还有约 ${km}km — 安全距离`,
-                   ja: (km) => `残り約 ${km}km — 安全距離` },
-    near:        { ko: (m) => `🔔 곧 도착 — ${m}m 남음`,
-                   en: (m) => `🔔 Approaching — ${m}m`,
-                   zh: (m) => `🔔 即将到达 — 还有 ${m}m`,
-                   ja: (m) => `🔔 まもなく到着 — ${m}m` },
+    far:         { ko: (km, eta) => `약 ${km}km · ETA ${eta}분 — 안전 거리`,
+                   en: (km, eta) => `~${km}km · ETA ${eta}min — safe distance`,
+                   zh: (km, eta) => `还有约 ${km}km · ETA ${eta}分钟 — 安全距离`,
+                   ja: (km, eta) => `残り約 ${km}km · ETA ${eta}分 — 安全距離` },
+    near:        { ko: (m, eta) => `🔔 곧 도착 — ${m}m · ETA ${eta}분`,
+                   en: (m, eta) => `🔔 Approaching — ${m}m · ETA ${eta}min`,
+                   zh: (m, eta) => `🔔 即将到达 — ${m}m · ETA ${eta}分钟`,
+                   ja: (m, eta) => `🔔 まもなく到着 — ${m}m · ETA ${eta}分` },
     arriving:    { ko: '🚉 도착! 하차하세요',
                    en: '🚉 Arrived! Please exit',
                    zh: '🚉 到达！请下车',
@@ -1473,6 +1473,13 @@ const LIVE = (() => {
                    zh: 'GPS 权限缺失 — 无法提醒',
                    ja: 'GPS 権限なし — アラート不可' },
   };
+
+  // ETA 추정 — 지하철 평균 속도 ~32km/h (정차 시간 포함, 서울교통공사 운영 평균)
+  const SUBWAY_AVG_KMH = 32;
+  function _etaMin(km) {
+    if (km == null || km < 0) return 0;
+    return Math.max(1, Math.round(km / SUBWAY_AVG_KMH * 60));
+  }
 
   function _getLang() {
     const lang = (typeof _curPageLang === 'string' ? _curPageLang : (navigator.language || 'ko').slice(0,2).toLowerCase());
@@ -1642,16 +1649,17 @@ const LIVE = (() => {
           { lat: destStation.lat, lon: destStation.lon }
         );
         const m = Math.round(km * 1000);
+        const eta = _etaMin(km);
         const L = _getLang();
         const status = document.getElementById('dest-status');
         if (m <= DEST_ARRIVAL_M) {
           if (status) status.textContent = DEST_TR.arriving[L];
           fireArrivalAlert('arriving');
         } else if (m <= DEST_NEAR_M) {
-          if (status) status.textContent = DEST_TR.near[L](m);
+          if (status) status.textContent = DEST_TR.near[L](m, eta);
           fireArrivalAlert('near');
         } else {
-          if (status) status.textContent = DEST_TR.far[L](km.toFixed(1));
+          if (status) status.textContent = DEST_TR.far[L](km.toFixed(1), eta);
         }
       },
       () => {
