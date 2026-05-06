@@ -838,7 +838,7 @@ const LIVE = (() => {
     { name: '잠실', line: 2, lat: 37.5133, lon: 127.1000, poi: '잠실역' },
     { name: '강남', line: 2, lat: 37.4980, lon: 127.0276, poi: '강남역' },
     { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244, poi: '홍대 관광특구' },
-    { name: '시청', line: 2, lat: 37.5642, lon: 126.9778, poi: '광화문·덕수궁' },
+    { name: '시청', line: 2, lat: 37.5642, lon: 126.9778, poi: '광화문·덕수궁 · OD 우선 (퇴근 출발 4.9x)', od: true },
     { name: '서울역', line: 1, lat: 37.5547, lon: 126.9707, poi: '서울역' },
     { name: '광화문', line: 5, lat: 37.5717, lon: 126.9766, poi: '광화문·덕수궁' },
     { name: '종로3가', line: 1, lat: 37.5717, lon: 126.9914, poi: '종로·청계 관광특구' },
@@ -850,6 +850,20 @@ const LIVE = (() => {
     { name: '서울숲', line: 0, lat: 37.5443, lon: 127.0374, poi: '서울숲공원', hot: true },
     { name: '뚝섬', line: 2, lat: 37.5295, lon: 127.0708, poi: '뚝섬한강공원', hot: true },
     { name: '김포공항', line: 5, lat: 37.5615, lon: 126.8014, poi: '김포공항' },
+    // OD 비대칭 핫스팟 (cycle 278 신규 — EDA priority_stations 매핑)
+    { name: '삼성', line: 2, lat: 37.5089, lon: 127.0631, poi: '코엑스·무역센터 · OD 우선 (출근 도착 12.4x)', od: true },
+    { name: '여의도', line: 5, lat: 37.5217, lon: 126.9244, poi: '여의도·한강공원 · OD 출근 도착' },
+    { name: '광교(을지로)', line: 2, lat: 37.5664, lon: 126.9826, poi: '을지로입구·광교 오피스' },
+    // 환승역 비대칭 (transfer_priority API 매핑)
+    { name: '충무로', line: 3, lat: 37.5613, lon: 126.9941, poi: '충무로 환승 · 호선 차이 +1.56', transfer: true },
+    { name: '연신내', line: 3, lat: 37.6191, lon: 126.9210, poi: '연신내 환승 · 차이 +1.44', transfer: true },
+    { name: '왕십리', line: 2, lat: 37.5611, lon: 127.0379, poi: '왕십리 환승 (2/5/경의중앙)', transfer: true },
+    { name: '교대', line: 2, lat: 37.4934, lon: 127.0149, poi: '교대 환승 (2/3)', transfer: true },
+    // 관광/POI
+    { name: '압구정', line: 3, lat: 37.5273, lon: 127.0286, poi: '압구정 · 청담동' },
+    { name: '명동', line: 4, lat: 37.5635, lon: 126.9831, poi: '명동 관광특구' },
+    { name: '동대문', line: 1, lat: 37.5710, lon: 127.0094, poi: '동대문 관광특구', transfer: true },
+    { name: '이태원', line: 6, lat: 37.5345, lon: 126.9943, poi: '이태원 관광특구', hot: true },
   ];
   function haversineKm(a, b) {
     const r = 6371, toRad = (d) => d * Math.PI / 180;
@@ -1294,18 +1308,23 @@ const LIVE = (() => {
       return ent;
     });
     if (f) entries = entries.filter(s => s.name.toLowerCase().includes(f) || (s.poi||'').toLowerCase().includes(f));
-    // GPS 있으면 거리 우선, 없으면 핫스팟 우선
+    // GPS 있으면 거리 우선, 없으면 OD/환승/핫스팟 우선 (보너스 ↑)
     if (_lastGps) entries.sort((a, b) => (a.km ?? 9999) - (b.km ?? 9999));
-    else entries.sort((a, b) => (b.hot?1:0) - (a.hot?1:0));
+    else entries.sort((a, b) => {
+      const score = (s) => (s.od?4:0) + (s.transfer?3:0) + (s.hot?2:0);
+      return score(b) - score(a);
+    });
     for (const s of entries) {
       const row = document.createElement('div');
       const cur = curStation && s.name === curStation.name;
       row.className = 'modal-row' + (cur ? ' current' : '');
       const hot = s.hot ? '<span class="hot" title="인파 폭증 핫스팟">🔥</span>' : '';
+      const odTag = s.od ? '<span class="od-tag" title="OD 비대칭 — 분산 시 +₩300" style="display:inline-block;margin-left:4px;padding:1px 6px;background:rgba(167,139,250,.20);border:1px solid rgba(167,139,250,.50);border-radius:999px;color:#a78bfa;font-size:10px;font-weight:600;">+₩300</span>' : '';
+      const trTag = s.transfer ? '<span class="tr-tag" title="환승역 — 분산 시 +₩400" style="display:inline-block;margin-left:4px;padding:1px 6px;background:rgba(245,158,11,.20);border:1px solid rgba(245,158,11,.50);border-radius:999px;color:#f59e0b;font-size:10px;font-weight:600;">🔀 +₩400</span>' : '';
       const lineLabel = s.line > 0 ? `${s.line}호선` : 'POI';
       const km = s.km != null ? `<span class="km">${s.km < 1 ? Math.round(s.km*1000)+'m' : s.km.toFixed(1)+'km'}</span>` : '';
       row.innerHTML = `
-        <span class="name"><b>${s.name}</b>${hot}<span class="meta">· ${lineLabel}</span></span>
+        <span class="name"><b>${s.name}</b>${hot}${odTag}${trTag}<span class="meta">· ${lineLabel}</span></span>
         ${km}
       `;
       row.addEventListener('click', () => {
