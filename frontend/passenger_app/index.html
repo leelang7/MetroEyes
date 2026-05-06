@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.2-dest-arrival-alert';
+  const CUR = 'v4.3-wake-lock-notification';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1456,6 +1456,54 @@ const LIVE = (() => {
     return ['ko','en','zh','ja'].includes(lang) ? lang : 'ko';
   }
 
+  // Wake Lock — 도착지 설정 시 스크린 슬립 방지 (Chrome / Safari 16.4+)
+  let _wakeLockSentinel = null;
+  async function _requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        _wakeLockSentinel = await navigator.wakeLock.request('screen');
+        _wakeLockSentinel.addEventListener('release', () => { _wakeLockSentinel = null; });
+      }
+    } catch {}
+  }
+  function _releaseWakeLock() {
+    if (_wakeLockSentinel) {
+      try { _wakeLockSentinel.release(); } catch {}
+      _wakeLockSentinel = null;
+    }
+  }
+  // 백그라운드 → 포그라운드 복귀 시 Wake Lock 재획득
+  document.addEventListener('visibilitychange', () => {
+    if (destStation && document.visibilityState === 'visible' && !_wakeLockSentinel) {
+      _requestWakeLock();
+    }
+  });
+
+  // Notification API — 백그라운드 알림 (앱이 백그라운드여도 시스템 알림으로 도착 통보)
+  function _notifyArrival(level, station) {
+    try {
+      if (!('Notification' in window)) return;
+      if (Notification.permission !== 'granted') return;
+      const L = _getLang();
+      const title = level === 'arriving'
+        ? { ko: '🚉 도착! 하차하세요', en: '🚉 Arrived — please exit',
+            zh: '🚉 到达！请下车', ja: '🚉 到着！降車してください' }[L]
+        : { ko: '🔔 곧 도착',           en: '🔔 Approaching',
+            zh: '🔔 即将到达',          ja: '🔔 まもなく到着' }[L];
+      const body = level === 'arriving'
+        ? `${station.name}${station.line > 0 ? ` (${station.line}호선)` : ''}`
+        : { ko: `${station.name} 곧 도착`, en: `${station.name} approaching`,
+            zh: `${station.name} 即将到达`, ja: `${station.name} まもなく到着` }[L];
+      const n = new Notification(title, {
+        body, tag: 'metroeyes-arrival',
+        renotify: true, requireInteraction: level === 'arriving',
+        silent: false,    // 시스템 알림음도 함께 (이중 안전망)
+      });
+      // 알림 클릭 시 포커스 복귀
+      n.onclick = () => { try { window.focus(); n.close(); } catch {} };
+    } catch {}
+  }
+
   function setDestination(s) {
     destStation = s;
     const banner = document.getElementById('dest-banner');
@@ -1467,6 +1515,13 @@ const LIVE = (() => {
     document.getElementById('dest-name').textContent = `${s.name}${s.line > 0 ? ` (${s.line}호선)` : ''}`;
     document.getElementById('dest-status').textContent = DEST_TR.tracking[L];
     _destAlertedAt = 0;
+    // 백그라운드 알림 권한 사전 요청 (사용자 명시적 동작 직후라 prompt 정상 표시)
+    try {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    } catch {}
+    _requestWakeLock();
     startDestPoll();
   }
 
@@ -1476,6 +1531,7 @@ const LIVE = (() => {
     const trigger = document.getElementById('dest-trigger');
     if (banner) banner.hidden = true;
     if (trigger) trigger.style.display = 'block';
+    _releaseWakeLock();
     stopDestPoll();
   }
 
@@ -1602,6 +1658,9 @@ const LIVE = (() => {
         banner.style.transform = 'scale(1)';
       }, 1500);
     }
+
+    // 5) 백그라운드 알림 (앱이 백그라운드/락 상태여도 시스템 알림 발생)
+    if (destStation) _notifyArrival(level, destStation);
   }
 
   const destTrigger = document.getElementById('dest-trigger');
