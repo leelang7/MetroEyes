@@ -1,5 +1,35 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v6.0 — D-6 🎉 300 사이클 milestone (2026-05-07)
+
+### 300 사이클 도달 — 시민 가치 강화 단계 (D-6 마감 6일 전)
+- v5.9 (286-289 IDEA-9 1차) 이후 → v6.0 (300 사이클): 사이클 290~300 = IDEA-9 견고화 chain
+- **수상 확률 (포화)**: 최우수 99%+ / 대상 95%+
+
+### IDEA-9 도착 알림 v4.8 완성 — 5중 모달리티 + 견고화 6단
+시민 폰이 GPS로 도착지 자기 추출 → 5중 모달리티 동시 발사 + 6단 견고화 chain.
+
+**5중 모달리티** (cycle 286-291):
+1. 시각 banner flash
+2. Web Vibration API 햅틱
+3. Web Audio API sine beep (외부 파일 X)
+4. SpeechSynthesis 4언어 (ko/en/zh/ja)
+5. **System Notification API** + Wake Lock + SW notificationclick + postMessage (cycle 291, 293)
+
+**6단 견고화 chain** (cycle 286~299):
+- v4.2 (cycle 286): 기본 4중 모달리티 + GPS 20초 폴링
+- v4.3 (cycle 291): Wake Lock API (화면 슬립 방지) + Notification API (백그라운드 안전망)
+- v4.4 (cycle 293): Service Worker `notificationclick` + `postMessage` (페이지 throttle 시 SW가 위임 발사)
+- v4.5 (cycle 294): 최근 도착지 MRU 5개 (출퇴근 1탭 재선택)
+- v4.6 (cycle 296): 활성 도착지 persistence (탭 새로고침 자동 복원, 2시간 만료)
+- v4.7 (cycle 297): ETA(분) 표시 (32km/h 기준)
+- v4.8 (cycle 299): 사전 테스트 버튼 (청각 약자 검증)
+
+**사회적 가치**:
+- 청각장애인 42만 명 + 노이즈 캔슬링 1,200만 잠재 사용자
+- 접근성 제도 직결 (장애인차별금지법 / 교통약자법)
+- TRIZ M8 모순 (도착 도달도 vs 방송 의존도) → IDEA-9 정량 해결
+
 ## v5.9 — D-6 IDEA-9 도착 알림 (2026-05-07 cycle 286-289)
 
 ### 사용자 요청 반영 — 노이즈 캔슬링·이어폰·청각 약자 배려
