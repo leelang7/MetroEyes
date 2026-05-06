@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.3-wake-lock-notification';
+  const CUR = 'v4.4-sw-arrival-notification';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1481,26 +1481,35 @@ const LIVE = (() => {
 
   // Notification API — 백그라운드 알림 (앱이 백그라운드여도 시스템 알림으로 도착 통보)
   function _notifyArrival(level, station) {
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    const L = _getLang();
+    const title = level === 'arriving'
+      ? { ko: '🚉 도착! 하차하세요', en: '🚉 Arrived — please exit',
+          zh: '🚉 到达！请下车', ja: '🚉 到着！降車してください' }[L]
+      : { ko: '🔔 곧 도착',           en: '🔔 Approaching',
+          zh: '🔔 即将到达',          ja: '🔔 まもなく到着' }[L];
+    const body = level === 'arriving'
+      ? `${station.name}${station.line > 0 ? ` (${station.line}호선)` : ''}`
+      : { ko: `${station.name} 곧 도착`, en: `${station.name} approaching`,
+          zh: `${station.name} 即将到达`, ja: `${station.name} まもなく到着` }[L];
+    // 1차: 페이지 레벨 Notification (포그라운드/얕은 백그라운드)
     try {
-      if (!('Notification' in window)) return;
-      if (Notification.permission !== 'granted') return;
-      const L = _getLang();
-      const title = level === 'arriving'
-        ? { ko: '🚉 도착! 하차하세요', en: '🚉 Arrived — please exit',
-            zh: '🚉 到达！请下车', ja: '🚉 到着！降車してください' }[L]
-        : { ko: '🔔 곧 도착',           en: '🔔 Approaching',
-            zh: '🔔 即将到达',          ja: '🔔 まもなく到着' }[L];
-      const body = level === 'arriving'
-        ? `${station.name}${station.line > 0 ? ` (${station.line}호선)` : ''}`
-        : { ko: `${station.name} 곧 도착`, en: `${station.name} approaching`,
-            zh: `${station.name} 即将到达`, ja: `${station.name} まもなく到着` }[L];
       const n = new Notification(title, {
         body, tag: 'metroeyes-arrival',
         renotify: true, requireInteraction: level === 'arriving',
-        silent: false,    // 시스템 알림음도 함께 (이중 안전망)
+        silent: false,
       });
-      // 알림 클릭 시 포커스 복귀
       n.onclick = () => { try { window.focus(); n.close(); } catch {} };
+    } catch {}
+    // 2차: Service Worker postMessage (페이지 throttle 시 SW가 showNotification 발사 + notificationclick으로 포커스 복귀)
+    try {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'metroeyes-arrival',
+          title, body, requireInteraction: level === 'arriving',
+        });
+      }
     } catch {}
   }
 

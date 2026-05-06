@@ -1,4 +1,4 @@
-const CACHE = 'subwaybev-citizen-v3';
+const CACHE = 'subwaybev-citizen-v4-arrival';
 const ASSETS = [
   './',
   './index.html',
@@ -39,4 +39,37 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => cached)
     )
   );
+});
+
+// IDEA-9 도착 알림 — Service Worker 레벨 notificationclick 핸들러
+// 잠금 화면 / 백그라운드에서 도착 알림 탭 시 PWA 포커스 복귀
+self.addEventListener('notificationclick', (event) => {
+  if (event.notification.tag !== 'metroeyes-arrival') return;
+  event.notification.close();
+  event.waitUntil((async () => {
+    const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    // 이미 열린 PWA 클라이언트 있으면 포커스
+    for (const c of all) {
+      if (c.url.includes('/passenger_app/')) {
+        try { return c.focus(); } catch {}
+      }
+    }
+    // 없으면 새로 오픈
+    if (self.clients.openWindow) {
+      return self.clients.openWindow('./index.html');
+    }
+  })());
+});
+
+// 페이지에서 SW로 도착 알림 위임 (페이지가 백그라운드 throttle된 경우 SW가 발사)
+self.addEventListener('message', (event) => {
+  if (!event.data || event.data.type !== 'metroeyes-arrival') return;
+  const { title, body, requireInteraction } = event.data;
+  try {
+    self.registration.showNotification(title, {
+      body, tag: 'metroeyes-arrival',
+      renotify: true, requireInteraction: !!requireInteraction,
+      silent: false,
+    });
+  } catch {}
 });
