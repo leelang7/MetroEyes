@@ -932,6 +932,16 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       <li>backend <code>incident_log {ev_type:'bottleneck'}</code> 누적 — 정체 hot-spot 통계</li>
     </ul>
   </div>
+  <div class="card" style="border-color: rgba(16,185,129,.45); background: linear-gradient(135deg, rgba(16,185,129,.06), rgba(125,211,211,.04));">
+    <h3>🔔 IDEA-9 도착 알림 다중 모달리티 (M8 — 약자·노이즈 캔슬링 배려)</h3>
+    <ul>
+      <li><b>차내 방송 의존성 제거</b> — 노이즈 캔슬링 헤드폰 / 이어폰 통화 / 유튜브 시청 / 청각 약자 모두 인지 가능</li>
+      <li><b>4중 모달리티 동시 발사</b>: 시각 banner flash + Web Vibration API 햅틱 + Web Audio sine beep (외부 파일 X) + SpeechSynthesis 4언어 (ko-KR/en-US/zh-CN/ja-JP)</li>
+      <li><b>3단 임계값</b>: > 1.5km (안전 거리) / ≤ 1.5km (곧 도착, 60초 cooldown) / ≤ 600m (도착, 30초 cooldown)</li>
+      <li>GPS 20초 폴링 + haversine 거리 — 시민 폰이 *자기* 도착을 추출 (TRIZ #2 추출, #25 자기 서비스)</li>
+      <li>대상 시장: 청각장애인 42만 + 노이즈 캔슬링 1,200만 잠재 사용자 → 접근성 제도와 직접 연결</li>
+    </ul>
+  </div>
 
   <div class="card" style="border-color: rgba(245,158,11,.45); background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(167,139,250,.04));">
     <h3>💰 차등 보상 자동 매칭 (글로벌 최초)</h3>
@@ -1199,7 +1209,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
 </div>
 
-<h2>FAQ — 예상 질문 7</h2>
+<h2>FAQ — 예상 질문 8</h2>
 <div class="row">
   <div class="card">
     <h3 style="color: var(--accent);">Q1. 응답률 30% 가정 근거는?</h3>
@@ -1259,6 +1269,23 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       ④ backend <code>_bonus_krw()</code> 가 station 매칭 → 자동 가산 (시민 추가 행동 불필요).
     </p>
   </div>
+  <div class="card" style="background: linear-gradient(135deg, rgba(16,185,129,.06), rgba(125,211,211,.04)); border-color: rgba(16,185,129,.45);">
+    <h3 style="color: #10b981;">Q8. 도착 알림 — 노이즈 캔슬링·이어폰·청각 약자 배려는?</h3>
+    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+      <b style="color: var(--text);">IDEA-9 (M8 모순)</b>. 차내 방송 의존성을 제거하고 시민 폰이 GPS로 자기 도착을 추출.
+      <br><br>
+      <b style="color: var(--text);">4중 모달리티 동시 발사</b>:
+      ① 시각 banner flash (scale + shadow) ② Web Vibration API 햅틱 (이어폰 사용자도 진동 인지)
+      ③ Web Audio sine wave beep (외부 파일 X — 800/1200Hz 짧은 펄스, 이어폰 통과)
+      ④ SpeechSynthesis 4언어 (ko-KR/en-US/zh-CN/ja-JP) — "X역 도착, 하차하세요"
+      <br><br>
+      <b style="color: var(--text);">3단 임계값</b>: 안전 거리(>1.5km) → 곧 도착(≤1.5km, 60초 cooldown) → 도착(≤600m, 30초 cooldown).
+      GPS 20초 폴링 + haversine 거리. 시민 폰 한 대로 모든 사용자가 자기 도착을 추출.
+      <br><br>
+      <b style="color: var(--text);">사회적 영향</b>: 한국 등록 청각장애인 42만 명 + 노이즈 캔슬링 헤드폰 사용자 1,200만 명 잠재 시장.
+      <b style="color: #10b981;">접근성 제도</b>(장애인차별금지법, 교통약자법)와 직접 연결되는 정책 솔루션.
+    </p>
+  </div>
 </div>
 
 <h2>심사위원 시연 가이드</h2>
@@ -1288,7 +1315,7 @@ document.getElementById('api-curl-link').href = (location.protocol === 'https:'
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 본선 출품 D-7
   <br>
-  <span style="color: var(--accent);">자동 모드 v5.8 — 287+ 사이클 (IDEA-9 도착 알림 + M8 모순 등록)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
+  <span style="color: var(--accent);">자동 모드 v5.8 — 288+ 사이클 (IDEA-9 카드 + FAQ Q8 — 접근성 제도 연결)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
 </footer>
 
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
