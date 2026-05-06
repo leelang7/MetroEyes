@@ -709,6 +709,11 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <figcaption>그림 3 — 시나리오 민감도 (응답률 5/15/30/50/70%) · 좌: 순 사회적 가치, 우: ROI 배수 · <b style="color:#a78bfa;">30% 가정은 보수적 중간값</b> (Singapore GP-S 5% × MetroEyes 차등 6배 = 30%)</figcaption>
 </figure>
 
+<figure>
+  <img src="figs/line_carload_heatmap.png" alt="호선별 시간대 추정 칸 점유율" loading="lazy">
+  <figcaption>그림 4 — 호선별 시간대 추정 점유율 (CardSubwayTime 202602 · <code>scripts/eda_line_carload.py</code>) · <b style="color:#ff5e57;">평균 126%, 9개 호선 모두 cap 150% 도달</b> → 공공 데이터는 *칸 단위 분포*를 보여주지 못함 · 같은 평균이라도 한 칸은 30% / 다른 칸은 200% 입석 가능 → <b style="color:#10b981;">MetroEyes CV의 칸별 BEV가 정책 차등의 유일한 데이터 소스</b></figcaption>
+</figure>
+
 <h2>실 데이터 분산 효과 — 평탄화 정량 검증</h2>
 <p>
   ROI v3 의 응답률 30% 가정이 *실제로* 시간대 곡선을 어떻게 평탄화시키는지 직접 시뮬.
@@ -1283,7 +1288,7 @@ document.getElementById('api-curl-link').href = (location.protocol === 'https:'
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 본선 출품 D-7
   <br>
-  <span style="color: var(--accent);">자동 모드 v5.7 — 280+ 사이클 🎉 (ROI v3 차트 3종 pitch 통합)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
+  <span style="color: var(--accent);">자동 모드 v5.7 — 281+ 사이클 (호선 칸 점유 EDA 그림 4 추가 — CV 필요성 정량 입증)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
 </footer>
 
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
