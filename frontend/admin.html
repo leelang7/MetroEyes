@@ -602,19 +602,22 @@ async function pollHealth() {
       ev('ic-em', ic.emergency); ev('ic-su', ic.suspicious);
       ev('ic-lo', ic.lost); ev('ic-fr', ic.free_ride);
       ev('ic-ps', ic.priority_seat || 0); ev('ic-bn', ic.bottleneck || 0);
-      // 비율 막대 — 4 type 누적 가로 바
+      // 비율 막대 — 6 type 누적 가로 바 (IDEA-7/8 priority_seat / bottleneck 포함)
       const cv = document.getElementById('ic-bar');
       if (cv) {
         const ctx = cv.getContext('2d');
         const W = cv.width = cv.clientWidth, H = cv.height = cv.clientHeight;
         ctx.clearRect(0, 0, W, H);
-        const total = (ic.emergency || 0) + (ic.suspicious || 0) + (ic.lost || 0) + (ic.free_ride || 0);
+        const total = (ic.emergency || 0) + (ic.suspicious || 0) + (ic.lost || 0) + (ic.free_ride || 0)
+                    + (ic.priority_seat || 0) + (ic.bottleneck || 0);
         if (total > 0) {
           const segs = [
             { v: ic.emergency, c: '#ff5e57', label: '응급' },
             { v: ic.suspicious, c: '#f0b46a', label: '이상' },
             { v: ic.lost, c: '#7dd3d3', label: '분실' },
             { v: ic.free_ride, c: '#a78bfa', label: '무임' },
+            { v: ic.priority_seat || 0, c: '#ec4899', label: '👶임산부석' },
+            { v: ic.bottleneck || 0, c: '#fb7185', label: '🚪병목' },
           ];
           let x = 0;
           segs.forEach(s => {
@@ -636,7 +639,8 @@ async function pollHealth() {
       if (recent && ic.recent && ic.recent.length) {
         recent.innerHTML = ic.recent.map(e => {
           const ago = Math.round(Date.now()/1000 - e.ts);
-          const labels = { emergency:'🚨응급', suspicious:'⚠️이상', lost:'🎒분실', free_ride:'💳무임' };
+          const labels = { emergency:'🚨응급', suspicious:'⚠️이상', lost:'🎒분실', free_ride:'💳무임',
+                           priority_seat:'👶임산부석', bottleneck:'🚪병목' };
           return `<div style="padding: 2px 0;">${labels[e.type]||e.type} <span style="color:#fff;">${e.msg}</span> <span style="color:var(--muted-2); font-size:9px;">${e.source} · ${ago}s ago</span></div>`;
         }).join('');
       }
