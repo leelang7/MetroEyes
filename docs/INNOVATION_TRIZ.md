@@ -82,14 +82,20 @@ SK PUZZLE 10분 + CardSubway 30분 + realtimeArrival 분 단위 + 자체 CV 1초
 - **혁신성**: 안전 사고를 *예측*하는 정책 직접 매핑. 단순 사후 통계 X
 - **구현**: `lite_server.py` `bottleneck` incident type (cycle 226)
 
-### IDEA-9. **도착 알림 다중 모달리티 (M8 — 약자·노이즈 캔슬링 사용자 배려)**
-시민 폰이 GPS로 도착지 근접을 자기 추출 → 시각 banner + 진동 + 음성 + beep을 *동시* 발사.
+### IDEA-9. **도착 알림 5중 모달리티 (M8 — 약자·노이즈 캔슬링 사용자 배려)**
+시민 폰이 GPS로 도착지 근접을 자기 추출 → 시각 banner + 진동 + 음성 + beep + 시스템 알림을 *동시* 발사.
 
-- **혁신성**: 차내 방송 의존성 제거. 노이즈 캔슬링 / 이어폰 / 유튜브 / 청각 약자 모두 인지
-- **구현**: `passenger_app/index.html` `setDestination` + `fireArrivalAlert` (cycle 286)
-- **다중 모달리티**: Web Vibration API (햅틱) + Web Audio API beep (sine 합성, 외부 파일 X) + SpeechSynthesis 4언어 (ko/en/zh/ja) + 시각 banner flash
+- **혁신성**: 차내 방송 의존성 제거. 노이즈 캔슬링 / 이어폰 / 유튜브 / 청각 약자 / 폰 락/백그라운드 모두 인지
+- **구현**: `passenger_app/index.html` `setDestination` + `fireArrivalAlert` + `_notifyArrival` + `_requestWakeLock` (cycle 286, 291)
+- **5중 모달리티 (이중 안전망)**:
+  1. 시각 banner flash (scale + shadow)
+  2. Web Vibration API 햅틱 — 이어폰 사용자도 진동 인지
+  3. Web Audio API beep — sine 합성 (외부 파일 X, 800/1200Hz)
+  4. SpeechSynthesis 4언어 (ko-KR/en-US/zh-CN/ja-JP)
+  5. **System Notification API** — 앱 백그라운드 / 폰 락 / 다른 앱 사용 중에도 잠금 화면 알림 (arriving은 requireInteraction=true)
+- **Wake Lock API**: 도착지 설정 동안 화면 슬립 방지 (visibilitychange 복귀 재획득)
 - **3단 임계값**: > 1.5km (안전 거리) / ≤ 1.5km (곧 도착, 60초 cooldown) / ≤ 600m (도착, 30초 cooldown)
-- **사회적 가치**: 청각 약자 (한국 등록 청각장애인 42만 명) + 노이즈 캔슬링 사용자 (1,200만 잠재 사용자) → 접근성 제도와 직접 연결
+- **사회적 가치**: 청각 약자 (한국 등록 청각장애인 42만 명) + 노이즈 캔슬링 사용자 (1,200만 잠재 사용자) → 접근성 제도와 직접 연결 (장애인차별금지법 / 교통약자법)
 
 ## 4. 정책 ROI — 수치 정리
 

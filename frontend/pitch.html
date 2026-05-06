@@ -933,11 +933,12 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
   </div>
   <div class="card" style="border-color: rgba(16,185,129,.45); background: linear-gradient(135deg, rgba(16,185,129,.06), rgba(125,211,211,.04));">
-    <h3>🔔 IDEA-9 도착 알림 다중 모달리티 (M8 — 약자·노이즈 캔슬링 배려)</h3>
+    <h3>🔔 IDEA-9 도착 알림 5중 모달리티 (M8 — 약자·노이즈 캔슬링 배려)</h3>
     <ul>
       <li><b>차내 방송 의존성 제거</b> — 노이즈 캔슬링 헤드폰 / 이어폰 통화 / 유튜브 시청 / 청각 약자 모두 인지 가능</li>
-      <li><b>4중 모달리티 동시 발사</b>: 시각 banner flash + Web Vibration API 햅틱 + Web Audio sine beep (외부 파일 X) + SpeechSynthesis 4언어 (ko-KR/en-US/zh-CN/ja-JP)</li>
-      <li><b>3단 임계값</b>: > 1.5km (안전 거리) / ≤ 1.5km (곧 도착, 60초 cooldown) / ≤ 600m (도착, 30초 cooldown)</li>
+      <li><b>5중 모달리티 동시 발사</b>: ① 시각 banner flash ② Web Vibration API 햅틱 ③ Web Audio sine beep (외부 파일 X) ④ SpeechSynthesis 4언어 (ko-KR/en-US/zh-CN/ja-JP) ⑤ <b style="color:#10b981;">System Notification (백그라운드/락 안전망)</b></li>
+      <li><b>Wake Lock API</b> — 도착지 설정 시 화면 슬립 방지 (visibilitychange 복귀 재획득)</li>
+      <li><b>3단 임계값</b>: > 1.5km (안전 거리) / ≤ 1.5km (곧 도착, 60초 cooldown) / ≤ 600m (도착, 30초 cooldown · requireInteraction)</li>
       <li>GPS 20초 폴링 + haversine 거리 — 시민 폰이 *자기* 도착을 추출 (TRIZ #2 추출, #25 자기 서비스)</li>
       <li>대상 시장: 청각장애인 42만 + 노이즈 캔슬링 1,200만 잠재 사용자 → 접근성 제도와 직접 연결</li>
     </ul>
@@ -1274,10 +1275,12 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
       <b style="color: var(--text);">IDEA-9 (M8 모순)</b>. 차내 방송 의존성을 제거하고 시민 폰이 GPS로 자기 도착을 추출.
       <br><br>
-      <b style="color: var(--text);">4중 모달리티 동시 발사</b>:
+      <b style="color: var(--text);">5중 모달리티 동시 발사</b>:
       ① 시각 banner flash (scale + shadow) ② Web Vibration API 햅틱 (이어폰 사용자도 진동 인지)
       ③ Web Audio sine wave beep (외부 파일 X — 800/1200Hz 짧은 펄스, 이어폰 통과)
       ④ SpeechSynthesis 4언어 (ko-KR/en-US/zh-CN/ja-JP) — "X역 도착, 하차하세요"
+      ⑤ <b style="color:#10b981;">System Notification API</b> — 앱 백그라운드/폰 락 상태에서도 잠금 화면 알림 (arriving은 requireInteraction).
+      Wake Lock API로 화면 슬립 방지 (도착지 설정 동안만, 해제 시 자동 release).
       <br><br>
       <b style="color: var(--text);">3단 임계값</b>: 안전 거리(>1.5km) → 곧 도착(≤1.5km, 60초 cooldown) → 도착(≤600m, 30초 cooldown).
       GPS 20초 폴링 + haversine 거리. 시민 폰 한 대로 모든 사용자가 자기 도착을 추출.
@@ -1315,7 +1318,7 @@ document.getElementById('api-curl-link').href = (location.protocol === 'https:'
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 본선 출품 D-7
   <br>
-  <span style="color: var(--accent);">자동 모드 v5.9 — 291+ 사이클 (IDEA-9 보강: Wake Lock + Notification API — 폰 락/백그라운드 안전망)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
+  <span style="color: var(--accent);">자동 모드 v5.9 — 292+ 사이클 (IDEA-9 5중 모달리티 pitch 카드/FAQ 갱신)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
 </footer>
 
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
