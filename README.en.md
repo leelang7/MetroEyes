@@ -34,7 +34,7 @@
 A single citizen action (₩200 reward) → backend krw accumulation → operator console live ROI x →
 backend incident broadcast → citizen route avoidance notice. **5-stage two-sided closed loop**.
 
-## 263 Auto Cycles Accumulated (D-7, 2026-05-13 deadline)
+## 298 Auto Cycles Accumulated (D-6, 2026-05-13 deadline)
 
 - ✅ **Two-sided value chain 8 stages** (CV → city → decision → OD match → transfer match → citizen tiered → backend auto-bonus → ROI live)
 - ✅ **Demo fail-safe 8 layers**: `--demo` + 30s injector + 5min sticky bar + backend join summary + admin click + warm seed + Docker compose + GitHub Actions CI
