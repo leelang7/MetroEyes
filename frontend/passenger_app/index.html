@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.5-recent-dest-mru';
+  const CUR = 'v4.6-dest-persistence';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1555,7 +1555,8 @@ const LIVE = (() => {
 
   function setDestination(s) {
     destStation = s;
-    _pushRecentDest(s);   // 최근 도착지 저장
+    _pushRecentDest(s);    // 최근 도착지 저장
+    _saveActiveDest(s);    // 활성 도착지 persistence
     const banner = document.getElementById('dest-banner');
     const trigger = document.getElementById('dest-trigger');
     if (banner) banner.hidden = false;
@@ -1575,6 +1576,14 @@ const LIVE = (() => {
     startDestPoll();
   }
 
+  // 페이지 로드 시 활성 도착지 자동 복원 (탭 새로고침/PWA 재오픈 사용자 안전망)
+  setTimeout(() => {
+    const saved = _restoreActiveDest();
+    if (saved && saved.name && saved.lat && saved.lon) {
+      setDestination(saved);
+    }
+  }, 600);
+
   function clearDestination() {
     destStation = null;
     const banner = document.getElementById('dest-banner');
@@ -1583,6 +1592,30 @@ const LIVE = (() => {
     if (trigger) trigger.style.display = 'block';
     _releaseWakeLock();
     stopDestPoll();
+    try { localStorage.removeItem(ACTIVE_DEST_KEY); } catch {}
+  }
+
+  // 활성 도착지 persistence — 탭 새로고침 / PWA 재오픈 시 복원
+  const ACTIVE_DEST_KEY = 'metroeyes_active_dest';
+  function _saveActiveDest(s) {
+    try {
+      localStorage.setItem(ACTIVE_DEST_KEY, JSON.stringify({
+        ...s, savedAt: Date.now(),
+      }));
+    } catch {}
+  }
+  function _restoreActiveDest() {
+    try {
+      const raw = localStorage.getItem(ACTIVE_DEST_KEY);
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      // 2시간 이상 경과 시 만료 — 의도하지 않은 자동 복원 방지
+      if (Date.now() - (obj.savedAt || 0) > 2 * 60 * 60 * 1000) {
+        localStorage.removeItem(ACTIVE_DEST_KEY);
+        return null;
+      }
+      return obj;
+    } catch { return null; }
   }
 
   function startDestPoll() {
