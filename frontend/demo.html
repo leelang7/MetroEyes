@@ -252,6 +252,31 @@ function showTransferOverlay() {
   setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5000);
 }
 
+// IDEA-9 도착 알림 5중 모달리티 overlay — 5초 표시
+function showIdea9Overlay() {
+  let ov = document.getElementById('idea9-overlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'idea9-overlay';
+    ov.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(4,6,10,0.96);border:2px solid #10b981;border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:680px;text-align:center;opacity:0;transition:opacity .35s';
+    ov.innerHTML = `
+      <div style="font:700 14px sans-serif;color:#10b981;letter-spacing:1.4px;margin-bottom:10px">🔔 IDEA-9 도착 알림 5중 모달리티 (M8 — 약자 배려)</div>
+      <div style="font:12px sans-serif;color:#fff;line-height:1.7;text-align:left">
+        시민 폰이 GPS로 도착지 자기 추출 → 5채널 동시 발사<br>
+        ① <span style="color:#7dd3d3">시각</span> banner flash · ② <span style="color:#a78bfa">햅틱</span> 진동 · ③ <span style="color:#f59e0b">Web Audio</span> sine beep ·<br>
+        ④ <span style="color:#ec4899">SpeechSynthesis</span> 4언어 (ko/en/zh/ja) · ⑤ <span style="color:#10b981">System Notification</span> (백그라운드/락 안전망)<br>
+        + Wake Lock + SW notificationclick + 최근 도착지 MRU + persistence + ETA(분) + 사전 테스트
+      </div>
+      <div style="font:600 11px sans-serif;color:#10b981;margin-top:12px">
+        대상: 청각장애인 42만 + 노이즈 캔슬링 1,200만 잠재 사용자 → 접근성 제도 직결
+      </div>
+    `;
+    document.body.appendChild(ov);
+  }
+  ov.style.opacity = '1';
+  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+}
+
 // 분산 효과 결과 overlay — 4초 표시
 function showDispersionOverlay() {
   let ov = document.getElementById('dispersion-overlay');
@@ -282,6 +307,7 @@ const SCRIPT = [
   [12000, '🚨 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s', () => clickInside('if-op', 'demo-trigger')],
   [45000, '📷 실 카메라 BEV 시연 — 응급 골든타임 + AED 자동 안내', () => clickInside('if-cam', 'demo-trigger')],
   [80000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200 차등)', null],
+  [100000,'🔔 IDEA-9 도착 알림 5중 모달리티 — 청각 약자/노이즈 캔슬링 배려', showIdea9Overlay],
   [120000,'🪙 backend krw 누적 → 운영자 ROI 라이브 갱신',     null],
   [180000,'🚨 incident_summary broadcast → 모든 페이지 동기화', null],
   [220000,'📈 실 데이터 분산 효과 — σ −9% / 피크 −13.5% / 비피크 +5.6%', showDispersionOverlay],
