@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.4-sw-arrival-notification';
+  const CUR = 'v4.5-recent-dest-mru';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1403,7 +1403,30 @@ const LIVE = (() => {
     if (title) title.textContent = mode === 'dest' ? '도착지 선택' : '역 선택';
     m.hidden = false;
     renderModalList('');
+    // 도착지 모드 + 최근 도착지 있으면 상단에 quick chip 노출
+    if (mode === 'dest') _renderRecentDestChips();
     setTimeout(() => { const i = document.getElementById('modal-search'); if (i) i.focus(); }, 100);
+  }
+  function _renderRecentDestChips() {
+    const list = document.getElementById('modal-list');
+    if (!list) return;
+    const recent = _loadRecentDest();
+    if (!recent.length) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'padding: 6px 4px 10px; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;';
+    const lbl = document.createElement('span');
+    lbl.textContent = '⏱ 최근:';
+    lbl.style.cssText = 'font-size: 10px; color: var(--muted-2); font-weight: 700; letter-spacing: 0.8px; align-self: center; margin-right: 2px;';
+    wrap.appendChild(lbl);
+    for (const r of recent) {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.textContent = `${r.name}${r.line > 0 ? ` ${r.line}호` : ''}`;
+      chip.style.cssText = 'padding: 4px 10px; background: rgba(167,139,250,.14); border: 1px solid rgba(167,139,250,.40); border-radius: 999px; color: #fff; font-size: 11px; cursor: pointer;';
+      chip.addEventListener('click', () => { setDestination(r); closeModal(); });
+      wrap.appendChild(chip);
+    }
+    list.insertBefore(wrap, list.firstChild);
   }
   function closeModal() {
     const m = document.getElementById('station-modal');
@@ -1513,8 +1536,26 @@ const LIVE = (() => {
     } catch {}
   }
 
+  // 최근 도착지 (출퇴근 반복 시 즉시 재선택) — localStorage MRU 5개
+  const RECENT_DEST_KEY = 'metroeyes_recent_dest';
+  const RECENT_DEST_MAX = 5;
+  function _loadRecentDest() {
+    try {
+      const raw = localStorage.getItem(RECENT_DEST_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+  function _pushRecentDest(s) {
+    try {
+      const arr = _loadRecentDest().filter(r => r.name !== s.name);
+      arr.unshift({ name: s.name, line: s.line, lat: s.lat, lon: s.lon, poi: s.poi, od: !!s.od, transfer: !!s.transfer, hot: !!s.hot, ts: Date.now() });
+      localStorage.setItem(RECENT_DEST_KEY, JSON.stringify(arr.slice(0, RECENT_DEST_MAX)));
+    } catch {}
+  }
+
   function setDestination(s) {
     destStation = s;
+    _pushRecentDest(s);   // 최근 도착지 저장
     const banner = document.getElementById('dest-banner');
     const trigger = document.getElementById('dest-trigger');
     if (banner) banner.hidden = false;
