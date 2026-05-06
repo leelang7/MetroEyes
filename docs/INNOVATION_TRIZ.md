@@ -2,8 +2,9 @@
 
 > 발표·심사위원용 자료. "왜 우리만 이 솔루션을 만들 수 있는가" 를 발명 방법론으로 정량화.
 >
-> **D-7 (2026-05-06) 누적 산출 v5.2**: 190 사이클 / 9 REST endpoint / 11페이지 4언어 / 3 EDA 검증 /
-> 차등 인센티브 4단 backend 자동 + tier 6P 동기화 / K-means 비상 동선 / OpenAPI 3.0 / 8중 시연 fail-safe / 8단 양면 가치 사슬.
+> **D-7 (2026-05-06) 누적 산출 v5.7**: 261 사이클 / 9 REST endpoint / 11페이지 4언어 / 3 EDA 검증 /
+> 차등 인센티브 4단 backend 자동 + tier 6P 동기화 / K-means(K=4) + 헝가리안 1:1 비상 동선 / OpenAPI 3.0 / 8중 시연 fail-safe /
+> 8단 양면 가치 사슬 / **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (M7 모순, cycle 226).
 
 ## 1. 본질 문제 (Ideal Final Result)
 
