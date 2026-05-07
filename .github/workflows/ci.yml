@@ -100,3 +100,18 @@ jobs:
         run: |
           python -m pytest tests/test_policy_roi_v3.py -v
           echo "✅ ROI v3 — 1,393억/year, 347x, 473M min/year, 2호선 157M, 134역 모두 검증"
+
+  eda-dispersion-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: pip install --no-cache-dir pytest
+      - name: Run dispersion EDA report regression tests
+        run: |
+          python -m pytest tests/test_eda_dispersion.py -v
+          echo "✅ Dispersion EDA — σ −9% / peak −13.5% / offpeak +5.6% / ratio 1.78→1.46 모두 검증"
