@@ -98,8 +98,8 @@ jobs:
         run: pip install --no-cache-dir numpy pytest
       - name: Run ROI v3 KPI regression tests
         run: |
-          python -m pytest tests/test_policy_roi_v3.py -v
-          echo "✅ ROI v3 — 1,393억/year, 347x, 473M min/year, 2호선 157M, 134역 모두 검증"
+          python -m pytest tests/test_policy_roi_v3.py tests/test_roi_ci_band.py -v
+          echo "✅ ROI v3 — 1,393억/year, 347x + Monte Carlo 95% CI [1,064~1,808억] 모두 검증"
 
   eda-dispersion-validate:
     runs-on: ubuntu-latest

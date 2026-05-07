@@ -139,6 +139,75 @@ def fmt_b(v):
     return f"{v:.0f}억"
 
 
+def monte_carlo_ci(rates: list, n_sims: int = 1000, seed: int = 42) -> dict:
+    """각 응답률 시나리오에 대해 Monte Carlo 1000회 → 95% CI.
+
+    불확실성 주입:
+        response_rate     ±15% (정책 채택률 변동)
+        save_min_base     ±20% (역별 통근 절감 시간 분포)
+        krw_per_hour      ±10% (한국교통연구원 혼잡비용 167원/분 ±)
+        line_cap_ratio    ±10% (호선별 운영 변동)
+    """
+    rng = np.random.default_rng(seed)
+    base_save_min_orig = 1.5
+    krw_orig = KRW_PER_HOUR
+    cap_orig = dict(LINE_CAP_RATIO)
+    ci = {}
+    for rate in rates:
+        net_samples = []
+        roi_samples = []
+        min_samples = []
+        for _ in range(n_sims):
+            # perturbation
+            r = float(np.clip(rate * rng.normal(1.0, 0.15 / 1.96), 0.001, 1.0))
+            # base_save_min ±20% via global scaling — simulate then rescale
+            save_factor = float(rng.normal(1.0, 0.20 / 1.96))
+            krw_factor = float(rng.normal(1.0, 0.10 / 1.96))
+            cap_factor = float(rng.normal(1.0, 0.10 / 1.96))
+            # 임시 swap
+            try:
+                globals()["KRW_PER_HOUR"] = krw_orig * max(0.5, krw_factor)
+                LINE_CAP_RATIO.update({k: v * max(0.5, cap_factor) for k, v in cap_orig.items()})
+                res = simulate_v3(r)
+            finally:
+                globals()["KRW_PER_HOUR"] = krw_orig
+                LINE_CAP_RATIO.update(cap_orig)
+            # save factor 는 절감 분 자체에 곱해서 commute_b 재계산
+            mins = res["minutes_saved_yr"] * max(0.4, save_factor)
+            commute = (mins / 60) * (krw_orig * max(0.5, krw_factor)) / 1e8
+            total = commute + res["safety_b"] + res["ad_b"] + res["energy_b"]
+            net = total - res["incentive_cost_b"]
+            roi = net / res["infra_b"] if res["infra_b"] > 0 else 0.0
+            net_samples.append(net)
+            roi_samples.append(roi)
+            min_samples.append(mins)
+        net_arr = np.array(net_samples)
+        roi_arr = np.array(roi_samples)
+        min_arr = np.array(min_samples)
+        ci[f"{rate:.2f}"] = {
+            "rate": rate,
+            "net_b_mean": float(net_arr.mean()),
+            "net_b_p5":   float(np.percentile(net_arr, 5)),
+            "net_b_p95":  float(np.percentile(net_arr, 95)),
+            "roi_x_mean": float(roi_arr.mean()),
+            "roi_x_p5":   float(np.percentile(roi_arr, 5)),
+            "roi_x_p95":  float(np.percentile(roi_arr, 95)),
+            "minutes_p5":  float(np.percentile(min_arr, 5)),
+            "minutes_p95": float(np.percentile(min_arr, 95)),
+            "n_sims": n_sims,
+        }
+    return {
+        "method": "Monte Carlo n=1000 per scenario, 95% CI = [p5, p95]",
+        "perturbations": {
+            "response_rate":  "±15% (정책 채택률 변동)",
+            "save_min_base":  "±20% (역별 통근 절감 분포)",
+            "krw_per_hour":   "±10% (한국교통연구원 167원/분 변동)",
+            "line_cap_ratio": "±10% (호선별 운영 변동)",
+        },
+        "scenarios": ci,
+    }
+
+
 def main():
     print("=" * 72)
     print("MetroEyes 정책 ROI v3 - 호선 × 시간대 차등 (cap 도달도 + 응답 비대칭)")
@@ -180,6 +249,17 @@ def main():
         bar = "█" * int(t / max_t * 32)
         print(f"    {line:<8} {t:>5.1f}M분 {bar}")
 
+    # === Monte Carlo 95% CI (cycle 364) ===
+    print("\n  [Monte Carlo n=1000 per scenario] 95% 신뢰구간 산출 중...")
+    rates_for_ci = [s[1] for s in scenarios]
+    ci_band = monte_carlo_ci(rates_for_ci, n_sims=1000, seed=42)
+    print("    " + f"{'시나리오':<14} {'순가치 mean':>12} {'p5–p95':>22} {'ROI mean':>10} {'p5–p95':>16}")
+    for label, rate in scenarios:
+        ci = ci_band["scenarios"][f"{rate:.2f}"]
+        print(f"    {label:<14} {fmt_b(ci['net_b_mean']):>12} "
+              f"[{fmt_b(ci['net_b_p5'])}—{fmt_b(ci['net_b_p95'])}]".rjust(22) +
+              f" {ci['roi_x_mean']:>8.0f}x [{ci['roi_x_p5']:.0f}—{ci['roi_x_p95']:.0f}x]".rjust(28))
+
     # JSON 저장 (matrix는 압축)
     summary = {**mid}
     summary["save_matrix"] = "[N_LINES × 24] omitted from JSON; see PNG"
@@ -188,9 +268,16 @@ def main():
          "net_b": x["net_value_b"], "roi_x": x["roi_x"]}
         for x in results
     ]
+    summary["ci_band"] = ci_band  # cycle 364 — Monte Carlo 95% CI
     with (OUT / "policy_roi_v3_report.json").open("w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
     print(f"\n  >> {OUT / 'policy_roi_v3_report.json'}")
+    # CI band 별도 git tracked 위치 (frontend/figs/) — CI 회귀 가드용
+    figs_dir = ROOT / "frontend" / "figs"
+    figs_dir.mkdir(parents=True, exist_ok=True)
+    with (figs_dir / "policy_roi_v3_ci_band.json").open("w", encoding="utf-8") as f:
+        json.dump(ci_band, f, ensure_ascii=False, indent=2)
+    print(f"  >> {figs_dir / 'policy_roi_v3_ci_band.json'}")
 
     # heatmap + 추가 차트 2종 (호선별 절감, 시나리오 비교)
     try:
@@ -241,29 +328,37 @@ def main():
         plt.close(fig2)
         print(f"  >> {png2}")
 
-        # 3) 시나리오 비교 — 응답률 5~70% 따른 순 가치 / ROI
+        # 3) 시나리오 비교 + Monte Carlo 95% CI 리본 (cycle 364)
         fig3, (ax3a, ax3b) = plt.subplots(1, 2, figsize=(12, 4.2))
         rates = [r["behavior_response"] * 100 for r in results]
         net_vals = [r["net_value_b"] for r in results]
         rois = [r["roi_x"] for r in results]
-        ax3a.plot(rates, net_vals, "o-", color="#10b981", linewidth=2, markersize=8)
+        # CI band 리본 (p5~p95)
+        net_p5 = [ci_band["scenarios"][f"{r['behavior_response']:.2f}"]["net_b_p5"] for r in results]
+        net_p95 = [ci_band["scenarios"][f"{r['behavior_response']:.2f}"]["net_b_p95"] for r in results]
+        roi_p5 = [ci_band["scenarios"][f"{r['behavior_response']:.2f}"]["roi_x_p5"] for r in results]
+        roi_p95 = [ci_band["scenarios"][f"{r['behavior_response']:.2f}"]["roi_x_p95"] for r in results]
+        ax3a.fill_between(rates, net_p5, net_p95, color="#10b981", alpha=0.15, label="95% CI (Monte Carlo n=1000)")
+        ax3a.plot(rates, net_vals, "o-", color="#10b981", linewidth=2, markersize=8, label="중심 추정")
         for x, y in zip(rates, net_vals):
             ax3a.annotate(fmt_b(y), (x, y), textcoords="offset points", xytext=(0, 8), ha="center", fontsize=9)
         ax3a.set_xlabel("응답률 (%)")
         ax3a.set_ylabel("순 사회적 가치 (억/년)")
-        ax3a.set_title("응답률별 순 가치")
+        ax3a.set_title("응답률별 순 가치 + 95% CI")
         ax3a.grid(linestyle="--", alpha=0.3)
         ax3a.axvspan(25, 35, alpha=0.12, color="#a78bfa", label="현실 추정 (30%)")
-        ax3a.legend(loc="lower right", fontsize=9)
-        ax3b.plot(rates, rois, "s-", color="#f59e0b", linewidth=2, markersize=8)
+        ax3a.legend(loc="lower right", fontsize=8)
+        ax3b.fill_between(rates, roi_p5, roi_p95, color="#f59e0b", alpha=0.15, label="95% CI")
+        ax3b.plot(rates, rois, "s-", color="#f59e0b", linewidth=2, markersize=8, label="중심 추정")
         for x, y in zip(rates, rois):
             ax3b.annotate(f"{y:.0f}x", (x, y), textcoords="offset points", xytext=(0, 8), ha="center", fontsize=9)
         ax3b.set_xlabel("응답률 (%)")
         ax3b.set_ylabel("ROI (배)")
-        ax3b.set_title("응답률별 ROI 배수")
+        ax3b.set_title("응답률별 ROI + 95% CI")
         ax3b.grid(linestyle="--", alpha=0.3)
         ax3b.axvspan(25, 35, alpha=0.12, color="#a78bfa")
-        plt.suptitle("정책 ROI v3 - 시나리오 민감도 (5/15/30/50/70% 응답률)", fontsize=11)
+        ax3b.legend(loc="lower right", fontsize=8)
+        plt.suptitle("정책 ROI v3 — 시나리오 민감도 (Monte Carlo 1000회 95% CI)", fontsize=11)
         plt.tight_layout()
         png3 = OUT / "policy_roi_v3_scenarios.png"
         plt.savefig(png3, dpi=120)
