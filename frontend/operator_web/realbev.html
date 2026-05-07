@@ -738,12 +738,12 @@ function _makeDistLabel(text, color) {
   scene.add(sprite);
 });
 
-// === Scanline sweep — Tesla BEV signature 회전 빔 ===
-const sweepGeo = new THREE.RingGeometry(0.5, 10, 64, 1, 0, Math.PI / 4);
+// === Scanline sweep — 얇은 회전 line (부채꼴 X, "콘처럼 보임" 제거) ===
+const sweepGeo = new THREE.RingGeometry(0.5, 10, 64, 1, 0, 0.05);   // 매우 좁은 1.4도 angle
 const sweepMat = new THREE.MeshBasicMaterial({
   color: 0x7dd3d3,
   transparent: true,
-  opacity: 0.10,
+  opacity: 0.30,
   side: THREE.DoubleSide,
   depthWrite: false,
   blending: THREE.AdditiveBlending,
@@ -780,8 +780,9 @@ scene.add(horizon);
   scene.add(axis);
 }
 
-// 카메라 위치 마커 — 콘 대신 평평한 disk + glow (cycle 345 cone 제거)
+// 카메라 위치 + 진행방향 마커 (cycle 346 — 어디를 보고 있는지 명확하게)
 {
+  // 1. 카메라 위치 disk
   const diskGeo = new THREE.CircleGeometry(0.18, 32);
   const diskMat = new THREE.MeshBasicMaterial({
     color: 0x7dd3d3, transparent: true, opacity: 0.85, depthWrite: false,
@@ -790,7 +791,8 @@ scene.add(horizon);
   disk.rotation.x = -Math.PI / 2;
   disk.position.set(0, 0.018, 4.0);
   scene.add(disk);
-  // 외곽 ring으로 카메라 위치 강조
+
+  // 2. 외곽 ring
   const camRing = new THREE.Mesh(
     new THREE.RingGeometry(0.20, 0.28, 32),
     new THREE.MeshBasicMaterial({ color: 0x7dd3d3, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false }),
@@ -798,6 +800,56 @@ scene.add(horizon);
   camRing.rotation.x = -Math.PI / 2;
   camRing.position.set(0, 0.014, 4.0);
   scene.add(camRing);
+
+  // 3. 진행방향 화살표 (큰 삼각형, ground plane 위) — "어디를 보고 있는지" 명확
+  const arrowShape = new THREE.Shape();
+  arrowShape.moveTo(0, 0.4);     // tip 앞쪽 (-z)
+  arrowShape.lineTo(-0.25, 0);   // 왼쪽 base
+  arrowShape.lineTo(-0.10, 0);
+  arrowShape.lineTo(-0.10, -0.15);   // 왼쪽 꼬리
+  arrowShape.lineTo(0.10, -0.15);    // 오른쪽 꼬리
+  arrowShape.lineTo(0.10, 0);
+  arrowShape.lineTo(0.25, 0);
+  arrowShape.closePath();
+  const arrowGeo = new THREE.ShapeGeometry(arrowShape);
+  const arrowMat = new THREE.MeshBasicMaterial({
+    color: 0x10b981,    // emerald — 카메라 방향 분명
+    transparent: true, opacity: 0.85, side: THREE.DoubleSide, depthWrite: false,
+  });
+  const arrow = new THREE.Mesh(arrowGeo, arrowMat);
+  arrow.rotation.x = -Math.PI / 2;
+  arrow.position.set(0, 0.022, 3.4);   // 카메라 위치 약간 앞
+  scene.add(arrow);
+
+  // 4. 진행방향 outline (시각적 강조)
+  const arrowOutline = new THREE.LineSegments(
+    new THREE.EdgesGeometry(arrowGeo),
+    new THREE.LineBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.6 }),
+  );
+  arrowOutline.rotation.x = -Math.PI / 2;
+  arrowOutline.position.copy(arrow.position);
+  arrowOutline.position.y = 0.024;
+  scene.add(arrowOutline);
+
+  // 5. "📷 CAM" 라벨 sprite
+  const _camLabelTex = (() => {
+    const c = document.createElement('canvas');
+    c.width = 128; c.height = 32;
+    const x = c.getContext('2d');
+    x.fillStyle = 'rgba(4,6,10,0.7)';
+    x.fillRect(0, 0, 128, 32);
+    x.font = 'bold 14px ui-monospace, monospace';
+    x.fillStyle = '#10b981';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText('📷 CAM', 64, 16);
+    return new THREE.CanvasTexture(c);
+  })();
+  const camLabel = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: _camLabelTex, transparent: true, depthTest: false,
+  }));
+  camLabel.scale.set(0.85, 0.21, 1);
+  camLabel.position.set(0, 0.6, 4.3);
+  scene.add(camLabel);
 }
 
 // 글로우 텍스처 (radial)
