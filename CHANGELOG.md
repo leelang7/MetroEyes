@@ -1,5 +1,45 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v6.6 — D-5 회귀 가드 114건 + 호선×시간 2D + 4언어 narration (2026-05-08 cycle 368-371)
+
+### "EDA 2D 표적 정밀화 + 영상 4언어 + 제안서 정합" 단계
+- v6.5 통계 신뢰도 → v6.6 운영 의사결정 2D + 발표 영상 4언어 자산화
+- 신규 회귀 가드 24건 (90 → 114)
+
+### 신규 EDA + 산출물
+- **cycle 368** 호선 × 시간대 2D 우선순위 매트릭스
+  - 9 호선 × 19 시간 (5~23시) → priority(line, hour) = occ_pct × commute_response_bias
+  - 🥇 Top 5: 2호선 9/17/19시 + 3호선 17/19시 (priority 158)
+  - Bottom: 1호선 5~6시 (priority 9~15)
+- **cycle 369** 5분 발표 영상 4언어 narration 스크립트
+  - demo.html SCRIPT (cycle 363) timestamp 1:1 정합
+  - 14 stage × 4 언어 (ko/en/zh/ja) = 56 narration 블록
+  - cycle 356/358/360 신규 KPI 모두 4언어 노출
+- **cycle 370** admin 호선×시간 mini heatmap (canvas 9×19)
+  - cycle 368 결과 운영자 admin 라이브 시각화
+  - Top 5 외곽선 강조 + 텍스트 요약 + i18n 4언어
+- **cycle 371** PROPOSAL §5 v3 갱신
+  - v2 ₩9,470억 → v3 1,393억 [Monte Carlo 95% CI 1,064~1,808]
+  - 호선별 ROI + 호선×시간 매트릭스 신규 §5.3 §5.4 추가
+
+### 신규 회귀 가드 24건 (90 → 114)
+- **test_line_hour_priority.py** (7건, cycle 368): 9×19 매트릭스 / Top 5 정렬 / 2호선 peak / 1호선 5시 Bottom
+- **test_recording_narration.py** (6건, cycle 369): 4언어 마커 / cycle reference / KPI 보존 / timestamp 정합
+- **test_admin_line_hour_panel.py** (6건, cycle 370): canvas DOM / fetch / Top 5 외곽선 / 색상 그라데이션 / i18n
+- **submission_check.py** (cycle 367, +5건): 12 항목 PASS/WARN/FAIL 자동 검증
+
+### 신규 도구
+- **scripts/eda_line_hour_priority.py** — 호선×시간 2D 매트릭스 산출 (cycle 368)
+- **docs/RECORDING_NARRATION.md** — 4언어 narration 스크립트 (cycle 369)
+- **scripts/submission_check.py** — D-5 제출 직전 12 항목 자동 검증 (cycle 367)
+
+### 가치
+- 운영자 admin 1 페이지 = (1) 호선별 1순위 ranked list + (2) 호선×시간 2D heatmap = 정책 표적 즉답
+- 제출 직전 단일 명령으로 모든 정합성 자동 확인
+- 4 언어 narration → 외국 심사위원 대비 영상 4 본 (각 5 분) 가능
+
+---
+
 ## v6.5 — D-5 회귀 가드 90건 + CI 14 jobs + Monte Carlo CI (2026-05-08 cycle 350-367)
 
 ### "발표 시연 → 정량 신뢰도 → 자동 제출 검증" 3단 진화
