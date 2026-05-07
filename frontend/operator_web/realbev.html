@@ -458,6 +458,24 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
         <span id="cam-mode">로컬 비디오 → JPEG → 백엔드</span>
         <span id="cam-size">—</span>
       </div>
+      <!-- 영상 밑 통계 패널 (좌측 빈 공간 채움) -->
+      <div style="margin-top: 6px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px; background: linear-gradient(135deg, rgba(125,211,211,.08), rgba(167,139,250,.04)); border: 1px solid rgba(125,211,211,.18); border-radius: 10px;">
+        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">📷 FPS</div><b id="cam-fps-mini" style="color: #7dd3d3; font-size: 18px;">—</b></div>
+        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">🎯 트랙</div><b id="cam-tracks-mini" style="color: #a78bfa; font-size: 18px;">—</b></div>
+        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">⏱ 송신</div><b id="cam-tx-mini" style="color: #f59e0b; font-size: 18px;">—</b></div>
+        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">🔌 WS</div><b id="cam-ws-mini" style="color: var(--muted); font-size: 13px;">—</b></div>
+      </div>
+      <!-- 좌측 mini KPI — BEV 3D 큰 높이만큼 빈 공간 보강 -->
+      <div style="margin-top: 6px; padding: 10px 12px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); border-radius: 10px;">
+        <div style="font-size: 10px; color: var(--muted); letter-spacing: 1.0px; text-transform: uppercase;">⚙ Pipeline</div>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted-2); margin-top: 6px;">
+          <div style="display: flex; justify-content: space-between;"><span>모델</span><span style="color: #fff;">YOLO11n + BoT-SORT</span></div>
+          <div style="display: flex; justify-content: space-between;"><span>입력 해상도</span><span style="color: #fff;" id="cam-res-mini">640×480</span></div>
+          <div style="display: flex; justify-content: space-between;"><span>디바이스</span><span style="color: #10b981;" id="cam-dev-mini">cuda · RTX 4070 SUPER</span></div>
+          <div style="display: flex; justify-content: space-between;"><span>총 송신 프레임</span><span style="color: #f59e0b;" id="cam-frames-mini">—</span></div>
+          <div style="display: flex; justify-content: space-between;"><span>호모그래피</span><span style="color: var(--accent);" id="cam-h-mini">기본 (조정 가능)</span></div>
+        </div>
+      </div>
     </div>
     <div class="tile bev">
       <h3><b>② BEV 3D</b>Three.js · OrbitControls (드래그/휠 회전)</h3>
@@ -611,6 +629,92 @@ const grid = new THREE.GridHelper(16, 32, 0x7dd3d3, 0x12283c);
 grid.material.transparent = true;
 grid.material.opacity = 0.55;
 scene.add(grid);
+
+// === 거리 링 (Tesla-style radar rings) — ego(0,0,4) 기준 동심원 ===
+const distanceRings = [];
+[2, 4, 6, 8, 10].forEach((r, i) => {
+  const inner = r - 0.04, outer = r + 0.04;
+  const ringGeo = new THREE.RingGeometry(inner, outer, 96, 1);
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: i % 2 === 0 ? 0x7dd3d3 : 0xa78bfa,
+    transparent: true,
+    opacity: 0.22 - i * 0.02,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.set(0, 0.012 + i * 0.001, 4.0);
+  scene.add(ring);
+  distanceRings.push(ring);
+});
+
+// 거리 라벨 (2m / 4m / 6m / 8m / 10m sprite text)
+function _makeDistLabel(text, color) {
+  const c = document.createElement('canvas');
+  c.width = 128; c.height = 32;
+  const ctx2 = c.getContext('2d');
+  ctx2.fillStyle = 'rgba(4,6,10,0.55)';
+  ctx2.fillRect(0, 0, 128, 32);
+  ctx2.font = 'bold 16px ui-monospace, monospace';
+  ctx2.fillStyle = color;
+  ctx2.textBaseline = 'middle';
+  ctx2.textAlign = 'center';
+  ctx2.fillText(text, 64, 16);
+  const tex = new THREE.CanvasTexture(c);
+  tex.minFilter = THREE.LinearFilter;
+  return tex;
+}
+[[2, '2m', '#7dd3d3'], [4, '4m', '#a78bfa'], [6, '6m', '#7dd3d3'], [8, '8m', '#a78bfa'], [10, '10m', '#f59e0b']].forEach(([r, txt, color]) => {
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: _makeDistLabel(txt, color), transparent: true, depthTest: false,
+  }));
+  sprite.scale.set(0.7, 0.18, 1);
+  sprite.position.set(0, 0.05, 4.0 - r);
+  scene.add(sprite);
+});
+
+// === Scanline sweep — Tesla BEV signature 회전 빔 ===
+const sweepGeo = new THREE.RingGeometry(0.5, 10, 64, 1, 0, Math.PI / 4);
+const sweepMat = new THREE.MeshBasicMaterial({
+  color: 0x7dd3d3,
+  transparent: true,
+  opacity: 0.10,
+  side: THREE.DoubleSide,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+});
+const sweep = new THREE.Mesh(sweepGeo, sweepMat);
+sweep.rotation.x = -Math.PI / 2;
+sweep.position.set(0, 0.025, 4.0);
+scene.add(sweep);
+
+// === Horizon glow ring (가장자리 cyan halo) ===
+const horizonGeo = new THREE.RingGeometry(8.5, 9.8, 96, 1);
+const horizonMat = new THREE.MeshBasicMaterial({
+  color: 0x10b981,
+  transparent: true,
+  opacity: 0.08,
+  side: THREE.DoubleSide,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+});
+const horizon = new THREE.Mesh(horizonGeo, horizonMat);
+horizon.rotation.x = -Math.PI / 2;
+horizon.position.set(0, 0.005, 4.0);
+scene.add(horizon);
+
+// === 중앙 → 진행방향 축 라인 (FOV center axis) ===
+{
+  const points = [new THREE.Vector3(0, 0.04, 4.0), new THREE.Vector3(0, 0.04, -6.0)];
+  const axisGeo = new THREE.BufferGeometry().setFromPoints(points);
+  const axisMat = new THREE.LineDashedMaterial({
+    color: 0x7dd3d3, dashSize: 0.2, gapSize: 0.15, transparent: true, opacity: 0.45,
+  });
+  const axis = new THREE.Line(axisGeo, axisMat);
+  axis.computeLineDistances();
+  scene.add(axis);
+}
 
 // ego 카메라 마커 (작은 콘)
 {
@@ -1156,6 +1260,22 @@ function animate() {
     }
   }
 
+  // === Tesla BEV scanline sweep — 회전 빔 + 거리링 펄스 ===
+  if (typeof sweep !== 'undefined') {
+    sweep.rotation.z = (now / 800) % (Math.PI * 2);     // 4초/회전
+  }
+  if (typeof distanceRings !== 'undefined') {
+    for (let i = 0; i < distanceRings.length; i++) {
+      const r = distanceRings[i];
+      // 각 링이 다른 phase로 isolated pulse
+      const t = now / 1000 + i * 0.3;
+      r.material.opacity = (0.16 - i * 0.015) + Math.sin(t * 1.4) * 0.05;
+    }
+  }
+  if (typeof horizon !== 'undefined') {
+    horizon.material.opacity = 0.06 + Math.sin(now / 1500) * 0.04;
+  }
+
   controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
@@ -1269,6 +1389,21 @@ function connect(url) {
     fpsEl.textContent = `${(p.fps ?? 0).toFixed(1)} FPS (백엔드)`;
     tracksEl.textContent = `${(p.tracks || []).length} 트랙`;
     document.getElementById('frame-idx').textContent = `frame ${p.frame_idx ?? 0}`;
+    // ① Camera 영상 밑 mini 통계 갱신
+    try {
+      const camFps = document.getElementById('cam-fps-mini');
+      const camTracks = document.getElementById('cam-tracks-mini');
+      const camTx = document.getElementById('cam-tx-mini');
+      const camWs = document.getElementById('cam-ws-mini');
+      const camFrames = document.getElementById('cam-frames-mini');
+      const camRes = document.getElementById('cam-res-mini');
+      if (camFps) camFps.textContent = (p.fps || 0).toFixed(1);
+      if (camTracks) camTracks.textContent = (p.tracks || []).length;
+      if (camTx) camTx.textContent = (txFrames > 0 ? `${(txFrames * 1000 / Math.max(1, performance.now() - txWindowStart)).toFixed(1)}/s` : '—');
+      if (camWs) { camWs.textContent = (ws && ws.readyState === 1) ? 'CONNECTED' : '—'; camWs.style.color = (ws && ws.readyState === 1) ? '#10b981' : 'var(--muted)'; }
+      if (camFrames) camFrames.textContent = (p.frame_idx || 0).toLocaleString();
+      if (camRes && p.input_size) camRes.textContent = `${p.input_size[0]}×${p.input_size[1]}`;
+    } catch {}
     onTracksUpdate(p.tracks || []);
     // ③ 라이브 트랙 분포 카드 (클래스별 카운트 + peak/avg)
     try {
