@@ -1,0 +1,137 @@
+{
+  "method": "ESG CO₂ derivation — ultra-conservative (0.7%) vs standard (5%) 자가용 회피 동시 산출",
+  "sources": {
+    "car_avoidance_ultra": "광고 baseline 0.012 kg/action 일치 reverse-derived 0.68%",
+    "car_avoidance_std": "한국교통연구원 통근 modal split 보수 추정 5%",
+    "commute_km": "서울교통공사 2023 평균 통근 8.4km",
+    "kg_co2_per_km": "환경부 2023 평균 휘발유 승용차 0.21 kg CO2/km",
+    "daily_riders": "서울 도시철도 일평균 700만",
+    "workdays_yr": "주 5일 × 50주 = 250일"
+  },
+  "assumptions": {
+    "car_avoidance_rate_ultra": 0.0068,
+    "car_avoidance_rate_standard": 0.05,
+    "commute_km": 8.4,
+    "kg_co2_per_km": 0.21,
+    "daily_riders": 7000000,
+    "workdays_yr": 250,
+    "actions_per_responding_user": 0.45,
+    "korean_avg_co2_per_person_yr_kg": 12000
+  },
+  "co2_per_action_kg_ultra": 0.012,
+  "co2_per_action_kg_standard": 0.0882,
+  "advertised_value_kg": 0.012,
+  "match_advertised_ultra": true,
+  "scenarios_ultra": [
+    {
+      "response_rate": 0.05,
+      "scenario": "ultra",
+      "actions_yr": 39375000,
+      "co2_per_action_kg": 0.012,
+      "co2_yr_kg": 472311.0,
+      "co2_yr_t": 472.3,
+      "equivalent_persons_yr": 39.4
+    },
+    {
+      "response_rate": 0.15,
+      "scenario": "ultra",
+      "actions_yr": 118125000,
+      "co2_per_action_kg": 0.012,
+      "co2_yr_kg": 1416933.0,
+      "co2_yr_t": 1416.9,
+      "equivalent_persons_yr": 118.1
+    },
+    {
+      "response_rate": 0.3,
+      "scenario": "ultra",
+      "actions_yr": 236250000,
+      "co2_per_action_kg": 0.012,
+      "co2_yr_kg": 2833866.0,
+      "co2_yr_t": 2833.9,
+      "equivalent_persons_yr": 236.2
+    },
+    {
+      "response_rate": 0.5,
+      "scenario": "ultra",
+      "actions_yr": 393750000,
+      "co2_per_action_kg": 0.012,
+      "co2_yr_kg": 4723110.0,
+      "co2_yr_t": 4723.1,
+      "equivalent_persons_yr": 393.6
+    },
+    {
+      "response_rate": 0.7,
+      "scenario": "ultra",
+      "actions_yr": 551250000,
+      "co2_per_action_kg": 0.012,
+      "co2_yr_kg": 6612354.0,
+      "co2_yr_t": 6612.4,
+      "equivalent_persons_yr": 551.0
+    }
+  ],
+  "scenarios_standard": [
+    {
+      "response_rate": 0.05,
+      "scenario": "standard",
+      "actions_yr": 39375000,
+      "co2_per_action_kg": 0.0882,
+      "co2_yr_kg": 3472875.0,
+      "co2_yr_t": 3472.9,
+      "equivalent_persons_yr": 289.4
+    },
+    {
+      "response_rate": 0.15,
+      "scenario": "standard",
+      "actions_yr": 118125000,
+      "co2_per_action_kg": 0.0882,
+      "co2_yr_kg": 10418625.0,
+      "co2_yr_t": 10418.6,
+      "equivalent_persons_yr": 868.2
+    },
+    {
+      "response_rate": 0.3,
+      "scenario": "standard",
+      "actions_yr": 236250000,
+      "co2_per_action_kg": 0.0882,
+      "co2_yr_kg": 20837250.0,
+      "co2_yr_t": 20837.2,
+      "equivalent_persons_yr": 1736.4
+    },
+    {
+      "response_rate": 0.5,
+      "scenario": "standard",
+      "actions_yr": 393750000,
+      "co2_per_action_kg": 0.0882,
+      "co2_yr_kg": 34728750.0,
+      "co2_yr_t": 34728.8,
+      "equivalent_persons_yr": 2894.1
+    },
+    {
+      "response_rate": 0.7,
+      "scenario": "standard",
+      "actions_yr": 551250000,
+      "co2_per_action_kg": 0.0882,
+      "co2_yr_kg": 48620250.0,
+      "co2_yr_t": 48620.2,
+      "equivalent_persons_yr": 4051.7
+    }
+  ],
+  "scenario_30pct_ultra": {
+    "response_rate": 0.3,
+    "scenario": "ultra",
+    "actions_yr": 236250000,
+    "co2_per_action_kg": 0.012,
+    "co2_yr_kg": 2833866.0,
+    "co2_yr_t": 2833.9,
+    "equivalent_persons_yr": 236.2
+  },
+  "scenario_30pct_standard": {
+    "response_rate": 0.3,
+    "scenario": "standard",
+    "actions_yr": 236250000,
+    "co2_per_action_kg": 0.0882,
+    "co2_yr_kg": 20837250.0,
+    "co2_yr_t": 20837.2,
+    "equivalent_persons_yr": 1736.4
+  }
+}

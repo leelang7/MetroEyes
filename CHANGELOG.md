@@ -1,6 +1,12 @@
 # Changelog — MetroEyes (SubwayBEV)
 
-## v6.7 — D-5 회귀 가드 195건 + 1-Pager 4언어 + RUNBOOK + QA + 자기 채점표 + GitHub polish (2026-05-08 cycle 372-386)
+## v6.7 — D-5 회귀 가드 203건 + 1-Pager 4언어 + RUNBOOK + QA + 자기 채점표 + GitHub polish + CO₂ EDA (2026-05-08 cycle 372-390)
+
+### v6.7 후속 (cycle 387-390)
+- cycle 387: docs freshness 일괄 갱신 (RECORDING_GUIDE / ARCHITECTURE_VIEW / SUBMISSION_GUIDE)
+- cycle 388: submission_check required_files 19→33 확장
+- cycle 389: onepager stale 146/377 → 197/389 갱신
+- cycle 390: ESG CO₂ 절감 정량 EDA — ultra (광고 0.012) + standard (실효 0.088) 두 시나리오
 
 ### "심사 take-away + Q&A 사전 준비 + 광고-코드 자동 정합" 단계
 - v6.6 EDA 2D + narration → v6.7 발표 자료 4언어 + 운영 안정성 + KPI drift 자동 차단
