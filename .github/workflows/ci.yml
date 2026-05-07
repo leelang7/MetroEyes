@@ -145,3 +145,18 @@ jobs:
         run: |
           python -m pytest tests/test_bonus_krw.py -v
           echo "✅ Differential bonus — basic ₩200 / +₩100 OD / +₩200 transfer + transfer outranks OD"
+
+  figures-present-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: pip install --no-cache-dir pytest
+      - name: Run figs/ presence regression tests
+        run: |
+          python -m pytest tests/test_figures_present.py -v
+          echo "✅ pitch.html 참조 figs/* 모두 존재 + 비어있지 않음"
