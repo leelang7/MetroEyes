@@ -55,9 +55,9 @@ def test_slides_html_v2_outdated_removed() -> None:
 
 
 def test_slides_html_line_priority_referenced() -> None:
-    """슬라이드 19에 호선별 ROI (cycle 360) 명시."""
+    """슬라이드 19에 호선별 ROI (cycle 360, cycle 374 v3 alignment) 명시."""
     t = _slides()
-    assert "621" in t, "2호선 ROI 621 missing"
+    assert "708" in t, "2호선 ROI 708x (cycle 374 v3 alignment) missing"
     assert "2호선" in t, "Line 2 reference missing"
 
 

@@ -190,16 +190,16 @@ One-direction transfer corridor pressure → A* evac route design basis.
 ## 04:00 — 🎯 호선별 ROI 우선순위 (cycle 360+368)
 
 **🇰🇷**: ₩400M 한정 예산을 9 개 호선에 어떻게 배분해야 할까요?
-2호선 ROI 621x, 5호선 294x, 7호선 257x. 1호선은 121x (가장 낮음).
+2호선 ROI 708x (157M분 절감), 9호선 236x, 7호선 224x. 8호선은 75x (가장 낮음).
 한 단계 더 — 2호선 9시 / 17시 / 19시가 priority 158 로 최우선.
 **🇺🇸**: How to allocate ₩400M budget across 9 lines for max ROI?
-Line 2 ROI 621x, Line 5 294x, Line 7 257x. Line 1 121x (lowest).
+Line 2 ROI 708x (157M min saved), Line 9 236x, Line 7 224x. Line 8 75x (lowest).
 One step deeper: Line 2 at 9 / 17 / 19 hours score 158 — top priority cells.
 **🇨🇳**: ₩400M 预算如何分配 9 条线路才能 ROI 最大?
-2 号线 ROI 621x, 5 号线 294x, 7 号线 257x。1 号线 121x (最低)。
+2 号线 ROI 708x (节省 157M 分), 9 号线 236x, 7 号线 224x。8 号线 75x (最低)。
 更深一层: 2 号线 9 / 17 / 19 时 priority 158 — 最优先单元。
 **🇯🇵**: ₩400M 予算を 9 路線にどう配分すれば ROI 最大?
-2 号線 ROI 621x、5 号線 294x、7 号線 257x。1 号線 121x (最低)。
+2 号線 ROI 708x (157M 分削減)、9 号線 236x、7 号線 224x。8 号線 75x (最低)。
 さらに一段: 2 号線 9 / 17 / 19 時 priority 158 — 最優先 cell。
 
 ---

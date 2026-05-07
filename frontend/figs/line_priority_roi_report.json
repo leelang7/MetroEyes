@@ -5,94 +5,94 @@
       "avg_pct": 141.3,
       "peak_pct": 150.0,
       "over_100_hours": 17,
-      "saved_min_yr": 65269189,
-      "social_value_won": 13053837800,
+      "saved_min_yr": 40376516,
+      "social_value_won": 8075303200,
       "priority_score": 915.0,
-      "roi_x": 293.7
+      "roi_x": 181.7
     },
     {
       "line": "6호선",
       "avg_pct": 133.3,
       "peak_pct": 150.0,
       "over_100_hours": 17,
-      "saved_min_yr": 32610989,
-      "social_value_won": 6522197800,
+      "saved_min_yr": 28501070,
+      "social_value_won": 5700214000,
       "priority_score": 915.0,
-      "roi_x": 146.7
+      "roi_x": 128.3
     },
     {
       "line": "7호선",
       "avg_pct": 141.6,
       "peak_pct": 150.0,
       "over_100_hours": 17,
-      "saved_min_yr": 57021696,
-      "social_value_won": 11404339200,
+      "saved_min_yr": 49876873,
+      "social_value_won": 9975374600,
       "priority_score": 915.0,
-      "roi_x": 256.6
+      "roi_x": 224.4
     },
     {
       "line": "9호선",
       "avg_pct": 136.9,
       "peak_pct": 150.0,
       "over_100_hours": 17,
-      "saved_min_yr": 28163456,
-      "social_value_won": 5632691200,
+      "saved_min_yr": 52438946,
+      "social_value_won": 10487789200,
       "priority_score": 915.0,
-      "roi_x": 126.7
+      "roi_x": 236.0
     },
     {
       "line": "2호선",
       "avg_pct": 139.0,
       "peak_pct": 150.0,
       "over_100_hours": 16,
-      "saved_min_yr": 137983296,
-      "social_value_won": 27596659200,
+      "saved_min_yr": 157316839,
+      "social_value_won": 31463367800,
       "priority_score": 870.0,
-      "roi_x": 620.9
+      "roi_x": 707.9
     },
     {
       "line": "8호선",
       "avg_pct": 132.1,
       "peak_pct": 150.0,
       "over_100_hours": 16,
-      "saved_min_yr": 20444318,
-      "social_value_won": 4088863600,
+      "saved_min_yr": 16625624,
+      "social_value_won": 3325124800,
       "priority_score": 870.0,
-      "roi_x": 92.0
+      "roi_x": 74.8
     },
     {
       "line": "3호선",
       "avg_pct": 125.0,
       "peak_pct": 150.0,
       "over_100_hours": 15,
-      "saved_min_yr": 53085165,
-      "social_value_won": 10617033000,
+      "saved_min_yr": 38001427,
+      "social_value_won": 7600285400,
       "priority_score": 825.0,
-      "roi_x": 238.9
+      "roi_x": 171.0
     },
     {
       "line": "4호선",
       "avg_pct": 119.8,
       "peak_pct": 150.0,
       "over_100_hours": 15,
-      "saved_min_yr": 51856199,
-      "social_value_won": 10371239800,
+      "saved_min_yr": 45126694,
+      "social_value_won": 9025338800,
       "priority_score": 825.0,
-      "roi_x": 233.4
+      "roi_x": 203.1
     },
     {
       "line": "1호선",
       "avg_pct": 68.0,
       "peak_pct": 150.0,
       "over_100_hours": 4,
-      "saved_min_yr": 26965687,
-      "social_value_won": 5393137400,
+      "saved_min_yr": 45126694,
+      "social_value_won": 9025338800,
       "priority_score": 330.0,
-      "roi_x": 121.3
+      "roi_x": 203.1
     }
   ],
-  "total_saved_min_yr": 473399995,
-  "total_social_value_won": 94679999000,
+  "total_saved_min_yr": 473390683,
+  "total_social_value_won": 94678136600,
   "budget_per_line_won": 44444444,
   "response_rate": 0.3,
   "won_per_min": 200,

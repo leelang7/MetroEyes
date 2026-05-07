@@ -36,8 +36,8 @@ def test_kpi_consistency_with_pitch() -> None:
     # Monte Carlo CI 표시
     assert "1,064" in html or "1064" in html, "30% CI lower bound missing"
     assert "1,808" in html or "1808" in html, "30% CI upper bound missing"
-    # 호선별 ROI (cycle 360)
-    assert "621x" in html, "2호선 ROI missing"
+    # 호선별 ROI (cycle 360, cycle 374 v3 alignment)
+    assert "708x" in html, "2호선 ROI 708x (cycle 374 v3 alignment) missing"
     # 호선×시간 (cycle 368)
     assert "priority 158" in html.lower() or "priority 158" in html, "Top 5 cell priority missing"
 

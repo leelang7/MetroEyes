@@ -40,11 +40,11 @@ def test_monte_carlo_ci_section_present() -> None:
 
 
 def test_line_priority_roi_section_present() -> None:
-    """§5.3 호선별 ROI 정량 답."""
+    """§5.3 호선별 ROI 정량 답 (cycle 374 — policy v3 직접 시뮬 정렬)."""
     t = _txt()
-    assert "621x" in t, "2호선 ROI 621x missing"
+    assert "708x" in t, "2호선 ROI 708x (cycle 374 v3 alignment) missing"
     assert "🥇" in t and "🥈" in t and "🥉" in t, "medal markers missing"
-    assert "121x" in t, "1호선 121x (lowest) missing"
+    assert "75x" in t, "8호선 75x (cycle 374 새 lowest) missing"
 
 
 def test_line_hour_matrix_section_present() -> None:

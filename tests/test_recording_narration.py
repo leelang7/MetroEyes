@@ -34,8 +34,8 @@ def test_critical_stages_referenced() -> None:
     txt = _doc()
     for marker in ("cycle 356", "cycle 358", "cycle 360"):
         assert marker in txt, f"missing cycle reference: {marker}"
-    # 핵심 KPI 수치 — 4언어로 보존되어야 함
-    for kpi in ("621x", "294x", "257x", "121x", "1,393", "347", "139.3"):
+    # 핵심 KPI 수치 (cycle 374 v3 alignment) — 4언어로 보존되어야 함
+    for kpi in ("708x", "236x", "224x", "75x", "1,393", "347", "139.3"):
         assert kpi in txt, f"missing KPI reference: {kpi}"
 
 

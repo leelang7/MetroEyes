@@ -32,8 +32,9 @@ def test_new_overlay_branding() -> None:
     # cycle 358 — Hungarian + ETA
     assert "Hungarian" in html, "evac overlay must mention Hungarian"
     assert "1.4 m/s" in html or "1.4 m" in html or "보행 1.4" in html, "evac ETA formula missing"
-    # cycle 360 — 2호선 ROI 621x
-    assert "621x" in html, "line ROI overlay must show 2호선 621x"
+    # cycle 360 (cycle 374 alignment) — 2호선 ROI 708x · 157M분
+    assert "708x" in html, "line ROI overlay must show 2호선 708x (cycle 374 v3 alignment)"
+    assert "157M" in html, "line ROI must reference 157M saved (광고 일치)"
     assert "₩400M" in html or "400M" in html, "line ROI budget reference missing"
 
 

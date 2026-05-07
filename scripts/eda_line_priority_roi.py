@@ -53,12 +53,20 @@ def load_carload() -> dict:
 
 
 def load_roi_per_line() -> dict:
-    """호선별 연간 saved minutes 추정 — 정책 ROI v3 의 473.4M/년 총량을
-    line_carload_est on_total 비중대로 분배.
+    """호선별 연간 saved minutes — 정책 ROI v3 직접 시뮬 결과 (per_line_saved_min).
 
-    이렇게 하면 호선별 합 == 정책 v3 의 30% 시나리오 절감분.
-    호선별 점유 부담이 큰 호선이 자동으로 더 큰 절감 효과 받음.
+    cycle 374 fix: 이전에는 line_carload on_total 비중으로 분배했으나
+    광고 "2호선 단독 157M" 와 충돌. 정책 v3 가 source of truth.
     """
+    if ROI_JSON.exists():
+        try:
+            d = json.loads(ROI_JSON.read_text(encoding="utf-8"))
+            per_line = d.get("per_line_saved_min")
+            if per_line:
+                return per_line
+        except Exception:
+            pass
+    # fallback (정책 v3 안 돌렸으면) — line_carload 비중 분배
     if not CARLOAD_CSV.exists():
         return {f"{i}호선": 17_000_000 for i in range(1, 10)}
     by_line: dict[str, float] = {}
@@ -70,9 +78,7 @@ def load_roi_per_line() -> dict:
             except (TypeError, ValueError):
                 continue
             by_line[line] = by_line.get(line, 0) + on
-    # 정책 v3 30% 시나리오 총 절감 = 473.4M/년
     total_saved_yr = 473_400_000
-    # 9 핵심 호선 비중만 사용 (지선/광역 제외)
     main_lines = {f"{i}호선" for i in range(1, 10)}
     main_total = sum(v for k, v in by_line.items() if k in main_lines)
     if main_total <= 0:

@@ -61,7 +61,7 @@
 - **cycle 356** AI 자동 단가 근거 카드 (ad_pricing.html) — Claude Haiku 폭증 컨텍스트 광고주 노출
 - **cycle 357** 환경 라이브 패널 (admin.html) — PM2.5≥36 호흡기 약자 지하 권고 자동 알림
 - **cycle 358** A* 비상 동선 강화 — 출구 차단 토글 + ETA 초 변환 + Hungarian vs 4분면 baseline 비교
-- **cycle 360** 호선별 차등 보상 ROI EDA — 2호선 ROI 621x · 138M분 · "예산 1순위는 2호선" 정량 답
+- **cycle 360** 호선별 차등 보상 ROI EDA — 2호선 ROI 708x · 157M분 (cycle 374 정책 v3 직접 시뮬 정렬)
 - **cycle 363** demo.html 5분 시연 SCRIPT 확장 — AI 단가/A* 강화/호선 ROI 3 신규 overlay stage
 - **cycle 364** Monte Carlo 1,000회 95% CI — 30% 시나리오 1,393억 [1,064~1,808억] · 통계적 근거
 - **cycle 366** admin 호선별 ROI 라이브 추천 — EDA 결과를 운영자 admin 열자마자 즉시 메달 ranked list

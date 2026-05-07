@@ -263,6 +263,11 @@ def main():
     # JSON 저장 (matrix는 압축)
     summary = {**mid}
     summary["save_matrix"] = "[N_LINES × 24] omitted from JSON; see PNG"
+    # per-line saved_min (cycle 374) — eda_line_priority_roi 가 직접 사용해 광고와 일치
+    summary["per_line_saved_min"] = {
+        line: int(line_totals[i] * 1e6)
+        for i, line in enumerate(mid["lines"])
+    }
     summary["all_scenarios"] = [
         {"label": x["label"], "rate": x["behavior_response"],
          "net_b": x["net_value_b"], "roi_x": x["roi_x"]}
