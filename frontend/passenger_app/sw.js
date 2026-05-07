@@ -1,4 +1,4 @@
-const CACHE = 'subwaybev-citizen-v5-grace-ping';
+const CACHE = 'subwaybev-citizen-v6-stt-co2';
 const ASSETS = [
   './',
   './index.html',
