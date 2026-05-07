@@ -251,6 +251,25 @@
       </div>
     </div>
 
+    <!-- 🌍 환경 라이브 패널 (cycle 357) — citydata 의 PM/UV/온도 실시간 노출 -->
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.08), rgba(167,139,250,.04)); border: 1px solid rgba(125,211,211,.30);">
+      <h2>🌍 환경 라이브 <span style="color: var(--muted); font-weight: 400;">(citydata · PM / UV / 온도)</span></h2>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
+        <div class="stat">🌫 PM2.5      <b id="env-pm25">— μg/m³</b></div>
+        <div class="stat">🌫 PM10       <b id="env-pm10">— μg/m³</b></div>
+        <div class="stat">🌬 통합 대기  <b id="env-air">—</b></div>
+        <div class="stat">☀ UV 지수    <b id="env-uv">—</b></div>
+        <div class="stat">🌡 기온       <b id="env-temp">— °C</b></div>
+        <div class="stat">💧 습도       <b id="env-hum">— %</b></div>
+      </div>
+      <div id="env-poi" style="margin-top: 6px; padding: 6px 10px; background: rgba(125,211,211,.08); border-radius: 6px; font-size: 11px; color: var(--muted);">
+        대기 중 — POI citydata broadcast 수신 시 자동 갱신
+      </div>
+      <div id="env-alert" hidden style="margin-top: 6px; padding: 8px 10px; background: rgba(239,68,68,.10); border: 1px solid rgba(239,68,68,.40); border-radius: 6px; font-size: 11px; color: #fca5a5;">
+        ⚠ <b id="env-alert-text">—</b>
+      </div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(239,68,68,.08), rgba(245,158,11,.04));">
       <h2>🚨 사고 누적 <span style="color: var(--muted); font-weight: 400;">(incident_log 동기화)</span>
         <button onclick="triggerDemoIncidents()" style="float: right; padding: 2px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연</button>
@@ -403,7 +422,10 @@ function connectWs() {
     } else {
       const t = (j && j.type) || 'unknown';
       if (t === 'arrival') bucket = 'arrival';
-      else if (t === 'population' || t === 'citydata') bucket = 'population';
+      else if (t === 'population' || t === 'citydata') {
+        bucket = 'population';
+        if (t === 'citydata') applyEnvLive(j);
+      }
       else if (t === 'impact_summary') {
         bucket = 'impact';
         applyImpactCard(j);
@@ -469,6 +491,30 @@ function getPoi() { return document.getElementById('poi').value; }
 function clearLog() { logEl.innerHTML = ''; stats = { sent:0, recv:0, bev:0, fpsSum:0, fpsN:0 }; refreshStats(); }
 
 // ====== Live Impact card ======
+// 🌍 환경 라이브 (cycle 357) — citydata 의 PM/UV/온도 broadcast 를 즉시 반영
+function applyEnvLive(j) {
+  if (!j) return;
+  try {
+    const setT = (id, v) => { const e = document.getElementById(id); if (e && v !== undefined) e.textContent = v; };
+    if (j.pm25 != null) setT('env-pm25', `${j.pm25} μg/m³`);
+    if (j.pm10 != null) setT('env-pm10', `${j.pm10} μg/m³`);
+    if (j.air_idx) setT('env-air', `${j.air_idx} (${j.air_idx_mvl != null ? j.air_idx_mvl : '—'})`);
+    if (j.uv_idx) setT('env-uv', `${j.uv_idx}${j.uv_lvl != null ? ' · lvl ' + j.uv_lvl : ''}`);
+    if (j.temp != null) setT('env-temp', `${j.temp} °C`);
+    if (j.humidity != null) setT('env-hum', `${j.humidity} %`);
+    if (j.poi || j.area_nm) setT('env-poi', `${j.poi || j.area_nm} · ${new Date().toLocaleTimeString()}`);
+    // 약자 보호 알림 — PM2.5 ≥ 36 (나쁨) OR PM10 ≥ 81 OR UV 매우높음
+    const alerts = [];
+    if (j.pm25 != null && j.pm25 >= 36) alerts.push(`PM2.5 ${j.pm25} (${j.pm25 >= 76 ? '매우 나쁨' : '나쁨'}) — 호흡기 약자 지하 권고`);
+    if (j.pm10 != null && j.pm10 >= 81) alerts.push(`PM10 ${j.pm10} 나쁨`);
+    if (j.uv_idx === '매우 높음' || (j.uv_lvl ?? 0) >= 9) alerts.push(`UV 매우 높음 — 지상 노출 최소화 권고`);
+    const box = document.getElementById('env-alert');
+    const txt = document.getElementById('env-alert-text');
+    if (alerts.length && box && txt) { box.hidden = false; txt.textContent = alerts.join(' · '); }
+    else if (box) { box.hidden = true; }
+  } catch {}
+}
+
 function applyImpactCard(j) {
   const fmt = (w) => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
   document.getElementById('im-cnt').textContent = (j.total_count || 0).toLocaleString();
