@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MetroEyes — 1-Pager · 2026 서울시 빅데이터 활용 경진대회 (창업 부문)</title>
+<meta name="description" content="MetroEyes 한 장 요약 — ROI 347x · 1,393억/년 · Monte Carlo 95% CI · 4언어 · 102 회귀 가드">
+<style>
+  /* ===== A4 print-friendly ===== */
+  @page { size: A4 portrait; margin: 12mm; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #f7f7fb; color: #1a1a1f;
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page {
+    max-width: 210mm; min-height: 297mm; margin: 0 auto; padding: 14mm 12mm;
+    background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 4mm;
+  }
+  /* ===== Header ===== */
+  header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding-bottom: 3mm; border-bottom: 2px solid #7dd3d3;
+  }
+  .brand { display: flex; align-items: center; gap: 4mm; }
+  .brand .logo {
+    width: 14mm; height: 14mm; border-radius: 3mm;
+    background: linear-gradient(135deg, #7dd3d3, #38bdf8);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 8mm; color: #0a0a0e;
+  }
+  .brand h1 { margin: 0; font-size: 8mm; letter-spacing: 0.2mm; color: #0a0a0e; }
+  .brand .tag { font-size: 3mm; color: #5a5a66; margin-top: 1mm; letter-spacing: 0.4mm; }
+  .meta { text-align: right; font-size: 2.6mm; color: #5a5a66; }
+  .meta b { color: #1a1a1f; }
+  /* ===== Quote ===== */
+  .quote {
+    padding: 3mm 5mm; background: linear-gradient(135deg, rgba(125,211,211,0.10), rgba(167,139,250,0.05));
+    border-left: 1mm solid #7dd3d3; border-radius: 1mm; font-style: italic;
+    font-size: 3.5mm; color: #1a1a1f; line-height: 1.5;
+  }
+  /* ===== KPI ===== */
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm;
+  }
+  .kpi {
+    padding: 3mm; border-radius: 2mm; background: #f0f4f8;
+    border-top: 1mm solid #7dd3d3;
+  }
+  .kpi.purple { border-top-color: #a78bfa; background: #f3f0fa; }
+  .kpi.amber { border-top-color: #f59e0b; background: #fbf5ec; }
+  .kpi.green { border-top-color: #10b981; background: #effaf5; }
+  .kpi .lbl { font-size: 2.2mm; color: #5a5a66; letter-spacing: 0.4mm; text-transform: uppercase; font-weight: 600; }
+  .kpi .val { font-size: 6mm; color: #0a0a0e; font-weight: 800; margin-top: 1mm; line-height: 1.0; font-variant-numeric: tabular-nums; }
+  .kpi .sub { font-size: 2.4mm; color: #1a1a1f; margin-top: 1mm; }
+  .kpi .ci { font-size: 2.0mm; color: #10b981; margin-top: 0.5mm; font-weight: 600; }
+  /* ===== Section ===== */
+  section { display: flex; flex-direction: column; gap: 2mm; }
+  section h2 {
+    margin: 0; font-size: 3.4mm; letter-spacing: 0.4mm; color: #1a1a1f;
+    text-transform: uppercase; padding-bottom: 1mm; border-bottom: 0.3mm solid #d8d8e0;
+  }
+  /* ===== 3-column grid ===== */
+  .col3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4mm; }
+  .col3 .box {
+    padding: 3mm; border: 0.3mm solid #d8d8e0; border-radius: 2mm; background: #fafafe;
+  }
+  .col3 .box h3 {
+    margin: 0 0 1.5mm; font-size: 3mm; color: #1a1a1f; font-weight: 700;
+  }
+  .col3 .box ul { margin: 0; padding-left: 4mm; font-size: 2.6mm; line-height: 1.55; color: #2a2a35; }
+  .col3 .box ul li { margin: 0.6mm 0; }
+  .col3 .box .accent { color: #7dd3d3; font-weight: 700; }
+  .col3 .box .accent2 { color: #a78bfa; font-weight: 700; }
+  .col3 .box .accent3 { color: #f59e0b; font-weight: 700; }
+  /* ===== Diff table ===== */
+  table.diff {
+    width: 100%; border-collapse: collapse; font-size: 2.6mm; line-height: 1.4;
+  }
+  table.diff th, table.diff td {
+    padding: 1.5mm 2mm; border-bottom: 0.2mm solid #d8d8e0; text-align: left;
+  }
+  table.diff th { background: #f0f4f8; font-weight: 700; }
+  table.diff td.us { background: rgba(125,211,211,0.08); font-weight: 600; }
+  /* ===== Footer ===== */
+  footer {
+    margin-top: auto; padding-top: 2mm; border-top: 0.3mm solid #d8d8e0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 2.6mm; color: #5a5a66;
+  }
+  footer .links { display: flex; gap: 4mm; }
+  footer a { color: #1a1a1f; text-decoration: none; font-weight: 600; }
+  footer .badge {
+    padding: 1mm 2.5mm; background: #10b981; color: #fff; border-radius: 1mm; font-weight: 700;
+  }
+  /* ===== Print ===== */
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; max-width: none; padding: 0; min-height: 0; }
+    .no-print { display: none !important; }
+  }
+  /* ===== Top print button ===== */
+  .print-btn {
+    position: fixed; right: 4mm; top: 4mm; z-index: 100;
+    padding: 3mm 5mm; background: #1a1a1f; color: #fff; border: none; border-radius: 2mm;
+    font-weight: 700; cursor: pointer; font-size: 3mm;
+  }
+</style>
+</head>
+<body>
+<button class="print-btn no-print" onclick="window.print()">🖨 PDF 인쇄</button>
+<div class="page">
+
+  <header>
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>MetroEyes</h1>
+        <div class="tag">테슬라가 도로를 보듯, 우리는 도시 교통 전체를 본다</div>
+      </div>
+    </div>
+    <div class="meta">
+      <div><b>2026 서울시 빅데이터 활용 경진대회</b> · 창업 부문</div>
+      <div>제출 마감 2026-05-13 · 본선 2026-07-06</div>
+      <div>이상철 · leescvsir@gmail.com</div>
+    </div>
+  </header>
+
+  <div class="quote">
+    "지하철·버스 BEV CV + 실시간 도시 데이터 + 시민 분산 인센티브 — 3 축 통합 시스템.
+    한 명의 분산 행동 = 한 KPI 라이브. <b>차등 보상으로 만석 칸 평탄화 → 광고 / 안전 / 통근 / 에너지 4 축 가치 창출</b>."
+  </div>
+
+  <!-- ===== 헤더라인 KPI ===== -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="lbl">정책 ROI v3</div>
+      <div class="val">347x</div>
+      <div class="sub">사회적 가치 ÷ 인프라</div>
+      <div class="ci">95% CI [270x ~ 424x]</div>
+    </div>
+    <div class="kpi purple">
+      <div class="lbl">순 사회적 가치</div>
+      <div class="val">1,393억<span style="font-size:3mm;color:#5a5a66;">/년</span></div>
+      <div class="sub">통근 + 사고 + 광고 + 에너지</div>
+      <div class="ci" style="color:#a78bfa;">CI [1,064~1,808억]</div>
+    </div>
+    <div class="kpi amber">
+      <div class="lbl">절감 시간</div>
+      <div class="val">473M<span style="font-size:3mm;color:#5a5a66;">분/년</span></div>
+      <div class="sub">2호선 단독 138M (29%)</div>
+      <div class="ci" style="color:#f59e0b;">9 호선 × 19 시간 매트릭스</div>
+    </div>
+    <div class="kpi green">
+      <div class="lbl">자동 검증</div>
+      <div class="val">120<span style="font-size:3mm;color:#5a5a66;">가드</span></div>
+      <div class="sub">CI 14 jobs · 372 사이클</div>
+      <div class="ci">광고 수치 ↔ 코드 자동 정합</div>
+    </div>
+  </div>
+
+  <!-- ===== 3 column section ===== -->
+  <section>
+    <h2>핵심 차별성 — 6 axis</h2>
+    <div class="col3">
+      <div class="box">
+        <h3>① 자체 CV BEV 백엔드</h3>
+        <ul>
+          <li><span class="accent">YOLO11n + BoT-SORT + 호모그래피</span> Tesla-식 BEV</li>
+          <li>Jetson Orin Edge AI — <b>개인정보 zero</b></li>
+          <li>1280p 입력 + Three.js 3D 시각화</li>
+          <li>--demo 모드: 모델 없이도 BEV broadcast</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>② 실 데이터 분산 효과 검증</h3>
+        <ul>
+          <li>1~9 호선 28일 평균 EDA</li>
+          <li><span class="accent">σ −9.0% / 피크 −13.5% / 비피크 +5.6%</span></li>
+          <li>피크/비피크 1.78 → 1.46</li>
+          <li>OD 비대칭 12.4x (삼성역) · 환승 +1.56 (충무로)</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>③ 9 가지 IDEA + 양면 가치사슬</h3>
+        <ul>
+          <li>IDEA-1~9: 분산 / 안전 / 환승 / OD / 비상 / 도착알림</li>
+          <li><span class="accent2">IDEA-9 5 채널 도착 알림</span> (청각 약자 42 만)</li>
+          <li>운영자 ↔ 시민 5단 closed loop</li>
+          <li>시민 분산 1회 → 운영자 ROI 라이브 갱신</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>④ AI 4 축 통합 (Claude Haiku 4.5)</h3>
+        <ul>
+          <li><span class="accent2">CV</span> + <span class="accent2">LLM 자동 컨텍스트</span></li>
+          <li><span class="accent2">ML 카로드 v3 R²=0.931</span></li>
+          <li><span class="accent2">Edge AI</span> + Web Speech STT</li>
+          <li>광고주에게 폭증 이유 자연어 설명 → 입찰 신뢰도 ↑</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>⑤ 호선별 정책 답 (정량)</h3>
+        <ul>
+          <li>🥇 <span class="accent3">2호선 ROI 621x</span> · 138M분</li>
+          <li>🥈 5호선 294x / 🥉 7호선 257x</li>
+          <li>1호선 121x (가장 낮음)</li>
+          <li><b>Top 5 cell</b>: 2호선 9/17/19시 (priority 158)</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>⑥ 통계적 신뢰도 + 4 언어</h3>
+        <ul>
+          <li><span class="accent">Monte Carlo 1,000회 95% CI</span> 4축 perturbation</li>
+          <li>한국어 / 영어 / 중국어 / 일본어 11 페이지 parity</li>
+          <li>CI 14 jobs · pytest 120 가드</li>
+          <li>scripts/submission_check.py — 12 항목 PASS/WARN/FAIL</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Diff table ===== -->
+  <section>
+    <h2>경쟁 비교 — 도시별 분산 정책</h2>
+    <table class="diff">
+      <tr><th>도시</th><th>정책</th><th>인센티브</th><th>입자</th><th>한계</th></tr>
+      <tr><td>🇬🇧 London</td><td>Off-Peak 30% 할인</td><td>고정</td><td>역 단위 RFID</td><td>칸 단위 분산 X</td></tr>
+      <tr><td>🇯🇵 Tokyo</td><td>Off-Peak Suica</td><td>월 정액</td><td>통근 구간 통계</td><td>실시간 안내 X</td></tr>
+      <tr><td>🇸🇬 Singapore</td><td>GP-S 25¢ 시범 (2018)</td><td>1회성</td><td>EZ-Link 카드</td><td>실시간 칸 데이터 X · 응답률 ~5%</td></tr>
+      <tr class="us"><td>🇰🇷 <b>MetroEyes</b></td><td><b>분산률 차등</b> (5%p +₩100, 30%p +₩200)</td><td><b>실시간 칸 단위</b></td><td><b>자체 CV BEV</b> (cap 30~150%)</td><td><b>30% 응답률 ROI 347x [CI 270~424]</b></td></tr>
+    </table>
+  </section>
+
+  <!-- ===== 사업화 / 시장 ===== -->
+  <section>
+    <h2>사업화 — Y3 매출 ₩200억 + 사회 가치 1,393억/년</h2>
+    <div class="col3">
+      <div class="box">
+        <h3>B2G SaaS 라이선스</h3>
+        <ul>
+          <li>도시 ₩3~8억/년 (서울 → 6 광역시 → 글로벌)</li>
+          <li>Y3 ₩40억 (서울 + 5 도시)</li>
+          <li>운영자 admin live 패널 + REST 9 endpoint</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>B2B 광고 API rev share</h3>
+        <ul>
+          <li>citydata 분 단위 단가 → 광고 거래 4~7% rev share</li>
+          <li>Y3 ₩100억 (시장 ₩2,000억의 5%)</li>
+          <li>AI 자동 단가 근거 (Claude Haiku) 로 입찰 신뢰</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>B2B Data API 구독</h3>
+        <ul>
+          <li>BEV 트랙 + 호선별 ROI ₩2,400만/년/고객</li>
+          <li>Y3 ₩12억 (50 광고주 × ₩2,400만)</li>
+          <li>OpenAPI 3.0 spec — Swagger / Postman 자동 import</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="links">
+      <a href="https://leelang7.github.io/MetroEyes/">🌐 leelang7.github.io/MetroEyes</a>
+      <a href="https://github.com/leelang7/MetroEyes">💾 github.com/leelang7/MetroEyes</a>
+      <a href="pitch.html">📊 pitch.html (정량 보고)</a>
+    </div>
+    <div>
+      <span class="badge">Live Demo</span>
+      <span style="margin-left: 2mm;">Apache 2.0</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

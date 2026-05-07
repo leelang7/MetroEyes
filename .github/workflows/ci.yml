@@ -216,7 +216,7 @@ jobs:
           python-version: '3.12'
       - name: Install pytest
         run: pip install --no-cache-dir pytest
-      - name: Run cycle 356-370 frontend regression tests
+      - name: Run cycle 356-372 frontend regression tests
         run: |
-          python -m pytest tests/test_ad_llm_context.py tests/test_env_live_panel.py tests/test_evac_strengthen.py tests/test_pwa_picker.py tests/test_demo_orchestration.py tests/test_i18n_admin_ad.py tests/test_admin_line_roi_panel.py tests/test_admin_line_hour_panel.py tests/test_recording_narration.py -v
-          echo "✅ Frontend features — ad LLM + 환경 + A* + PWA + demo + i18n + ROI 패널 + 시간대 mini heatmap + narration 모두 검증"
+          python -m pytest tests/test_ad_llm_context.py tests/test_env_live_panel.py tests/test_evac_strengthen.py tests/test_pwa_picker.py tests/test_demo_orchestration.py tests/test_i18n_admin_ad.py tests/test_admin_line_roi_panel.py tests/test_admin_line_hour_panel.py tests/test_recording_narration.py tests/test_onepager.py tests/test_proposal_v3_alignment.py -v
+          echo "✅ Frontend features — 11 테스트 파일 (LLM + 환경 + A* + PWA + demo + i18n + ROI panel + heatmap + narration + onepager + proposal v3) 모두 검증"
