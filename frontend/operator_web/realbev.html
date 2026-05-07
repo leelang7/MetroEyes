@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>MetroEyes — 3D Tesla-style HUD</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
 <style>
@@ -471,7 +474,10 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
   </section>
 
   <!-- ③ 라이브 트랙 분포 + 사고 history + KPI (실영상 밑 빈칸 보강) -->
-  <section style="margin-top: 14px; display: grid; grid-template-columns: 1.2fr 1.4fr 1fr; gap: 12px;">
+  <div style="margin-top: 18px; padding: 8px 14px; background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(167,139,250,.06)); border: 1px solid rgba(125,211,211,.30); border-radius: 10px; font-size: 12px; color: var(--muted-2);">
+    <b style="color: var(--accent); letter-spacing: 1px;">▼ 라이브 분석 패널 (cycle 341 신규)</b> — 실 카메라 영상 + BEV 3D 뷰 결과를 실시간 집계한 운영자 종합 대시보드
+  </div>
+  <section style="margin-top: 10px; display: grid; grid-template-columns: 1.2fr 1.4fr 1fr; gap: 12px;">
     <div class="tile" style="padding: 12px 14px;">
       <h3><b>③ 라이브 트랙 분포</b><span style="color: var(--muted); font-weight: 400;">YOLO11n 클래스별 카운트</span></h3>
       <div id="track-dist" style="display: flex; flex-direction: column; gap: 6px; padding: 6px 0;">
