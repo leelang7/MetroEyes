@@ -1343,9 +1343,9 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       <div style="font-size: 22px;">🌱</div>
       <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">ENV — 탄소중립</div>
       <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
-        분산 σ −9% × 700만/일<br>
-        → 차량 전환 ↓<br>
-        <b style="color: #10b981;">CO₂ 연 ~12,000톤 절감</b>
+        분산 30% × 자가용 회피<br>
+        <b style="color: #10b981;">2,834 톤/년 (ultra 광고)</b><br>
+        <span style="color: #f59e0b; font-weight: 600;">20,837 톤 (실효, 7배)</span>
       </div>
     </div>
     <div style="padding: 12px; background: rgba(125,211,211,.08); border: 1px solid rgba(125,211,211,.30); border-radius: 8px; text-align: center;">
@@ -1386,7 +1386,10 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
   </div>
   <p style="font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.7;">
-    <b style="color: var(--text);">탄소 절감 산정</b>: 시민 분산 30% × 출퇴근 자가용 전환 회피 5% × 700만/일 × 250일 × 1.5kg/회 ≈ <b style="color: #10b981;">연 약 13,000톤 CO₂eq</b> (서울시 ESG 가점 대상).
+    <b style="color: var(--text);">탄소 절감 정량 EDA (cycle 390)</b>: 30% 시나리오 분산 행동 236M회/년 × CO₂/회 →
+    <b style="color: #10b981;">ultra 0.012 kg = 2,834 톤/년 (광고, 한국인 236년 배출 등가)</b> · <b style="color: #f59e0b;">standard 0.088 kg = 20,837 톤 (실효 7배)</b>.
+    derivation: 자가용 회피율 (ultra 0.7% / standard 5%) × 8.4km × 0.21 kg/km. 출처: 환경부 2023 / 서울교통공사 2023 / 한국교통연구원 modal split.
+    <code>scripts/eda_co2_savings.py</code> · CI 6 회귀 가드 자동 검증.
   </p>
 </div>
 

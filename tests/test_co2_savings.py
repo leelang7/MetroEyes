@@ -62,3 +62,27 @@ def test_sources_documented() -> None:
     assert "한국교통연구원" in sources["car_avoidance_std"], "한국교통연구원 출처 누락"
     assert "서울교통공사" in sources["commute_km"], "서울교통공사 출처 누락"
     assert "환경부" in sources["kg_co2_per_km"], "환경부 출처 누락"
+
+
+# === cycle 393 — pitch.html ESG callout 정합 ===
+
+def test_pitch_co2_two_scenarios() -> None:
+    """pitch.html ESG 카드에 ultra (2,834) + standard (20,837) 두 톤/년 모두 명시."""
+    pitch = (ROOT / "frontend" / "pitch.html").read_text(encoding="utf-8")
+    assert "2,834" in pitch, "pitch ESG missing ultra 2,834톤"
+    assert "20,837" in pitch, "pitch ESG missing standard 20,837톤"
+    assert "0.012" in pitch and "0.088" in pitch, "pitch derivation factors missing"
+
+
+def test_pitch_co2_outdated_12000_removed() -> None:
+    """pitch.html outdated '12,000톤' 또는 '13,000톤' (cycle 390 이전) 제거."""
+    pitch = (ROOT / "frontend" / "pitch.html").read_text(encoding="utf-8")
+    # 정확히 "12,000톤" 또는 "13,000톤" 절감 헤드라인 제거
+    assert "CO₂ 연 ~12,000톤" not in pitch, "outdated CO₂ 12,000톤 still present"
+    assert "연 약 13,000톤" not in pitch, "outdated 13,000톤 still present"
+
+
+def test_pitch_co2_eda_script_referenced() -> None:
+    """pitch.html 가 scripts/eda_co2_savings.py reference."""
+    pitch = (ROOT / "frontend" / "pitch.html").read_text(encoding="utf-8")
+    assert "eda_co2_savings.py" in pitch, "pitch missing eda_co2_savings.py reference"
