@@ -4,10 +4,10 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-381회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-382회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/regression_tests-172회귀_가드-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/regression_tests-177회귀_가드-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
@@ -16,6 +16,27 @@
 
 **라이브 데모 (외부 고정 URL)**: https://leelang7.github.io/MetroEyes/
 > 너 PC backend(ngrok 영구 도메인)에 자동 wss 연결. PC 켜둔 상태에서 누구든 접속하면 LIVE.
+
+---
+
+## 💡 평가위원 / Reviewers — 5 분 안에 핵심 파악
+
+> 처음 보시는 분은 아래 5 자료부터 — 모두 1차/2차 심사 정량 가중치와 1:1 매핑됨.
+
+| 우선순위 | 자료 | 1줄 설명 | 시간 |
+|---:|---|---|---:|
+| **1** | [📊 frontend/onepager.html](frontend/onepager.html) | A4 1-Pager — 핵심 KPI / 6 차별성 / 4 도시 비교 / 사업화 BM **(4언어)** | 1분 |
+| **2** | [🎬 frontend/demo.html](frontend/demo.html) | 5 분 통합 자동 시연 — 4 패널 동시 + 14 stage SCRIPT | 5분 |
+| **3** | [📈 frontend/pitch.html](frontend/pitch.html) | 정량 보고 — Monte Carlo CI + 호선별 ROI + 호선×시간 매트릭스 | 5분 |
+| **4** | [🎯 docs/SUBMISSION_INDEX.md](docs/SUBMISSION_INDEX.md) | 평가 지표 ↔ 산출물 ↔ CI 가드 자기 채점 (1차 105 + 2차 100) | 3분 |
+| **5** | [💬 docs/QA_PREPARATION.md](docs/QA_PREPARATION.md) | 18 예상 질문 + 30초 self-pitch (5 카테고리) | 5분 |
+
+**짧은 요약**: 자체 CV BEV + 9 공공 API + 시민 인센티브 3 축 통합 시스템.
+정책 ROI v3 + Monte Carlo 1,000 회 95% CI 로 사회 가치 **1,393억/년 [CI 1,064~1,808억]** 정량 도출.
+2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 177 회귀 가드 + 4 언어 i18n production-grade.
+
+**문서 추가 (장애·운영)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 시나리오 1줄 복구 · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — 상세 기획서 v3
+
 
 **핵심 KPI (정책 ROI v3, 응답률 30% 가정)**:
 - 순 사회적 가치 **1,393억/년** · ROI **347x** · 인프라 4억 (134역 우선)
