@@ -142,16 +142,27 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 
 ## 8. 발표 시연 스크립트 (3차 7/6 대비, 5분)
 
+**자동 SCRIPT** (cycle 363) — `frontend/demo.html` 가 14 stage timestamp 자동 진행:
+
 ```
-00:00-00:60  운영자 콘솔 (realbev.html) — 영상 업로드 → 칸별 점유 라이브
-00:60-01:30  🚨 비상 동선 추론 클릭 → 4분면 분석 → 출구 추천 (15초)
-             광고 단가 페이지 — 12역×24h 히트맵 → 가치사슬 3단 (45초)
-01:30-02:15  시민 PWA → 분산 인센티브 배너 + citydata 칩 (45초)
-02:15-02:45  네이티브 폰 → 헤더 sensors 카운트 ↑ (Phone-as-Sensor) (30초)
-02:45-03:15  CO₂ 그래프 (scripts/co2_correlation.py) → weak supervision 원리
-03:15-03:45  ROI 시뮬레이터 (scripts/policy_roi.py) → 가정값 슬라이더
-03:45-05:00  TRIZ 매트릭스 + 6대 혁신 슬라이드 + Q&A
+00:00  잠실역 18시 평상 운영 (오프닝)
+00:05  광고 단가 라이브 + 12 POI 분 단위 변동
+00:10  🤖 AI 자동 단가 근거 (Claude Haiku 4.5) ← cycle 356
+00:22  운영자 incident 5종 30초
+00:55  실 카메라 BEV (응급 골든타임 + AED)
+01:30  시민 PWA + 분산 인센티브 ₩300/₩400
+01:50  IDEA-9 도착 알림 5중 모달리티 (청각 약자 42만)
+02:08  backend krw → 운영자 ROI 라이브 갱신
+02:30  🚨 A* 비상 동선 강화 (Hungarian + 출구 차단 + ETA) ← cycle 358
+03:00  incident_summary 4-패널 동기화
+03:30  분산 효과 σ −9% / 피크 −13.5%
+03:42  환승 비대칭 충무로 +1.56
+04:00  🎯 호선별 ROI 우선순위 (2호선 708x · 157M분) ← cycle 360+374
+04:35  pitch.html ROI 슬라이더 마무리
 ```
+
+**4언어 narration**: [`docs/RECORDING_NARRATION.md`](RECORDING_NARRATION.md) — ko/en/zh/ja 14 stage × 4 = 56 블록
+**OBS 녹화**: ▶︎ 시연 시작 클릭 → 5분 자동 진행 + 음성 합성 (Audacity 별도 녹음 권장)
 
 ## 9. 백업 — DNS/네트워크 사고 대비
 
@@ -160,3 +171,27 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 정적 백업: outputs/demo/*.png (4장)
 오프라인 데모: docs/SLIDES.html (인터넷 없어도 동작)
 ```
+
+또한 [`docs/RUNBOOK.md`](RUNBOOK.md) 9 시나리오 1줄 복구 (cycle 376) 참조.
+
+## 10. D-1 자동 검증 (cycle 367 + 380)
+
+제출 직전 단일 명령으로 12 항목 정합성 검증:
+
+```powershell
+# 풀 검증 (heavy import + pytest 포함, ~3분)
+python scripts/submission_check.py
+
+# 빠른 검증 (CI mode — 1초 < 10 항목)
+python scripts/submission_check.py --ci
+```
+
+기대값: **12/12 PASS** — 제출 준비 완료 🎉
+- KPI 정합 (1,393억 / 347x / 473.4M / 2호선 157M / CI [1,064~1,808])
+- pitch.html figs 모두 존재
+- PWA 4언어 parity (ko/en/zh/ja)
+- 33 핵심 산출물 파일 모두 존재
+- pytest 207+ PASS
+
+자동 회귀 가드 207건 + CI 15 jobs + canonical KPI drift 자동 차단으로
+D-day 직전 회귀 사고 자동 차단 (cycle 374 같은 KPI 충돌 미연 방지).

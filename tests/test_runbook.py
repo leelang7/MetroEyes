@@ -73,3 +73,21 @@ def test_5second_grace_period_documented() -> None:
     t = _txt()
     assert "5초 offline grace" in t, "5초 grace period missing"
     assert "30초 ping" in t, "30s ping keepalive missing"
+
+
+def test_submission_guide_demo_script_updated() -> None:
+    """SUBMISSION_GUIDE §8 발표 시연 스크립트가 cycle 363 자동 SCRIPT 반영."""
+    sg = (ROOT / "docs" / "SUBMISSION_GUIDE.md").read_text(encoding="utf-8")
+    # cycle 363 자동 SCRIPT 14 stage timestamp 명시
+    assert "00:10" in sg and "AI 자동 단가" in sg, "cycle 356 stage 누락"
+    assert "02:30" in sg and "A*" in sg, "cycle 358 A* stage 누락"
+    assert "04:00" in sg and "호선별 ROI" in sg, "cycle 360 호선 ROI stage 누락"
+    assert "RECORDING_NARRATION" in sg, "4언어 narration cross-link 누락"
+
+
+def test_submission_guide_d_minus_1_section() -> None:
+    """SUBMISSION_GUIDE §10 D-1 자동 검증 섹션 + submission_check 명령."""
+    sg = (ROOT / "docs" / "SUBMISSION_GUIDE.md").read_text(encoding="utf-8")
+    assert "submission_check.py --ci" in sg, "submission_check --ci 명령 누락"
+    assert "12/12 PASS" in sg or "12 항목 PASS" in sg, "기대값 명시 누락"
+    assert "canonical KPI drift" in sg, "drift 차단 명시 누락"
