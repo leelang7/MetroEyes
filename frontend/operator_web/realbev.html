@@ -174,10 +174,70 @@
     <button id="lang-toggle" style="margin-left: 6px; padding: 2px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language">🇰🇷</button>
 <script>
 const I18N_OP_REALCAM = {
-  ko: { nav_subway: '🚇 지하철', nav_bus: '🚌 버스', nav_realcam: '📷 실 카메라', nav_ads: '📺 디스플레이', nav_citizen: '📱 시민 앱 →', flag: '🇰🇷' },
-  en: { nav_subway: '🚇 Subway', nav_bus: '🚌 Bus', nav_realcam: '📷 RealCam', nav_ads: '📺 Display', nav_citizen: '📱 Citizen →', flag: '🇺🇸' },
-  zh: { nav_subway: '🚇 地铁', nav_bus: '🚌 巴士', nav_realcam: '📷 实摄像', nav_ads: '📺 显示', nav_citizen: '📱 市民 →', flag: '🇨🇳' },
-  ja: { nav_subway: '🚇 地下鉄', nav_bus: '🚌 バス', nav_realcam: '📷 実カメラ', nav_ads: '📺 表示', nav_citizen: '📱 市民 →', flag: '🇯🇵' },
+  ko: {
+    nav_subway: '🚇 지하철', nav_bus: '🚌 버스', nav_realcam: '📷 실 카메라', nav_ads: '📺 디스플레이', nav_citizen: '📱 시민 앱 →', flag: '🇰🇷',
+    h_main: '3D BEV — 실시간 사람 트래킹', h_main_sub: '검출된 사람을 실제 3D 메시로 ground plane 위에 배치',
+    fc_cv: '검출 인원', fc_arr: '다음 도착', fc_pop: '역세권 인구', fc_cong: '혼잡 레벨',
+    fc_road: '도로 평균', fc_trans: '환승 옵션', fc_wx: '날씨', fc_cmrcl: '상권 결제',
+    h_cam: '① Camera', h_cam_sub: '입력 + 검출 박스 (디버그)',
+    h_bev: '② BEV 3D', h_bev_sub: 'Three.js · OrbitControls (드래그/휠 회전)',
+    h_track: '③ 라이브 트랙 분포', h_track_sub: 'YOLO11n 클래스별 카운트',
+    h_evt: '④ 사고 history', h_evt_sub: '최근 10건 (6 type)',
+    h_kpi: '⑤ 누적 KPI', h_kpi_sub: 'backend impact_summary',
+    kpi_disp: '분산 액션', kpi_min: '절감 시간', kpi_won: '사회적 가치', kpi_tier: '차등 4단 분포',
+    td_peak: '최대 동시', td_avg: '평균 트랙', td_fps: 'FPS 평균',
+    btn_cam_start: '📷 웹캠 시작', btn_cam_stop: '정지', btn_evac: '🚨 비상 동선 추론',
+    pp_model: '모델', pp_res: '입력 해상도', pp_dev: '디바이스', pp_frames: '총 송신 프레임', pp_h: '호모그래피',
+    pl_panel: '▼ 라이브 분석 패널 (cycle 341 신규) — 실 카메라 영상 + BEV 3D 뷰 결과를 실시간 집계한 운영자 종합 대시보드',
+  },
+  en: {
+    nav_subway: '🚇 Subway', nav_bus: '🚌 Bus', nav_realcam: '📷 RealCam', nav_ads: '📺 Display', nav_citizen: '📱 Citizen →', flag: '🇺🇸',
+    h_main: '3D BEV — Real-time Person Tracking', h_main_sub: 'Detected persons placed as 3D meshes on ground plane',
+    fc_cv: 'Detected', fc_arr: 'Next Arrival', fc_pop: 'Area Population', fc_cong: 'Congestion',
+    fc_road: 'Road Avg', fc_trans: 'Transfer', fc_wx: 'Weather', fc_cmrcl: 'Commerce',
+    h_cam: '① Camera', h_cam_sub: 'Input + detection boxes (debug)',
+    h_bev: '② BEV 3D', h_bev_sub: 'Three.js · OrbitControls (drag/wheel)',
+    h_track: '③ Live Track Distribution', h_track_sub: 'YOLO11n class counts',
+    h_evt: '④ Incident History', h_evt_sub: 'Recent 10 (6 types)',
+    h_kpi: '⑤ Cumulative KPI', h_kpi_sub: 'backend impact_summary',
+    kpi_disp: 'Redistribution', kpi_min: 'Saved Time', kpi_won: 'Social Value', kpi_tier: '4-Tier Distribution',
+    td_peak: 'Peak', td_avg: 'Avg tracks', td_fps: 'Avg FPS',
+    btn_cam_start: '📷 Start Webcam', btn_cam_stop: 'Stop', btn_evac: '🚨 Emergency Route',
+    pp_model: 'Model', pp_res: 'Resolution', pp_dev: 'Device', pp_frames: 'Total frames', pp_h: 'Homography',
+    pl_panel: '▼ Live Analytics Panel — Operator dashboard aggregating real camera + BEV 3D in real time',
+  },
+  zh: {
+    nav_subway: '🚇 地铁', nav_bus: '🚌 巴士', nav_realcam: '📷 实摄像', nav_ads: '📺 显示', nav_citizen: '📱 市民 →', flag: '🇨🇳',
+    h_main: '3D BEV — 实时人员跟踪', h_main_sub: '检测到的人作为3D网格放置在地面',
+    fc_cv: '检测人数', fc_arr: '下一班', fc_pop: '商圈人口', fc_cong: '拥挤度',
+    fc_road: '道路均速', fc_trans: '换乘', fc_wx: '天气', fc_cmrcl: '商圈交易',
+    h_cam: '① 摄像头', h_cam_sub: '输入 + 检测框 (调试)',
+    h_bev: '② BEV 3D', h_bev_sub: 'Three.js · OrbitControls',
+    h_track: '③ 实时轨迹分布', h_track_sub: 'YOLO11n 类别计数',
+    h_evt: '④ 事件历史', h_evt_sub: '最近10条 (6种)',
+    h_kpi: '⑤ 累计 KPI', h_kpi_sub: 'backend impact_summary',
+    kpi_disp: '分散动作', kpi_min: '节省时间', kpi_won: '社会价值', kpi_tier: '4级差异分布',
+    td_peak: '同时峰值', td_avg: '平均轨迹', td_fps: '平均FPS',
+    btn_cam_start: '📷 启动摄像头', btn_cam_stop: '停止', btn_evac: '🚨 紧急疏散路径',
+    pp_model: '模型', pp_res: '分辨率', pp_dev: '设备', pp_frames: '总发送帧', pp_h: '单应矩阵',
+    pl_panel: '▼ 实时分析面板 — 实摄像头 + BEV 3D 实时集成运营仪表板',
+  },
+  ja: {
+    nav_subway: '🚇 地下鉄', nav_bus: '🚌 バス', nav_realcam: '📷 実カメラ', nav_ads: '📺 表示', nav_citizen: '📱 市民 →', flag: '🇯🇵',
+    h_main: '3D BEV — リアルタイム人物トラッキング', h_main_sub: '検出された人を3Dメッシュとして地面に配置',
+    fc_cv: '検出人数', fc_arr: '次の到着', fc_pop: '駅周辺人口', fc_cong: '混雑',
+    fc_road: '道路平均', fc_trans: '乗換', fc_wx: '天気', fc_cmrcl: '商圏決済',
+    h_cam: '① カメラ', h_cam_sub: '入力 + 検出ボックス (デバッグ)',
+    h_bev: '② BEV 3D', h_bev_sub: 'Three.js · OrbitControls',
+    h_track: '③ ライブトラック分布', h_track_sub: 'YOLO11n クラス別カウント',
+    h_evt: '④ 事故履歴', h_evt_sub: '最近10件 (6種)',
+    h_kpi: '⑤ 累積 KPI', h_kpi_sub: 'backend impact_summary',
+    kpi_disp: '分散アクション', kpi_min: '節減時間', kpi_won: '社会的価値', kpi_tier: '4段階分布',
+    td_peak: '最大同時', td_avg: '平均トラック', td_fps: '平均FPS',
+    btn_cam_start: '📷 ウェブカム開始', btn_cam_stop: '停止', btn_evac: '🚨 緊急動線',
+    pp_model: 'モデル', pp_res: '解像度', pp_dev: 'デバイス', pp_frames: '総送信フレーム', pp_h: 'ホモグラフィー',
+    pl_panel: '▼ ライブ分析パネル — 実カメラ + BEV 3D を統合した運用ダッシュボード',
+  },
 };
 let _curRealLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_OP_REALCAM[_curRealLang]) _curRealLang = 'ko';
@@ -185,7 +245,11 @@ function applyRealcamI18n() {
   const t = I18N_OP_REALCAM[_curRealLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
-    if (t[k]) el.textContent = t[k];
+    if (!t[k]) return;
+    // 자식 element 보존 — 첫 번째 textNode만 교체 (없으면 textContent)
+    const firstText = Array.from(el.childNodes).find(n => n.nodeType === 3);
+    if (firstText) firstText.textContent = t[k];
+    else el.textContent = t[k];
   });
   const btn = document.getElementById('lang-toggle');
   if (btn) btn.textContent = t.flag;
@@ -273,7 +337,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 <main>
   <section class="train-strip">
     <div class="train-strip-head">
-      <h2><b>3D BEV — 실시간 사람 트래킹</b><span style="color: var(--muted)">검출된 사람을 실제 3D 메시로 ground plane 위에 배치</span></h2>
+      <h2><b data-i18n="h_main">3D BEV — 실시간 사람 트래킹</b><span style="color: var(--muted)" data-i18n="h_main_sub">검출된 사람을 실제 3D 메시로 ground plane 위에 배치</span></h2>
       <div class="train-meta">
         <span class="pulse"></span><span id="m-fps">— FPS</span> · <span id="m-tracks">— 트랙</span> · <span id="m-tx">송신 — fps</span>
       </div>
@@ -283,22 +347,22 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     </div>
     <div class="fusion-strip" id="fusion-strip">
       <div class="fusion-card dim" id="fc-cv">
-        <div class="fc-label">검출 인원<span class="src">자체 CV</span></div>
+        <div class="fc-label" data-i18n="fc_cv">검출 인원<span class="src">자체 CV</span></div>
         <div class="fc-value" id="fc-cv-v">—<span class="unit">명</span></div>
         <div class="fc-sub" id="fc-cv-sub">YOLO11 + BoT-SORT</div>
       </div>
       <div class="fusion-card dim" id="fc-arr">
-        <div class="fc-label">다음 도착<span class="src">서울 TOPIS</span></div>
+        <div class="fc-label" data-i18n="fc_arr">다음 도착<span class="src">서울 TOPIS</span></div>
         <div class="fc-value" id="fc-arr-v">—<span class="unit">분</span></div>
         <div class="fc-sub" id="fc-arr-sub">realtimeStationArrival</div>
       </div>
       <div class="fusion-card dim" id="fc-pop">
-        <div class="fc-label">역세권 인구<span class="src">서울 도시데이터</span></div>
+        <div class="fc-label" data-i18n="fc_pop">역세권 인구<span class="src">서울 도시데이터</span></div>
         <div class="fc-value" id="fc-pop-v">—<span class="unit">명</span></div>
         <div class="fc-sub" id="fc-pop-sub">citydata_ppltn</div>
       </div>
       <div class="fusion-card dim" id="fc-cong">
-        <div class="fc-label">혼잡 레벨<span class="src">융합</span></div>
+        <div class="fc-label" data-i18n="fc_cong">혼잡 레벨<span class="src">융합</span></div>
         <div class="fc-value" id="fc-cong-v">—</div>
         <div class="fc-sub" id="fc-cong-sub">CV + 인구 결합 평가</div>
       </div>
@@ -307,22 +371,22 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     <!-- 통합 도시데이터 row 2: 도로 / 환승(따릉이+주차) / 날씨 / 상권 -->
     <div class="fusion-strip" id="fusion-strip-2" style="margin-top: -4px;">
       <div class="fusion-card dim" id="fc-road">
-        <div class="fc-label">도로 평균<span class="src">citydata</span></div>
+        <div class="fc-label" data-i18n="fc_road">도로 평균<span class="src">citydata</span></div>
         <div class="fc-value" id="fc-road-v">—<span class="unit">km/h</span></div>
         <div class="fc-sub" id="fc-road-sub">ROAD_TRAFFIC_STTS</div>
       </div>
       <div class="fusion-card dim" id="fc-trans">
-        <div class="fc-label">환승 옵션<span class="src">citydata</span></div>
+        <div class="fc-label" data-i18n="fc_trans">환승 옵션<span class="src">citydata</span></div>
         <div class="fc-value" id="fc-trans-v">—<span class="unit">대</span></div>
         <div class="fc-sub" id="fc-trans-sub">따릉이 / 주차장</div>
       </div>
       <div class="fusion-card dim" id="fc-wx">
-        <div class="fc-label">날씨<span class="src">citydata</span></div>
+        <div class="fc-label" data-i18n="fc_wx">날씨<span class="src">citydata</span></div>
         <div class="fc-value" id="fc-wx-v">—<span class="unit">°C</span></div>
         <div class="fc-sub" id="fc-wx-sub">기온 · 체감 · 습도</div>
       </div>
       <div class="fusion-card dim" id="fc-cmrcl">
-        <div class="fc-label">상권 결제<span class="src">citydata</span></div>
+        <div class="fc-label" data-i18n="fc_cmrcl">상권 결제<span class="src">citydata</span></div>
         <div class="fc-value" id="fc-cmrcl-v">—</div>
         <div class="fc-sub" id="fc-cmrcl-sub">LIVE_CMRCL_STTS</div>
       </div>
@@ -446,7 +510,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 
   <section class="split">
     <div class="tile">
-      <h3><b>① Camera</b>입력 + 검출 박스 (디버그)</h3>
+      <h3><b data-i18n="h_cam">① Camera</b><span data-i18n="h_cam_sub">입력 + 검출 박스 (디버그)</span></h3>
       <div class="stage" style="position:relative;">
         <span class="badge live" id="cam-badge">RGB · LIVE</span>
         <span class="corner-meta" id="frame-idx">frame —</span>
@@ -478,7 +542,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       </div>
     </div>
     <div class="tile bev">
-      <h3><b>② BEV 3D</b>Three.js · OrbitControls (드래그/휠 회전)</h3>
+      <h3><b data-i18n="h_bev">② BEV 3D</b><span data-i18n="h_bev_sub">Three.js · OrbitControls (드래그/휠 회전)</span></h3>
       <div class="stage">
         <span class="badge">BEV · 3D</span>
         <span class="corner-meta" id="corner-meta">0 명</span>
@@ -497,7 +561,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
   </div>
   <section style="margin-top: 10px; display: grid; grid-template-columns: 1.2fr 1.4fr 1fr; gap: 12px;">
     <div class="tile" style="padding: 12px 14px;">
-      <h3><b>③ 라이브 트랙 분포</b><span style="color: var(--muted); font-weight: 400;">YOLO11n 클래스별 카운트</span></h3>
+      <h3><b data-i18n="h_track">③ 라이브 트랙 분포</b><span style="color: var(--muted); font-weight: 400;" data-i18n="h_track_sub">YOLO11n 클래스별 카운트</span></h3>
       <div id="track-dist" style="display: flex; flex-direction: column; gap: 6px; padding: 6px 0;">
         <div style="color: var(--muted); font-size: 12px;">트랙 수신 대기...</div>
       </div>
@@ -508,13 +572,13 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       </div>
     </div>
     <div class="tile" style="padding: 12px 14px;">
-      <h3><b>④ 사고 history</b><span style="color: var(--muted); font-weight: 400;">최근 10건 (6 type)</span></h3>
+      <h3><b data-i18n="h_evt">④ 사고 history</b><span style="color: var(--muted); font-weight: 400;" data-i18n="h_evt_sub">최근 10건 (6 type)</span></h3>
       <div id="evt-hist" style="display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; font-size: 12px;">
         <div style="color: var(--muted);">사고 알림 없음 — 정상 운영</div>
       </div>
     </div>
     <div class="tile" style="padding: 12px 14px;">
-      <h3><b>⑤ 누적 KPI</b><span style="color: var(--muted); font-weight: 400;">backend impact_summary</span></h3>
+      <h3><b data-i18n="h_kpi">⑤ 누적 KPI</b><span style="color: var(--muted); font-weight: 400;" data-i18n="h_kpi_sub">backend impact_summary</span></h3>
       <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 0;">
         <div><span style="color: var(--muted); font-size: 11px;">분산 액션</span><br><b id="kpi-disp" style="color: #a78bfa; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 12px;"> 회</span></div>
         <div><span style="color: var(--muted); font-size: 11px;">절감 시간</span><br><b id="kpi-min" style="color: #7dd3d3; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 12px;"> 분</span></div>
@@ -716,36 +780,24 @@ scene.add(horizon);
   scene.add(axis);
 }
 
-// ego 카메라 마커 (작은 콘)
+// 카메라 위치 마커 — 콘 대신 평평한 disk + glow (cycle 345 cone 제거)
 {
-  const egoGeom = new THREE.ConeGeometry(0.18, 0.4, 4);
-  const egoMat = new THREE.MeshStandardMaterial({
-    color: 0x7dd3d3, emissive: 0x7dd3d3, emissiveIntensity: 0.6,
-    metalness: 0.4, roughness: 0.3,
+  const diskGeo = new THREE.CircleGeometry(0.18, 32);
+  const diskMat = new THREE.MeshBasicMaterial({
+    color: 0x7dd3d3, transparent: true, opacity: 0.85, depthWrite: false,
   });
-  const ego = new THREE.Mesh(egoGeom, egoMat);
-  ego.position.set(0, 0.2, 4.0);    // 카메라 위치 = z+ 쪽
-  ego.rotation.x = Math.PI / 2;     // 진행방향 = -z
-  ego.castShadow = true;
-  scene.add(ego);
-  // 시야 콘 (반투명)
-  const fovGeom = new THREE.ConeGeometry(4.5, 9, 32, 1, true);
-  const fovMat = new THREE.MeshBasicMaterial({
-    color: 0x7dd3d3, transparent: true, opacity: 0.05,
-    side: THREE.DoubleSide, depthWrite: false,
-  });
-  const fov = new THREE.Mesh(fovGeom, fovMat);
-  fov.position.set(0, 0.05, -0.5);
-  fov.rotation.x = -Math.PI / 2;
-  scene.add(fov);
-  // 시야 외곽선
-  const fovEdge = new THREE.LineSegments(
-    new THREE.EdgesGeometry(fovGeom),
-    new THREE.LineBasicMaterial({ color: 0x7dd3d3, transparent: true, opacity: 0.18 })
+  const disk = new THREE.Mesh(diskGeo, diskMat);
+  disk.rotation.x = -Math.PI / 2;
+  disk.position.set(0, 0.018, 4.0);
+  scene.add(disk);
+  // 외곽 ring으로 카메라 위치 강조
+  const camRing = new THREE.Mesh(
+    new THREE.RingGeometry(0.20, 0.28, 32),
+    new THREE.MeshBasicMaterial({ color: 0x7dd3d3, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false }),
   );
-  fovEdge.position.copy(fov.position);
-  fovEdge.rotation.copy(fov.rotation);
-  scene.add(fovEdge);
+  camRing.rotation.x = -Math.PI / 2;
+  camRing.position.set(0, 0.014, 4.0);
+  scene.add(camRing);
 }
 
 // 글로우 텍스처 (radial)
