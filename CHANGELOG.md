@@ -1,6 +1,6 @@
 # Changelog — MetroEyes (SubwayBEV)
 
-## v6.7 — D-5 회귀 가드 203건 + 1-Pager 4언어 + RUNBOOK + QA + 자기 채점표 + GitHub polish + CO₂ EDA (2026-05-08 cycle 372-390)
+## v6.7 — D-5 회귀 가드 223건 + 1-Pager 4언어 + RUNBOOK + QA + 자기 채점표 + GitHub polish + CO₂ EDA + dday.ps1 (2026-05-08 cycle 372-395)
 
 ### v6.7 후속 (cycle 387-390)
 - cycle 387: docs freshness 일괄 갱신 (RECORDING_GUIDE / ARCHITECTURE_VIEW / SUBMISSION_GUIDE)

@@ -157,6 +157,19 @@ python scripts/submission_check.py
 
 ## 9. 평가 시연 직전 체크리스트 (5분 전)
 
+**1줄 통합 검증 (cycle 395 — 권장)**:
+```powershell
+# 빠른 검증 (10초 < 7 단계)
+.\scripts\dday.ps1 -Quick
+
+# 풀 검증 (D-1 권장, ~3분 — EDA 재생성 + 풀 ship-gate)
+.\scripts\dday.ps1 -Full
+
+# EDA 재생성만 (canonical KPI drift 발생 시)
+.\scripts\dday.ps1 -Regen
+```
+
+**개별 명령** (수동 디버깅 시):
 ```powershell
 # 1. 백엔드 자가 진단
 curl http://localhost:8765/health | jq
@@ -171,7 +184,7 @@ python -m pytest tests/ --ignore=tests/test_smoke.py -q
 python scripts/submission_check.py
 ```
 
-기대값: 139 passed · submission_check PASS
+기대값: 216+ passed · submission_check PASS
 
 ---
 
