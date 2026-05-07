@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.10-safeguard-status';
+  const CUR = 'v4.11-dest-i18n';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -647,10 +647,18 @@ window.addEventListener('DOMContentLoaded', () => renderRewardSummary());
 
 // ==== 4개 언어 페이지 텍스트 i18n (toggle: ko → en → zh → ja → ko) ====
 const I18N_PAGE = {
-  ko: { tab_subway: '지하철', tab_bus: '버스', live_off: '오프라인', live_on: 'LIVE', flag: '🇰🇷' },
-  en: { tab_subway: 'Subway', tab_bus: 'Bus', live_off: 'Offline', live_on: 'LIVE', flag: '🇺🇸' },
-  zh: { tab_subway: '地铁', tab_bus: '巴士', live_off: '离线', live_on: '实时', flag: '🇨🇳' },
-  ja: { tab_subway: '地下鉄', tab_bus: 'バス', live_off: 'オフライン', live_on: 'LIVE', flag: '🇯🇵' },
+  ko: { tab_subway: '지하철', tab_bus: '버스', live_off: '오프라인', live_on: 'LIVE', flag: '🇰🇷',
+        dest_set: '🔔 도착지 설정 — 노이즈 캔슬링·이어폰 사용 시 도착 알림',
+        dest_test: '🔔 테스트' },
+  en: { tab_subway: 'Subway', tab_bus: 'Bus', live_off: 'Offline', live_on: 'LIVE', flag: '🇺🇸',
+        dest_set: '🔔 Set destination — arrival alert for noise-canceling/earphone users',
+        dest_test: '🔔 Test' },
+  zh: { tab_subway: '地铁', tab_bus: '巴士', live_off: '离线', live_on: '实时', flag: '🇨🇳',
+        dest_set: '🔔 设置目的地 — 降噪/耳机用户到站提醒',
+        dest_test: '🔔 测试' },
+  ja: { tab_subway: '地下鉄', tab_bus: 'バス', live_off: 'オフライン', live_on: 'LIVE', flag: '🇯🇵',
+        dest_set: '🔔 目的地設定 — ノイキャン・イヤホン使用時の到着アラート',
+        dest_test: '🔔 テスト' },
 };
 let _curPageLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_PAGE[_curPageLang]) _curPageLang = 'ko';
@@ -673,6 +681,12 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curPageLang = order[(order.indexOf(_curPageLang) + 1) % 4];
   applyPageI18n();
+  // dest-trigger 누적 카운트 chip 재적용 (data-i18n 적용으로 origText 갱신 필요)
+  try {
+    const trigger = document.getElementById('dest-trigger');
+    if (trigger) delete trigger.dataset.origText;
+    if (typeof _updateDestTriggerBadge === 'function') _updateDestTriggerBadge();
+  } catch {}
 });
 window.addEventListener('DOMContentLoaded', applyPageI18n);
 
