@@ -111,7 +111,8 @@
 </style>
 </head>
 <body>
-<button class="print-btn no-print" onclick="window.print()">🖨 PDF 인쇄</button>
+<button class="print-btn no-print" onclick="window.print()" data-i18n="print_btn">🖨 PDF 인쇄</button>
+<button id="op-lang" class="no-print" style="position: fixed; right: 32mm; top: 4mm; z-index: 100; padding: 3mm 5mm; background: #fff; color: #1a1a1f; border: 1px solid #d8d8e0; border-radius: 2mm; font-weight: 700; cursor: pointer; font-size: 3mm;" title="Language">🇰🇷 KO</button>
 <div class="page">
 
   <header>
@@ -119,17 +120,17 @@
       <div class="logo">M</div>
       <div>
         <h1>MetroEyes</h1>
-        <div class="tag">테슬라가 도로를 보듯, 우리는 도시 교통 전체를 본다</div>
+        <div class="tag" data-i18n="tagline">테슬라가 도로를 보듯, 우리는 도시 교통 전체를 본다</div>
       </div>
     </div>
     <div class="meta">
-      <div><b>2026 서울시 빅데이터 활용 경진대회</b> · 창업 부문</div>
-      <div>제출 마감 2026-05-13 · 본선 2026-07-06</div>
-      <div>이상철 · leescvsir@gmail.com</div>
+      <div data-i18n="competition"><b>2026 서울시 빅데이터 활용 경진대회</b> · 창업 부문</div>
+      <div data-i18n="deadlines">제출 마감 2026-05-13 · 본선 2026-07-06</div>
+      <div data-i18n="contact">이상철 · leescvsir@gmail.com</div>
     </div>
   </header>
 
-  <div class="quote">
+  <div class="quote" data-i18n="quote">
     "지하철·버스 BEV CV + 실시간 도시 데이터 + 시민 분산 인센티브 — 3 축 통합 시스템.
     한 명의 분산 행동 = 한 KPI 라이브. <b>차등 보상으로 만석 칸 평탄화 → 광고 / 안전 / 통근 / 에너지 4 축 가치 창출</b>."
   </div>
@@ -137,28 +138,28 @@
   <!-- ===== 헤더라인 KPI ===== -->
   <div class="kpi-row">
     <div class="kpi">
-      <div class="lbl">정책 ROI v3</div>
+      <div class="lbl" data-i18n="kpi1_lbl">정책 ROI v3</div>
       <div class="val">347x</div>
-      <div class="sub">사회적 가치 ÷ 인프라</div>
+      <div class="sub" data-i18n="kpi1_sub">사회적 가치 ÷ 인프라</div>
       <div class="ci">95% CI [270x ~ 424x]</div>
     </div>
     <div class="kpi purple">
-      <div class="lbl">순 사회적 가치</div>
-      <div class="val">1,393억<span style="font-size:3mm;color:#5a5a66;">/년</span></div>
-      <div class="sub">통근 + 사고 + 광고 + 에너지</div>
+      <div class="lbl" data-i18n="kpi2_lbl">순 사회적 가치</div>
+      <div class="val">1,393억<span style="font-size:3mm;color:#5a5a66;" data-i18n="per_year">/년</span></div>
+      <div class="sub" data-i18n="kpi2_sub">통근 + 사고 + 광고 + 에너지</div>
       <div class="ci" style="color:#a78bfa;">CI [1,064~1,808억]</div>
     </div>
     <div class="kpi amber">
-      <div class="lbl">절감 시간</div>
-      <div class="val">473M<span style="font-size:3mm;color:#5a5a66;">분/년</span></div>
-      <div class="sub">2호선 단독 138M (29%)</div>
-      <div class="ci" style="color:#f59e0b;">9 호선 × 19 시간 매트릭스</div>
+      <div class="lbl" data-i18n="kpi3_lbl">절감 시간</div>
+      <div class="val">473M<span style="font-size:3mm;color:#5a5a66;" data-i18n="min_per_year">분/년</span></div>
+      <div class="sub" data-i18n="kpi3_sub">2호선 단독 157M (33%)</div>
+      <div class="ci" style="color:#f59e0b;" data-i18n="kpi3_ci">9 호선 × 19 시간 매트릭스</div>
     </div>
     <div class="kpi green">
-      <div class="lbl">자동 검증</div>
-      <div class="val">120<span style="font-size:3mm;color:#5a5a66;">가드</span></div>
-      <div class="sub">CI 14 jobs · 372 사이클</div>
-      <div class="ci">광고 수치 ↔ 코드 자동 정합</div>
+      <div class="lbl" data-i18n="kpi4_lbl">자동 검증</div>
+      <div class="val">146<span style="font-size:3mm;color:#5a5a66;" data-i18n="guards">가드</span></div>
+      <div class="sub" data-i18n="kpi4_sub">CI 14 jobs · 377 사이클</div>
+      <div class="ci" data-i18n="kpi4_ci">광고 수치 ↔ 코드 자동 정합</div>
     </div>
   </div>
 
@@ -279,5 +280,83 @@
   </footer>
 
 </div>
+<script>
+// 4언어 토글 (cycle 377) — 핵심 헤더/KPI 라벨 / 인용구 / 사업화 헤더만 번역.
+// 한국어 단가/금액 (₩400M, 1,393억) 은 모든 언어에서 그대로 (정량 KPI).
+const I18N_ONEPAGER = {
+  ko: {
+    flag: '🇰🇷 KO',
+    print_btn: '🖨 PDF 인쇄',
+    tagline: '테슬라가 도로를 보듯, 우리는 도시 교통 전체를 본다',
+    competition: '<b>2026 서울시 빅데이터 활용 경진대회</b> · 창업 부문',
+    deadlines: '제출 마감 2026-05-13 · 본선 2026-07-06',
+    contact: '이상철 · leescvsir@gmail.com',
+    quote: '"지하철·버스 BEV CV + 실시간 도시 데이터 + 시민 분산 인센티브 — 3 축 통합 시스템. 한 명의 분산 행동 = 한 KPI 라이브. <b>차등 보상으로 만석 칸 평탄화 → 광고 / 안전 / 통근 / 에너지 4 축 가치 창출</b>."',
+    kpi1_lbl: '정책 ROI v3', kpi1_sub: '사회적 가치 ÷ 인프라',
+    kpi2_lbl: '순 사회적 가치', kpi2_sub: '통근 + 사고 + 광고 + 에너지', per_year: '/년',
+    kpi3_lbl: '절감 시간', kpi3_sub: '2호선 단독 157M (33%)', kpi3_ci: '9 호선 × 19 시간 매트릭스', min_per_year: '분/년',
+    kpi4_lbl: '자동 검증', kpi4_sub: 'CI 14 jobs · 377 사이클', kpi4_ci: '광고 수치 ↔ 코드 자동 정합', guards: '가드',
+  },
+  en: {
+    flag: '🇺🇸 EN',
+    print_btn: '🖨 Print PDF',
+    tagline: 'As Tesla sees the road as BEV, MetroEyes sees the entire urban transit network',
+    competition: '<b>2026 Seoul Big Data Competition</b> · Startup Track',
+    deadlines: 'Submission 2026-05-13 · Final 2026-07-06',
+    contact: 'Lee Sang-cheol · leescvsir@gmail.com',
+    quote: '"Subway / Bus BEV CV + Real-time city data + Citizen redistribution incentives — 3-axis integrated system. One citizen action = one live KPI. <b>Tiered rewards flatten over-capacity cars → 4-axis value creation: ads / safety / commute / energy</b>."',
+    kpi1_lbl: 'Policy ROI v3', kpi1_sub: 'Social value ÷ infrastructure',
+    kpi2_lbl: 'Net Social Value', kpi2_sub: 'Commute + safety + ads + energy', per_year: '/yr',
+    kpi3_lbl: 'Saved Time', kpi3_sub: 'Line 2 alone 157M (33%)', kpi3_ci: '9 lines × 19 hours matrix', min_per_year: 'min/yr',
+    kpi4_lbl: 'Auto Verification', kpi4_sub: 'CI 14 jobs · 377 cycles', kpi4_ci: 'Advertised numbers ↔ code auto-aligned', guards: 'guards',
+  },
+  zh: {
+    flag: '🇨🇳 ZH',
+    print_btn: '🖨 打印 PDF',
+    tagline: '特斯拉以BEV看路, MetroEyes俯瞰整个城市交通',
+    competition: '<b>2026 首尔大数据应用大赛</b> · 创业组',
+    deadlines: '提交截止 2026-05-13 · 决赛 2026-07-06',
+    contact: '李相喆 · leescvsir@gmail.com',
+    quote: '"地铁·巴士 BEV CV + 实时城市数据 + 市民分散激励 — 三轴整合系统。一次市民行为 = 一个实时 KPI。<b>差等奖励使满载车厢平坦化 → 广告 / 安全 / 通勤 / 能源 4轴价值创造</b>。"',
+    kpi1_lbl: '政策 ROI v3', kpi1_sub: '社会价值 ÷ 基础设施',
+    kpi2_lbl: '净社会价值', kpi2_sub: '通勤 + 安全 + 广告 + 能源', per_year: '/年',
+    kpi3_lbl: '节省时间', kpi3_sub: '2号线 单独 157M (33%)', kpi3_ci: '9 线路 × 19 时段 矩阵', min_per_year: '分/年',
+    kpi4_lbl: '自动验证', kpi4_sub: 'CI 14 jobs · 377 周期', kpi4_ci: '广告数值 ↔ 代码自动对齐', guards: '保护',
+  },
+  ja: {
+    flag: '🇯🇵 JA',
+    print_btn: '🖨 PDF 印刷',
+    tagline: 'テスラが道路を BEV で見るように、MetroEyes は都市交通全体を見る',
+    competition: '<b>2026 ソウル ビッグデータ活用大会</b> · 創業部門',
+    deadlines: '提出締切 2026-05-13 · 本選 2026-07-06',
+    contact: '李相喆 · leescvsir@gmail.com',
+    quote: '"地下鉄・バス BEV CV + リアルタイム都市データ + 市民分散インセンティブ — 3軸統合システム。一人の市民行動 = 一つの ライブ KPI。<b>差等報奨で満員車両を平坦化 → 広告 / 安全 / 通勤 / エネルギー 4軸価値創造</b>。"',
+    kpi1_lbl: '政策 ROI v3', kpi1_sub: '社会的価値 ÷ インフラ',
+    kpi2_lbl: '純社会的価値', kpi2_sub: '通勤 + 事故 + 広告 + エネルギー', per_year: '/年',
+    kpi3_lbl: '削減時間', kpi3_sub: '2 号線単独 157M (33%)', kpi3_ci: '9 路線 × 19 時間 マトリクス', min_per_year: '分/年',
+    kpi4_lbl: '自動検証', kpi4_sub: 'CI 14 jobs · 377 サイクル', kpi4_ci: '広告数値 ↔ コード自動整合', guards: 'ガード',
+  },
+};
+let _curOpLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+if (!I18N_ONEPAGER[_curOpLang]) _curOpLang = 'ko';
+function applyOpI18n() {
+  const t = I18N_ONEPAGER[_curOpLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (!t[k]) return;
+    if (t[k].includes('<b>') || t[k].includes('<br') || t[k].includes('<span')) el.innerHTML = t[k];
+    else el.textContent = t[k];
+  });
+  const btn = document.getElementById('op-lang');
+  if (btn) btn.textContent = t.flag;
+  document.documentElement.lang = _curOpLang;
+}
+document.getElementById('op-lang')?.addEventListener('click', () => {
+  const order = ['ko', 'en', 'zh', 'ja'];
+  _curOpLang = order[(order.indexOf(_curOpLang) + 1) % 4];
+  applyOpI18n();
+});
+window.addEventListener('DOMContentLoaded', applyOpI18n);
+</script>
 </body>
 </html>
