@@ -254,20 +254,20 @@ python scripts/policy_roi_v3.py
 
 ## 오픈 REST API v1 + OpenAPI 3.0
 
-backend `lite_server.py` 가 6 endpoint 제공 — 모두 CORS 허용:
+backend `lite_server.py` 가 10 endpoint 제공 (REST API v1 9 + 자동 docs UI 1) — 모두 CORS 허용:
 
 | Endpoint | 응답 | 용도 |
 |---|---|---|
 | `GET /health` | 시스템 상태 (api/cv/incidents/msg) | health check |
 | `GET /api/v1/roi_curve` | 0~80% 81 샘플 ROI | 정책 시뮬 외부 도구 |
-| `GET /api/v1/impact` | 누적 분산 임팩트 | 라이브 KPI |
-| `GET /api/v1/incidents` | 사고 4 카운트 + 30 events | 라이브 모니터링 |
+| `GET /api/v1/impact` | 누적 분산 임팩트 + tier_counts | 라이브 KPI |
+| `GET /api/v1/incidents` | 사고 6 카운트 (IDEA-7/8 priority_seat/bottleneck 포함) + 30 events | 라이브 모니터링 |
 | `GET /api/v1/dispersion` | σ/peak/offpeak 정적 검증 + 라이브 응답률 추정 | 분산 효과 시각화 |
 | `GET /api/v1/od_asymmetry` | 현 시각(AM/PM) 자동 매칭 + 우선 분산 추천 역 TOP 5 | 운영자 정책 우선순위 |
 | `GET /api/v1/transfer_priority` | 환승역 호선 간 비대칭 차이 TOP 5 (현 시각 AM/PM) | 환승 흐름 분산 정책 |
-| `GET /api/v1/policy_summary` | 정책 정의 + 라이브 impact + dispersion + EDA 통합 | Excel/Power BI 단일 폴링 |
-| `GET /api/docs` | 자동 HTML 명세 페이지 | curl/Postman 대체 |
+| `GET /api/v1/policy_summary` | 정책 정의 + 라이브 impact + dispersion + **incident_breakdown 6 type** + EDA 통합 | Excel/Power BI 단일 폴링 |
 | `GET /api/openapi.yaml` | OpenAPI 3.0 spec | Swagger/Redoc/Postman 자동 임포트 |
+| `GET /api/docs` | 자동 HTML 명세 페이지 | curl/Postman 대체 |
 
 ```bash
 # 예시: ROI 곡선 fetch
