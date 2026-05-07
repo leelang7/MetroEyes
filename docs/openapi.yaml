@@ -182,6 +182,16 @@ paths:
                       estimated_response_rate: { type: number }
                       sigma_reduction_pct: { type: number }
                       peak_reduction_pct: { type: number }
+                  incident_breakdown:
+                    type: object
+                    description: 6 type 사고 카운트 (emergency/suspicious/lost/free_ride/priority_seat/bottleneck) — IDEA-7/8 포함
+                    properties:
+                      emergency: { type: integer }
+                      suspicious: { type: integer }
+                      lost: { type: integer }
+                      free_ride: { type: integer }
+                      priority_seat: { type: integer, description: 'IDEA-7 임산부석 점유 (cycle 226)' }
+                      bottleneck: { type: integer, description: 'IDEA-8 병목 (cycle 226)' }
                   static_eda:
                     type: object
 

@@ -818,6 +818,14 @@ async def http_health(path, headers):
                     "sigma_reduction_pct": round(disp.get("sigma_reduction_pct", 9.0) * ratio, 2),
                     "peak_reduction_pct": round(disp.get("peak_reduction_pct", 13.5) * ratio, 2),
                 },
+                "incident_breakdown": {
+                    "emergency": _incident_total["emergency"],
+                    "suspicious": _incident_total["suspicious"],
+                    "lost": _incident_total["lost"],
+                    "free_ride": _incident_total["free_ride"],
+                    "priority_seat": _incident_total["priority_seat"],
+                    "bottleneck": _incident_total["bottleneck"],
+                },
                 "static_eda": {
                     "dispersion_sim": {
                         "sigma_reduction_pct": disp.get("sigma_reduction_pct"),
