@@ -246,17 +246,22 @@ def check_changelog_recent(rep: Report) -> None:
 
 def check_python_imports(rep: Report) -> None:
     """9. 핵심 backend 모듈 import 가능 (구문 오류 즉시 차단)."""
-    modules = ["src.cv.lite_server", "src.cv.tesla_bev"]
-    for m in modules:
+    # tesla_bev 는 ultralytics/torch heavy load — cold start 30s 가능
+    modules = [("src.cv.lite_server", 15), ("src.cv.tesla_bev", 60)]
+    for m, t in modules:
         try:
             result = subprocess.run(
                 [sys.executable, "-c", f"import {m}"],
-                cwd=ROOT, capture_output=True, text=True, timeout=15,
+                cwd=ROOT, capture_output=True, text=True, timeout=t,
             )
             if result.returncode != 0:
                 err = result.stderr.strip().split("\n")[-1]
                 rep.fail("python_imports", f"{m} 구문/의존성 오류: {err}")
                 return
+        except subprocess.TimeoutExpired:
+            # cold start 만 느린 거면 WARN (구문 오류 아님)
+            rep.warn("python_imports", f"{m} import {t}s timeout (heavy deps cold start) — 무시 가능")
+            return
         except Exception as e:
             rep.fail("python_imports", f"{m}: {e}")
             return

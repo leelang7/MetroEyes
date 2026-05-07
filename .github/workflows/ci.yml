@@ -143,8 +143,8 @@ jobs:
         run: pip install --no-cache-dir pytest
       - name: Run 호선별 ROI EDA report regression tests
         run: |
-          python -m pytest tests/test_line_priority_roi.py -v
-          echo "✅ 호선별 ROI EDA — 9 호선 우선순위 + 정책 v3 473.4M 합 일치 검증"
+          python -m pytest tests/test_line_priority_roi.py tests/test_line_hour_priority.py -v
+          echo "✅ 호선별 ROI EDA — 9 호선 우선순위 + 정책 v3 473.4M + 호선×시간 매트릭스 모두 검증"
 
   bonus-krw-validate:
     runs-on: ubuntu-latest

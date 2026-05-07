@@ -782,6 +782,12 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <b style="color: var(--text);">반대로 1호선은 평균 68% / peak 4시간만 100%↑ → ROI 121x (가장 낮음)</b>.
     "예산 1순위는 2호선" 이라는 정책 답을 정량적으로 도출 — <b style="color: #10b981;">CI 6 회귀 가드로 자동 검증</b>.
   </p>
+  <p style="margin: 8px 0 0; padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 12px; color: var(--muted-2);">
+    <b style="color: #10b981;">🎯 한 단계 더 (cycle 368) — 호선 × 시간대 우선순위 매트릭스</b>:
+    Top 5 cell 모두 priority 158 — <b style="color: var(--text);">2호선 9시 / 17시 / 19시 + 3호선 17시 / 19시</b>.
+    Bottom 5 = 1호선 5~6시 (priority 9~15). 운영자 일정표에 직접 배정 가능.
+    <code>scripts/eda_line_hour_priority.py</code> · CI 7 회귀 가드 자동 검증.
+  </p>
 </div>
 
 <h2>실 데이터 분산 효과 — 평탄화 정량 검증</h2>
