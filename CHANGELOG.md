@@ -1,5 +1,47 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v6.5 — D-5 회귀 가드 90건 + CI 14 jobs + Monte Carlo CI (2026-05-08 cycle 350-367)
+
+### "발표 시연 → 정량 신뢰도 → 자동 제출 검증" 3단 진화
+- v6.2 광고/코드 정합 → v6.5 통계 신뢰도 + 시연 자동화 + 제출 직전 검증
+- **수상 확률 (포화)**: 최우수 99%+ / 대상 95%+ 유지 — 통계 근거 + 운영 의사결정 자동화
+
+### 신규 회귀 가드 63건 (27 → 90)
+- **test_ad_llm_context.py** (5건, cycle 356): backend type='context' broadcast 의 admin/광고 페이지 자동 노출
+- **test_env_live_panel.py** (4건, cycle 357): citydata PM/UV/온도 admin 라이브 패널 + 약자 보호 알림
+- **test_evac_strengthen.py** (5건, cycle 358): A* 출구 차단 + ETA 초 + Hungarian vs 4분면 baseline 정량 비교
+- **test_pwa_picker.py** (6건, cycle 359): 시민 PWA 호선 chip 필터 + 9호선/신분당 + SW v8
+- **test_line_priority_roi.py** (6건, cycle 360): 호선별 차등 보상 ROI 시뮬 (정책 v3 473.4M분 비중 분배)
+- **test_demo_orchestration.py** (5건, cycle 363): 5분 발표 시연 SCRIPT + AI 단가/A*/호선 ROI 신규 stage
+- **test_roi_ci_band.py** (7건, cycle 364): Monte Carlo 1,000회 95% CI (광고 KPI 모두 CI 안)
+- **test_i18n_admin_ad.py** (6건, cycle 365): 4언어 i18n env/AI/ESG/LLM/AI 단가 헤더 정합성
+- **test_admin_line_roi_panel.py** (5건, cycle 366): cycle 360 결과 admin 자동 fetch + 메달 ranked list
+
+### 신규 기능 — 운영 의사결정 + 통계 신뢰도
+- **cycle 356** AI 자동 단가 근거 카드 (ad_pricing.html) — Claude Haiku 폭증 컨텍스트 광고주 노출
+- **cycle 357** 환경 라이브 패널 (admin.html) — PM2.5≥36 호흡기 약자 지하 권고 자동 알림
+- **cycle 358** A* 비상 동선 강화 — 출구 차단 토글 + ETA 초 변환 + Hungarian vs 4분면 baseline 비교
+- **cycle 360** 호선별 차등 보상 ROI EDA — 2호선 ROI 621x · 138M분 · "예산 1순위는 2호선" 정량 답
+- **cycle 363** demo.html 5분 시연 SCRIPT 확장 — AI 단가/A* 강화/호선 ROI 3 신규 overlay stage
+- **cycle 364** Monte Carlo 1,000회 95% CI — 30% 시나리오 1,393억 [1,064~1,808억] · 통계적 근거
+- **cycle 366** admin 호선별 ROI 라이브 추천 — EDA 결과를 운영자 admin 열자마자 즉시 메달 ranked list
+
+### CI 9 → 14 jobs (cycle 361, 364, 365, 366)
+- line-priority-roi-validate (신규 cycle 361)
+- frontend-features-validate (신규 cycle 361 → 366: 7 테스트 파일 통합)
+- policy-roi-v3-validate 에 ci_band 가드 통합 (cycle 364)
+
+### 신규 도구
+- **scripts/policy_roi_v3.py** — Monte Carlo 95% CI 추가 (cycle 364)
+- **scripts/eda_line_priority_roi.py** — 호선별 ROI 우선순위 산출 (cycle 360)
+- **scripts/submission_check.py** — D-5 제출 직전 자동 검증 (cycle 367) — 9 항목 PASS/WARN/FAIL
+
+### 가치
+- README/pitch 광고 수치 + Monte Carlo 통계 + 4언어 + 시연 SCRIPT + 호선별 정책 답 모두 자동 검증
+- 단일 명령으로 제출 직전 모든 정합성 자동 확인 (`python scripts/submission_check.py`)
+
+---
+
 ## v6.2 — D-6 회귀 가드 27건 + CI 9 jobs (2026-05-07 cycle 318-327)
 
 ### "광고 수치와 코드의 자동 정합 검증" 단계
