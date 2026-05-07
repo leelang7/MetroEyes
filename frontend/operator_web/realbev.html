@@ -503,6 +503,11 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     </div>
     <div class="cam-picker" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
       <button id="evac-btn" style="background: linear-gradient(135deg, #ff5e57, #ff8a4c); color: #fff; font-weight: 600;">🚨 비상 동선 추론</button>
+      <span style="color: var(--muted); font-size: 11px; margin-left: 8px;">차단 출구:</span>
+      <button class="exit-block-btn" data-exit="NW" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;" title="북서 출구 차단/해제">NW</button>
+      <button class="exit-block-btn" data-exit="NE" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;">NE</button>
+      <button class="exit-block-btn" data-exit="SW" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;">SW</button>
+      <button class="exit-block-btn" data-exit="SE" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;">SE</button>
       <span id="evac-result" style="color: var(--muted); font-size: 12px; margin-left: 6px;">— 클릭 시 현재 점유 분포로 최적 대피 출구 추천 (IDEA-6)</span>
     </div>
     <div class="diag-log" id="diag">[준비] 페이지 로드됨\n</div>
@@ -2574,6 +2579,32 @@ function assign1to1(groups, exits, costMatrix) {
   return best;
 }
 
+// 출구 차단 상태 (cycle 358) — 화재/침수 시뮬, 광역 = 차단된 출구는 매칭에서 제외
+const _blockedExits = new Set();
+document.querySelectorAll('.exit-block-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.exit;
+    if (_blockedExits.has(id)) {
+      _blockedExits.delete(id);
+      btn.style.background = 'var(--panel)';
+      btn.style.color = 'var(--muted)';
+      btn.style.borderColor = 'var(--line)';
+      btn.textContent = id;
+    } else {
+      _blockedExits.add(id);
+      btn.style.background = 'rgba(239,68,68,.20)';
+      btn.style.color = '#fca5a5';
+      btn.style.borderColor = '#ef4444';
+      btn.textContent = `🚫${id}`;
+    }
+  });
+});
+
+// BEV 그리드 1셀 ≈ 0.5m (8m 광장 / 16 grid 가정), 보행속도 1.4 m/s 군중 흐름
+const GRID_CELL_M = 0.5;
+const WALK_SPEED_MS = 1.4;
+const stepsToSec = (cost) => (cost * GRID_CELL_M / WALK_SPEED_MS);
+
 document.getElementById('evac-btn').addEventListener('click', () => {
   const persons = _lastTracksForEvac;
   const result = document.getElementById('evac-result');
@@ -2582,14 +2613,19 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     return;
   }
   const cost = buildCostField(persons);
-  const exits = [
+  const allExits = [
     { id: 'NW', label: '북서 출구', tx: 0.10, ty: 0.10 },
     { id: 'NE', label: '북동 출구', tx: 0.90, ty: 0.10 },
     { id: 'SW', label: '남서 출구', tx: 0.10, ty: 0.90 },
     { id: 'SE', label: '남동 출구', tx: 0.90, ty: 0.90 },
   ];
+  const exits = allExits.filter(e => !_blockedExits.has(e.id));
+  if (exits.length === 0) {
+    result.innerHTML = `<span style="color:#ff5e57">⚠ 모든 출구 차단됨 — 1개 이상 해제 필요</span>`;
+    return;
+  }
 
-  // K-means 4그룹 분할
+  // K-means 4그룹 분할 (출구가 줄어도 군중 분할은 그대로 — 매칭만 줄임)
   const groups = kmeans4(persons);
 
   // costMatrix[group][exit]
@@ -2608,7 +2644,18 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     }
   }
 
-  const matching = assign1to1(groups, exits, cm);
+  // 출구 차단 → groups 가 exits 보다 많을 수 있으므로 그리디 폴백 매칭
+  let matching;
+  if (groups.length === exits.length) {
+    matching = assign1to1(groups, exits, cm);
+  } else {
+    // 그룹 수 ≠ 출구 수 (출구 차단됨) — 그룹별 가장 저비용 출구 그리디 (중복 허용)
+    matching = groups.map((_, g) => {
+      let bk = 0, bd = Infinity;
+      for (let e = 0; e < exits.length; e++) if (cm[g][e] < bd) { bd = cm[g][e]; bk = e; }
+      return bk;
+    });
+  }
   if (!matching) {
     result.innerHTML = `<span style="color:#ff5e57">⚠ 경로 없음 — 그리드 차단</span>`;
     return;
@@ -2639,6 +2686,28 @@ document.getElementById('evac-btn').addEventListener('click', () => {
   const distributedSavePct = singleExitCost > 0
     ? (((singleExitCost - totalDispCost) / singleExitCost) * 100).toFixed(0)
     : 0;
+  // 4분면 단순 baseline (cycle 358) — 군중 위치를 4사분면으로 정의해 가장 가까운 출구로 (휴리스틱)
+  let quadrantCost = 0;
+  for (let g = 0; g < groups.length; g++) {
+    // 4사분면: x<0.5, y<0.5 → 가장 가까운 사분면 출구 (NW/NE/SW/SE)
+    const center = groups[g];
+    const nearestQuadId = (center.x < 0.5 ? (center.y < 0.5 ? 'NW' : 'SW') : (center.y < 0.5 ? 'NE' : 'SE'));
+    const eIdx = exits.findIndex(e => e.id === nearestQuadId);
+    if (eIdx >= 0 && cm[g][eIdx] !== Infinity) {
+      quadrantCost += cm[g][eIdx] * groups[g].members.length;
+    } else {
+      // 차단됨 → 그 다음 가까운 출구
+      let bm = Infinity;
+      for (let e = 0; e < exits.length; e++) bm = Math.min(bm, cm[g][e]);
+      quadrantCost += bm * groups[g].members.length;
+    }
+  }
+  const vsQuadPct = quadrantCost > 0
+    ? (((quadrantCost - totalDispCost) / quadrantCost) * 100).toFixed(0)
+    : 0;
+  // ETA 초 변환 — 가장 오래 걸리는 그룹 (병목)
+  const slowestStepCost = Math.max(...Object.values(groupExit).map(ge => ge.cost));
+  const etaSec = stepsToSec(slowestStepCost);
 
   // best/worst — 분산 매칭에서 cost min/max
   const sortedGroups = Object.values(groupExit).sort((a, b) => a.cost - b.cost);
@@ -2649,15 +2718,21 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     .map(ge => `${ge.exit.label.replace(' 출구', '')} ${ge.members}명`)
     .join(' · ');
 
+  const blockedNote = _blockedExits.size > 0
+    ? ` <span style="color:#fca5a5; font-size:11px;">차단 ${_blockedExits.size}/4</span>`
+    : '';
   result.innerHTML = `
-    <span style="color:#7dd3d3; font-weight:600;">▶ 4-출구 분산</span>
+    <span style="color:#7dd3d3; font-weight:600;">▶ ${exits.length}-출구 분산</span>${blockedNote}
     <span style="color:#fff; font-size:11px;">${summary}</span>
     &nbsp;|&nbsp;
-    <span style="color:#10b981">vs 단일 출구 ${distributedSavePct}% 절감</span>
-    &nbsp;|&nbsp;<span style="color:#f0b46a">A*+K-means ${GRID_N}×${GRID_N}</span>
+    <span style="color:#fff; font-weight:600;">ETA ${etaSec.toFixed(1)}s</span>
+    &nbsp;|&nbsp;
+    <span style="color:#10b981">단일 -${distributedSavePct}%</span>
+    <span style="color:#a78bfa; margin-left:6px;">·  4분면 -${vsQuadPct}%</span>
+    &nbsp;|&nbsp;<span style="color:#f0b46a">A*+Hungarian ${GRID_N}×${GRID_N}</span>
   `;
   drawPathOverlay(paths, exits, best, worst);
-  diagEl.append(`[EVAC A*+K-means] ${summary} / 분산 cost=${totalDispCost.toFixed(1)} / 단일출구 ${singleExitCost.toFixed(1)} / 절감 ${distributedSavePct}%\n`);
+  diagEl.append(`[EVAC A*+Hungarian] ${summary} / ETA ${etaSec.toFixed(1)}s / 분산 ${totalDispCost.toFixed(1)} vs 단일 ${singleExitCost.toFixed(1)} (-${distributedSavePct}%) vs 4분면 ${quadrantCost.toFixed(1)} (-${vsQuadPct}%) / 차단 ${_blockedExits.size}/4\n`);
 });
 </script>
 
