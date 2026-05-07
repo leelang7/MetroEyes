@@ -131,6 +131,21 @@ jobs:
           python -m pytest tests/test_eda_od_transfer.py -v
           echo "✅ OD/Transfer EDA — 삼성 12.4x 출근 / 충무로 +1.56 환승 / 연신내 +1.44 모두 검증"
 
+  line-priority-roi-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: pip install --no-cache-dir pytest
+      - name: Run 호선별 ROI EDA report regression tests
+        run: |
+          python -m pytest tests/test_line_priority_roi.py -v
+          echo "✅ 호선별 ROI EDA — 9 호선 우선순위 + 정책 v3 473.4M 합 일치 검증"
+
   bonus-krw-validate:
     runs-on: ubuntu-latest
     steps:
@@ -190,3 +205,18 @@ jobs:
         run: |
           python -m pytest tests/test_impact_summary.py -v
           echo "✅ Impact summary — _incident_total 6 type + IMPACT_AVG_TRIP_MIN 25 + 167원/분 + 700만 baseline"
+
+  frontend-features-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: pip install --no-cache-dir pytest
+      - name: Run cycle 356-359 frontend regression tests
+        run: |
+          python -m pytest tests/test_ad_llm_context.py tests/test_env_live_panel.py tests/test_evac_strengthen.py tests/test_pwa_picker.py -v
+          echo "✅ Frontend features — ad LLM 카드 + admin 환경 패널 + A* 강화 + PWA picker 모두 검증"
