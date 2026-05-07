@@ -4,8 +4,8 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/Social_Value-%E2%82%A9139.3B%2Fyr-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/Auto_Cycles-382-a78bfa.svg)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/regression_tests-177_guards-10b981.svg)](tests/)
+[![Cycles](https://img.shields.io/badge/Auto_Cycles-383-a78bfa.svg)](CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/regression_tests-182_guards-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"As Tesla sees the road as BEV, MetroEyes sees the entire urban transit network."*
@@ -57,7 +57,7 @@ Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 177 regression gu
 A single citizen action (₩200 reward) → backend krw accumulation → operator console live ROI x →
 backend incident broadcast → citizen route avoidance notice. **5-stage two-sided closed loop**.
 
-## 311 Auto Cycles Accumulated (D-6, 2026-05-13 deadline)
+## 382 Auto Cycles Accumulated (D-5, 2026-05-13 deadline)
 
 - ✅ **Two-sided value chain 8 stages** (CV → city → decision → OD match → transfer match → citizen tiered → backend auto-bonus → ROI live)
 - ✅ **Demo fail-safe 8 layers**: `--demo` + 30s injector + 5min sticky bar + backend join summary + admin click + warm seed + Docker compose + GitHub Actions CI
@@ -69,7 +69,9 @@ backend incident broadcast → citizen route avoidance notice. **5-stage two-sid
 - ✅ **Tiered incentive policy** — ₩100 / ₩200 / ₩300 (OD priority) / ₩400 (transfer station) **with backend auto-bonus**
 - ✅ **A* + K-means(K=4) + Hungarian** emergency evacuation — single-exit baseline cost reduction quantified
 - ✅ **10 REST endpoints** (health/roi_curve/impact/incidents/dispersion/od/transfer/policy_summary/openapi/docs) + **OpenAPI 3.0 spec**
-- ✅ **CI 12 jobs + 41 pytest regression guards** (cycle 318-336): OpenAPI spec(4) + ROI v3 KPI(5) + dispersion EDA(6) + OD/transfer EDA(6) + bonus_krw tier(6) + pitch figs(3) + pitch structure(6) + impact summary(5) — advertised numbers + code + figures + deck + 6-type incident state all auto-synced
+- ✅ **CI 15 jobs + 177 pytest regression guards** (cycle 318-382): OpenAPI(4) + ROI v3(5) + dispersion(6) + OD/transfer(6) + bonus(6) + figs(3) + pitch(6) + impact(5) + cycle 356-382 new 78 (LLM/env/A*/PWA/demo/i18n/ROI panel/heatmap/narration/onepager/proposal v3/SLIDES v3/Monte Carlo CI/RUNBOOK/QA/SUBMISSION_INDEX/reviewer guide/changelog/ship-gate) — advertised KPIs ↔ code ↔ figs ↔ deck ↔ canonical JSON all auto-synced
+- ✅ **Canonical KPI drift auto-blocked** (cycle 375): ad 1,393억 / 347x / Line 2 157M / CI [1,064~1,808] all artifacts simultaneously consistent — D-day issue like cycle 374 auto-detected
+- ✅ **Submission ship-gate** (cycle 380): `python scripts/submission_check.py --ci` 1-sec 12 items PASS/WARN/FAIL — every push auto-verifies submission-ready
 - ✅ **A* + K-means(K=4) + Hungarian 1:1 exit matching** for emergency evacuation (cost reduction vs single-exit baseline quantified)
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman auto-import
 

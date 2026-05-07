@@ -4,10 +4,10 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-382회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-383회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/regression_tests-177회귀_가드-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/regression_tests-182회귀_가드-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
@@ -50,7 +50,7 @@
 
 **진입**: [`frontend/index.html`](frontend/index.html) — 8장 카드 허브 (📊 정책 보고 / 🎬 통합 시연 / 🚇 운영자 / 📱 시민 / 🛠 디버그)
 
-**자동 311 사이클 누적 결과** (D-6, 5/13 마감):
+**자동 382 사이클 누적 결과** (D-5, 2026-05-13 마감):
 - ✅ 양면 가치 사슬 5단계 (시민 분산 → backend krw → 운영자 ROI → backend incident → 시민 알림)
 - ✅ 시연 fail-safe **8중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭 + fake impact seed + Docker compose + GitHub Actions CI
 - ✅ 다국어 4개 (ko/en/zh/ja) **11 페이지 패리티** (운영자 4 + 시민 2 + 메타 5) + Web Speech + ARIA
@@ -62,7 +62,9 @@
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman 자동 임포트
 - ✅ **IDEA-7 임산부석** + **IDEA-8 병목 사전 경고** (cycle 226 — 칸 단위 BEV ROI 응용)
 - ✅ **IDEA-9 도착 알림 5중 모달리티** (cycle 286-310, PWA v4.10) — 시각/햅틱/beep/4언어 음성/시스템 알림 + Wake Lock + SW notificationclick + 최근 도착지 MRU 5개 + persistence (2시간 만료) + ETA 분 표시 + 사전 테스트 버튼 + 안전망 인디케이터 (🔆🔔⚙) + 사용 히스토리 카운터 (노이즈 캔슬링/이어폰/청각 약자 42만 명 + 노캔 1,200만 잠재 사용자, 접근성 제도 직결)
-- ✅ **CI 12 jobs + pytest 회귀 가드 41건** (cycle 318-336): OpenAPI spec(4) + ROI v3 KPI(5) + dispersion EDA(6) + OD/transfer EDA(6) + bonus_krw tier(6) + pitch figs(3) + pitch 구조(6) + impact summary(5) — README 광고 수치 + 코드 + 그림 + 발표 자료 + 6 type incident 모두 자동 정합 검증
+- ✅ **CI 15 jobs + pytest 회귀 가드 177건** (cycle 318-382): OpenAPI(4) + ROI v3(5) + dispersion(6) + OD/transfer(6) + bonus(6) + figs(3) + pitch(6) + impact(5) + cycle 356-382 신규 78건 (LLM/환경/A*/PWA/demo/i18n/ROI panel/heatmap/narration/onepager/proposal v3/SLIDES v3/Monte Carlo CI/RUNBOOK/QA/SUBMISSION_INDEX/reviewer guide/changelog/submission ship-gate) — 광고 KPI ↔ 코드 ↔ 그림 ↔ 발표 자료 ↔ canonical JSON 모두 자동 정합 검증
+- ✅ **canonical KPI drift 자동 차단** (cycle 375): 광고 1,393억 / 347x / 2호선 157M / CI [1,064~1,808] 모든 자료 동시 일치 강제 — D-day 제출 직전 cycle 374 같은 KPI 충돌 사고 자동 감지
+- ✅ **submission ship-gate** (cycle 380): `python scripts/submission_check.py --ci` 1초 내 12 항목 PASS/WARN/FAIL — 매 push 마다 자동 제출 가능 검증
 
 ---
 
