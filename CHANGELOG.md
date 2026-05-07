@@ -32,6 +32,11 @@
 - cycle 396: user memory project_d9_iteration v6.2/328 → v6.7/395 마일스톤 갱신
 - cycle 397: internal markdown link checker (10 docs) — D-day 평가위원 404 차단
 - cycle 398: link checker 확장 — docs/*.md 전체 + 루트 *.md sweep + CHANGELOG.md
+- cycle 399: CHANGELOG v6.8 신규 블록 (cycle 391-398 누적 정리)
+- cycle 400: 🎉 마일스톤 — 자동 모드 400 사이클 완주 + onepager 197/389 → 233/400
+- cycle 401: docs/FORM_DATA.md 마이박스 양식 4종 사전 작성 데이터 (D-day copy-paste)
+- cycle 402: FORM_DATA cross-link (SUBMISSION_GUIDE §0 + README ko/en 추가 docs)
+- cycle 403: FORM_DATA stale 233 → 241 가드 동기화
 
 ---
 
