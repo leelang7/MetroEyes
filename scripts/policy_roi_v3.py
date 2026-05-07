@@ -284,6 +284,38 @@ def main():
         json.dump(ci_band, f, ensure_ascii=False, indent=2)
     print(f"  >> {figs_dir / 'policy_roi_v3_ci_band.json'}")
 
+    # cycle 375 — Canonical KPI 광고용 (모든 PROPOSAL/SLIDES/pitch/onepager 가 이 값과 일치해야 함)
+    per_line_m = {line: round(line_totals[i], 1) for i, line in enumerate(mid["lines"])}
+    canonical = {
+        "source_script": "scripts/policy_roi_v3.py",
+        "scenario_30pct": {
+            "net_value_b": round(mid["net_value_b"]),                         # 1,393억
+            "roi_x":       round(mid["roi_x"]),                               # 347
+            "minutes_saved_yr_m": round(mid["minutes_saved_yr"] / 1e6, 1),    # 473.4M
+            "infra_b":     round(mid["infra_b"], 1),                          # 4억
+            "n_stations_priority": mid["n_stations_priority"],                # 134
+        },
+        "per_line_saved_min_m": per_line_m,                                   # 2호선: 157.3
+        "ci_30pct": {
+            "net_b_p5": round(ci_band["scenarios"]["0.30"]["net_b_p5"]),
+            "net_b_p95": round(ci_band["scenarios"]["0.30"]["net_b_p95"]),
+            "roi_x_p5": round(ci_band["scenarios"]["0.30"]["roi_x_p5"]),
+            "roi_x_p95": round(ci_band["scenarios"]["0.30"]["roi_x_p95"]),
+        },
+        "advertised_in": [
+            "README.md (badge + headline)",
+            "frontend/pitch.html (callout)",
+            "frontend/onepager.html (KPI cards)",
+            "frontend/demo.html (showLineRoiOverlay)",
+            "docs/PROPOSAL.md §5",
+            "docs/SLIDES_DECK.md + SLIDES.html (slide 1, 19)",
+            "docs/RECORDING_NARRATION.md (4 lang)",
+        ],
+    }
+    with (figs_dir / "policy_roi_v3_canonical_kpi.json").open("w", encoding="utf-8") as f:
+        json.dump(canonical, f, ensure_ascii=False, indent=2)
+    print(f"  >> {figs_dir / 'policy_roi_v3_canonical_kpi.json'}")
+
     # heatmap + 추가 차트 2종 (호선별 절감, 시나리오 비교)
     try:
         import matplotlib

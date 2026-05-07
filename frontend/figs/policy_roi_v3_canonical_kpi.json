@@ -1,0 +1,36 @@
+{
+  "source_script": "scripts/policy_roi_v3.py",
+  "scenario_30pct": {
+    "net_value_b": 1393,
+    "roi_x": 347,
+    "minutes_saved_yr_m": 473.4,
+    "infra_b": 4.0,
+    "n_stations_priority": 134
+  },
+  "per_line_saved_min_m": {
+    "1호선": 45.1,
+    "2호선": 157.3,
+    "3호선": 38.0,
+    "4호선": 45.1,
+    "5호선": 40.4,
+    "6호선": 28.5,
+    "7호선": 49.9,
+    "8호선": 16.6,
+    "9호선": 52.4
+  },
+  "ci_30pct": {
+    "net_b_p5": 1064,
+    "net_b_p95": 1808,
+    "roi_x_p5": 270,
+    "roi_x_p95": 424
+  },
+  "advertised_in": [
+    "README.md (badge + headline)",
+    "frontend/pitch.html (callout)",
+    "frontend/onepager.html (KPI cards)",
+    "frontend/demo.html (showLineRoiOverlay)",
+    "docs/PROPOSAL.md §5",
+    "docs/SLIDES_DECK.md + SLIDES.html (slide 1, 19)",
+    "docs/RECORDING_NARRATION.md (4 lang)"
+  ]
+}

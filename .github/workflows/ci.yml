@@ -96,10 +96,10 @@ jobs:
           python-version: '3.12'
       - name: Install numpy + pytest
         run: pip install --no-cache-dir numpy pytest
-      - name: Run ROI v3 KPI regression tests
+      - name: Run ROI v3 KPI regression tests + KPI drift detection
         run: |
-          python -m pytest tests/test_policy_roi_v3.py tests/test_roi_ci_band.py -v
-          echo "✅ ROI v3 — 1,393억/year, 347x + Monte Carlo 95% CI [1,064~1,808억] 모두 검증"
+          python -m pytest tests/test_policy_roi_v3.py tests/test_roi_ci_band.py tests/test_kpi_drift.py -v
+          echo "✅ ROI v3 + canonical KPI drift — 1,393억/year, 347x, 2호선 157M 모든 광고 자료 동시 정합 자동 검증"
 
   eda-dispersion-validate:
     runs-on: ubuntu-latest
