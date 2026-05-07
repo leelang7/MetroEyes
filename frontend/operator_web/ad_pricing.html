@@ -263,6 +263,23 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
       </p>
     </div>
 
+    <!-- 🤖 AI 자동 단가 근거 (cycle 356) — Claude Haiku 폭증 컨텍스트를 광고주 단가 책정 근거로 노출 -->
+    <div id="ad-llm-card" hidden class="insight" style="background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border-color: rgba(167,139,250,.40);">
+      <h3 style="color: #a78bfa;">🤖 AI 자동 단가 근거 (Claude Haiku · 라이브)</h3>
+      <p style="margin-bottom: 6px;">
+        <b>특정 시각·POI 단가가 급등하는 이유</b>를 AI가 자연어로 자동 설명. citydata 폭증 감지 → Naver 뉴스 검색 → Claude Haiku 80자 요약 → broadcast.
+      </p>
+      <p style="background: rgba(167,139,250,.08); padding: 10px 12px; border-radius: 8px; border-left: 3px solid #a78bfa; margin: 8px 0;">
+        <b id="ad-llm-poi" style="color: #a78bfa;">—</b>
+        <span id="ad-llm-trigger" style="color: var(--muted); font-size: 11px; margin-left: 6px;">—</span><br/>
+        <span id="ad-llm-text" style="color: var(--fg); font-size: 13px; line-height: 1.6;">—</span>
+      </p>
+      <p style="font-size: 11px; color: var(--muted-2);">
+        <b>광고주 가치</b>: "왜 이 단가인가?" 가 분 단위로 투명해짐 → 고정 옥외광고 대비 <b>입찰 신뢰도 ↑</b>. 폭증 이벤트 시 자동 트리거됨 (수동 조회 불필요).<br/>
+        <span id="ad-llm-ts" style="color: var(--muted); font-size: 10px;">—</span>
+      </p>
+    </div>
+
     <div class="insight" style="background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(167,139,250,.02)); border-color: rgba(245,158,11,.30);">
       <h3 style="color: #f59e0b;">차등 보상 → 노출 안정화 (광고주 가치)</h3>
       <p>
@@ -445,6 +462,49 @@ function pickWsUrl() {
   return 'ws://localhost:8765';
 }
 
+// 🤖 AI 자동 단가 근거 (cycle 356) — Claude Haiku 폭증 컨텍스트를 광고주 단가 책정 근거로 노출
+const AD_LLM_KEY = 'me_ad_llm_ctx';
+function applyAdLlmContext(j) {
+  const text = (j && (j.llm_text || j.text || j.context || j.summary)) || '';
+  if (!text) return;
+  const card = document.getElementById('ad-llm-card');
+  const poiEl = document.getElementById('ad-llm-poi');
+  const trgEl = document.getElementById('ad-llm-trigger');
+  const txtEl = document.getElementById('ad-llm-text');
+  const tsEl  = document.getElementById('ad-llm-ts');
+  if (!card || !txtEl) return;
+  const poi = j.poi || (j.trigger && j.trigger.poi) || '';
+  const lvl = (j.trigger && j.trigger.lvl) || j.congest_lvl || '';
+  const ppl = (j.trigger && j.trigger.ppltn) || j.ppltn_max || null;
+  if (poiEl) poiEl.textContent = poi || '—';
+  if (trgEl) trgEl.textContent = [lvl, ppl ? ppl.toLocaleString() + '명' : ''].filter(Boolean).join(' · ') || '—';
+  txtEl.textContent = text.slice(0, 220);
+  if (tsEl) tsEl.textContent = `갱신 ${new Date().toLocaleTimeString()} · Claude Haiku 4.5`;
+  card.hidden = false;
+  try {
+    localStorage.setItem(AD_LLM_KEY, JSON.stringify({
+      poi, lvl, ppl, text: text.slice(0, 220), at: Date.now()
+    }));
+  } catch {}
+}
+// 페이지 로드 시 직전 컨텍스트 1회 복원 — 광고주가 새 탭 열어도 마지막 근거 즉시 노출
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    const raw = localStorage.getItem(AD_LLM_KEY);
+    if (!raw) return;
+    const v = JSON.parse(raw);
+    // 30분 이내 컨텍스트만 복원
+    if (v && v.text && (Date.now() - (v.at || 0)) < 30 * 60 * 1000) {
+      applyAdLlmContext({
+        type: 'context', poi: v.poi, summary: v.text,
+        trigger: { poi: v.poi, lvl: v.lvl, ppltn: v.ppl }
+      });
+      const tsEl = document.getElementById('ad-llm-ts');
+      if (tsEl) tsEl.textContent = `직전 캐시 (${new Date(v.at).toLocaleTimeString()}) · 새 컨텍스트 수신 시 갱신`;
+    }
+  } catch {}
+});
+
 function connectAdLive() {
   try { if (_ws) _ws.close(); } catch {}
   _wsState = 'connecting'; updDbg();
@@ -463,6 +523,10 @@ function connectAdLive() {
         liveDensity[j.poi] = { density: d, ppltn: mid, lvl: j.congest_lvl, ts: Date.now() };
         applyLiveDensity();
         updDbg();
+      }
+      // 🤖 AI 자동 단가 근거 (cycle 356) — backend 의 폭증 컨텍스트 수신 시 카드 노출
+      else if (j.type === 'context' || j.type === 'surge_context' || j.type === 'llm_context' || j.llm_text || j.summary) {
+        applyAdLlmContext(j);
       }
     } catch {}
   };

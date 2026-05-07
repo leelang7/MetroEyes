@@ -408,8 +408,9 @@ function connectWs() {
         bucket = 'impact';
         applyImpactCard(j);
       }
-      // 🤖 LLM 자동 컨텍스트 (cycle 355) — Claude Haiku의 폭증 추론 결과 라이브 노출
-      else if (t === 'surge_context' || t === 'llm_context' || (j && j.llm_text)) {
+      // 🤖 LLM 자동 컨텍스트 (cycle 355/356) — Claude Haiku의 폭증 추론 결과 라이브 노출
+      // backend tesla_bev.py 는 type='context' + summary 로 broadcast (cycle 356 fix)
+      else if (t === 'context' || t === 'surge_context' || t === 'llm_context' || (j && (j.llm_text || j.summary))) {
         try {
           const ctxBox = document.getElementById('llm-context-box');
           const txt = document.getElementById('llm-context-text');
