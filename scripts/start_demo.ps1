@@ -99,12 +99,26 @@ if (-not $NoTunnel) {
     $cfConfig = Join-Path $root "cloudflared-config.yml"
     if (Test-Path $cfConfig) {
         Write-Host ""
-        Write-Host "[3] cloudflared named tunnel (new console, $WS)..." -ForegroundColor Cyan
-        $cfp = Start-Process -FilePath "powershell.exe" -ArgumentList @(
-            "-NoExit", "-Command",
-            "cloudflared tunnel --config '$cfConfig' run"
-        ) -PassThru -WorkingDirectory $root -WindowStyle $WS
-        Write-Host "  cloudflared PID=$($cfp.Id) - permanent domain (config in $cfConfig)" -ForegroundColor Gray
+        Write-Host "[3] cloudflared named tunnel (hidden + log to logs/cloudflared.{out,err}.log)..." -ForegroundColor Cyan
+        # 이미 떠있으면 skip — child PowerShell 죽음으로 사라지는 일 없도록 직접 cloudflared.exe 호출
+        if (Get-Process cloudflared -ErrorAction SilentlyContinue) {
+            Write-Host "  cloudflared 이미 실행 중 — skip" -ForegroundColor Yellow
+        } else {
+            $cfExe = Join-Path $env:LOCALAPPDATA "Microsoft\WinGet\Packages\Cloudflare.cloudflared_Microsoft.Winget.Source_8wekyb3d8bbwe\cloudflared.exe"
+            if (-not (Test-Path $cfExe)) { $cfExe = "cloudflared" }
+            $logsDir = Join-Path $root "logs"
+            if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir | Out-Null }
+            $cfp = Start-Process -FilePath $cfExe -ArgumentList @('tunnel','--config',$cfConfig,'run') `
+                                  -WorkingDirectory $root -WindowStyle Hidden -PassThru `
+                                  -RedirectStandardOutput "$logsDir\cloudflared.out.log" `
+                                  -RedirectStandardError "$logsDir\cloudflared.err.log"
+            Start-Sleep -Seconds 3
+            if (Get-Process -Id $cfp.Id -ErrorAction SilentlyContinue) {
+                Write-Host "  cloudflared PID=$($cfp.Id) - permanent domain (config in $cfConfig)" -ForegroundColor Green
+            } else {
+                Write-Host "  cloudflared 시작 후 즉시 종료 — logs/cloudflared.err.log 확인" -ForegroundColor Red
+            }
+        }
     } else {
         Write-Host ""
         Write-Host "[3] cloudflared SKIP - run setup_cloudflared.ps1 first to create config." -ForegroundColor Yellow
