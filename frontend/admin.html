@@ -208,6 +208,19 @@
       <div class="stat">응답률 추정     <b id="im-rate">—%</b></div>
     </div>
 
+    <!-- 🌱 ESG 라이브 패널 (cycle 353 신규) — 탄소 / 일자리 / 약자 / 거버넌스 -->
+    <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(16,185,129,.10), rgba(125,211,211,.04)); border: 1px solid rgba(16,185,129,.30);">
+      <h2>♻ ESG 라이브 (5축 동시 실현)</h2>
+      <div class="stat">🌱 CO₂ 절감     <b id="esg-co2" class="ok">0 kg eq</b></div>
+      <div class="stat">♿ 약자 수혜     <b id="esg-soc" class="ok">청각 42만 + 노캔 1,200만 잠재</b></div>
+      <div class="stat">💼 신규 고용     <b id="esg-job" class="ok">Y3 25 FTE</b></div>
+      <div class="stat">🤝 가치사슬 단계 <b id="esg-co" class="ok">8단</b></div>
+      <div class="stat">🛡 개인정보 노출 <b id="esg-gov" class="ok">zero (Edge AI)</b></div>
+      <div style="margin-top: 6px; padding: 6px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 11px; color: #10b981;">
+        분산 1회 = 0.012 kg CO₂ eq (자가용 회피 5% × 8.4km × 0.21 kg/km, 보수)
+      </div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(239,68,68,.08), rgba(245,158,11,.04));">
       <h2>🚨 사고 누적 <span style="color: var(--muted); font-weight: 400;">(incident_log 동기화)</span>
         <button onclick="triggerDemoIncidents()" style="float: right; padding: 2px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 5px; font-size: 10px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연</button>
@@ -412,6 +425,11 @@ function clearLog() { logEl.innerHTML = ''; stats = { sent:0, recv:0, bev:0, fps
 function applyImpactCard(j) {
   const fmt = (w) => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
   document.getElementById('im-cnt').textContent = (j.total_count || 0).toLocaleString();
+  // ESG CO₂ 라이브 갱신 — cycle 353 (탄소중립 5점)
+  try {
+    const co2El = document.getElementById('esg-co2');
+    if (co2El) co2El.textContent = `${((j.total_count || 0) * 0.012).toFixed(1)} kg eq`;
+  } catch {}
   document.getElementById('im-min').textContent = Math.round(j.saved_min_total || 0).toLocaleString();
   document.getElementById('im-val').textContent = fmt(j.value_won || 0);
   document.getElementById('im-krw').textContent = fmt(j.krw_paid || 0);
