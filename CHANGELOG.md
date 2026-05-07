@@ -1,6 +1,6 @@
 # Changelog — MetroEyes (SubwayBEV)
 
-## v6.7 — D-5 회귀 가드 177건 + 1-Pager 4언어 + RUNBOOK + QA 준비 + 자기 채점표 (2026-05-08 cycle 372-382)
+## v6.7 — D-5 회귀 가드 195건 + 1-Pager 4언어 + RUNBOOK + QA + 자기 채점표 + GitHub polish (2026-05-08 cycle 372-386)
 
 ### "심사 take-away + Q&A 사전 준비 + 광고-코드 자동 정합" 단계
 - v6.6 EDA 2D + narration → v6.7 발표 자료 4언어 + 운영 안정성 + KPI drift 자동 차단

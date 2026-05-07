@@ -51,3 +51,36 @@ def test_contributing_links_to_canonical() -> None:
     assert "canonical" in body.lower() and "kpi" in body.lower(), "CONTRIBUTING missing canonical KPI section"
     assert "policy_roi_v3.py" in body, "CONTRIBUTING missing canonical regen command"
     assert "test_kpi_drift" in body, "CONTRIBUTING missing drift test reference"
+
+
+# === cycle 386 — SECURITY.md ===
+
+def test_security_md_exists() -> None:
+    """SECURITY.md (취약점 disclosure + 개인정보 보호 정책)."""
+    p = ROOT / "SECURITY.md"
+    assert p.exists(), f"missing {p}"
+
+
+def test_security_privacy_documented() -> None:
+    """SECURITY 가 Edge AI 개인정보 zero 정책 명시."""
+    p = ROOT / "SECURITY.md"
+    body = p.read_text(encoding="utf-8")
+    assert "Edge AI" in body, "Edge AI architecture missing"
+    assert "개인정보" in body, "privacy policy missing"
+    assert "zero" in body.lower(), "zero personal data claim missing"
+
+
+def test_security_secret_management_documented() -> None:
+    """API 키 / 시크릿 관리 .env (gitignored) 명시."""
+    p = ROOT / "SECURITY.md"
+    body = p.read_text(encoding="utf-8")
+    assert ".env" in body and "gitignored" in body, "secret management policy missing"
+    assert "ANTHROPIC_API_KEY" in body, "Anthropic API key reference missing"
+
+
+def test_security_vuln_reporting_email() -> None:
+    """취약점 보고 이메일 명시 (공개 issue 대신 직접 연락)."""
+    p = ROOT / "SECURITY.md"
+    body = p.read_text(encoding="utf-8")
+    assert "leescvsir@gmail.com" in body, "vulnerability reporting email missing"
+    assert "48시간" in body or "7일" in body, "response SLA missing"
