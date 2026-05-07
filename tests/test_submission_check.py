@@ -80,6 +80,36 @@ def test_ci_mode_runs_passes() -> None:
         f"stdout tail:\n{r.stdout[-1200:]}"
     )
 
+
+# === cycle 388 — required_files 확장 ===
+
+def test_extended_required_files_includes_new_docs() -> None:
+    """submission_check 의 required_files 가 cycle 367-386 신규 docs 모두 포함."""
+    src = SCRIPT.read_text(encoding="utf-8")
+    new_required = [
+        "docs/RUNBOOK.md", "docs/QA_PREPARATION.md", "docs/SUBMISSION_INDEX.md",
+        "docs/RECORDING_NARRATION.md",
+        "frontend/onepager.html",
+        "CONTRIBUTING.md", "SECURITY.md",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+        ".github/ISSUE_TEMPLATE/bug_report.md",
+        "frontend/figs/policy_roi_v3_canonical_kpi.json",
+        "frontend/figs/policy_roi_v3_ci_band.json",
+        "frontend/figs/line_priority_roi_report.json",
+        "frontend/figs/line_hour_priority_matrix.json",
+        "scripts/eda_line_hour_priority.py",
+        "scripts/submission_check.py",
+    ]
+    for f in new_required:
+        assert f in src, f"submission_check required_files missing: {f}"
+
+
+def test_canonical_kpi_json_referenced() -> None:
+    """canonical KPI source of truth (cycle 375) 가 required 안에 명시."""
+    src = SCRIPT.read_text(encoding="utf-8")
+    assert "policy_roi_v3_canonical_kpi.json" in src, "canonical KPI JSON not in required_files"
+    assert "policy_roi_v3_ci_band.json" in src, "CI band JSON not in required_files"
+
 # NOTE: 실제 end-to-end 실행 (`python scripts/submission_check.py`)은 D-day 직전 수동 실행 권장.
 # 이 도구가 내부적으로 pytest 를 다시 호출 → pytest 안에서 재귀 호출 시 timeout 발생하므로
 # regression suite 에는 포함하지 않음. CI 별도 job 또는 사용자 수동 실행으로 검증.

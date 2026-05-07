@@ -62,17 +62,35 @@ class Report:
 # ============== 검사 항목 ==============
 
 def check_required_files(rep: Report) -> None:
-    """1. 필수 산출물 존재 + 비어있지 않음."""
+    """1. 필수 산출물 존재 + 비어있지 않음. cycle 388 — 신규 docs/SECURITY/CONTRIBUTING/onepager 포함."""
     required = [
+        # 핵심
         "README.md", "README.en.md", "LICENSE", "CHANGELOG.md",
+        # 발표 자료
         "docs/PROPOSAL.md", "docs/SLIDES.html", "docs/SLIDES_DECK.md",
-        "frontend/pitch.html", "frontend/index.html",
+        # 신규 평가 보조 자료 (cycle 367-381)
+        "docs/RUNBOOK.md", "docs/QA_PREPARATION.md",
+        "docs/SUBMISSION_INDEX.md", "docs/RECORDING_NARRATION.md",
+        # frontend
+        "frontend/pitch.html", "frontend/index.html", "frontend/onepager.html",
         "frontend/passenger_app/index.html", "frontend/admin.html",
         "frontend/operator_web/realbev.html", "frontend/operator_web/ad_pricing.html",
         "frontend/demo.html",
+        # 핵심 산출 스크립트
         "scripts/policy_roi_v3.py", "scripts/eda_line_priority_roi.py",
+        "scripts/eda_line_hour_priority.py", "scripts/submission_check.py",
         "src/cv/lite_server.py", "src/cv/tesla_bev.py",
+        # GitHub polish (cycle 385-386)
+        "CONTRIBUTING.md", "SECURITY.md",
         ".github/workflows/ci.yml",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+        ".github/ISSUE_TEMPLATE/bug_report.md",
+        ".github/ISSUE_TEMPLATE/feature_request.md",
+        # canonical KPI source of truth (cycle 375)
+        "frontend/figs/policy_roi_v3_canonical_kpi.json",
+        "frontend/figs/policy_roi_v3_ci_band.json",
+        "frontend/figs/line_priority_roi_report.json",
+        "frontend/figs/line_hour_priority_matrix.json",
     ]
     for f in required:
         p = ROOT / f
