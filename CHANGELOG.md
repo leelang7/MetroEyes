@@ -1,5 +1,56 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v6.7 — D-5 회귀 가드 158건 + 1-Pager 4언어 + RUNBOOK + QA 준비 (2026-05-08 cycle 372-378)
+
+### "심사 take-away + Q&A 사전 준비 + 광고-코드 자동 정합" 단계
+- v6.6 EDA 2D + narration → v6.7 발표 자료 4언어 + 운영 안정성 + KPI drift 자동 차단
+- 신규 회귀 가드 44건 (114 → 158)
+
+### 신규 발표/문서 자료
+- **cycle 372** `frontend/onepager.html` — A4 print-friendly 1-Pager (심사위원 take-away)
+  - 헤더라인 4 KPI / 6 차별성 카드 / 4 도시 비교 / B2G·B2B 사업화 3-tier
+  - @page A4 portrait + window.print() 인쇄 버튼
+- **cycle 373** SLIDES_DECK + SLIDES.html v3 갱신 (v2 9,470억 outdated 제거)
+- **cycle 374** 호선별 ROI 정책 v3 직접 시뮬 정렬 (광고 "2호선 157M" 일치)
+  - cycle 360 비중 분배 138M ↔ 정책 v3 직접 시뮬 157.3M 충돌 검출 + 수정
+  - 새 ROI: 🥇 2호선 708x / 🥈 9호선 236x / 🥉 7호선 224x / 8호선 75x lowest
+- **cycle 375** Canonical KPI JSON + 광고-코드 자동 정합 시스템
+  - `frontend/figs/policy_roi_v3_canonical_kpi.json` source of truth
+  - 6 cross-file drift 가드 — 1,393억 / 347x / 2호선 157M / CI [1,064~1,808] 동시 일치
+- **cycle 376** `docs/RUNBOOK.md` — 장애 9 시나리오 + 8단 fail-safe + 5분 사전 체크리스트
+- **cycle 377** onepager 4언어 토글 (ko/en/zh/ja) + KPI v3 sync (138M→157M)
+- **cycle 378** `docs/QA_PREPARATION.md` — 18 예상 질문 5 카테고리 + 30초 self-pitch
+
+### 신규 회귀 가드 44건 (114 → 158)
+- test_onepager.py (11건, cycle 372 + 377): A4 print / KPI 정합 / 사업화 / 4언어 토글 / I18N dict
+- test_proposal_v3_alignment.py (6건, cycle 371): v3 KPI / v2 제거 / Monte Carlo / 호선 ROI / 호선×시간
+- test_slides_v3_alignment.py (6건, cycle 373): DECK v3 / SLIDES v3 / v2 제거 / 호선 ROI 708x / 호선×시간
+- test_kpi_drift.py (6건, cycle 375): canonical schema / net_value / ROI / 2호선 157M / CI band
+- test_runbook.py (7건, cycle 376): 9 시나리오 / 복구 명령 / fail-safe 8단 / 체크리스트 / 5초 grace
+- test_qa_preparation.py (8건, cycle 378): 18 질문 / 5 카테고리 / KPI cross-ref / 가드 ref / self-pitch
+
+### 핵심 사고 + 회복 (시스템 자체 검증)
+- **cycle 374**: 자동 회귀 시스템이 D-5 직전 광고-EDA 충돌 검출
+  - 광고 "2호선 157M" vs cycle 360 EDA 결과 138M 5일간 미감지
+  - cycle 375 canonical KPI drift 가드로 향후 회귀 자동 차단
+
+### CI 12 → 14 jobs (변경 없음, 가드만 +44)
+- frontend-features-validate (11 테스트 파일 통합)
+- policy-roi-v3-validate 에 ci_band + kpi_drift 통합
+
+### 신규 도구
+- `scripts/policy_roi_v3.py` — Monte Carlo + per_line_saved_min + canonical KPI 출력 (cycle 364, 374, 375)
+- `frontend/onepager.html` — A4 4언어 1-Pager (cycle 372 + 377)
+- `docs/RUNBOOK.md` — 장애 복구 (cycle 376)
+- `docs/QA_PREPARATION.md` — 발표 Q&A (cycle 378)
+
+### 가치
+- 1차 서류: PROPOSAL ↔ SLIDES ↔ pitch ↔ onepager ↔ README KPI 자동 정합
+- 2차 발표: take-away 1-pager + 18 질문 사전 답변 + RUNBOOK 운영 안정성
+- 향후 회귀: canonical KPI drift 자동 차단 (cycle 374 같은 사고 재발 방지)
+
+---
+
 ## v6.6 — D-5 회귀 가드 114건 + 호선×시간 2D + 4언어 narration (2026-05-08 cycle 368-371)
 
 ### "EDA 2D 표적 정밀화 + 영상 4언어 + 제안서 정합" 단계
