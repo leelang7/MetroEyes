@@ -277,6 +277,82 @@ function showIdea9Overlay() {
   setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
 }
 
+// 🤖 AI 자동 단가 근거 overlay (cycle 356) — Claude Haiku 라이브 비즈니스 가치
+function showAiPricingOverlay() {
+  let ov = document.getElementById('ai-pricing-overlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'ai-pricing-overlay';
+    ov.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(4,6,10,0.96);border:2px solid #a78bfa;border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:720px;text-align:center;opacity:0;transition:opacity .35s';
+    ov.innerHTML = `
+      <div style="font:700 14px sans-serif;color:#a78bfa;letter-spacing:1.4px;margin-bottom:10px">🤖 AI 자동 단가 근거 — Claude Haiku 4.5 라이브</div>
+      <div style="font:12px sans-serif;color:#fff;line-height:1.7;text-align:left">
+        citydata 폭증 감지 → Naver 검색 → <b>Claude Haiku 80자 요약</b> → broadcast<br>
+        예: "성수 카페거리 K-pop 콘서트 시작 18:30 — 일반 주말 대비 3.2배 인구"<br>
+        <span style="color:#a78bfa">광고주 가치</span>: "왜 이 시각 이 POI 단가가 높은지" 분 단위로 투명 → 입찰 신뢰도 ↑
+      </div>
+      <div style="font:600 11px sans-serif;color:#a78bfa;margin-top:12px">
+        AI 혁신성 — 정적 광고가 아닌 LLM 추론 컨텍스트의 실 비즈니스 가치
+      </div>
+    `;
+    document.body.appendChild(ov);
+  }
+  ov.style.opacity = '1';
+  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+}
+
+// 🚨 A* 비상 동선 강화 overlay (cycle 358) — Hungarian + 출구 차단 + ETA
+function showEvacOverlay() {
+  let ov = document.getElementById('evac-overlay-demo');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'evac-overlay-demo';
+    ov.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(4,6,10,0.96);border:2px solid #ff5e57;border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:760px;text-align:center;opacity:0;transition:opacity .35s';
+    ov.innerHTML = `
+      <div style="font:700 14px sans-serif;color:#ff5e57;letter-spacing:1.4px;margin-bottom:10px">🚨 A* 비상 동선 — Hungarian + K-means(K=4) + 출구 차단 시뮬</div>
+      <div style="font:12px sans-serif;color:#fff;line-height:1.7;text-align:left">
+        16×16 BEV 그리드 위에 군중 분포 cost field → A* 8방향 + Hungarian 1:1 매칭<br>
+        <span style="color:#7dd3d3">단일 출구</span> baseline 대비 <b>-32%</b> 절감 ·
+        <span style="color:#a78bfa">4분면 단순</span> 대비 <b>-18%</b> 절감 (정량 우위 증명)<br>
+        ETA 초 변환: 그리드 셀 0.5m × 보행 1.4 m/s = <b>실시간 평가 가능</b><br>
+        🚫 출구 NW 차단 시 → 그룹 자동 그리디 재배치 (화재/침수 시뮬)
+      </div>
+      <div style="font:600 11px sans-serif;color:#ff5e57;margin-top:12px">
+        AI 혁신성 — 단순 4분면이 아닌 cost-aware 다중 알고리즘 결합
+      </div>
+    `;
+    document.body.appendChild(ov);
+  }
+  ov.style.opacity = '1';
+  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+}
+
+// 🎯 호선별 차등 ROI 우선순위 overlay (cycle 360) — 정책 결정 정량 답
+function showLineRoiOverlay() {
+  let ov = document.getElementById('line-roi-overlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'line-roi-overlay';
+    ov.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(4,6,10,0.96);border:2px solid #a78bfa;border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:740px;text-align:center;opacity:0;transition:opacity .35s';
+    ov.innerHTML = `
+      <div style="font:700 14px sans-serif;color:#a78bfa;letter-spacing:1.4px;margin-bottom:10px">🎯 호선별 차등 보상 우선순위 — ₩400M 예산 정책 답</div>
+      <div style="font:12px sans-serif;color:#fff;line-height:1.7;text-align:left">
+        <b>line_carload × policy_roi_v3 결합 분석</b> · 정책 v3 30% 시나리오 473.4M분/년 기준<br>
+        🥇 <span style="color:#10b981">2호선 ROI 621x</span> · 138M분 절감 · 사회 가치 <b>276억</b><br>
+        🥈 <span style="color:#7dd3d3">5호선 ROI 294x</span> · 65M분 · 130억 ·
+        🥉 <span style="color:#f59e0b">7호선 ROI 257x</span> · 57M분 · 114억<br>
+        반대로 1호선 121x (peak 4시간만 100%↑ — 가장 낮음)
+      </div>
+      <div style="font:600 11px sans-serif;color:#a78bfa;margin-top:12px">
+        정량 정책 답: "예산 1순위는 2호선" — CI 6 회귀 가드 자동 검증
+      </div>
+    `;
+    document.body.appendChild(ov);
+  }
+  ov.style.opacity = '1';
+  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+}
+
 // 분산 효과 결과 overlay — 4초 표시
 function showDispersionOverlay() {
   let ov = document.getElementById('dispersion-overlay');
@@ -304,15 +380,18 @@ const SCRIPT = [
   // [ms, banner, action]
   [0,     '🎬 잠실역 18시 — 평상 운영',                     null],
   [5000,  '📊 광고 단가 라이브 시연 — 12 POI 분 단위 변동',   () => clickInside('if-ad', 'demo-trigger')],
-  [12000, '🚨 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s', () => clickInside('if-op', 'demo-trigger')],
-  [45000, '📷 실 카메라 BEV 시연 — 응급 골든타임 + AED 자동 안내', () => clickInside('if-cam', 'demo-trigger')],
-  [80000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200 차등)', null],
-  [100000,'🔔 IDEA-9 도착 알림 5중 모달리티 — 청각 약자/노이즈 캔슬링 배려', showIdea9Overlay],
-  [120000,'🪙 backend krw 누적 → 운영자 ROI 라이브 갱신',     null],
+  [10000, '🤖 AI 자동 단가 근거 — Claude Haiku 라이브 (cycle 356)', showAiPricingOverlay],
+  [22000, '🚨 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s', () => clickInside('if-op', 'demo-trigger')],
+  [55000, '📷 실 카메라 BEV 시연 — 응급 골든타임 + AED 자동 안내', () => clickInside('if-cam', 'demo-trigger')],
+  [90000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200 차등)', null],
+  [110000,'🔔 IDEA-9 도착 알림 5중 모달리티 — 청각 약자/노이즈 캔슬링 배려', showIdea9Overlay],
+  [128000,'🪙 backend krw 누적 → 운영자 ROI 라이브 갱신',     null],
+  [150000,'🚨 A* 비상 동선 강화 — Hungarian + 출구 차단 + ETA (cycle 358)', showEvacOverlay],
   [180000,'🚨 incident_summary broadcast → 모든 페이지 동기화', null],
-  [220000,'📈 실 데이터 분산 효과 — σ −9% / 피크 −13.5% / 비피크 +5.6%', showDispersionOverlay],
-  [232000,'🔀 환승역 비대칭 — 충무로 4호선 vs 3호선 +1.56 (분산 우선)', showTransferOverlay],
-  [248000,'⏱  5분 시연 종료 — pitch.html ROI 슬라이더로 마무리', null],
+  [210000,'📈 실 데이터 분산 효과 — σ −9% / 피크 −13.5% / 비피크 +5.6%', showDispersionOverlay],
+  [222000,'🔀 환승역 비대칭 — 충무로 4호선 vs 3호선 +1.56 (분산 우선)', showTransferOverlay],
+  [240000,'🎯 호선별 ROI 우선순위 — ₩400M 예산은 2호선 1순위 (cycle 360)', showLineRoiOverlay],
+  [275000,'⏱ 5분 시연 종료 — pitch.html ROI 슬라이더로 마무리', null],
 ];
 
 let started = false;
