@@ -75,3 +75,24 @@ def test_dday_marker_recent() -> None:
         assert int(m_ko.group(1)) <= 7, f"ko D-{m_ko.group(1)} too old"
     if m_en:
         assert int(m_en.group(1)) <= 7, f"en D-{m_en.group(1)} too old"
+
+
+# === cycle 406 — pitch.html footer freshness ===
+
+def test_pitch_footer_cycle_recent() -> None:
+    """frontend/pitch.html 푸터 자동 모드 사이클 ≥ 400."""
+    pitch = (ROOT / "frontend" / "pitch.html").read_text(encoding="utf-8")
+    m = re.search(r"자동\s*모드\s*v[\d.]+\s*—\s*(\d{3,4})\+?\s*사이클", pitch)
+    assert m, "pitch footer cycle pattern missing"
+    cycle = int(m.group(1))
+    assert cycle >= 400, f"pitch footer cycle {cycle} too old (must be ≥400)"
+
+
+def test_pitch_og_title_recent_version() -> None:
+    """frontend/pitch.html og:title 버전 v6.5 이상."""
+    pitch = (ROOT / "frontend" / "pitch.html").read_text(encoding="utf-8")
+    m = re.search(r'og:title.*?MetroEyes\s*v(\d+\.\d+)', pitch)
+    assert m, "pitch og:title version pattern missing"
+    parts = m.group(1).split(".")
+    major, minor = int(parts[0]), int(parts[1])
+    assert (major, minor) >= (6, 5), f"pitch og:title v{m.group(1)} too old (must be ≥v6.5)"
