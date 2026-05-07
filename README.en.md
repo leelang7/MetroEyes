@@ -45,7 +45,7 @@ backend incident broadcast → citizen route avoidance notice. **5-stage two-sid
 - ✅ **PDF print-friendly** pitch.html + FAQ 6 + Global comparison + dispersion 4-KPI cards
 - ✅ **Tiered incentive policy** — ₩100 / ₩200 / ₩300 (OD priority) / ₩400 (transfer station) **with backend auto-bonus**
 - ✅ **A* + K-means(K=4) + Hungarian** emergency evacuation — single-exit baseline cost reduction quantified
-- ✅ **9 REST endpoints** (health/roi_curve/impact/incidents/dispersion/od/transfer/policy_summary/openapi) + **OpenAPI 3.0 spec**
+- ✅ **10 REST endpoints** (health/roi_curve/impact/incidents/dispersion/od/transfer/policy_summary/openapi/docs) + **OpenAPI 3.0 spec**
 - ✅ **A* + K-means(K=4) + Hungarian 1:1 exit matching** for emergency evacuation (cost reduction vs single-exit baseline quantified)
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman auto-import
 
@@ -116,18 +116,20 @@ docker compose up -d
 
 ## Open REST API v1 + OpenAPI 3.0
 
-backend `lite_server.py` exposes 7 endpoints — all CORS-enabled:
+backend `lite_server.py` exposes 10 endpoints (REST API v1 9 + auto docs UI 1) — all CORS-enabled:
 
 | Endpoint | Response | Use |
 |---|---|---|
 | `GET /health` | system status (api/cv/incidents/msg) | health check |
 | `GET /api/v1/roi_curve` | 81 samples 0~80% ROI | external policy sim |
-| `GET /api/v1/impact` | cumulative redistribution impact | live KPI |
-| `GET /api/v1/incidents` | 4 incident counts + 30 events | live monitoring |
+| `GET /api/v1/impact` | cumulative redistribution impact + tier_counts | live KPI |
+| `GET /api/v1/incidents` | 6 incident counts (incl. IDEA-7/8 priority_seat/bottleneck) + 30 events | live monitoring |
 | `GET /api/v1/dispersion` | static σ/peak/offpeak validation + live response-rate estimate | dispersion visualization |
 | `GET /api/v1/od_asymmetry` | current-hour AM/PM auto-match + top 5 priority stations | operator policy priority |
 | `GET /api/v1/transfer_priority` | transfer-station inter-line asymmetry diff top 5 (current AM/PM) | transfer-flow policy |
+| `GET /api/v1/policy_summary` | tier definition + live impact + dispersion + **incident_breakdown 6 type** + EDA | Excel/Power BI single poll |
 | `GET /api/openapi.yaml` | OpenAPI 3.0 spec | Swagger/Redoc/Postman auto-import |
+| `GET /api/docs` | auto HTML spec page | curl/Postman alternative |
 
 ```bash
 # Example: ROI curve fetch
