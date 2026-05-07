@@ -1,0 +1,100 @@
+{
+  "lines": [
+    {
+      "line": "5호선",
+      "avg_pct": 141.3,
+      "peak_pct": 150.0,
+      "over_100_hours": 17,
+      "saved_min_yr": 65269189,
+      "social_value_won": 13053837800,
+      "priority_score": 915.0,
+      "roi_x": 293.7
+    },
+    {
+      "line": "6호선",
+      "avg_pct": 133.3,
+      "peak_pct": 150.0,
+      "over_100_hours": 17,
+      "saved_min_yr": 32610989,
+      "social_value_won": 6522197800,
+      "priority_score": 915.0,
+      "roi_x": 146.7
+    },
+    {
+      "line": "7호선",
+      "avg_pct": 141.6,
+      "peak_pct": 150.0,
+      "over_100_hours": 17,
+      "saved_min_yr": 57021696,
+      "social_value_won": 11404339200,
+      "priority_score": 915.0,
+      "roi_x": 256.6
+    },
+    {
+      "line": "9호선",
+      "avg_pct": 136.9,
+      "peak_pct": 150.0,
+      "over_100_hours": 17,
+      "saved_min_yr": 28163456,
+      "social_value_won": 5632691200,
+      "priority_score": 915.0,
+      "roi_x": 126.7
+    },
+    {
+      "line": "2호선",
+      "avg_pct": 139.0,
+      "peak_pct": 150.0,
+      "over_100_hours": 16,
+      "saved_min_yr": 137983296,
+      "social_value_won": 27596659200,
+      "priority_score": 870.0,
+      "roi_x": 620.9
+    },
+    {
+      "line": "8호선",
+      "avg_pct": 132.1,
+      "peak_pct": 150.0,
+      "over_100_hours": 16,
+      "saved_min_yr": 20444318,
+      "social_value_won": 4088863600,
+      "priority_score": 870.0,
+      "roi_x": 92.0
+    },
+    {
+      "line": "3호선",
+      "avg_pct": 125.0,
+      "peak_pct": 150.0,
+      "over_100_hours": 15,
+      "saved_min_yr": 53085165,
+      "social_value_won": 10617033000,
+      "priority_score": 825.0,
+      "roi_x": 238.9
+    },
+    {
+      "line": "4호선",
+      "avg_pct": 119.8,
+      "peak_pct": 150.0,
+      "over_100_hours": 15,
+      "saved_min_yr": 51856199,
+      "social_value_won": 10371239800,
+      "priority_score": 825.0,
+      "roi_x": 233.4
+    },
+    {
+      "line": "1호선",
+      "avg_pct": 68.0,
+      "peak_pct": 150.0,
+      "over_100_hours": 4,
+      "saved_min_yr": 26965687,
+      "social_value_won": 5393137400,
+      "priority_score": 330.0,
+      "roi_x": 121.3
+    }
+  ],
+  "total_saved_min_yr": 473399995,
+  "total_social_value_won": 94679999000,
+  "budget_per_line_won": 44444444,
+  "response_rate": 0.3,
+  "won_per_min": 200,
+  "method": "line_carload_est on_total 비중 × policy_roi_v3 30% 시나리오 473.4M/년"
+}
