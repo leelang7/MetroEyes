@@ -4,7 +4,7 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-401회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-402회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/regression_tests-241회귀_가드-10b981.svg)](tests/)
@@ -35,7 +35,7 @@
 정책 ROI v3 + Monte Carlo 1,000 회 95% CI 로 사회 가치 **1,393억/년 [CI 1,064~1,808억]** 정량 도출.
 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 177 회귀 가드 + 4 언어 i18n production-grade.
 
-**문서 추가 (장애·운영)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 시나리오 1줄 복구 · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — 상세 기획서 v3
+**문서 추가 (장애·운영)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 시나리오 1줄 복구 · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — 상세 기획서 v3 · [📋 docs/FORM_DATA.md](docs/FORM_DATA.md) — 마이박스 양식 사전 작성 데이터
 
 
 **핵심 KPI (정책 ROI v3, 응답률 30% 가정)**:
