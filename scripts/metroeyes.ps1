@@ -93,15 +93,24 @@ function Start-Backend {
         Write-Color "  backend 이미 :8765 LISTEN — skip" Yellow
         return
     }
-    # 모드 선택: METROEYES_MODE=full → tesla_bev (CV+GPU), 기본 lite → 외부 API only (즉시 listen)
-    $mode = if ($env:METROEYES_MODE) { $env:METROEYES_MODE } else { 'lite' }
+    # 모드 선택: 기본 full (tesla_bev YOLO11) — METROEYES_MODE=lite 명시 시만 lite_server
+    # 이전 기본값은 lite였으나 실 카메라 안 뜨는 함정 → 기본 full로 변경 (cycle 339)
+    $mode = if ($env:METROEYES_MODE) { $env:METROEYES_MODE } else { 'full' }
+    if ($mode -eq 'full') {
+        # torch/ultralytics 사전 점검 — 없으면 lite로 자동 fallback
+        & $pywExe -c "import torch, ultralytics" 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Color "  torch/ultralytics 미설치 — lite로 자동 fallback (실 카메라 비활성)" Yellow
+            $mode = 'lite'
+        }
+    }
     if ($mode -eq 'full') {
         Remove-Item $backendLog -Force -ErrorAction SilentlyContinue
         $device = if ($env:METROEYES_DEVICE) { $env:METROEYES_DEVICE } else { 'cuda' }
-        Write-Host "  backend (full / $device) 시작 ... " -NoNewline
+        Write-Host "  backend (full / tesla_bev YOLO11 / $device) 시작 ... " -NoNewline
         $args = @('-u','-m','src.cv.tesla_bev','--port','8765','--model','yolo11n.pt','--imgsz','640','--conf','0.18','--device',$device)
     } else {
-        Write-Host "  backend (lite / 외부 API only) 시작 ... " -NoNewline
+        Write-Host "  backend (lite / 외부 API only — METROEYES_MODE=full 또는 환경 점검 필요) 시작 ... " -NoNewline
         $args = @('-u','-m','src.cv.lite_server','--port','8765')
     }
     $p = Start-Process -FilePath $pywExe -ArgumentList $args -WorkingDirectory $root -PassThru
