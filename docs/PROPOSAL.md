@@ -10,7 +10,7 @@
 > K-means(K=4) + 헝가리안 1:1 출구 매칭 비상 동선 + ROI v3 ±15% 민감도 CI band + 11페이지 4언어 i18n + **8단 양면 가치 사슬** +
 > **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (칸 단위 BEV ROI 응용, cycle 226) +
 > **IDEA-9 도착 알림 5중 모달리티 + 6단 견고화** (cycle 286-299, PWA v4.11) — 청각 42만 + 노캔 1,200만 잠재 사용자, 접근성 제도 직결 (M8 모순) +
-> **CI 10 jobs + pytest 회귀 가드 30건** (cycle 318-331 — 광고 수치 ↔ 코드 ↔ 그림 자동 정합).
+> **CI 15 jobs + pytest 회귀 가드 182건** (cycle 318-383 — 광고 수치 ↔ 코드 ↔ 그림 ↔ canonical JSON 자동 정합).
 
 ---
 
@@ -265,7 +265,7 @@ GitHub: https://github.com/leelang7/MetroEyes
 2. **칸 컬럼 부재 정량 입증** (1주차 EDA 골든) — 다른 팀은 가정조차 못 함
 3. **9 공공 API fusion** — TOPIS / citydata 110 POI / CardSubway / ListPublicReservationCulture 등 통합 호출 코드 1년치 누적
 4. **ko/en/zh/ja 4언어 11페이지** — 외국인 시민/광고주 동시 포용 (글로벌 확장 base)
-5. **CI 12 jobs + 41 회귀 가드** — production-grade 신뢰성 (광고 수치 코드 자동 정합)
+5. **CI 15 jobs + 182 회귀 가드 + canonical KPI drift 자동 차단** — production-grade 신뢰성 (광고 수치 ↔ 코드 ↔ 그림 ↔ JSON 동시 정합)
 6. **TRIZ 8 모순 9 IDEA** — 발명 방법론 정량 분석 (논문화 가능)
 7. **IDEA-9 접근성 제도 연결** — 청각장애인 42만 명 + 노캔 1,200만 잠재 사용자, 장애인차별금지법/교통약자법 직결 (정부 정책 우선순위)
 
