@@ -216,7 +216,20 @@ jobs:
           python-version: '3.12'
       - name: Install pytest
         run: pip install --no-cache-dir pytest
-      - name: Run cycle 356-372 frontend regression tests
+      - name: Run cycle 356-379 frontend regression tests
         run: |
-          python -m pytest tests/test_ad_llm_context.py tests/test_env_live_panel.py tests/test_evac_strengthen.py tests/test_pwa_picker.py tests/test_demo_orchestration.py tests/test_i18n_admin_ad.py tests/test_admin_line_roi_panel.py tests/test_admin_line_hour_panel.py tests/test_recording_narration.py tests/test_onepager.py tests/test_proposal_v3_alignment.py -v
-          echo "✅ Frontend features — 11 테스트 파일 (LLM + 환경 + A* + PWA + demo + i18n + ROI panel + heatmap + narration + onepager + proposal v3) 모두 검증"
+          python -m pytest tests/test_ad_llm_context.py tests/test_env_live_panel.py tests/test_evac_strengthen.py tests/test_pwa_picker.py tests/test_demo_orchestration.py tests/test_i18n_admin_ad.py tests/test_admin_line_roi_panel.py tests/test_admin_line_hour_panel.py tests/test_recording_narration.py tests/test_onepager.py tests/test_proposal_v3_alignment.py tests/test_slides_v3_alignment.py tests/test_qa_preparation.py tests/test_changelog_freshness.py -v
+          echo "✅ Frontend features — 14 테스트 파일 (LLM + 환경 + A* + PWA + demo + i18n + ROI panel + heatmap + narration + onepager + proposal/slides v3 + QA + changelog) 모두 검증"
+
+  submission-ship-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Submission ship gate (cycle 380) — 10 fast checks
+        run: |
+          python scripts/submission_check.py --ci
+          echo "✅ Ship gate — 모든 광고 KPI / figs / 4언어 / CI / CHANGELOG 정합 자동 검증"

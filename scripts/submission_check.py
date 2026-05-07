@@ -270,7 +270,8 @@ def check_python_imports(rep: Report) -> None:
 
 # ============== runner ==============
 
-CHECKS: list[Callable[[Report], None]] = [
+# 핵심 fast checks — CI 모드에서도 실행 (cycle 380)
+FAST_CHECKS: list[Callable[[Report], None]] = [
     check_required_files,
     check_kpi_consistency,
     check_dispersion_kpi,
@@ -278,17 +279,28 @@ CHECKS: list[Callable[[Report], None]] = [
     check_4lang_parity,
     check_ci_jobs_present,
     check_changelog_recent,
-    check_python_imports,
-    check_pytest_pass,   # 가장 무거우므로 마지막
 ]
+# 무거운 checks — 로컬 D-day 검증에서만 실행
+HEAVY_CHECKS: list[Callable[[Report], None]] = [
+    check_python_imports,    # tesla_bev import: 60s
+    check_pytest_pass,        # 추가 pytest 60s+ (CI 자체 pytest 와 중복)
+]
+CHECKS: list[Callable[[Report], None]] = FAST_CHECKS + HEAVY_CHECKS
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    import sys as _sys
+    args = argv if argv is not None else _sys.argv[1:]
+    ci_mode = "--ci" in args
     print("=" * 72)
-    print(" MetroEyes 제출 직전 자동 검증 — D-5 (2026-05-13 마감)")
+    if ci_mode:
+        print(" MetroEyes CI 검증 (FAST mode — heavy import / pytest 제외)")
+    else:
+        print(" MetroEyes 제출 직전 자동 검증 — D-5 (2026-05-13 마감)")
     print("=" * 72)
     rep = Report()
-    for fn in CHECKS:
+    checks_to_run = FAST_CHECKS if ci_mode else CHECKS
+    for fn in checks_to_run:
         try:
             fn(rep)
         except Exception as e:

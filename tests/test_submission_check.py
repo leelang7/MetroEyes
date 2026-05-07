@@ -25,17 +25,24 @@ def test_script_compiles() -> None:
 
 
 def test_all_checks_registered() -> None:
-    """9개 핵심 검사 모두 CHECKS 리스트에 등록."""
+    """9개 핵심 검사 모두 FAST_CHECKS + HEAVY_CHECKS 리스트에 등록 (cycle 380)."""
     src = SCRIPT.read_text(encoding="utf-8")
-    expected = [
+    expected_fast = [
         "check_required_files", "check_kpi_consistency", "check_dispersion_kpi",
         "check_pitch_figs_present", "check_4lang_parity", "check_ci_jobs_present",
-        "check_changelog_recent", "check_python_imports", "check_pytest_pass",
+        "check_changelog_recent",
     ]
-    for fn in expected:
+    expected_heavy = ["check_python_imports", "check_pytest_pass"]
+    # 함수 정의 모두 존재
+    for fn in expected_fast + expected_heavy:
         assert f"def {fn}" in src, f"missing check function: {fn}"
-        assert fn in src.split("CHECKS")[1] if "CHECKS" in src else False, \
-            f"{fn} not in CHECKS list"
+    # FAST_CHECKS 와 HEAVY_CHECKS 분류
+    fast_block = src.split("FAST_CHECKS")[1].split("HEAVY_CHECKS")[0] if "FAST_CHECKS" in src else ""
+    heavy_block = src.split("HEAVY_CHECKS")[1].split("CHECKS:")[0] if "HEAVY_CHECKS" in src else ""
+    for fn in expected_fast:
+        assert fn in fast_block, f"{fn} not in FAST_CHECKS"
+    for fn in expected_heavy:
+        assert fn in heavy_block, f"{fn} not in HEAVY_CHECKS"
 
 
 def test_exit_codes_documented() -> None:
@@ -51,6 +58,27 @@ def test_help_text_present() -> None:
     assert "D-5" in src or "마감" in src, "마감 명시 docstring 누락"
     assert "submission_check" in src, "스크립트 명 self-reference 누락"
     assert "pre-submission" in src.lower() or "제출" in src, "사용 목적 docstring 누락"
+
+
+# === cycle 380 — --ci mode ===
+
+def test_ci_mode_flag_supported() -> None:
+    """--ci 플래그로 fast 모드 진입 (heavy import / pytest 제외)."""
+    src = SCRIPT.read_text(encoding="utf-8")
+    assert '"--ci" in args' in src, "--ci CLI flag 처리 누락"
+    assert "FAST_CHECKS" in src, "FAST_CHECKS 분류 누락"
+    assert "HEAVY_CHECKS" in src, "HEAVY_CHECKS 분류 누락"
+
+
+def test_ci_mode_runs_passes() -> None:
+    """--ci 모드 현재 시점에서 PASS (exit 0)."""
+    r = subprocess.run([sys.executable, str(SCRIPT), "--ci"],
+                       cwd=ROOT, capture_output=True, text=True,
+                       encoding="utf-8", errors="replace", timeout=30)
+    assert r.returncode == 0, (
+        f"submission_check --ci FAIL/WARN — 회귀 발생\n"
+        f"stdout tail:\n{r.stdout[-1200:]}"
+    )
 
 # NOTE: 실제 end-to-end 실행 (`python scripts/submission_check.py`)은 D-day 직전 수동 실행 권장.
 # 이 도구가 내부적으로 pytest 를 다시 호출 → pytest 안에서 재귀 호출 시 timeout 발생하므로
