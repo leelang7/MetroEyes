@@ -115,3 +115,18 @@ jobs:
         run: |
           python -m pytest tests/test_eda_dispersion.py -v
           echo "✅ Dispersion EDA — σ −9% / peak −13.5% / offpeak +5.6% / ratio 1.78→1.46 모두 검증"
+
+  eda-od-transfer-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: pip install --no-cache-dir pytest
+      - name: Run OD/transfer EDA report regression tests
+        run: |
+          python -m pytest tests/test_eda_od_transfer.py -v
+          echo "✅ OD/Transfer EDA — 삼성 12.4x 출근 / 충무로 +1.56 환승 / 연신내 +1.44 모두 검증"
