@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.9-arrival-history';
+  const CUR = 'v4.10-safeguard-status';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -56,6 +56,7 @@
       <div style="font-size: 10px; letter-spacing: 1.1px; color: #10b981; font-weight: 700;" id="dest-label">도착 알림 ON</div>
       <div style="color: #fff; font-weight: 600;" id="dest-name">강남역</div>
       <div style="color: var(--muted-2); font-size: 11px;" id="dest-status">GPS 추적 중...</div>
+      <div id="dest-safeguards" style="font-size: 10px; color: var(--muted-2); margin-top: 2px; letter-spacing: .4px;" title="활성화된 안전망"></div>
     </div>
     <button id="dest-test" style="background: rgba(125,211,211,.18); border: 1px solid rgba(125,211,211,.45); color: #7dd3d3; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;" title="도착 알림 미리 보기 (진동/소리/음성/시각 모두 테스트)" data-i18n="dest_test">🔔 테스트</button>
     <button id="dest-clear" style="background: rgba(255,94,87,.18); border: 1px solid rgba(255,94,87,.45); color: #ff8a8a; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;">해제</button>
@@ -1582,6 +1583,28 @@ const LIVE = (() => {
     } catch {}
     _requestWakeLock();
     startDestPoll();
+    setTimeout(_updateSafeguardStatus, 800);   // 권한 응답 후 갱신
+  }
+
+  // 안전망 권한 상태 가시화 (Wake Lock / Notification)
+  function _updateSafeguardStatus() {
+    const el = document.getElementById('dest-safeguards');
+    if (!el) return;
+    const wl = _wakeLockSentinel ? '🔆' : '·';
+    const wlT = _wakeLockSentinel ? 'Wake Lock 활성 (화면 꺼짐 방지)' : 'Wake Lock 미지원/비활성';
+    let nt = '·', ntT = 'Notification 권한 없음';
+    try {
+      if ('Notification' in window) {
+        if (Notification.permission === 'granted') { nt = '🔔'; ntT = 'Notification 활성 (백그라운드/락 알림 가능)'; }
+        else if (Notification.permission === 'denied') { nt = '✖'; ntT = 'Notification 거부됨 (설정에서 변경 가능)'; }
+        else { nt = '?'; ntT = 'Notification 권한 미요청'; }
+      }
+    } catch {}
+    let sw = '·', swT = 'Service Worker 비활성';
+    try {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) { sw = '⚙'; swT = 'Service Worker 활성 (페이지 throttle 시 알림 위임)'; }
+    } catch {}
+    el.innerHTML = `<span title="${wlT}" style="cursor: help;">${wl}</span> · <span title="${ntT}" style="cursor: help;">${nt}</span> · <span title="${swT}" style="cursor: help;">${sw}</span>`;
   }
 
   // 페이지 로드 시 활성 도착지 자동 복원 (탭 새로고침/PWA 재오픈 사용자 안전망)
