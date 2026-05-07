@@ -107,3 +107,32 @@ def test_all_targets_combined() -> None:
     assert not all_broken, (
         f"총 {len(all_broken)} 개 broken link 발견:\n  " + "\n  ".join(all_broken)
     )
+
+
+# === cycle 398 — docs/*.md 전체 자동 sweep ===
+
+def test_all_docs_md_links_resolve() -> None:
+    """docs/ 디렉토리의 모든 .md 파일 + 루트 (.md) 의 internal link 일괄 검증."""
+    all_broken = []
+    # 루트 .md
+    for p in ROOT.glob("*.md"):
+        rel = p.name
+        all_broken.extend(_find_broken_links(rel))
+    # docs/*.md 모두
+    docs_dir = ROOT / "docs"
+    if docs_dir.exists():
+        for p in docs_dir.glob("*.md"):
+            rel = f"docs/{p.name}"
+            all_broken.extend(_find_broken_links(rel))
+    # 결과
+    assert not all_broken, (
+        f"docs/*.md + 루트 *.md 에서 총 {len(all_broken)} broken link:\n  " +
+        "\n  ".join(all_broken)
+    )
+
+
+def test_changelog_internal_links_resolve() -> None:
+    """CHANGELOG.md 가 외부 자료 cross-link 없거나 모두 실재."""
+    broken = _find_broken_links("CHANGELOG.md")
+    assert not broken, "CHANGELOG.md broken links:\n  " + "\n  ".join(broken)
+
