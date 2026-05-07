@@ -714,6 +714,35 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <figcaption>그림 4 — 호선별 시간대 추정 점유율 (CardSubwayTime 202602 · <code>scripts/eda_line_carload.py</code>) · <b style="color:#ff5e57;">평균 126%, 9개 호선 모두 cap 150% 도달</b> → 공공 데이터는 *칸 단위 분포*를 보여주지 못함 · 같은 평균이라도 한 칸은 30% / 다른 칸은 200% 입석 가능 → <b style="color:#10b981;">MetroEyes CV의 칸별 BEV가 정책 차등의 유일한 데이터 소스</b></figcaption>
 </figure>
 
+<!-- cycle 360/362 — 호선별 차등 보상 ROI 우선순위 (운영자 정책 결정) -->
+<div class="callout" style="background: linear-gradient(135deg, rgba(167,139,250,.14), rgba(125,211,211,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 14px; padding: 16px 20px; margin: 18px 0;">
+  <h3 style="color: #a78bfa; margin: 0 0 8px; font-size: 14px; letter-spacing: 1.2px;">🎯 호선별 차등 보상 우선순위 — ₩400M 예산 할당 정량 답</h3>
+  <p style="margin: 6px 0; color: var(--muted-2); font-size: 13px;">
+    <code>scripts/eda_line_priority_roi.py</code> · 호선별 점유 부담 + 절감분 합치 → 정책 v3 30% 시나리오 (473.4M분/년) 비중 분배.
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0; font-size: 12px;">
+    <div style="padding: 8px 10px; background: rgba(167,139,250,.10); border-radius: 8px;">
+      <div style="font-size: 10px; color: #a78bfa; letter-spacing: 1.0px; font-weight: 700;">🥇 2호선</div>
+      <div style="color: var(--text);">우선도 870 · ROI <b style="color: #10b981;">621x</b></div>
+      <div style="font-size: 10px; color: var(--muted);">절감 138M분 · 사회 가치 276억</div>
+    </div>
+    <div style="padding: 8px 10px; background: rgba(125,211,211,.10); border-radius: 8px;">
+      <div style="font-size: 10px; color: #7dd3d3; letter-spacing: 1.0px; font-weight: 700;">🥈 5호선</div>
+      <div style="color: var(--text);">우선도 915 · ROI <b style="color: #10b981;">294x</b></div>
+      <div style="font-size: 10px; color: var(--muted);">절감 65M분 · 사회 가치 130억</div>
+    </div>
+    <div style="padding: 8px 10px; background: rgba(245,158,11,.10); border-radius: 8px;">
+      <div style="font-size: 10px; color: #f59e0b; letter-spacing: 1.0px; font-weight: 700;">🥉 7호선</div>
+      <div style="color: var(--text);">우선도 915 · ROI <b style="color: #10b981;">257x</b></div>
+      <div style="font-size: 10px; color: var(--muted);">절감 57M분 · 사회 가치 114억</div>
+    </div>
+  </div>
+  <p style="margin: 6px 0; color: var(--muted-2); font-size: 12px;">
+    <b style="color: var(--text);">반대로 1호선은 평균 68% / peak 4시간만 100%↑ → ROI 121x (가장 낮음)</b>.
+    "예산 1순위는 2호선" 이라는 정책 답을 정량적으로 도출 — <b style="color: #10b981;">CI 6 회귀 가드로 자동 검증</b>.
+  </p>
+</div>
+
 <h2>실 데이터 분산 효과 — 평탄화 정량 검증</h2>
 <p>
   ROI v3 의 응답률 30% 가정이 *실제로* 시간대 곡선을 어떻게 평탄화시키는지 직접 시뮬.
