@@ -155,7 +155,7 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 [D-Day 5/13 18:00]
 □ 6개 파일 모두 명명규칙 확인 (이상철_X.pdf/png)
 □ python scripts/submission_check.py — 12 항목 PASS 확인
-□ python -m pytest tests/ -q — 233+ tests passed 확인
+□ python -m pytest tests/ -q — 241+ tests passed 확인
 □ 한 번에 제출 (마이박스 또는 대회 사이트)
 □ 제출 확인 메일 / 캡처 보관
 
@@ -170,6 +170,6 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 
 > "MetroEyes는 자체 CV BEV + 9 공공 API + 시민 분산 인센티브 3축 통합 시스템으로,
 > Monte Carlo 1,000회 95% CI 통계 검증 사회 가치 1,393억/년 (CI 1,064~1,808억) 정량 도출.
-> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 233 회귀 가드 + 4언어 i18n production-grade."
+> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 241 회귀 가드 + 4언어 i18n production-grade."
 
 (글자수: 한국어 132자 / 영어 약 250자)
