@@ -238,7 +238,7 @@
       </div>
     </div>
 
-    <!-- 🌱 ESG 라이브 패널 (cycle 353 신규) — 탄소 / 일자리 / 약자 / 거버넌스 -->
+    <!-- 🌱 ESG 라이브 패널 (cycle 353 + 391) — 탄소 / 일자리 / 약자 / 거버넌스 + 정량 EDA -->
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(16,185,129,.10), rgba(125,211,211,.04)); border: 1px solid rgba(16,185,129,.30);">
       <h2 data-i18n="esg_h">♻ ESG 라이브 (5축 동시 실현)</h2>
       <div class="stat">🌱 CO₂ 절감     <b id="esg-co2" class="ok">0 kg eq</b></div>
@@ -246,10 +246,35 @@
       <div class="stat">💼 신규 고용     <b id="esg-job" class="ok">Y3 25 FTE</b></div>
       <div class="stat">🤝 가치사슬 단계 <b id="esg-co" class="ok">8단</b></div>
       <div class="stat">🛡 개인정보 노출 <b id="esg-gov" class="ok">zero (Edge AI)</b></div>
-      <div style="margin-top: 6px; padding: 6px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 11px; color: #10b981;">
-        분산 1회 = 0.012 kg CO₂ eq (자가용 회피 5% × 8.4km × 0.21 kg/km, 보수)
+      <!-- cycle 391 — CO₂ 정량 EDA 두 시나리오 (cycle 390 결과) -->
+      <div id="esg-co2-eda" style="margin-top: 6px; padding: 6px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 11px; color: #10b981;">
+        <span style="font-size: 9px; color: #10b981; font-weight: 700; letter-spacing: 0.6px;">📊 CO₂ 정량 EDA (30% 시나리오)</span>
+        <div id="esg-co2-30pct" style="color: #fff; margin-top: 2px;">로드 중...</div>
+        <div style="font-size: 9px; color: var(--muted-2); margin-top: 2px;">
+          ultra: 0.7% × 8.4km × 0.21kg/km = 0.012 (광고 보수) ·
+          standard: 5% × 8.4km × 0.21 (실효, 7배)
+        </div>
       </div>
     </div>
+<script>
+// 🌱 ESG CO₂ EDA 라이브 (cycle 391) — co2_savings_report.json 자동 로드
+(async function loadCO2EDA() {
+  try {
+    const r = await fetch('figs/co2_savings_report.json', { cache: 'no-cache' });
+    if (!r.ok) return;
+    const j = await r.json();
+    const ultra = j.scenario_30pct_ultra || j.scenario_30pct;
+    const std = j.scenario_30pct_standard;
+    const el = document.getElementById('esg-co2-30pct');
+    if (!el) return;
+    let txt = '';
+    if (ultra) txt += `ultra <b>${(ultra.co2_yr_t).toLocaleString(undefined,{maximumFractionDigits:0})} 톤/년</b>`;
+    if (std) txt += ` · standard <b style="color:#f59e0b;">${(std.co2_yr_t).toLocaleString(undefined,{maximumFractionDigits:0})} 톤/년</b>`;
+    if (ultra) txt += ` <span style="color:var(--muted);font-size:9px;">(한국인 ${ultra.equivalent_persons_yr.toFixed(0)}년 배출 등가)</span>`;
+    el.innerHTML = txt;
+  } catch (e) { /* 정적 호스팅 fetch 실패 무시 */ }
+})();
+</script>
 
     <!-- 🌍 환경 라이브 패널 (cycle 357) — citydata 의 PM/UV/온도 실시간 노출 -->
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.08), rgba(167,139,250,.04)); border: 1px solid rgba(125,211,211,.30);">
