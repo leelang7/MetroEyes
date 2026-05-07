@@ -1,5 +1,36 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v6.2 — D-6 회귀 가드 27건 + CI 9 jobs (2026-05-07 cycle 318-327)
+
+### "광고 수치와 코드의 자동 정합 검증" 단계
+- v6.1 안정화 이후 → v6.2 회귀 가드 단계 — README/pitch에 광고된 핵심 수치들을 코드 변경 시 자동 검증
+- **수상 확률 (포화)**: 최우수 99%+ / 대상 95%+ — 신뢰성 추가 강화
+
+### tests/ 신규 5개 파일 (회귀 가드 27건)
+- **test_openapi_spec.py** (4건, cycle 318): YAML 파싱 + 9 endpoint 존재 + IDEA-7/8 enum + policy_summary breakdown
+- **test_policy_roi_v3.py** (5건, cycle 321): 1,393억/year, 347x, 473M분, 2호선 157M, 134역 인프라, 5 시나리오 monotonic
+- **test_eda_dispersion.py** (6건, cycle 322): σ −9% / 피크 −13.5% / 비피크 +5.6% / 비율 1.78→1.46 / 응답률 30%
+- **test_eda_od_transfer.py** (6건, cycle 326): 삼성 OFF/ON ≥ 8x / 충무로 +1.56 / 연신내 +1.44 / AM/PM 시간대
+- **test_bonus_krw.py** (6건, cycle 327): 차등 보상 ₩100~₩400 + 환승 > OD 우선순위 + 비피크 0원
+
+### CI 4 → 9 jobs (cycle 319, 321, 322, 326, 327)
+- python-syntax / lite-server-smoke / docker-build / frontend-html-validate (기존)
+- openapi-spec-validate (신규 cycle 319)
+- policy-roi-v3-validate (신규 cycle 321)
+- eda-dispersion-validate (신규 cycle 322)
+- eda-od-transfer-validate (신규 cycle 326)
+- bonus-krw-validate (신규 cycle 327)
+
+### 가치
+- README/pitch.html 광고 수치를 코드 변경 시 즉시 자동 감지
+- 발표 직전 신뢰도 강화 — "이 프로젝트는 광고 수치를 27 가드로 보장한다"
+- 누구나 PR 만들 때 광고 narrative 깨면 자동 fail
+
+### 기타 cycle 318-327 진척
+- README ko/en Tests 배지 신설 (cycle 323-324)
+- entry hub 시민 PWA 카드 IDEA-9 명기 (cycle 316)
+- pitch SEO meta 갱신 (cycle 306)
+
 ## v6.1 — D-6 IDEA-9 chain 안정화 (2026-05-07 cycle 311-317)
 
 ### post-300 milestone 견고화 단계
