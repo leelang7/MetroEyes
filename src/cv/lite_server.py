@@ -1074,9 +1074,29 @@ async def main():
           f"NAVER={'ok' if NAVER_ID else 'MISSING'}  "
           f"ANTHROPIC={'ok' if ANTHROPIC_KEY else 'MISSING'}", flush=True)
 
+    # websockets 16+ process_request 시그니처 적응 wrapper
+    # 기존 http_health(path, headers) → 새 (connection, request) → Response
+    try:
+        from websockets.http11 import Response as _WSResponse
+        from websockets.datastructures import Headers as _WSHeaders
+        async def _process_request_v16(connection, request):
+            path = request.path
+            # query string 제거 — 기존 http_health는 path만 받았음
+            if "?" in path:
+                path = path.split("?", 1)[0]
+            old_result = await http_health(path, request.headers)
+            if old_result is None:
+                return None  # WS handshake 진행
+            status, headers_list, body = old_result
+            return _WSResponse(status, "OK", _WSHeaders(headers_list), body)
+        _proc_req = _process_request_v16
+    except Exception:
+        # 구 websockets (≤11) fallback
+        _proc_req = http_health
+
     async with websockets.serve(
         handler, args.host, args.port,
-        process_request=http_health,
+        process_request=_proc_req,
     ):
         print(f"[lite_server] LISTEN ws://{args.host}:{args.port}", flush=True)
         if args.demo:
