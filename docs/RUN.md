@@ -188,6 +188,41 @@ cloudflared tunnel --config cloudflared-config.yml run metroeyes
 cloudflared service install --config "C:\Users\leesc\Documents\Seoul\cloudflared-config.yml"
 ```
 
+## 9.5 IDEA-9 도착 알림 5중 모달리티 시연 (PWA v4.10)
+
+> 청각 약자 / 노이즈 캔슬링 / 이어폰 / 유튜브 사용자 배려 기능 — D-6 (cycle 286-307) 신규 추가.
+
+### 시연 순서 (1분)
+1. **PWA 열기**: 모바일 또는 데스크톱 (Chrome / Safari 16.4+) `https://leelang7.github.io/MetroEyes/passenger_app/`
+2. **🔔 도착지 설정 버튼 클릭** → 모달 열림 (24역 + 검색 + 키보드 단축키)
+3. **충무로 (환승역) 또는 삼성 (OD 우선)** 클릭 → 즉시 보너스 toast (`+₩400` / `+₩300`)
+4. **상단 banner 등장**:
+   - 도착지 이름 + 호선
+   - GPS 추적 상태 ("약 X.Xkm · ETA X분")
+   - 안전망 인디케이터 `🔆 🔔 ⚙` (Wake Lock / Notification / SW 활성)
+   - [🔔 테스트] [해제] 버튼
+5. **[🔔 테스트] 버튼** 클릭 → 5중 모달리티 즉시 발사:
+   - 시각 banner flash (녹색 4px shadow)
+   - 강한 진동 [200,100,200,100,400]
+   - 1200Hz beep × 2회
+   - 4언어 음성 (자동 감지) "X역 도착, 하차하세요"
+   - 시스템 알림 (requireInteraction=true)
+
+### 검증 포인트
+- 권한 prompt: Notification 허용 → `🔔` 활성 (denied면 `✖`)
+- Wake Lock 지원 브라우저 → `🔆` 활성
+- Service Worker 등록 → `⚙` 활성 (페이지 throttle 시 SW가 알림 위임)
+
+### 데이터 검증
+```powershell
+# 누적 사용 카운트 확인 (브라우저 DevTools → Console)
+JSON.parse(localStorage.getItem('metroeyes_arrival_history'))
+# 활성 도착지 (탭 새로고침 자동 복원)
+JSON.parse(localStorage.getItem('metroeyes_active_dest'))
+# 최근 도착지 MRU (출퇴근 1탭 재선택)
+JSON.parse(localStorage.getItem('metroeyes_recent_dest'))
+```
+
 ## 10. 환경 변수 (`.env`)
 
 ```bash
