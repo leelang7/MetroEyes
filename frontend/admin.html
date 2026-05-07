@@ -279,6 +279,13 @@
       <div id="line-roi-meta" style="margin-top: 8px; padding: 6px 10px; background: rgba(167,139,250,.08); border-radius: 6px; font-size: 10px; color: var(--muted-2); line-height: 1.5;">
         📊 <code>scripts/eda_line_priority_roi.py</code> · 정책 v3 30% 시나리오 분배 · CI 6 회귀 가드 자동 검증
       </div>
+
+      <!-- 🎯 호선×시간대 mini heatmap (cycle 370) — cycle 368 결과 시각화 -->
+      <div style="margin-top: 10px; padding: 8px 6px; background: rgba(125,211,211,.04); border: 1px solid rgba(125,211,211,.14); border-radius: 8px;">
+        <div data-i18n="line_hour_h" style="font-size: 10px; color: #7dd3d3; letter-spacing: 0.8px; font-weight: 700; padding: 0 4px 6px;">📅 호선 × 시간대 (5~23시) 우선순위 — Top 5 cell 외곽선 강조</div>
+        <canvas id="line-hour-canvas" width="660" height="180" style="width:100%; height:auto; max-width:100%; background:#04060a; border-radius:6px;"></canvas>
+        <div id="line-hour-top5" style="margin-top: 4px; padding: 4px 8px; font-size: 10px; color: var(--muted-2); line-height: 1.5;">로드 중...</div>
+      </div>
     </div>
 <script>
 // 🎯 호선별 ROI 추천 (cycle 366) — frontend/figs/ JSON 자동 로드해 라이브 카드로 노출
@@ -309,6 +316,67 @@
       cont.appendChild(row);
     });
   } catch (e) { /* 정적 호스팅 (file://) 시 fetch 실패 — 무시 */ }
+})();
+
+// 🎯 호선 × 시간대 mini heatmap (cycle 370) — cycle 368 결과 라이브 노출
+(async function loadLineHourHeatmap() {
+  try {
+    const r = await fetch('figs/line_hour_priority_matrix.json', { cache: 'no-cache' });
+    if (!r.ok) return;
+    const j = await r.json();
+    const cv = document.getElementById('line-hour-canvas');
+    if (!cv || !j.lines || !j.hours || !j.matrix) return;
+    const ctx = cv.getContext('2d');
+    const W = cv.width, H = cv.height;
+    const padL = 50, padT = 16, padR = 8, padB = 22;
+    const lines = j.lines, hours = j.hours;
+    const cw = (W - padL - padR) / hours.length;
+    const ch = (H - padT - padB) / lines.length;
+    ctx.fillStyle = '#04060a'; ctx.fillRect(0, 0, W, H);
+    const colorFor = s => {
+      const t = Math.min(1, s / 160);
+      if (t < 0.30) return `rgba(45, 125, 125, ${0.35 + t})`;
+      if (t < 0.55) return `rgba(125, 211, 211, ${0.45 + t * 0.6})`;
+      if (t < 0.80) return `rgba(245, 158, 11, ${0.6 + t * 0.4})`;
+      return `rgba(255, 94, 87, ${0.7 + t * 0.3})`;
+    };
+    for (let i = 0; i < lines.length; i++) {
+      for (let k = 0; k < hours.length; k++) {
+        const score = (j.matrix[i].hours[String(hours[k])] || 0);
+        ctx.fillStyle = colorFor(score);
+        ctx.fillRect(padL + k * cw, padT + i * ch, cw - 1, ch - 1);
+        if (score > 90) {
+          ctx.fillStyle = score > 130 ? '#fff' : '#000';
+          ctx.font = '8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(Math.round(score), padL + k * cw + cw / 2, padT + i * ch + ch / 2 + 3);
+        }
+      }
+    }
+    const top5 = j.top5_cells || [];
+    ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2;
+    for (const c of top5) {
+      const i = lines.indexOf(c.line);
+      const k = hours.indexOf(c.hour);
+      if (i < 0 || k < 0) continue;
+      ctx.strokeRect(padL + k * cw + 1, padT + i * ch + 1, cw - 3, ch - 3);
+    }
+    ctx.fillStyle = '#7dd3d3'; ctx.font = '9px sans-serif';
+    ctx.textAlign = 'right';
+    for (let i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], padL - 4, padT + i * ch + ch / 2 + 3);
+    }
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#8a8a96';
+    for (let k = 0; k < hours.length; k++) {
+      if (k % 2 === 0) ctx.fillText(hours[k], padL + k * cw + cw / 2, H - padB + 14);
+    }
+    const top5El = document.getElementById('line-hour-top5');
+    if (top5El && top5.length) {
+      const txt = top5.slice(0, 5).map(c => `${c.line} ${c.hour}시 (${c.score.toFixed(0)})`).join(' · ');
+      top5El.innerHTML = `<b style="color:#10b981;">🥇 Top 5</b>: ${txt}`;
+    }
+  } catch (e) { /* 정적 호스팅 fetch 실패 무시 */ }
 })();
 </script>
 
@@ -879,25 +947,29 @@ const I18N_ADMIN = {
         esg_h: '♻ ESG 라이브 (5축 동시 실현)',
         env_h: '🌍 환경 라이브 (citydata · PM / UV / 온도)',
         llm_h: '🤖 LLM 자동 컨텍스트 (최신)',
-        line_roi_h: '🎯 호선별 차등 보상 우선순위 (예산 ₩400M 정량 답)' },
+        line_roi_h: '🎯 호선별 차등 보상 우선순위 (예산 ₩400M 정량 답)',
+        line_hour_h: '📅 호선 × 시간대 (5~23시) 우선순위 — Top 5 cell 외곽선 강조' },
   en: { sub: 'Direct WS call / Response validation / Live traffic / Impact monitoring', btn: '🇺🇸 EN',
         ai_h: '🤖 AI 4-axis Live (AI Innovation 20pt)',
         esg_h: '♻ ESG Live (5 axes simultaneous)',
         env_h: '🌍 Environment Live (citydata · PM / UV / Temp)',
         llm_h: '🤖 LLM Auto Context (latest)',
-        line_roi_h: '🎯 Per-line Reward Priority (₩400M Budget Quantitative Answer)' },
+        line_roi_h: '🎯 Per-line Reward Priority (₩400M Budget Quantitative Answer)',
+        line_hour_h: '📅 Line × Hour (5~23h) Priority — Top 5 cells outlined' },
   zh: { sub: 'WS 直接调用 / 响应验证 / 实时流量 / 影响监控', btn: '🇨🇳 ZH',
         ai_h: '🤖 AI 四轴实时 (AI 创新性 20分)',
         esg_h: '♻ ESG 实时 (5轴同时实现)',
         env_h: '🌍 环境实时 (citydata · PM / UV / 温度)',
         llm_h: '🤖 LLM 自动上下文 (最新)',
-        line_roi_h: '🎯 各线差等奖励优先级 (预算 ₩400M 定量答案)' },
+        line_roi_h: '🎯 各线差等奖励优先级 (预算 ₩400M 定量答案)',
+        line_hour_h: '📅 线路 × 时段 (5~23 时) 优先级 — Top 5 单元外框强调' },
   ja: { sub: 'WS 直接呼出 / 応答検証 / ライブトラフィック / インパクト監視', btn: '🇯🇵 JA',
         ai_h: '🤖 AI 4軸ライブ (AI 革新性 20点)',
         esg_h: '♻ ESG ライブ (5軸同時実現)',
         env_h: '🌍 環境ライブ (citydata · PM / UV / 気温)',
         llm_h: '🤖 LLM 自動コンテキスト (最新)',
-        line_roi_h: '🎯 路線別差等報奨優先順位 (予算 ₩400M 定量解)' },
+        line_roi_h: '🎯 路線別差等報奨優先順位 (予算 ₩400M 定量解)',
+        line_hour_h: '📅 路線 × 時間帯 (5~23 時) 優先順位 — Top 5 cell 外枠強調' },
 };
 let _curAdmLang = 'ko';
 function applyAdminI18n() {
