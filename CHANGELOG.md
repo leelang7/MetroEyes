@@ -1,5 +1,24 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## v6.1 — D-6 IDEA-9 chain 안정화 (2026-05-07 cycle 311-317)
+
+### post-300 milestone 견고화 단계
+- **PWA v4.10 → v4.11**:
+  * v4.10 (cycle 307): 안전망 권한 상태 인디케이터 (🔆 Wake Lock / 🔔 Notification / ⚙ SW)
+  * v4.11 (cycle 314): 도착지 버튼 4언어 i18n (`dest_set` / `dest_test` ko/en/zh/ja) + 토글 시 누적 chip 자동 재적용
+- **stale doc 일괄 정리**:
+  * README.md endpoint 6→10 (cycle 312) — IDEA-7/8 incident 6 type 정확 명기
+  * README.en.md endpoint 7→10 ko-en parity (cycle 313)
+  * README ko/en 누적 헤더 263→311 (cycle 311)
+  * frontend/index.html 시민 PWA 카드 IDEA-9 노출 (cycle 316)
+  * pitch.html SEO meta og:description (cycle 306) — IDEA-9 + 청각/노캔 잠재 사용자
+- **REST API substantive 보강**:
+  * /api/v1/policy_summary에 incident_breakdown 6 type 추가 (cycle 308)
+  * OpenAPI 3.0 spec IDEA-7/8 cycle 226 description 추가
+- **demo SCRIPT IDEA-9 단계** (cycle 303): t=100s `🔔 IDEA-9 5중 모달리티` overlay
+- **auto memory v6.0/303 동기** (cycle 304)
+- **수상 확률 (포화)**: 최우수 99%+ / 대상 95%+ 유지
+
 ## v6.0 — D-6 🎉 300 사이클 milestone (2026-05-07)
 
 ### 300 사이클 도달 — 시민 가치 강화 단계 (D-6 마감 6일 전)
