@@ -5,7 +5,7 @@
 [![Social Value](https://img.shields.io/badge/Social_Value-%E2%82%A9139.3B%2Fyr-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
 [![Cycles](https://img.shields.io/badge/Auto_Cycles-325-a78bfa.svg)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/regression_tests-21_guards-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/regression_tests-27_guards-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"As Tesla sees the road as BEV, MetroEyes sees the entire urban transit network."*
@@ -47,7 +47,7 @@ backend incident broadcast → citizen route avoidance notice. **5-stage two-sid
 - ✅ **Tiered incentive policy** — ₩100 / ₩200 / ₩300 (OD priority) / ₩400 (transfer station) **with backend auto-bonus**
 - ✅ **A* + K-means(K=4) + Hungarian** emergency evacuation — single-exit baseline cost reduction quantified
 - ✅ **10 REST endpoints** (health/roi_curve/impact/incidents/dispersion/od/transfer/policy_summary/openapi/docs) + **OpenAPI 3.0 spec**
-- ✅ **CI 8 jobs + 21 pytest regression guards** (cycle 318-326): OpenAPI spec(4) + ROI v3 KPI(5) + dispersion EDA(6) + OD/transfer EDA(6) — keeps advertised numbers (Samsung 12.4x / Chungmuro +1.56 / Yeonsinnae +1.44) and code in sync
+- ✅ **CI 9 jobs + 27 pytest regression guards** (cycle 318-327): OpenAPI spec(4) + ROI v3 KPI(5) + dispersion EDA(6) + OD/transfer EDA(6) + bonus_krw tier(6) — keeps advertised numbers (Samsung 12.4x / Chungmuro +1.56 / Yeonsinnae +1.44 / tiered bonus ₩100~₩400) and code in sync
 - ✅ **A* + K-means(K=4) + Hungarian 1:1 exit matching** for emergency evacuation (cost reduction vs single-exit baseline quantified)
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman auto-import
 

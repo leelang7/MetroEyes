@@ -130,3 +130,18 @@ jobs:
         run: |
           python -m pytest tests/test_eda_od_transfer.py -v
           echo "✅ OD/Transfer EDA — 삼성 12.4x 출근 / 충무로 +1.56 환승 / 연신내 +1.44 모두 검증"
+
+  bonus-krw-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install websockets + pytest
+        run: pip install --no-cache-dir websockets pytest
+      - name: Run differential bonus tier regression tests
+        run: |
+          python -m pytest tests/test_bonus_krw.py -v
+          echo "✅ Differential bonus — basic ₩200 / +₩100 OD / +₩200 transfer + transfer outranks OD"
