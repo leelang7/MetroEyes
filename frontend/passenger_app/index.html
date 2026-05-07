@@ -13,7 +13,7 @@
 <body>
 <script>
 (function () {
-  const CUR = 'v4.11-dest-i18n';
+  const CUR = 'v4.12-ws-grace-ping';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1270,7 +1270,25 @@ const LIVE = (() => {
         }
       } catch {}
     };
-    ws.onclose = () => { setBadge('', '오프라인'); clearTimeout(retryT); retryT = setTimeout(() => connect(url), 3000); };
+    // 5초 grace period — 즉시 '오프라인' 표시하지 않고 재연결 성공 시 깜빡임 회피
+    let _offlineTimer = null;
+    ws.onclose = () => {
+      if (_offlineTimer) clearTimeout(_offlineTimer);
+      _offlineTimer = setTimeout(() => setBadge('', '오프라인'), 5000);
+      clearTimeout(retryT);
+      // 재연결 jitter (1.5~4.5초) — 모든 클라이언트 동시 재연결 spike 회피
+      const delay = 1500 + Math.floor(Math.random() * 3000);
+      retryT = setTimeout(() => connect(url), delay);
+    };
+    ws.onopen = (function (orig) { return function (e) {
+      if (_offlineTimer) { clearTimeout(_offlineTimer); _offlineTimer = null; }
+      // 30초 ping 루프 — cloudflared idle timeout / 모바일 throttle 회피
+      if (ws._pingT) clearInterval(ws._pingT);
+      ws._pingT = setInterval(() => {
+        try { if (ws.readyState === 1) ws.send(JSON.stringify({ type: 'ping', ts: Date.now() })); } catch {}
+      }, 30000);
+      if (orig) return orig.call(ws, e);
+    }; })(ws.onopen);
     ws.onerror = () => { setBadge('error', '연결 실패'); };
   }
 
