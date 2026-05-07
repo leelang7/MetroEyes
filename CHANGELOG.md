@@ -1,5 +1,47 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## 🎯 D-5 자동 모드 완성 (2026-05-08 cycle 356-406)
+
+**1 세션 51 사이클 누적** — 356 → 406, 27 회귀 가드 → 243 (+216), CI 9 → 15 jobs (+6).
+
+### 주요 사고 + 회복 1 건
+- **cycle 374**: 광고 "2호선 단독 157M" ↔ cycle 360 EDA 결과 138M 5일간 미감지 →
+  `tests/test_kpi_drift.py` (cycle 375) 6 가드가 자동 검출 → policy_roi_v3 직접 시뮬 결과를
+  source of truth 로 정렬, 5+ 광고 자료 동시 동기화. **자동 회귀 시스템 가치 실증**.
+
+### 신규 시스템 (재사용 가능 패턴)
+1. **Canonical KPI JSON + drift 자동 감지** (cycle 375, 6 가드)
+2. **Fast/heavy 분리 ship-gate** (cycle 380) — `--ci` 1초 vs 풀 ~3분
+3. **3 모드 통합 runner** (cycle 395) — `dday.ps1 -Quick / -Full / -Regen`
+4. **2 시나리오 동시 derivation** (cycle 390) — ESG ultra (광고) + standard (실효 7배)
+5. **Internal markdown link checker** (cycle 397-398, 10 가드) — D-day 404 차단
+
+### 신규 자료 (8 종)
+- `frontend/onepager.html` (cycle 372/377/389) — A4 1-Pager 4언어
+- `docs/RUNBOOK.md` (cycle 376) — 9 시나리오 1줄 복구
+- `docs/QA_PREPARATION.md` (cycle 378) — 18 예상 질문 + 30초 self-pitch
+- `docs/SUBMISSION_INDEX.md` (cycle 381) — 1차 105 + 2차 100 자기 채점
+- `docs/RECORDING_NARRATION.md` (cycle 369) — 4언어 narration 14 stage × 4
+- `docs/FORM_DATA.md` (cycle 401) — 마이박스 양식 사전 작성 데이터
+- `scripts/dday.ps1` (cycle 395) — D-day 통합 runner
+- `frontend/figs/policy_roi_v3_canonical_kpi.json` (cycle 375) — KPI source of truth
+
+### 신규 EDA (3 종)
+- `eda_line_priority_roi.py` (cycle 360, 374) — 호선별 ROI · 2호선 708x
+- `eda_line_hour_priority.py` (cycle 368) — 호선×시간 매트릭스 · Top 5 priority 158
+- `eda_co2_savings.py` (cycle 390) — ESG ultra (0.012 kg) + standard (0.088 kg)
+
+### 회귀 가드 단위 분류 (243건)
+- Frontend features (LLM/env/A*/PWA/i18n/onepager/heatmap/narration): 50건
+- ROI/EDA (policy v3 + Monte Carlo CI + line priority + line×hour + CO₂): 35건
+- Integration (KPI drift + ship-gate + RUNBOOK + QA + reviewer guide): 25건
+- Docs freshness (CHANGELOG/README/pitch/SLIDES outdated 차단): 15건
+- Internal links (10 docs + sweep): 10건
+- 기존 (OpenAPI/dispersion/OD/transfer/bonus/figs/pitch 구조/impact): 41건
+- ESG / canonical / structural: 67건
+
+---
+
 ## 🎉 cycle 400 마일스톤 (2026-05-08, D-5)
 
 **자동 모드 400 사이클 완주** — 5/13 마감 5일 전 D-5 시점 누적 산출:
