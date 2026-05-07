@@ -160,3 +160,18 @@ jobs:
         run: |
           python -m pytest tests/test_figures_present.py -v
           echo "✅ pitch.html 참조 figs/* 모두 존재 + 비어있지 않음"
+
+  pitch-structure-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pytest
+        run: pip install --no-cache-dir pytest
+      - name: Run pitch.html structure regression tests
+        run: |
+          python -m pytest tests/test_pitch_structure.py -v
+          echo "✅ pitch.html — FAQ 8 + IDEA-7/8/9 + 5 모달리티 + 차등 4단 + 글로벌 비교 모두 검증"

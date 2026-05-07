@@ -7,7 +7,7 @@
 [![Cycles](https://img.shields.io/badge/자동_사이클-330회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/regression_tests-30회귀_가드-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/regression_tests-36회귀_가드-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
@@ -41,7 +41,7 @@
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman 자동 임포트
 - ✅ **IDEA-7 임산부석** + **IDEA-8 병목 사전 경고** (cycle 226 — 칸 단위 BEV ROI 응용)
 - ✅ **IDEA-9 도착 알림 5중 모달리티** (cycle 286-310, PWA v4.10) — 시각/햅틱/beep/4언어 음성/시스템 알림 + Wake Lock + SW notificationclick + 최근 도착지 MRU 5개 + persistence (2시간 만료) + ETA 분 표시 + 사전 테스트 버튼 + 안전망 인디케이터 (🔆🔔⚙) + 사용 히스토리 카운터 (노이즈 캔슬링/이어폰/청각 약자 42만 명 + 노캔 1,200만 잠재 사용자, 접근성 제도 직결)
-- ✅ **CI 10 jobs + pytest 회귀 가드 30건** (cycle 318-331): OpenAPI spec(4) + ROI v3 KPI(5) + dispersion EDA(6) + OD/transfer EDA(6) + bonus_krw tier(6) + pitch figs(3) — README 광고 수치 + 코드 + 그림 모두 자동 정합 검증
+- ✅ **CI 11 jobs + pytest 회귀 가드 36건** (cycle 318-334): OpenAPI spec(4) + ROI v3 KPI(5) + dispersion EDA(6) + OD/transfer EDA(6) + bonus_krw tier(6) + pitch figs(3) + pitch 구조(6) — README 광고 수치 + 코드 + 그림 + 발표 자료 구조 모두 자동 정합 검증
 
 ---
 
