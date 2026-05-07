@@ -28,7 +28,7 @@
 
 **진입**: [`frontend/index.html`](frontend/index.html) — 8장 카드 허브 (📊 정책 보고 / 🎬 통합 시연 / 🚇 운영자 / 📱 시민 / 🛠 디버그)
 
-**자동 298 사이클 누적 결과** (D-6, 5/13 마감):
+**자동 311 사이클 누적 결과** (D-6, 5/13 마감):
 - ✅ 양면 가치 사슬 5단계 (시민 분산 → backend krw → 운영자 ROI → backend incident → 시민 알림)
 - ✅ 시연 fail-safe **8중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭 + fake impact seed + Docker compose + GitHub Actions CI
 - ✅ 다국어 4개 (ko/en/zh/ja) **11 페이지 패리티** (운영자 4 + 시민 2 + 메타 5) + Web Speech + ARIA
@@ -39,7 +39,7 @@
 - ✅ **비상 동선 K-means(K=4) + 헝가리안 1:1 출구 매칭** (단일 출구 baseline 대비 cost 절감 정량화)
 - ✅ **OpenAPI 3.0 spec** (`/api/openapi.yaml`) — Swagger/Redoc/Postman 자동 임포트
 - ✅ **IDEA-7 임산부석** + **IDEA-8 병목 사전 경고** (cycle 226 — 칸 단위 BEV ROI 응용)
-- ✅ **IDEA-9 도착 알림 5중 모달리티** (cycle 286-297, PWA v4.7) — 시각/햅틱/beep/4언어 음성/시스템 알림 + Wake Lock + SW notificationclick + 최근 도착지 MRU + persistence + ETA 분 표시 (노이즈 캔슬링/이어폰/청각 약자 배려, 접근성 제도 직결)
+- ✅ **IDEA-9 도착 알림 5중 모달리티** (cycle 286-310, PWA v4.10) — 시각/햅틱/beep/4언어 음성/시스템 알림 + Wake Lock + SW notificationclick + 최근 도착지 MRU 5개 + persistence (2시간 만료) + ETA 분 표시 + 사전 테스트 버튼 + 안전망 인디케이터 (🔆🔔⚙) + 사용 히스토리 카운터 (노이즈 캔슬링/이어폰/청각 약자 42만 명 + 노캔 1,200만 잠재 사용자, 접근성 제도 직결)
 
 ---
 
