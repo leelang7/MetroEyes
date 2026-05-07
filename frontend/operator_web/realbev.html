@@ -465,10 +465,52 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       </div>
       <div class="meta">
         <span>3D 메시 · 점광원 · 그림자 · 시안 글로우</span>
-        <span>마우스 드래그=회전 / 휠=줌</span>
+        <span>마우스 드래그=휐전 / 휠=줌</span>
       </div>
     </div>
   </section>
+
+  <!-- ③ 라이브 트랙 분포 + 사고 history + KPI (실영상 밑 빈칸 보강) -->
+  <section style="margin-top: 14px; display: grid; grid-template-columns: 1.2fr 1.4fr 1fr; gap: 12px;">
+    <div class="tile" style="padding: 12px 14px;">
+      <h3><b>③ 라이브 트랙 분포</b><span style="color: var(--muted); font-weight: 400;">YOLO11n 클래스별 카운트</span></h3>
+      <div id="track-dist" style="display: flex; flex-direction: column; gap: 6px; padding: 6px 0;">
+        <div style="color: var(--muted); font-size: 12px;">트랙 수신 대기...</div>
+      </div>
+      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.06); display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px;">
+        <div><span style="color: var(--muted);">최대 동시</span><br><b id="td-peak" style="color: #f59e0b; font-size: 16px;">—</b></div>
+        <div><span style="color: var(--muted);">평균 트랙</span><br><b id="td-avg" style="color: #7dd3d3; font-size: 16px;">—</b></div>
+        <div><span style="color: var(--muted);">FPS 평균</span><br><b id="td-fps" style="color: #10b981; font-size: 16px;">—</b></div>
+      </div>
+    </div>
+    <div class="tile" style="padding: 12px 14px;">
+      <h3><b>④ 사고 history</b><span style="color: var(--muted); font-weight: 400;">최근 10건 (6 type)</span></h3>
+      <div id="evt-hist" style="display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; font-size: 12px;">
+        <div style="color: var(--muted);">사고 알림 없음 — 정상 운영</div>
+      </div>
+    </div>
+    <div class="tile" style="padding: 12px 14px;">
+      <h3><b>⑤ 누적 KPI</b><span style="color: var(--muted); font-weight: 400;">backend impact_summary</span></h3>
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 0;">
+        <div><span style="color: var(--muted); font-size: 11px;">분산 액션</span><br><b id="kpi-disp" style="color: #a78bfa; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 12px;"> 회</span></div>
+        <div><span style="color: var(--muted); font-size: 11px;">절감 시간</span><br><b id="kpi-min" style="color: #7dd3d3; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 12px;"> 분</span></div>
+        <div><span style="color: var(--muted); font-size: 11px;">사회적 가치</span><br><b id="kpi-won" style="color: #10b981; font-size: 22px;">₩0</b></div>
+        <div><span style="color: var(--muted); font-size: 11px;">차등 4단 분포</span>
+          <div style="display: flex; gap: 2px; margin-top: 4px; height: 10px; border-radius: 4px; overflow: hidden;">
+            <div id="kpi-tier-basic" style="background: #7dd3d3; flex: 1;" title="기본 ₩200"></div>
+            <div id="kpi-tier-od" style="background: #a78bfa; flex: 0;" title="OD +₩100"></div>
+            <div id="kpi-tier-tp" style="background: #f59e0b; flex: 0;" title="환승 +₩200"></div>
+          </div>
+          <div style="font-size: 10px; color: var(--muted-2); margin-top: 3px;">
+            <span id="kpi-tier-text">기본 0 / OD 0 / 환승 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <style>
+    @media (max-width: 1100px) { main > section[style*="grid-template-columns: 1.2fr"] { grid-template-columns: 1fr !important; } }
+  </style>
 </main>
 
 <script type="module">
@@ -1168,12 +1210,96 @@ function connect(url) {
       document.getElementById('ic-bar').style.width = Math.min(100, saved * 4) + '%';
       const recent = (p.recent || []).slice(-5).map(e => `${e.station}/${e.car}(-${e.saved_pct.toFixed(0)}%)`).join(' · ');
       document.getElementById('ic-recent').textContent = recent ? `최근 5건: ${recent}` : '';
+      // ⑤ 누적 KPI 카드 라이브 갱신
+      try {
+        const dispEl = document.getElementById('kpi-disp');
+        const minEl = document.getElementById('kpi-min');
+        const wonEl = document.getElementById('kpi-won');
+        if (dispEl) dispEl.textContent = (p.total_count || 0).toLocaleString();
+        if (minEl) minEl.textContent = Math.round(p.saved_min_total || 0).toLocaleString();
+        if (wonEl) {
+          const w = p.value_won || 0;
+          wonEl.textContent = w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString()}`;
+        }
+        const tc = p.tier_counts || { basic: 0, od: 0, transfer: 0 };
+        const tot = (tc.basic || 0) + (tc.od || 0) + (tc.transfer || 0);
+        if (tot > 0) {
+          document.getElementById('kpi-tier-basic').style.flex = tc.basic;
+          document.getElementById('kpi-tier-od').style.flex = tc.od;
+          document.getElementById('kpi-tier-tp').style.flex = tc.transfer;
+        }
+        document.getElementById('kpi-tier-text').textContent = `기본 ${tc.basic||0} / OD ${tc.od||0} / 환승 ${tc.transfer||0}`;
+      } catch {}
+      return;
+    }
+    if (p.type === 'incident_summary' || p.type === 'incident_log') {
+      // ④ 사고 history 카드 (최근 10건, 6 type 라벨)
+      try {
+        const labels = {
+          emergency: '🚨 응급', suspicious: '⚠️ 이상', lost: '🎒 분실',
+          free_ride: '💳 무임', priority_seat: '👶 임산부석', bottleneck: '🚪 병목',
+        };
+        const colors = {
+          emergency: '#ff5e57', suspicious: '#f0b46a', lost: '#7dd3d3',
+          free_ride: '#a78bfa', priority_seat: '#ec4899', bottleneck: '#fb7185',
+        };
+        const events = (p.events || (p.ev_type ? [p] : [])).slice(-10).reverse();
+        const el = document.getElementById('evt-hist');
+        if (el && events.length) {
+          el.innerHTML = events.map(e => {
+            const ty = e.ev_type || e.type || 'unknown';
+            const ago = e.ts ? Math.round((Date.now()/1000 - e.ts)) : 0;
+            const agoTxt = ago < 60 ? `${ago}s` : ago < 3600 ? `${Math.round(ago/60)}m` : `${Math.round(ago/3600)}h`;
+            return `<div style="display:flex; gap:6px; padding:3px 0; border-bottom:1px solid rgba(255,255,255,.04);">
+              <span style="color:${colors[ty]||'#fff'}; font-weight:600; min-width:90px;">${labels[ty]||ty}</span>
+              <span style="color:#fff; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${e.msg||'—'}</span>
+              <span style="color:var(--muted-2); font-size:11px;">${agoTxt}</span>
+            </div>`;
+          }).join('');
+        }
+      } catch {}
       return;
     }
     fpsEl.textContent = `${(p.fps ?? 0).toFixed(1)} FPS (백엔드)`;
     tracksEl.textContent = `${(p.tracks || []).length} 트랙`;
     document.getElementById('frame-idx').textContent = `frame ${p.frame_idx ?? 0}`;
     onTracksUpdate(p.tracks || []);
+    // ③ 라이브 트랙 분포 카드 (클래스별 카운트 + peak/avg)
+    try {
+      const tracks = p.tracks || [];
+      const dist = {};
+      for (const t of tracks) { const c = t.cls || t.class_name || 'unknown'; dist[c] = (dist[c] || 0) + 1; }
+      window._trackHist = window._trackHist || { peak: 0, sum: 0, n: 0, fpsSum: 0 };
+      window._trackHist.peak = Math.max(window._trackHist.peak, tracks.length);
+      window._trackHist.sum += tracks.length;
+      window._trackHist.fpsSum += (p.fps || 0);
+      window._trackHist.n += 1;
+      const td = document.getElementById('track-dist');
+      if (td) {
+        const colors = { person: '#7dd3d3', car: '#a78bfa', truck: '#f59e0b', bus: '#fb7185', dog: '#ec4899', bicycle: '#10b981' };
+        const total = tracks.length;
+        const rows = Object.entries(dist).sort((a,b) => b[1] - a[1]).slice(0, 6);
+        if (rows.length) {
+          td.innerHTML = rows.map(([cls, n]) => {
+            const w = total > 0 ? (n/total*100).toFixed(0) : 0;
+            const c = colors[cls] || '#888';
+            return `<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
+              <span style="min-width:60px; color:${c}; font-weight:600;">${cls}</span>
+              <div style="flex:1; height:8px; background:rgba(255,255,255,.05); border-radius:4px; overflow:hidden;">
+                <div style="height:100%; width:${w}%; background:${c};"></div>
+              </div>
+              <b style="min-width:24px; text-align:right; color:#fff;">${n}</b>
+            </div>`;
+          }).join('');
+        }
+        const peakEl = document.getElementById('td-peak');
+        const avgEl = document.getElementById('td-avg');
+        const fpsAvgEl = document.getElementById('td-fps');
+        if (peakEl) peakEl.textContent = window._trackHist.peak;
+        if (avgEl) avgEl.textContent = (window._trackHist.sum / Math.max(1, window._trackHist.n)).toFixed(1);
+        if (fpsAvgEl) fpsAvgEl.textContent = (window._trackHist.fpsSum / Math.max(1, window._trackHist.n)).toFixed(1);
+      }
+    } catch {}
     Fusion.applyBev(p);
     if (p.input_b64) {
       const img = document.getElementById('img-input');
