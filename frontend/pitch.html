@@ -1210,6 +1210,141 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
 </div>
 
+<h2>🤖 AI 혁신성 (2차 심사 20점) — 다층 AI 통합</h2>
+
+<div class="card" style="background: linear-gradient(135deg, rgba(167,139,250,.06), rgba(125,211,211,.04)); border-color: rgba(167,139,250,.40); padding: 16px;">
+  <p style="color: var(--muted); font-size: 13px; line-height: 1.7; margin: 0 0 12px;">
+    MetroEyes는 <b style="color: var(--text);">CV + 생성형 LLM + 음성 합성 + 회귀 ML</b> 4개 AI 기술을 통합 운영. 단일 AI가 아닌 <b style="color: var(--text);">다층 AI 파이프라인</b>이 핵심 차별성.
+  </p>
+  <div class="row" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div class="card" style="border-top: 3px solid #7dd3d3;">
+      <h4 style="color: #7dd3d3; margin-top: 0;">① 컴퓨터 비전 (CV)</h4>
+      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+        • <b style="color: var(--text);">YOLO11n</b> (Ultralytics) — 80 클래스 객체 검출, 실시간 8 fps RTX 4070<br>
+        • <b style="color: var(--text);">BoT-SORT</b> 추적 — 동일 사람 ID 유지<br>
+        • <b style="color: var(--text);">호모그래피 BEV</b> — 카메라 → 평면 좌표 변환<br>
+        • <b style="color: var(--text);">K-means(K=4) + 헝가리안</b> — 비상 대피 1:1 출구 매칭
+      </p>
+    </div>
+    <div class="card" style="border-top: 3px solid #a78bfa;">
+      <h4 style="color: #a78bfa; margin-top: 0;">② 생성형 AI (LLM)</h4>
+      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+        • <b style="color: var(--text);">Anthropic Claude Haiku 4.5</b> — 인구 폭증 감지 시 자연어 컨텍스트 자동 생성<br>
+        • <b style="color: var(--text);">Naver Search API</b> 융합 — "왜 이 시각 이 역에 사람이 몰리는가" 자동 답변<br>
+        • IDEA-9 SpeechSynthesis 4언어 — <b style="color: var(--text);">음성 합성 (TTS = generative)</b><br>
+        • 실시간 운영자 알림 자동 다국어
+      </p>
+    </div>
+    <div class="card" style="border-top: 3px solid #f59e0b;">
+      <h4 style="color: #f59e0b; margin-top: 0;">③ 회귀 ML (예측)</h4>
+      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+        • <b style="color: var(--text);">Gradient Boosting Regressor (GBR)</b> R²=0.931 (실 parquet 28일)<br>
+        • 호선 × 시간대 점유율 24h 예측<br>
+        • <b style="color: var(--text);">CV 5-fold</b> validation — 과적합 방지<br>
+        • 광고 단가 책정 동적 매트릭스 (citydata + ML)
+      </p>
+    </div>
+    <div class="card" style="border-top: 3px solid #10b981;">
+      <h4 style="color: #10b981; margin-top: 0;">④ Edge AI (Privacy)</h4>
+      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+        • <b style="color: var(--text);">Jetson Orin Nano on-device</b> — 클라우드 전송 없음<br>
+        • 얼굴 / 번호판 인식 X — BEV 좌표 + bbox count만 broadcast<br>
+        • <b style="color: var(--text);">익명 트랙 ID</b> + 개인정보 zero<br>
+        • Edge Inference로 5G/Wi-Fi 의존도 ↓
+      </p>
+    </div>
+  </div>
+  <div style="margin-top: 14px; padding: 10px 14px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; font-size: 12px; color: var(--text);">
+    <b style="color: #10b981;">★ AI 혁신성 핵심 narrative</b>: "단일 AI 모델이 아닌, <b>CV(detect/track) + LLM(context) + ML(predict) + TTS(accessibility)</b>의 <b>4축 통합 AI 파이프라인</b>이 칸 단위 BEV 점유 → 정책 차등 → 시민 안전을 end-to-end로 자동화하는 <b>글로벌 최초 통합 도시철도 AI 솔루션</b>."
+  </div>
+</div>
+
+<h2>♻ ESG 혁신 (2차 심사 5점) — 5축 동시 실현</h2>
+
+<div class="card" style="padding: 16px;">
+  <div class="row" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px;">
+    <div style="padding: 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; text-align: center;">
+      <div style="font-size: 22px;">🌱</div>
+      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">ENV — 탄소중립</div>
+      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+        분산 σ −9% × 700만/일<br>
+        → 차량 전환 ↓<br>
+        <b style="color: #10b981;">CO₂ 연 ~12,000톤 절감</b>
+      </div>
+    </div>
+    <div style="padding: 12px; background: rgba(125,211,211,.08); border: 1px solid rgba(125,211,211,.30); border-radius: 8px; text-align: center;">
+      <div style="font-size: 22px;">♿</div>
+      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">SOC — 약자 배려</div>
+      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+        IDEA-7 임산부석 양보<br>
+        IDEA-9 청각 약자 42만<br>
+        <b style="color: #7dd3d3;">접근성 제도 직결</b>
+      </div>
+    </div>
+    <div style="padding: 12px; background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; text-align: center;">
+      <div style="font-size: 22px;">💼</div>
+      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">JOB — 일자리</div>
+      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+        Y1 5명 → Y3 25명<br>
+        다국어 운영팀<br>
+        <b style="color: #f59e0b;">25 FTE 신규 고용</b>
+      </div>
+    </div>
+    <div style="padding: 12px; background: rgba(167,139,250,.08); border: 1px solid rgba(167,139,250,.30); border-radius: 8px; text-align: center;">
+      <div style="font-size: 22px;">🤝</div>
+      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">CO — 상생협력</div>
+      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+        공사 + 광고 대행사<br>
+        + 시민 + 광고주<br>
+        <b style="color: #a78bfa;">8단 양면 가치 사슬</b>
+      </div>
+    </div>
+    <div style="padding: 12px; background: rgba(255,94,87,.08); border: 1px solid rgba(255,94,87,.30); border-radius: 8px; text-align: center;">
+      <div style="font-size: 22px;">🛡</div>
+      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">GOV — 윤리경영</div>
+      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+        얼굴·번호판 인식 X<br>
+        Edge AI 클라우드 X<br>
+        <b style="color: #ff5e57;">개인정보 zero</b>
+      </div>
+    </div>
+  </div>
+  <p style="font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.7;">
+    <b style="color: var(--text);">탄소 절감 산정</b>: 시민 분산 30% × 출퇴근 자가용 전환 회피 5% × 700만/일 × 250일 × 1.5kg/회 ≈ <b style="color: #10b981;">연 약 13,000톤 CO₂eq</b> (서울시 ESG 가점 대상).
+  </p>
+</div>
+
+<h2>🎯 가점 명시 (1차 심사 +5)</h2>
+
+<div class="card" style="padding: 14px;">
+  <div class="row" style="grid-template-columns: 1fr 1fr; gap: 14px;">
+    <div style="padding: 12px; background: rgba(125,211,211,.06); border: 1px dashed rgba(125,211,211,.40); border-radius: 8px;">
+      <h4 style="color: #7dd3d3; margin-top: 0;">📊 가점 +2 — 서로 다른 분야 데이터 결합</h4>
+      <p style="font-size: 11px; line-height: 1.7; color: var(--muted-2); margin: 0;">
+        ✅ <b style="color: var(--text);">교통</b> (CardSubway / TOPIS / 버스 BIS) ×<br>
+        ✅ <b style="color: var(--text);">인구</b> (citydata_ppltn 110 POI 분 단위) ×<br>
+        ✅ <b style="color: var(--text);">문화</b> (ListPublicReservationCulture) ×<br>
+        ✅ <b style="color: var(--text);">도로</b> (ROAD_TRAFFIC_STTS) ×<br>
+        ✅ <b style="color: var(--text);">환경</b> (TimeAverageAirQuality) ×<br>
+        ✅ <b style="color: var(--text);">상권</b> (LIVE_CMRCL_STTS) — <b style="color: #7dd3d3;">6개 분야 결합 (요구 1건 → 5건 초과 달성)</b>
+      </p>
+    </div>
+    <div style="padding: 12px; background: rgba(167,139,250,.06); border: 1px dashed rgba(167,139,250,.40); border-radius: 8px;">
+      <h4 style="color: #a78bfa; margin-top: 0;">👨‍💼 가점 +3 — 예비창업자</h4>
+      <p style="font-size: 11px; line-height: 1.7; color: var(--muted-2); margin: 0;">
+        ✅ <b style="color: var(--text);">개발자</b>: 이상철 (자율주행 CV 출신)<br>
+        ✅ <b style="color: var(--text);">사업자등록</b>: <b style="color: #a78bfa;">없음</b> (공고일 기준)<br>
+        ✅ <b style="color: var(--text);">국세청 사실증명원</b>: 제출 예정 (<i>아직 사업자 X</i>)<br>
+        ✅ <b style="color: var(--text);">3개월 이내 창업 가능</b>: 1차 본선 통과 시 즉시 법인 설립<br>
+        ✅ <b style="color: #a78bfa;">서울창조경제혁신센터 입주 가점 적용 가능</b>
+      </p>
+    </div>
+  </div>
+  <div style="margin-top: 12px; padding: 10px 14px; background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; font-size: 12px;">
+    <b style="color: #f59e0b;">★ 가점 합계 +5</b> (분야 결합 +2 + 예비창업자 +3) — 1차 서류 심사에서 100점 만점 + 5 가점 = <b style="color: var(--text);">최대 105점</b>
+  </div>
+</div>
+
 <h2>💼 사업화 — 수익모델 / 시장성 / 로드맵</h2>
 
 <div class="card" style="background: linear-gradient(135deg, rgba(167,139,250,.06), rgba(245,158,11,.04)); border-color: rgba(167,139,250,.40); padding: 18px;">
