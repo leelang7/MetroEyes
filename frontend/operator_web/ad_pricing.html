@@ -134,6 +134,12 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
       <span style="color: #f59e0b; font-size: 10px; font-weight: 700;">💰 차등</span>
       <b id="ad-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="ad-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="ad-tier-tp" style="color: #f59e0b;">0</b>
     </span>
+    <!-- 🌍 환경 라이브 (cycle 394) — PM2.5 / UV → 광고 노출 환경 modulation -->
+    <span id="ad-env-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(125,211,211,.14), rgba(167,139,250,.06)); border: 1px solid rgba(125,211,211,.40);">
+      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">🌍 환경</span>
+      <span style="margin-left: 4px; color: var(--muted);">PM2.5<b id="ad-env-pm25" style="color: var(--text); margin-left:3px;">—</b></span>
+      <span style="margin-left: 4px; color: var(--muted);">UV<b id="ad-env-uv" style="color: var(--text); margin-left:3px;">—</b></span>
+    </span>
 <script>
 (async function pollAdTier() {
   try {
@@ -288,6 +294,22 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
       <p style="font-size: 11px; color: var(--muted-2);">
         <b>광고주 가치</b>: "왜 이 단가인가?" 가 분 단위로 투명해짐 → 고정 옥외광고 대비 <b>입찰 신뢰도 ↑</b>. 폭증 이벤트 시 자동 트리거됨 (수동 조회 불필요).<br/>
         <span id="ad-llm-ts" style="color: var(--muted); font-size: 10px;">—</span>
+      </p>
+    </div>
+
+    <!-- 🌍 환경 modulation (cycle 394) — PM2.5 / UV → 광고 노출 환경 영향 -->
+    <div class="insight" style="background: linear-gradient(135deg, rgba(125,211,211,.08), rgba(167,139,250,.04)); border-color: rgba(125,211,211,.30);">
+      <h3 style="color: #7dd3d3;">🌍 날씨/공기 → 광고 매체 modulation</h3>
+      <p>
+        <b>지하 vs 지상 광고 가치 역전</b>: PM2.5 ≥ 36 (나쁨) / UV ≥ 9 (매우 높음) 시
+        시민 지하 체류 시간 ↑ → <b style="color: #7dd3d3;">지하 디지털 사이니지 노출 +20~40% 프리미엄</b>.
+      </p>
+      <p>
+        헤더 chip 의 <b style="color: #7dd3d3;">🌍 환경</b> 은 backend citydata broadcast 의 PM2.5/UV 라이브 수신 결과.
+        polluted day → 지하 광고 우선 / clean sunny day → 지상 ad 평소 단가.
+      </p>
+      <p>
+        <b>광고주 가치</b>: 동일 예산으로 환경 trigger 시 자동 매체 전환 → ROAS +15~25% (일별 변동성 흡수).
       </p>
     </div>
 
@@ -538,6 +560,21 @@ function connectAdLive() {
       // 🤖 AI 자동 단가 근거 (cycle 356) — backend 의 폭증 컨텍스트 수신 시 카드 노출
       else if (j.type === 'context' || j.type === 'surge_context' || j.type === 'llm_context' || j.llm_text || j.summary) {
         applyAdLlmContext(j);
+      }
+      // 🌍 환경 라이브 (cycle 394) — citydata broadcast 에서 PM2.5 / UV 발견 시 chip 노출
+      else if (j.type === 'citydata' || j.pm25 != null || j.uv_idx) {
+        try {
+          if (j.pm25 != null) {
+            const pm25El = document.getElementById('ad-env-pm25');
+            if (pm25El) pm25El.textContent = `${j.pm25}`;
+          }
+          if (j.uv_idx) {
+            const uvEl = document.getElementById('ad-env-uv');
+            if (uvEl) uvEl.textContent = j.uv_idx;
+          }
+          const pill = document.getElementById('ad-env-pill');
+          if (pill && (j.pm25 != null || j.uv_idx)) pill.hidden = false;
+        } catch {}
       }
     } catch {}
   };
