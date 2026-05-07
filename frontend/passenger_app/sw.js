@@ -1,4 +1,4 @@
-const CACHE = 'subwaybev-citizen-v6-stt-co2';
+const CACHE = 'subwaybev-citizen-v7-a11y';
 const ASSETS = [
   './',
   './index.html',

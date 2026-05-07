@@ -9,11 +9,29 @@
 <title>MetroEyes — 시민 앱</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="styles.css">
+<style>
+/* ♿ 접근성 모드 (cycle 354) — 시각 약자/고령층/저시력 사용자 배려 (장애인차별금지법 + 교통약자법 직결) */
+body.a11y-large { font-size: 17px; }
+body.a11y-large h1, body.a11y-large h2 { font-size: 1.3em; }
+body.a11y-large button, body.a11y-large input, body.a11y-large .modal-row { font-size: 16px; }
+body.a11y-large .ctx-meta, body.a11y-large small { font-size: 14px; }
+body.a11y-large #ctx-name { font-size: 22px; }
+body.a11y-high { background: #000 !important; color: #fff !important; }
+body.a11y-high .station, body.a11y-high .ppltn-strip, body.a11y-high #dest-banner { background: #000 !important; border-color: #fff !important; color: #fff !important; }
+body.a11y-high button { border: 2px solid #fff !important; }
+body.a11y-high #a11y-toggle { background: #ffeb3b !important; color: #000 !important; border-color: #ffeb3b !important; }
+body.a11y-high #stt-feedback, body.a11y-high #co2-card { color: #fff !important; }
+body.a11y-high a { color: #ffeb3b !important; text-decoration: underline; }
+body.a11y-high .modal-panel { background: #000 !important; border: 2px solid #fff !important; }
+body.a11y-high .modal-row { color: #fff !important; }
+body.a11y-high .modal-row.current { background: #ffeb3b !important; color: #000 !important; }
+body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !important; }
+</style>
 </head>
 <body>
 <script>
 (function () {
-  const CUR = 'v4.13-stt-co2';
+  const CUR = 'v4.14-a11y-mode';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -46,6 +64,8 @@
       <small id="ctx-meta">2호선 · 잠실행</small>
       <span class="picker-arrow">▾</span>
     </div>
+    <!-- ♿ 접근성 toggle (cycle 354 — 시각 약자/고령층 + IDEA-9 chain 확장) -->
+    <button id="a11y-toggle" title="접근성: 큰 글씨 + 고대비" aria-label="접근성 모드" style="margin-right: 6px; padding: 4px 8px; background: rgba(16,185,129,.14); border: 1px solid rgba(16,185,129,.45); color: #10b981; border-radius: 6px; font-size: 13px; cursor: pointer;">♿</button>
     <div class="time" id="ctx-time">18:22</div>
   </div>
 
@@ -1890,6 +1910,39 @@ const LIVE = (() => {
     sttFb.style.background = ok ? 'rgba(16,185,129,.08)' : 'rgba(255,138,138,.06)';
     setTimeout(() => { if (sttFb) sttFb.hidden = true; }, 5000);
   }
+  // ♿ 접근성 모드 toggle (cycle 354) — IDEA-9 chain 확장 (장애인차별금지법 + 교통약자법)
+  // 3 mode 순환: off → 큰 글씨 → 큰 글씨+고대비 → off
+  const A11Y_KEY = 'metroeyes_a11y_mode';
+  const a11yBtn = document.getElementById('a11y-toggle');
+  function _applyA11y(mode) {
+    document.body.classList.toggle('a11y-large', mode >= 1);
+    document.body.classList.toggle('a11y-high', mode >= 2);
+    document.body.classList.toggle('a11y-on', mode >= 1);
+    if (a11yBtn) a11yBtn.title = mode === 0 ? '접근성 OFF — 클릭 시 큰 글씨' : mode === 1 ? '큰 글씨 ON — 클릭 시 고대비 추가' : '큰 글씨 + 고대비 ON — 클릭 시 OFF';
+    try { localStorage.setItem(A11Y_KEY, String(mode)); } catch {}
+  }
+  let _a11yMode = parseInt(localStorage.getItem(A11Y_KEY) || '0', 10);
+  if (isNaN(_a11yMode) || _a11yMode < 0 || _a11yMode > 2) _a11yMode = 0;
+  _applyA11y(_a11yMode);
+  if (a11yBtn) a11yBtn.addEventListener('click', () => {
+    _a11yMode = (_a11yMode + 1) % 3;
+    _applyA11y(_a11yMode);
+    // 음성 안내 (스크린리더 호환 + 시각약자 추가 신호)
+    try {
+      if (window.speechSynthesis) {
+        const lang = (typeof _curPageLang === 'string' ? _curPageLang : 'ko');
+        const msg = { ko: ['접근성 OFF', '큰 글씨 모드', '큰 글씨와 고대비 모드'][_a11yMode],
+                      en: ['Accessibility OFF', 'Large text mode', 'Large text + high contrast mode'][_a11yMode],
+                      zh: ['无障碍关闭', '大字模式', '大字+高对比模式'][_a11yMode],
+                      ja: ['アクセシビリティ OFF', '大文字モード', '大文字+高コントラスト'][_a11yMode] }[lang] || '';
+        const u = new SpeechSynthesisUtterance(msg);
+        u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR';
+        u.rate = 0.95; u.volume = 0.85;
+        speechSynthesis.cancel(); speechSynthesis.speak(u);
+      }
+    } catch {}
+  });
+
   if (sttBtn) sttBtn.addEventListener('click', () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { _showSttFb('이 브라우저는 STT 미지원 (Chrome 권장)', false); return; }
