@@ -210,7 +210,7 @@
 
     <!-- 🤖 AI 4축 라이브 (cycle 355 신규) — CV + LLM + ML + Edge -->
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border: 1px solid rgba(167,139,250,.30);">
-      <h2>🤖 AI 4축 라이브 통합 (심사 AI 혁신성 20점)</h2>
+      <h2 data-i18n="ai_h">🤖 AI 4축 라이브 통합 (심사 AI 혁신성 20점)</h2>
       <div class="stat" style="border-left: 3px solid #7dd3d3; padding-left: 8px;">
         <span><b style="color: #7dd3d3;">① CV</b> YOLO11n + BoT-SORT</span>
         <b id="ai-cv" class="ok">— fps</b>
@@ -232,7 +232,7 @@
         <b id="ai-stt" class="ok">활성 (Chrome)</b>
       </div>
       <div id="llm-context-box" hidden style="margin-top: 8px; padding: 8px 10px; background: rgba(167,139,250,.08); border: 1px solid rgba(167,139,250,.30); border-radius: 6px; font-size: 11px; color: #fff; line-height: 1.5;">
-        <div style="font-size: 9px; color: #a78bfa; letter-spacing: 0.8px; font-weight: 700;">🤖 LLM 자동 컨텍스트 (최신)</div>
+        <div data-i18n="llm_h" style="font-size: 9px; color: #a78bfa; letter-spacing: 0.8px; font-weight: 700;">🤖 LLM 자동 컨텍스트 (최신)</div>
         <div id="llm-context-text" style="margin-top: 4px;">—</div>
         <div id="llm-context-ts" style="font-size: 9px; color: var(--muted-2); margin-top: 4px;">—</div>
       </div>
@@ -240,7 +240,7 @@
 
     <!-- 🌱 ESG 라이브 패널 (cycle 353 신규) — 탄소 / 일자리 / 약자 / 거버넌스 -->
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(16,185,129,.10), rgba(125,211,211,.04)); border: 1px solid rgba(16,185,129,.30);">
-      <h2>♻ ESG 라이브 (5축 동시 실현)</h2>
+      <h2 data-i18n="esg_h">♻ ESG 라이브 (5축 동시 실현)</h2>
       <div class="stat">🌱 CO₂ 절감     <b id="esg-co2" class="ok">0 kg eq</b></div>
       <div class="stat">♿ 약자 수혜     <b id="esg-soc" class="ok">청각 42만 + 노캔 1,200만 잠재</b></div>
       <div class="stat">💼 신규 고용     <b id="esg-job" class="ok">Y3 25 FTE</b></div>
@@ -253,7 +253,7 @@
 
     <!-- 🌍 환경 라이브 패널 (cycle 357) — citydata 의 PM/UV/온도 실시간 노출 -->
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(125,211,211,.08), rgba(167,139,250,.04)); border: 1px solid rgba(125,211,211,.30);">
-      <h2>🌍 환경 라이브 <span style="color: var(--muted); font-weight: 400;">(citydata · PM / UV / 온도)</span></h2>
+      <h2 data-i18n="env_h">🌍 환경 라이브 <span style="color: var(--muted); font-weight: 400;">(citydata · PM / UV / 온도)</span></h2>
       <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
         <div class="stat">🌫 PM2.5      <b id="env-pm25">— μg/m³</b></div>
         <div class="stat">🌫 PM10       <b id="env-pm10">— μg/m³</b></div>
@@ -830,21 +830,47 @@ function showAdminToast(msg, level) {
   } catch {}
 }
 
-// 4언어 토글
+// 4언어 토글 (cycle 365 — env/AI/ESG/LLM 패널 4언어 통합)
 const I18N_ADMIN = {
-  ko: { sub: 'WS 직접 호출 / 응답 검증 / 라이브 트래픽 / 임팩트 모니터링', btn: '🇰🇷 KO' },
-  en: { sub: 'Direct WS call / Response validation / Live traffic / Impact monitoring', btn: '🇺🇸 EN' },
-  zh: { sub: 'WS 直接调用 / 响应验证 / 实时流量 / 影响监控', btn: '🇨🇳 ZH' },
-  ja: { sub: 'WS 直接呼出 / 応答検証 / ライブトラフィック / インパクト監視', btn: '🇯🇵 JA' },
+  ko: { sub: 'WS 직접 호출 / 응답 검증 / 라이브 트래픽 / 임팩트 모니터링', btn: '🇰🇷 KO',
+        ai_h: '🤖 AI 4축 라이브 통합 (심사 AI 혁신성 20점)',
+        esg_h: '♻ ESG 라이브 (5축 동시 실현)',
+        env_h: '🌍 환경 라이브 (citydata · PM / UV / 온도)',
+        llm_h: '🤖 LLM 자동 컨텍스트 (최신)' },
+  en: { sub: 'Direct WS call / Response validation / Live traffic / Impact monitoring', btn: '🇺🇸 EN',
+        ai_h: '🤖 AI 4-axis Live (AI Innovation 20pt)',
+        esg_h: '♻ ESG Live (5 axes simultaneous)',
+        env_h: '🌍 Environment Live (citydata · PM / UV / Temp)',
+        llm_h: '🤖 LLM Auto Context (latest)' },
+  zh: { sub: 'WS 直接调用 / 响应验证 / 实时流量 / 影响监控', btn: '🇨🇳 ZH',
+        ai_h: '🤖 AI 四轴实时 (AI 创新性 20分)',
+        esg_h: '♻ ESG 实时 (5轴同时实现)',
+        env_h: '🌍 环境实时 (citydata · PM / UV / 温度)',
+        llm_h: '🤖 LLM 自动上下文 (最新)' },
+  ja: { sub: 'WS 直接呼出 / 応答検証 / ライブトラフィック / インパクト監視', btn: '🇯🇵 JA',
+        ai_h: '🤖 AI 4軸ライブ (AI 革新性 20点)',
+        esg_h: '♻ ESG ライブ (5軸同時実現)',
+        env_h: '🌍 環境ライブ (citydata · PM / UV / 気温)',
+        llm_h: '🤖 LLM 自動コンテキスト (最新)' },
 };
 let _curAdmLang = 'ko';
+function applyAdminI18n() {
+  const t = I18N_ADMIN[_curAdmLang];
+  const sub = document.getElementById('debug-sub');
+  if (sub) sub.textContent = t.sub;
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = t.btn;
+  document.documentElement.lang = _curAdmLang;
+  // data-i18n attrs (env/AI/ESG/LLM 헤더)
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (t[k]) el.textContent = t[k];
+  });
+}
 document.getElementById('lang-toggle')?.addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curAdmLang = order[(order.indexOf(_curAdmLang) + 1) % 4];
-  const t = I18N_ADMIN[_curAdmLang];
-  document.getElementById('debug-sub').textContent = t.sub;
-  document.getElementById('lang-toggle').textContent = t.btn;
-  document.documentElement.lang = _curAdmLang;
+  applyAdminI18n();
 });
 
 // /api/docs 링크 자동 도출

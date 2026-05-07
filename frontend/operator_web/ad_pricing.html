@@ -81,10 +81,18 @@
     <button id="lang-toggle" style="margin-left: 6px; padding: 2px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language">🇰🇷</button>
 <script>
 const I18N_OP_AD = {
-  ko: { nav_subway: '🚇 지하철', nav_bus: '🚌 버스', nav_realcam: '📷 실 카메라', nav_ads: '📺 디스플레이', nav_citizen: '📱 시민 앱 →', flag: '🇰🇷' },
-  en: { nav_subway: '🚇 Subway', nav_bus: '🚌 Bus', nav_realcam: '📷 RealCam', nav_ads: '📺 Display', nav_citizen: '📱 Citizen →', flag: '🇺🇸' },
-  zh: { nav_subway: '🚇 地铁', nav_bus: '🚌 巴士', nav_realcam: '📷 实摄像', nav_ads: '📺 显示', nav_citizen: '📱 市民 →', flag: '🇨🇳' },
-  ja: { nav_subway: '🚇 地下鉄', nav_bus: '🚌 バス', nav_realcam: '📷 実カメラ', nav_ads: '📺 表示', nav_citizen: '📱 市民 →', flag: '🇯🇵' },
+  ko: { nav_subway: '🚇 지하철', nav_bus: '🚌 버스', nav_realcam: '📷 실 카메라', nav_ads: '📺 디스플레이', nav_citizen: '📱 시민 앱 →', flag: '🇰🇷',
+        ad_llm_h: '🤖 AI 자동 단가 근거 (Claude Haiku · 라이브)',
+        ad_llm_intro: '<b>특정 시각·POI 단가가 급등하는 이유</b>를 AI가 자연어로 자동 설명. citydata 폭증 감지 → Naver 뉴스 검색 → Claude Haiku 80자 요약 → broadcast.' },
+  en: { nav_subway: '🚇 Subway', nav_bus: '🚌 Bus', nav_realcam: '📷 RealCam', nav_ads: '📺 Display', nav_citizen: '📱 Citizen →', flag: '🇺🇸',
+        ad_llm_h: '🤖 AI Auto Pricing Rationale (Claude Haiku · Live)',
+        ad_llm_intro: '<b>Why this POI price surges at this time</b>, narrated by AI. citydata surge → Naver news search → Claude Haiku 80-char summary → broadcast.' },
+  zh: { nav_subway: '🚇 地铁', nav_bus: '🚌 巴士', nav_realcam: '📷 实摄像', nav_ads: '📺 显示', nav_citizen: '📱 市民 →', flag: '🇨🇳',
+        ad_llm_h: '🤖 AI 自动定价依据 (Claude Haiku · 实时)',
+        ad_llm_intro: '<b>该时段该POI价格为何上涨</b>由AI自动用自然语言说明。citydata 激增检测 → Naver 新闻搜索 → Claude Haiku 80字摘要 → broadcast。' },
+  ja: { nav_subway: '🚇 地下鉄', nav_bus: '🚌 バス', nav_realcam: '📷 実カメラ', nav_ads: '📺 表示', nav_citizen: '📱 市民 →', flag: '🇯🇵',
+        ad_llm_h: '🤖 AI 自動価格根拠 (Claude Haiku · ライブ)',
+        ad_llm_intro: '<b>その時刻・POIの単価が高騰する理由</b>をAIが自然言語で自動説明。citydata 急増検出 → Naver 検索 → Claude Haiku 80字要約 → broadcast。' },
 };
 let _curAdLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_OP_AD[_curAdLang]) _curAdLang = 'ko';
@@ -92,7 +100,10 @@ function applyAdI18n() {
   const t = I18N_OP_AD[_curAdLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
-    if (t[k]) el.textContent = t[k];
+    if (!t[k]) return;
+    // <b>/HTML 포함된 i18n 값은 innerHTML 로, 단순 텍스트는 textContent (XSS 회피)
+    if (t[k].includes('<b>') || t[k].includes('<br') || t[k].includes('<span')) el.innerHTML = t[k];
+    else el.textContent = t[k];
   });
   const btn = document.getElementById('lang-toggle');
   if (btn) btn.textContent = t.flag;
@@ -265,8 +276,8 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
 
     <!-- 🤖 AI 자동 단가 근거 (cycle 356) — Claude Haiku 폭증 컨텍스트를 광고주 단가 책정 근거로 노출 -->
     <div id="ad-llm-card" hidden class="insight" style="background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border-color: rgba(167,139,250,.40);">
-      <h3 style="color: #a78bfa;">🤖 AI 자동 단가 근거 (Claude Haiku · 라이브)</h3>
-      <p style="margin-bottom: 6px;">
+      <h3 data-i18n="ad_llm_h" style="color: #a78bfa;">🤖 AI 자동 단가 근거 (Claude Haiku · 라이브)</h3>
+      <p data-i18n="ad_llm_intro" style="margin-bottom: 6px;">
         <b>특정 시각·POI 단가가 급등하는 이유</b>를 AI가 자연어로 자동 설명. citydata 폭증 감지 → Naver 뉴스 검색 → Claude Haiku 80자 요약 → broadcast.
       </p>
       <p style="background: rgba(167,139,250,.08); padding: 10px 12px; border-radius: 8px; border-left: 3px solid #a78bfa; margin: 8px 0;">
