@@ -59,3 +59,23 @@ def test_runbook_referenced_on_fail() -> None:
     """FAIL 시 RUNBOOK 9 시나리오 cross-link (cycle 376)."""
     t = _txt()
     assert "RUNBOOK" in t, "RUNBOOK reference missing"
+
+
+# === cycle 412 — Mac/Linux dday.sh mirror ===
+
+def test_dday_sh_mirror_exists() -> None:
+    """Mac/Linux 사용자용 bash mirror — scripts/dday.sh."""
+    sh = ROOT / "scripts" / "dday.sh"
+    assert sh.exists(), f"missing {sh} — Mac/Linux dday mirror"
+    body = sh.read_text(encoding="utf-8")
+    # 4 EDA 스크립트 모두 호출
+    for s in ("policy_roi_v3.py", "eda_line_priority_roi.py",
+              "eda_line_hour_priority.py", "eda_co2_savings.py"):
+        assert s in body, f"dday.sh missing EDA: {s}"
+    # 3 모드 지원
+    assert "--quick" in body and "--full" in body and "--regen" in body, \
+        "dday.sh missing 3 mode support"
+    # submission_check + pytest
+    assert "submission_check.py" in body and "pytest" in body
+    # bash shebang
+    assert body.startswith("#!/usr/bin/env bash"), "bash shebang missing"
