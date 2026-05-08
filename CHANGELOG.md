@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 257건 + link checker + ad env + dday.ps1/sh/Makefile + 3D OpenFreeMap + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-425)
+## v6.8 — D-5 회귀 가드 257건 + link checker + ad env + dday.ps1/sh/Makefile + 3D OpenFreeMap + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-426)
 
-### v6.8 cycle 414-425 (3rd platform parity + install + Quick Start + body drift + 3D map)
+### v6.8 cycle 414-426 (3rd platform parity + install + Quick Start + body drift + 3D map + 광고 차별성)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -100,6 +100,10 @@
   - 재중심 버튼 (📍) — 사용자 GPS 또는 매칭된 역으로 flyTo
   - **새 가드 10건** test_passenger_minimap.py — CDN/style/DOM/3D buildings/user marker/station markers/dest polyline/fallback/GPS 연결/dest 연결
   - 257 passed (+10)
+- cycle 426: 3D mini-map 광고 자료 cross-reference + drift fix
+  - frontend/onepager.html box ③ — "3D OpenFreeMap 시민 GPS 자동 매칭 + 도착 polyline" 추가 (차별성 6 axis 노출)
+  - frontend/onepager.html box ⑥ — "pytest 197 가드" → "257 가드" (60 가드 stale)
+  - frontend/pitch.html footer — "423+ 사이클 / 246 가드" → "426+ / 257 + 3D OpenFreeMap"
 
 
 

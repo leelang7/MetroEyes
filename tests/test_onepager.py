@@ -33,9 +33,9 @@ def test_kpi_consistency_with_pitch() -> None:
     # 핵심 KPI (cycle 374/389 sync) — 가드 수는 cycle 마다 갱신되므로 정확 매치 X
     for kpi in ("347x", "1,393억", "473M", "157M"):
         assert kpi in html, f"missing KPI: {kpi}"
-    # 가드 수 — 3자리 숫자 등장만 확인
+    # 가드 수 — 3자리 숫자 등장만 확인 (cycle 426 — 200+ 허용)
     import re
-    assert re.search(r"\b1\d{2}\b\s*<span[^>]*>가드", html) or re.search(r"\b1\d{2}\b\s*가드", html), \
+    assert re.search(r"\b\d{3}\b\s*<span[^>]*>가드", html) or re.search(r"\b\d{3}\b\s*가드", html), \
         "guard count (3-digit) missing"
     # Monte Carlo CI 표시
     assert "1,064" in html or "1064" in html, "30% CI lower bound missing"
