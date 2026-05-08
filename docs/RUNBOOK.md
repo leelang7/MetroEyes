@@ -157,7 +157,7 @@ python scripts/submission_check.py
 
 ## 9. 평가 시연 직전 체크리스트 (5분 전)
 
-**1줄 통합 검증 (cycle 395 + 412 — 권장)**:
+**1줄 통합 검증 (cycle 395 + 412 + 419 — 권장)**:
 ```powershell
 # Windows PowerShell
 .\scripts\dday.ps1 -Quick    # 빠른 검증 (10초)
@@ -169,6 +169,15 @@ python scripts/submission_check.py
 ./scripts/dday.sh --quick    # 동일 동작
 ./scripts/dday.sh --full
 ./scripts/dday.sh --regen
+```
+```bash
+# Make (cycle 419 — third-platform parity)
+make verify                  # quick (alias for `make`)
+make full                    # EDA 재생성 + 풀 ship-gate
+make regen                   # EDA 4 scripts only
+make test                    # pytest 245+ 가드만
+make demo                    # backend lite-server --demo
+make help                    # 모든 target 설명
 ```
 
 **개별 명령** (수동 디버깅 시):

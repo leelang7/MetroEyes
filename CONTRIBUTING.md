@@ -22,9 +22,10 @@ python -m pytest tests/ --ignore=tests/test_smoke.py -q
 python scripts/submission_check.py --ci
 # 기대: 10/10 PASS (1초 내)
 
-# 또는 1줄 통합 검증 (Windows / Mac/Linux):
+# 또는 1줄 통합 검증 (Windows / Mac/Linux / Make):
 .\scripts\dday.ps1 -Quick      # PowerShell
 ./scripts/dday.sh --quick      # bash (Mac/Linux)
+make verify                    # Makefile (cycle 419, 3rd platform parity)
 ```
 
 ## 작업 흐름
