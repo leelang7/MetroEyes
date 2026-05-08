@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 246건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-423)
+## v6.8 — D-5 회귀 가드 247건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-424)
 
-### v6.8 cycle 414-423 (3rd platform parity + install + Quick Start + drift fix)
+### v6.8 cycle 414-424 (3rd platform parity + install + Quick Start + body drift)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -86,6 +86,12 @@
   - pitch.html footer "405+ 사이클 / 241 가드" → "423+ / 246" (17 cycle drift, dday.ps1/sh+Makefile 반영)
   - test_recent_cycle_count_advertised 임계값 380 → 420 (느슨해서 stale 통과 사례 재발 방지)
   - test_pitch_footer_cycle_recent 임계값 400 → 420
+- cycle 424: README **본문** 회귀 가드 수치 drift fix + body-level guard
+  - "8단 fail-safe + 177 회귀 가드" / "8-layer fail-safe + 177 regression guards" → 247
+  - "CI 15 jobs + pytest 회귀 가드 177건 (cycle 318-382)" → "247건 (cycle 318-424)"
+  - 신규 가드 신규 78건 → 148건 (cycle 356-424 누적)
+  - **새 가드** test_readme_body_guard_count_recent — 헤더가 아닌 산문 안의 stale 수치 차단 (≥240 임계값)
+  - 247 passed (+1)
 
 
 

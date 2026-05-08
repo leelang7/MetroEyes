@@ -94,6 +94,34 @@ def test_pitch_footer_cycle_recent() -> None:
     assert cycle >= 420, f"pitch footer cycle {cycle} too old (must be ≥420)"
 
 
+# === cycle 424 — README body guard count drift ===
+
+def test_readme_body_guard_count_recent() -> None:
+    """README 본문 (헤더가 아닌 산문) 안의 '회귀 가드 N건' / 'N regression guards' ≥ 240.
+
+    cycle 423 까지 README 헤더는 _readme_freshness 가드로 잡았지만, 본문에 있던
+    "8단 fail-safe + 177 회귀 가드" / "CI 15 jobs + pytest 회귀 가드 177건" stale 가
+    그대로 통과 — 246 가드로 진행됐는데 README 는 5월 초 177건 이라고 광고.
+
+    body-level drift 도 ≥240 임계값으로 차단 (cycle 424 — D-5 ±10 가드 윈도우).
+    """
+    ko = _ko()
+    en = _en()
+    # ko: '회귀 가드 N건' or 'N 회귀 가드' (어순 둘 다 사용)
+    ko_counts = [int(m) for m in re.findall(r"(\d{2,4})\s*회귀\s*가드", ko)]
+    ko_counts += [int(m) for m in re.findall(r"회귀\s*가드\s*(\d{2,4})\s*건", ko)]
+    # en: 'N regression guards' or 'N_guards'
+    en_counts = [int(m) for m in re.findall(r"(\d{2,4})\s*regression\s*guards", en, re.IGNORECASE)]
+    en_counts += [int(m) for m in re.findall(r"(\d{2,4})_guards", en)]
+    assert ko_counts, "ko regression guard count missing"
+    assert en_counts, "en regression guard count missing"
+    # 모든 본문 언급이 최근 임계값 이상이어야 함 (배지 제외 — 배지는 이미 별도 가드)
+    stale_ko = [c for c in ko_counts if c < 240]
+    stale_en = [c for c in en_counts if c < 240]
+    assert not stale_ko, f"ko stale guard count(s) in body: {stale_ko} (must be ≥240)"
+    assert not stale_en, f"en stale guard count(s) in body: {stale_en} (must be ≥240)"
+
+
 def test_pitch_og_title_recent_version() -> None:
     """frontend/pitch.html og:title 버전 v6.5 이상."""
     pitch = (ROOT / "frontend" / "pitch.html").read_text(encoding="utf-8")

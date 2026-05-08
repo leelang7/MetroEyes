@@ -4,8 +4,8 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/Social_Value-%E2%82%A9139.3B%2Fyr-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/Auto_Cycles-423-a78bfa.svg)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/regression_tests-246_guards-10b981.svg)](tests/)
+[![Cycles](https://img.shields.io/badge/Auto_Cycles-424-a78bfa.svg)](CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/regression_tests-247_guards-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"As Tesla sees the road as BEV, MetroEyes sees the entire urban transit network."*
@@ -18,7 +18,7 @@
 ```bash
 git clone https://github.com/leelang7/MetroEyes.git && cd MetroEyes
 make install      # pip install -r requirements.txt (cycle 421)
-make verify       # ship-gate 10/10 + pytest 246 guards (10s)
+make verify       # ship-gate 10/10 + pytest 247 guards (10s)
 make demo         # backend lite-server :8765 --demo (no CV model)
 ```
 Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dday.sh --quick`
@@ -39,7 +39,7 @@ Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dd
 
 **TL;DR**: In-house CV BEV + 9 public APIs + citizen redistribution incentives — 3-axis integrated system.
 Policy ROI v3 + Monte Carlo 1,000 simulations → social value **₩139.3B/yr [CI ₩106B~₩181B]**.
-Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 177 regression guards + 4-language i18n production-grade.
+Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 247 regression guards + 4-language i18n production-grade.
 
 **Additional docs (ops/incident)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 scenarios 1-line recovery · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — detailed proposal v3 · [📋 docs/FORM_DATA.md](docs/FORM_DATA.md) — pre-filled myBox submission form data
 
@@ -66,7 +66,7 @@ Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 177 regression gu
 A single citizen action (₩200 reward) → backend krw accumulation → operator console live ROI x →
 backend incident broadcast → citizen route avoidance notice. **5-stage two-sided closed loop**.
 
-## 423 Auto Cycles Accumulated (D-5, 2026-05-13 deadline)
+## 424 Auto Cycles Accumulated (D-5, 2026-05-13 deadline)
 
 - ✅ **Two-sided value chain 8 stages** (CV → city → decision → OD match → transfer match → citizen tiered → backend auto-bonus → ROI live)
 - ✅ **Demo fail-safe 8 layers**: `--demo` + 30s injector + 5min sticky bar + backend join summary + admin click + warm seed + Docker compose + GitHub Actions CI
