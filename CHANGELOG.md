@@ -79,6 +79,16 @@
 - cycle 401: docs/FORM_DATA.md 마이박스 양식 4종 사전 작성 데이터 (D-day copy-paste)
 - cycle 402: FORM_DATA cross-link (SUBMISSION_GUIDE §0 + README ko/en 추가 docs)
 - cycle 403: FORM_DATA stale 233 → 241 가드 동기화
+- cycle 404: CHANGELOG v6.8 후속 cycle 399-403 entries
+- cycle 405: pitch.html footer + og:title v6.0/355 → v6.8/405 동기화
+- cycle 406: pitch.html footer/og:title freshness 자동 가드 (+2)
+- cycle 407: D-5 자동 모드 51 사이클 (356-406) 세션 마감 노트
+- cycle 408: README 배지 + user memory v6.8/407 동기화
+- cycle 409: FORM_DATA stale 241 → 243 가드 동기화
+- cycle 410: final audit OK (243 passed · ship-gate 10/10)
+- cycle 411: heartbeat tick · saturation 유지
+- cycle 412: scripts/dday.sh Mac/Linux bash mirror (PowerShell 1:1)
+- cycle 413: dday.sh cross-link (CONTRIBUTING + RUNBOOK §9) + dday.ps1 stale 216 → 244
 
 ---
 
