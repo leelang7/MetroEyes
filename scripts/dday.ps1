@@ -39,7 +39,7 @@ if ($Regen -or $Full) {
 }
 
 # ========== 모드 2: 회귀 가드 ==========
-Write-Step "2. 회귀 가드 (216+ tests)"
+Write-Step "2. 회귀 가드 (244+ tests)"
 python -m pytest tests/ --ignore=tests/test_smoke.py -q
 if ($LASTEXITCODE -ne 0) { Write-Host "❌ pytest 실패 — 수정 후 재실행" -ForegroundColor Red; exit 2 }
 

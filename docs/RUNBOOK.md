@@ -157,16 +157,18 @@ python scripts/submission_check.py
 
 ## 9. 평가 시연 직전 체크리스트 (5분 전)
 
-**1줄 통합 검증 (cycle 395 — 권장)**:
+**1줄 통합 검증 (cycle 395 + 412 — 권장)**:
 ```powershell
-# 빠른 검증 (10초 < 7 단계)
-.\scripts\dday.ps1 -Quick
-
-# 풀 검증 (D-1 권장, ~3분 — EDA 재생성 + 풀 ship-gate)
-.\scripts\dday.ps1 -Full
-
-# EDA 재생성만 (canonical KPI drift 발생 시)
-.\scripts\dday.ps1 -Regen
+# Windows PowerShell
+.\scripts\dday.ps1 -Quick    # 빠른 검증 (10초)
+.\scripts\dday.ps1 -Full     # 풀 검증 (~3분, D-1 권장)
+.\scripts\dday.ps1 -Regen    # EDA 재생성만
+```
+```bash
+# Mac/Linux bash (cycle 412 mirror)
+./scripts/dday.sh --quick    # 동일 동작
+./scripts/dday.sh --full
+./scripts/dday.sh --regen
 ```
 
 **개별 명령** (수동 디버깅 시):

@@ -63,7 +63,7 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 233건 + link checker + ad env modulation + dday.ps1 + memory 마일스톤 (2026-05-08 cycle 391-398)
+## v6.8 — D-5 회귀 가드 244건 + link checker + ad env + dday.ps1/sh + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-413)
 
 ### v6.8 추가 (cycle 391-398) — "광고 ↔ 정량 검증 + D-day 자동화 + link 안전망"
 - cycle 391: admin ESG CO₂ EDA 라이브 패널 (ultra/standard 두 시나리오 자동 표시)
