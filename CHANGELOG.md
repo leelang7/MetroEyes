@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 246건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-421)
+## v6.8 — D-5 회귀 가드 246건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-422)
 
-### v6.8 cycle 414-421 (3rd platform parity + install + .gitignore)
+### v6.8 cycle 414-422 (3rd platform parity + install + Quick Start)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -78,6 +78,9 @@
 - cycle 421: `make install` target — 평가위원 clone 후 첫 셋업 (`pip install -r requirements.txt`)
   - test_makefile_install_target 가드 (246 passed, +1)
   - .gitignore: `.claude/` (auto-memory) + `*공모문*.hwpx` 등 사용자 스크래치 차단
+- cycle 422: README ko/en Quick Start 블록 — `git clone → make install → make verify → make demo`
+  - 평가위원이 코드 clone 후 진입점 부재 (이전엔 RUN.md / dday.ps1 별도 안내 필요)
+  - 라이브 데모 URL 바로 아래 30초 코드 실행 명령 4줄
 
 
 

@@ -4,7 +4,7 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-421회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-422회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/regression_tests-246회귀_가드-10b981.svg)](tests/)
@@ -16,6 +16,15 @@
 
 **라이브 데모 (외부 고정 URL)**: https://leelang7.github.io/MetroEyes/
 > 너 PC backend(ngrok 영구 도메인)에 자동 wss 연결. PC 켜둔 상태에서 누구든 접속하면 LIVE.
+
+**코드 직접 실행** (clone 후 30초 안 진입):
+```bash
+git clone https://github.com/leelang7/MetroEyes.git && cd MetroEyes
+make install      # pip install -r requirements.txt (cycle 421)
+make verify       # ship-gate 10/10 + pytest 246 가드 (10초)
+make demo         # backend lite-server :8765 --demo (CV 모델 없이)
+```
+Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dday.sh --quick`
 
 ---
 
