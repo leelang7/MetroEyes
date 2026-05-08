@@ -79,3 +79,22 @@ def test_dday_sh_mirror_exists() -> None:
     assert "submission_check.py" in body and "pytest" in body
     # bash shebang
     assert body.startswith("#!/usr/bin/env bash"), "bash shebang missing"
+
+
+# === cycle 419 — Makefile (3rd platform parity) ===
+
+def test_makefile_exists() -> None:
+    """Makefile (third-platform parity for dday.ps1/sh)."""
+    mk = ROOT / "Makefile"
+    assert mk.exists(), f"missing {mk}"
+    body = mk.read_text(encoding="utf-8")
+    # 6 targets 모두
+    for target in ("verify:", "full:", "regen:", "test:", "demo:", "clean:"):
+        assert target in body, f"Makefile missing target: {target}"
+    # 4 EDA scripts in full/regen
+    for s in ("policy_roi_v3.py", "eda_line_priority_roi.py",
+              "eda_line_hour_priority.py", "eda_co2_savings.py"):
+        assert s in body, f"Makefile missing EDA: {s}"
+    # cross-platform reference
+    assert "dday.ps1" in body or "dday.sh" in body, \
+        "Makefile missing cross-platform reference"
