@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 246건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-422)
+## v6.8 — D-5 회귀 가드 246건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-423)
 
-### v6.8 cycle 414-422 (3rd platform parity + install + Quick Start)
+### v6.8 cycle 414-423 (3rd platform parity + install + Quick Start + drift fix)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -81,6 +81,11 @@
 - cycle 422: README ko/en Quick Start 블록 — `git clone → make install → make verify → make demo`
   - 평가위원이 코드 clone 후 진입점 부재 (이전엔 RUN.md / dday.ps1 별도 안내 필요)
   - 라이브 데모 URL 바로 아래 30초 코드 실행 명령 4줄
+- cycle 423: README + pitch footer cycle drift fix
+  - README ko "자동 382 사이클" / en "382 Auto Cycles" → 423 (40 cycle stale)
+  - pitch.html footer "405+ 사이클 / 241 가드" → "423+ / 246" (17 cycle drift, dday.ps1/sh+Makefile 반영)
+  - test_recent_cycle_count_advertised 임계값 380 → 420 (느슨해서 stale 통과 사례 재발 방지)
+  - test_pitch_footer_cycle_recent 임계값 400 → 420
 
 
 

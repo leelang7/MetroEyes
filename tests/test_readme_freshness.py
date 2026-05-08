@@ -39,7 +39,10 @@ def test_no_outdated_ci_12_jobs() -> None:
 
 
 def test_recent_cycle_count_advertised() -> None:
-    """README 누적 결과 헤더가 cycle 350+ 사이클 수 광고."""
+    """README 누적 결과 헤더가 cycle 420+ 사이클 수 광고 (cycle 423 — D-5 기준).
+
+    cycle 422 까지 README 헤더가 382 stale 로 멈춰 있던 사례 (40 cycle drift) 재발 방지.
+    """
     ko = _ko()
     en = _en()
     # 'XXX 사이클 누적' 또는 'XXX Auto Cycles Accumulated'
@@ -47,8 +50,8 @@ def test_recent_cycle_count_advertised() -> None:
     m_en = re.search(r"(\d{3,4})\s+Auto\s+Cycles\s+Accumulated", en)
     assert m_ko, "ko cycle count header missing"
     assert m_en, "en cycle count header missing"
-    assert int(m_ko.group(1)) >= 380, f"ko cycle count {m_ko.group(1)} too old (must be ≥380)"
-    assert int(m_en.group(1)) >= 380, f"en cycle count {m_en.group(1)} too old (must be ≥380)"
+    assert int(m_ko.group(1)) >= 420, f"ko cycle count {m_ko.group(1)} too old (must be ≥420)"
+    assert int(m_en.group(1)) >= 420, f"en cycle count {m_en.group(1)} too old (must be ≥420)"
 
 
 def test_recent_ci_jobs_advertised() -> None:
@@ -80,12 +83,15 @@ def test_dday_marker_recent() -> None:
 # === cycle 406 — pitch.html footer freshness ===
 
 def test_pitch_footer_cycle_recent() -> None:
-    """frontend/pitch.html 푸터 자동 모드 사이클 ≥ 400."""
+    """frontend/pitch.html 푸터 자동 모드 사이클 ≥ 420 (cycle 423 — D-5 기준).
+
+    cycle 422 까지 footer 가 405+ 로 멈춰 있던 사례 (17 cycle drift) 재발 방지.
+    """
     pitch = (ROOT / "frontend" / "pitch.html").read_text(encoding="utf-8")
     m = re.search(r"자동\s*모드\s*v[\d.]+\s*—\s*(\d{3,4})\+?\s*사이클", pitch)
     assert m, "pitch footer cycle pattern missing"
     cycle = int(m.group(1))
-    assert cycle >= 400, f"pitch footer cycle {cycle} too old (must be ≥400)"
+    assert cycle >= 420, f"pitch footer cycle {cycle} too old (must be ≥420)"
 
 
 def test_pitch_og_title_recent_version() -> None:

@@ -4,7 +4,7 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/Social_Value-%E2%82%A9139.3B%2Fyr-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/Auto_Cycles-422-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/Auto_Cycles-423-a78bfa.svg)](CHANGELOG.md)
 [![Tests](https://img.shields.io/badge/regression_tests-246_guards-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
@@ -66,7 +66,7 @@ Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 177 regression gu
 A single citizen action (₩200 reward) → backend krw accumulation → operator console live ROI x →
 backend incident broadcast → citizen route avoidance notice. **5-stage two-sided closed loop**.
 
-## 382 Auto Cycles Accumulated (D-5, 2026-05-13 deadline)
+## 423 Auto Cycles Accumulated (D-5, 2026-05-13 deadline)
 
 - ✅ **Two-sided value chain 8 stages** (CV → city → decision → OD match → transfer match → citizen tiered → backend auto-bonus → ROI live)
 - ✅ **Demo fail-safe 8 layers**: `--demo` + 30s injector + 5min sticky bar + backend join summary + admin click + warm seed + Docker compose + GitHub Actions CI
