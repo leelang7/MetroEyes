@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 247건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-424)
+## v6.8 — D-5 회귀 가드 257건 + link checker + ad env + dday.ps1/sh/Makefile + 3D OpenFreeMap + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-425)
 
-### v6.8 cycle 414-424 (3rd platform parity + install + Quick Start + body drift)
+### v6.8 cycle 414-425 (3rd platform parity + install + Quick Start + body drift + 3D map)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -92,6 +92,14 @@
   - 신규 가드 신규 78건 → 148건 (cycle 356-424 누적)
   - **새 가드** test_readme_body_guard_count_recent — 헤더가 아닌 산문 안의 stale 수치 차단 (≥240 임계값)
   - 247 passed (+1)
+- cycle 425: 🗺️ **3D OpenFreeMap mini-map** (시민 PWA passenger_app)
+  - MapLibre GL JS 4.7.1 + OpenFreeMap liberty style (3D building extrusion)
+  - 33개 역 marker + 사용자 GPS 도트 + nearest 강조 (오렌지) + dest 마커 (보라) + 사용자→도착지 dashed polyline
+  - GPS 성공/실패/미지원 모든 경로에서 updateMiniMap 호출 — fallback 실패 시 카드 hide + 텍스트 거리 표시 유지
+  - setDestination/clearDestination 양방향 sync (도착지 marker 자동 추가/제거)
+  - 재중심 버튼 (📍) — 사용자 GPS 또는 매칭된 역으로 flyTo
+  - **새 가드 10건** test_passenger_minimap.py — CDN/style/DOM/3D buildings/user marker/station markers/dest polyline/fallback/GPS 연결/dest 연결
+  - 257 passed (+10)
 
 
 

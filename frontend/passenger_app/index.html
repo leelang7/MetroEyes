@@ -9,7 +9,26 @@
 <title>MetroEyes — 시민 앱</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="styles.css">
+<!-- 🗺️ MapLibre GL JS (cycle 425) — OpenFreeMap 3D mini-map for GPS 자동 시각화 -->
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" crossorigin="anonymous">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" defer crossorigin="anonymous"></script>
 <style>
+/* mini-map (cycle 425) — 3D OpenFreeMap with user GPS + nearest station highlight */
+#mini-map-card { margin: 8px 14px 0; padding: 0; border: 1px solid rgba(125,211,211,.40); border-radius: 12px; overflow: hidden; background: rgba(8,12,18,.6); }
+#mini-map-card .mm-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; font-size: 11px; color: #7dd3d3; letter-spacing: .8px; font-weight: 700; }
+#mini-map-card .mm-head button { background: transparent; border: 1px solid rgba(125,211,211,.40); color: #7dd3d3; padding: 2px 8px; border-radius: 6px; font-size: 10px; cursor: pointer; }
+#mini-map { height: 220px; width: 100%; background: #0a0d12; }
+#mini-map.failed { display: none; }
+#mini-map-fallback { padding: 10px 14px; font-size: 11px; color: var(--muted-2, #94a3b8); display: none; }
+#mini-map-card.failed #mini-map-fallback { display: block; }
+.mm-marker-user { width: 14px; height: 14px; border-radius: 50%; background: #10b981; border: 2px solid #fff; box-shadow: 0 0 0 4px rgba(16,185,129,.30); }
+.mm-marker-station { width: 10px; height: 10px; border-radius: 50%; background: #7dd3d3; border: 1.5px solid #04060a; cursor: pointer; }
+.mm-marker-station.nearest { width: 16px; height: 16px; background: #f59e0b; border: 2px solid #fff; box-shadow: 0 0 0 4px rgba(245,158,11,.40); }
+.mm-marker-station.dest { width: 16px; height: 16px; background: #a78bfa; border: 2px solid #fff; box-shadow: 0 0 0 4px rgba(167,139,250,.40); }
+.maplibregl-popup-content { background: #0a0d12; color: #fff; border: 1px solid rgba(125,211,211,.40); font-size: 11px; padding: 6px 10px; }
+.maplibregl-popup-tip { border-top-color: rgba(125,211,211,.40) !important; }
+body.a11y-high #mini-map-card { background: #000 !important; border-color: #fff !important; }
+
 /* ♿ 접근성 모드 (cycle 354) — 시각 약자/고령층/저시력 사용자 배려 (장애인차별금지법 + 교통약자법 직결) */
 body.a11y-large { font-size: 17px; }
 body.a11y-large h1, body.a11y-large h2 { font-size: 1.3em; }
@@ -67,6 +86,16 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     <!-- ♿ 접근성 toggle (cycle 354 — 시각 약자/고령층 + IDEA-9 chain 확장) -->
     <button id="a11y-toggle" title="접근성: 큰 글씨 + 고대비" aria-label="접근성 모드" style="margin-right: 6px; padding: 4px 8px; background: rgba(16,185,129,.14); border: 1px solid rgba(16,185,129,.45); color: #10b981; border-radius: 6px; font-size: 13px; cursor: pointer;">♿</button>
     <div class="time" id="ctx-time">18:22</div>
+  </div>
+
+  <!-- 🗺️ 3D OpenFreeMap mini-map (cycle 425) — GPS 자동 매칭 + nearest 역 highlight + 33개 역 marker + destStation polyline -->
+  <div id="mini-map-card">
+    <div class="mm-head">
+      <span data-i18n="mm_title">🗺️ 3D 지도 — GPS 자동 매칭</span>
+      <button id="mm-recenter" title="사용자 위치로 재중심" data-i18n="mm_recenter">📍 재중심</button>
+    </div>
+    <div id="mini-map" role="region" aria-label="3D 지도"></div>
+    <div id="mini-map-fallback" data-i18n="mm_fallback">지도 로드 실패 — 거리 표시는 위 컨텍스트 텍스트로 유지됩니다.</div>
   </div>
 
   <!-- 도착 알림 banner (도착지 설정 시 표시 — 노이즈 캔슬링/이어폰 사용자 배려) -->
@@ -1370,6 +1399,8 @@ const LIVE = (() => {
           gpsPulse.title = `GPS 매칭 — 거리 ${distLabel}`;
         }
         if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); queryForecast(); }
+        // 🗺️ mini-map sync (cycle 425)
+        try { updateMiniMap(pos.coords.latitude, pos.coords.longitude, r.station); } catch {}
       },
       (err) => {
         if (gpsPulse) {
@@ -1377,6 +1408,8 @@ const LIVE = (() => {
           gpsPulse.classList.add('error');
           gpsPulse.title = 'GPS 권한 거부 — 잠실역 기본값';
         }
+        // 🗺️ mini-map default (잠실역)
+        try { updateMiniMap(null, null, curStation); } catch {}
       },
       { enableHighAccuracy: false, timeout: 8000 }
     );
@@ -1385,7 +1418,179 @@ const LIVE = (() => {
       gpsPulse.classList.add('error');
       gpsPulse.title = 'GPS 미지원';
     }
+    try { updateMiniMap(null, null, curStation); } catch {}
   }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 🗺️ 3D OpenFreeMap mini-map (cycle 425) — MapLibre GL JS + liberty 3D
+  // ═══════════════════════════════════════════════════════════════════
+  let _mmMap = null;
+  let _mmUserMarker = null;
+  let _mmStationMarkers = [];
+  let _mmDestMarker = null;
+  let _mmFailed = false;
+
+  function _markMmFailed(reason) {
+    _mmFailed = true;
+    const card = document.getElementById('mini-map-card');
+    if (card) card.classList.add('failed');
+    console.warn('[mini-map] 로드 실패 —', reason);
+  }
+
+  function initMiniMap() {
+    if (_mmMap || _mmFailed) return;
+    if (typeof maplibregl === 'undefined') {
+      // CDN 로드 실패 — 5초 후 한 번 더 재시도, 그래도 실패 시 fallback
+      setTimeout(() => {
+        if (typeof maplibregl === 'undefined') { _markMmFailed('maplibre-gl undefined'); }
+        else initMiniMap();
+      }, 5000);
+      return;
+    }
+    const container = document.getElementById('mini-map');
+    if (!container) return;
+    try {
+      _mmMap = new maplibregl.Map({
+        container: 'mini-map',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [127.0276, 37.4980],   // 강남역 default
+        zoom: 13,
+        pitch: 50,                      // 3D 시점 (지면에서 50도 기울임)
+        bearing: -10,
+        antialias: true,
+        attributionControl: { compact: true }
+      });
+      _mmMap.on('error', (e) => {
+        if (e && e.error && /style/i.test(String(e.error.message || ''))) {
+          _markMmFailed('style load error');
+        }
+      });
+      _mmMap.on('load', () => {
+        // 3D building extrusion layer (liberty style 에 building polygon source 있음)
+        try {
+          const layers = _mmMap.getStyle().layers || [];
+          const labelLayer = layers.find(l => l.type === 'symbol' && l.layout && l.layout['text-field']);
+          const labelId = labelLayer ? labelLayer.id : undefined;
+          if (_mmMap.getSource('openmaptiles') && !_mmMap.getLayer('mm-3d-buildings')) {
+            _mmMap.addLayer({
+              id: 'mm-3d-buildings',
+              source: 'openmaptiles',
+              'source-layer': 'building',
+              type: 'fill-extrusion',
+              minzoom: 13,
+              paint: {
+                'fill-extrusion-color': '#7dd3d3',
+                'fill-extrusion-opacity': 0.55,
+                'fill-extrusion-height': ['coalesce', ['get', 'render_height'], ['get', 'height'], 8],
+                'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0]
+              }
+            }, labelId);
+          }
+        } catch (e) { console.warn('[mini-map] 3D buildings layer skip', e); }
+        // 33개 역 marker
+        for (const s of stations) {
+          const el = document.createElement('div');
+          el.className = 'mm-marker-station';
+          if (s.od) el.title = `${s.name}역 · OD 우선`;
+          else if (s.transfer) el.title = `${s.name}역 · 환승 비대칭`;
+          else if (s.hot) el.title = `${s.name}역 · 인파 핫스팟`;
+          else el.title = `${s.name}역 (${s.line}호선)`;
+          el.addEventListener('click', () => {
+            try { setStation(s, null); _mmMap.flyTo({ center: [s.lon, s.lat], zoom: 15, pitch: 55, duration: 800 }); } catch {}
+          });
+          const m = new maplibregl.Marker({ element: el }).setLngLat([s.lon, s.lat]).addTo(_mmMap);
+          _mmStationMarkers.push({ marker: m, station: s, el });
+        }
+      });
+    } catch (e) {
+      _markMmFailed(e && e.message);
+    }
+  }
+
+  function updateMiniMap(lat, lon, station) {
+    if (!_mmMap) {
+      // 첫 호출 — 초기화
+      initMiniMap();
+      // 초기화는 비동기 (style load)이므로 호출자 GPS 정보를 큐로 저장
+      setTimeout(() => updateMiniMap(lat, lon, station), 600);
+      return;
+    }
+    if (_mmFailed) return;
+    // 매칭된 역 highlight
+    if (station && _mmStationMarkers.length) {
+      for (const o of _mmStationMarkers) {
+        o.el.classList.toggle('nearest', o.station === station);
+      }
+    }
+    // 사용자 GPS 점
+    if (lat != null && lon != null) {
+      if (!_mmUserMarker) {
+        const u = document.createElement('div');
+        u.className = 'mm-marker-user';
+        u.title = '내 위치 (GPS)';
+        _mmUserMarker = new maplibregl.Marker({ element: u }).setLngLat([lon, lat]).addTo(_mmMap);
+      } else {
+        _mmUserMarker.setLngLat([lon, lat]);
+      }
+      // 사용자 위치 + 매칭된 역 둘 다 보이게 fit
+      try {
+        if (station) {
+          const b = new maplibregl.LngLatBounds();
+          b.extend([lon, lat]); b.extend([station.lon, station.lat]);
+          _mmMap.fitBounds(b, { padding: 60, pitch: 50, duration: 900, maxZoom: 16 });
+        } else {
+          _mmMap.flyTo({ center: [lon, lat], zoom: 15, pitch: 50, duration: 800 });
+        }
+      } catch {}
+    } else if (station) {
+      _mmMap.flyTo({ center: [station.lon, station.lat], zoom: 14, pitch: 50, duration: 800 });
+    }
+  }
+
+  function setMiniMapDest(dest) {
+    if (!_mmMap || _mmFailed) return;
+    if (_mmDestMarker) { try { _mmDestMarker.remove(); } catch {} _mmDestMarker = null; }
+    if (_mmMap.getLayer('mm-route')) { try { _mmMap.removeLayer('mm-route'); } catch {} }
+    if (_mmMap.getSource('mm-route')) { try { _mmMap.removeSource('mm-route'); } catch {} }
+    if (!dest) return;
+    const el = document.createElement('div');
+    el.className = 'mm-marker-station dest';
+    el.title = `🔔 도착지 — ${dest.name}역`;
+    _mmDestMarker = new maplibregl.Marker({ element: el }).setLngLat([dest.lon, dest.lat]).addTo(_mmMap);
+    // 사용자 → 도착지 polyline
+    if (_lastGps) {
+      const route = {
+        type: 'Feature', geometry: { type: 'LineString',
+          coordinates: [[_lastGps.lon, _lastGps.lat], [dest.lon, dest.lat]] }
+      };
+      try {
+        _mmMap.addSource('mm-route', { type: 'geojson', data: route });
+        _mmMap.addLayer({
+          id: 'mm-route', type: 'line', source: 'mm-route',
+          paint: { 'line-color': '#a78bfa', 'line-width': 3, 'line-opacity': 0.7, 'line-dasharray': [2, 2] }
+        });
+        const b = new maplibregl.LngLatBounds();
+        b.extend([_lastGps.lon, _lastGps.lat]); b.extend([dest.lon, dest.lat]);
+        _mmMap.fitBounds(b, { padding: 60, pitch: 50, duration: 900, maxZoom: 15 });
+      } catch (e) { console.warn('[mini-map] route fail', e); }
+    }
+  }
+
+  // 재중심 버튼
+  const _mmRecenter = document.getElementById('mm-recenter');
+  if (_mmRecenter) {
+    _mmRecenter.addEventListener('click', () => {
+      if (_lastGps && _mmMap) {
+        _mmMap.flyTo({ center: [_lastGps.lon, _lastGps.lat], zoom: 15, pitch: 55, duration: 800 });
+      } else if (curStation && _mmMap) {
+        _mmMap.flyTo({ center: [curStation.lon, curStation.lat], zoom: 14, pitch: 50, duration: 800 });
+      }
+    });
+  }
+
+  // 외부 노출 (setDestStation 같은 기존 함수가 호출 가능)
+  window._setMiniMapDest = setMiniMapDest;
+  window._updateMiniMap = updateMiniMap;
 
   // ───── 사용자 picker ─────
   function setStation(s, distKm) {
@@ -1403,6 +1608,11 @@ const LIVE = (() => {
     if (distKm == null && (s.od || s.transfer)) {
       try { showStationBonusToast(s); } catch {}
     }
+    // 🗺️ mini-map sync — 사용자 GPS 보존 + 매칭된 역 갱신 (cycle 425)
+    try {
+      const u = (typeof _lastGps !== 'undefined' && _lastGps) ? _lastGps : null;
+      if (window._updateMiniMap) window._updateMiniMap(u ? u.lat : null, u ? u.lon : null, s);
+    } catch {}
   }
 
   // 역 선택 직후 OD/환승 보너스 안내 toast (3초, 4언어 ko/en/zh/ja)
@@ -1707,6 +1917,8 @@ const LIVE = (() => {
     _requestWakeLock();
     startDestPoll();
     setTimeout(_updateSafeguardStatus, 800);   // 권한 응답 후 갱신
+    // 🗺️ mini-map sync (cycle 425) — 도착지 marker + polyline
+    try { if (window._setMiniMapDest) window._setMiniMapDest(s); } catch {}
   }
 
   // 안전망 권한 상태 가시화 (Wake Lock / Notification)
@@ -1751,6 +1963,8 @@ const LIVE = (() => {
     stopDestPoll();
     try { localStorage.removeItem(ACTIVE_DEST_KEY); } catch {}
     _updateDestTriggerBadge();   // 누적 카운트 다시 표시
+    // 🗺️ mini-map sync (cycle 425) — 도착지 marker + polyline 제거
+    try { if (window._setMiniMapDest) window._setMiniMapDest(null); } catch {}
   }
 
   // 도착 알림 사용 히스토리 — 사회적 가치 정량 (오늘 N번 / 누적 M번)
