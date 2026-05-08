@@ -98,3 +98,17 @@ def test_makefile_exists() -> None:
     # cross-platform reference
     assert "dday.ps1" in body or "dday.sh" in body, \
         "Makefile missing cross-platform reference"
+
+
+# === cycle 421 — install target (first-time setup for evaluators) ===
+
+def test_makefile_install_target() -> None:
+    """make install — 평가위원 clone 후 첫 셋업 (pip install -r requirements.txt)."""
+    mk = ROOT / "Makefile"
+    body = mk.read_text(encoding="utf-8")
+    assert "install:" in body, "Makefile missing 'install' target"
+    assert "requirements.txt" in body, "make install must reference requirements.txt"
+    # PHONY 등록 확인 (file-name 충돌 방지)
+    phony_lines = [ln for ln in body.splitlines() if ln.startswith(".PHONY:")]
+    assert any("install" in ln for ln in phony_lines), \
+        "Makefile install target must be in .PHONY"

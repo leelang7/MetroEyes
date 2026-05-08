@@ -32,6 +32,14 @@ env/
 *.swp
 *.swo
 
+# Claude Code agent state (auto-memory, per-user — never commit)
+.claude/
+
+# 로컬 스크래치 / 공모문 통합본 다운로드 (사용자 작업용)
+.gongmoon_text.txt
+*공고문*.hwpx
+*공모문*.hwpx
+
 # OS
 .DS_Store
 Thumbs.db

@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 245건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-420)
+## v6.8 — D-5 회귀 가드 246건 + link checker + ad env + dday.ps1/sh/Makefile + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-421)
 
-### v6.8 cycle 414-420 (3rd platform parity + Makefile cross-link)
+### v6.8 cycle 414-421 (3rd platform parity + install + .gitignore)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -75,6 +75,9 @@
   - 6 targets: verify / full / regen / test / demo / clean / help
   - test_makefile_exists 가드 (245 passed)
 - cycle 420: Makefile cross-link 보강 — CONTRIBUTING + docs/RUNBOOK §9 + CHANGELOG header
+- cycle 421: `make install` target — 평가위원 clone 후 첫 셋업 (`pip install -r requirements.txt`)
+  - test_makefile_install_target 가드 (246 passed, +1)
+  - .gitignore: `.claude/` (auto-memory) + `*공모문*.hwpx` 등 사용자 스크래치 차단
 
 
 

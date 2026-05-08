@@ -175,7 +175,8 @@ python scripts/submission_check.py
 make verify                  # quick (alias for `make`)
 make full                    # EDA 재생성 + 풀 ship-gate
 make regen                   # EDA 4 scripts only
-make test                    # pytest 245+ 가드만
+make install                 # 첫 셋업 (cycle 421 — pip install)
+make test                    # pytest 246+ 가드만
 make demo                    # backend lite-server --demo
 make help                    # 모든 target 설명
 ```
