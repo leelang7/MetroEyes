@@ -19,7 +19,7 @@
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
 (function () {
-  const CUR = 'v3.7-pitchpage-2026-05-05';
+  const CUR = 'v3.8-car-strip-detail-2026-05-09';
   if (sessionStorage.getItem('me_ver') !== CUR) {
     sessionStorage.setItem('me_ver', CUR);
     // navigation type 1 = reload — loop 방지
@@ -403,6 +403,7 @@ const sim = BEVEngine.createSim({
 
 // ============== 10량 strip ==============
 let lastOccs = [];
+let lastCarSummary = [];   // [{car, count, seated, standing, occ_pct, priority_occ, door_zone, bottleneck}]
 function drawStrip(occs, selectedIdx) {
   const cv = document.getElementById('strip');
   const fitted = BEVEngine.fitCanvas(cv);
@@ -410,45 +411,84 @@ function drawStrip(occs, selectedIdx) {
   const { ctx, W, H } = fitted;
   ctx.clearRect(0, 0, W, H);
   const n = occs.length;
-  const pad = 16, gap = 4;
+  const pad = 12, gap = 3;
   const carW = (W - pad * 2 - gap * (n - 1)) / n;
-  const carH = H - pad * 2 - 26;
+  const carH = H - pad * 2 - 28;
   const yTop = pad;
   for (let i = 0; i < n; i++) {
     const x = pad + i * (carW + gap);
     const o = occs[i];
     const col = occColor(o);
-    BEVEngine.rrect(ctx, x, yTop, carW, carH, 6);
+    const cs = lastCarSummary[i] || null;
+
+    // 배경
+    BEVEngine.rrect(ctx, x, yTop, carW, carH, 5);
     ctx.fillStyle = 'rgba(255,255,255,0.025)'; ctx.fill();
+
+    // 점유 채우기 바
     const fillH = carH * Math.min(1, o);
-    BEVEngine.rrect(ctx, x, yTop + (carH - fillH), carW, fillH, 6);
-    ctx.fillStyle = rgba(col, 0.78); ctx.fill();
-    ctx.strokeStyle = (i === selectedIdx) ? rgba([125, 211, 211], 0.85) : 'rgba(255,255,255,0.08)';
+    BEVEngine.rrect(ctx, x, yTop + (carH - fillH), carW, fillH, 5);
+    ctx.fillStyle = rgba(col, cs && cs.bottleneck ? 0.92 : 0.72); ctx.fill();
+
+    // 병목(bottleneck) — 문 구역 기립 집중 → 빨간 상단 줄
+    if (cs && cs.bottleneck) {
+      BEVEngine.rrect(ctx, x, yTop, carW, 4, 3);
+      ctx.fillStyle = 'rgba(239,68,68,0.90)'; ctx.fill();
+    }
+
+    // 우선석 점유 — 보라 스트라이프 (하단)
+    if (cs && cs.priority_occ > 0) {
+      BEVEngine.rrect(ctx, x, yTop + carH - 5, carW, 5, 3);
+      ctx.fillStyle = 'rgba(167,139,250,0.85)'; ctx.fill();
+    }
+
+    // 테두리 (선택 강조)
+    ctx.strokeStyle = (i === selectedIdx) ? rgba([125, 211, 211], 0.88) : 'rgba(255,255,255,0.08)';
     ctx.lineWidth = (i === selectedIdx) ? 1.5 : 1;
-    BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 6);
+    BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 5);
     ctx.stroke();
     if (i === selectedIdx) {
       ctx.save();
       ctx.shadowColor = rgba([125, 211, 211], 0.5);
-      ctx.shadowBlur = 14;
-      BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 6);
+      ctx.shadowBlur = 12;
+      BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 5);
       ctx.stroke();
       ctx.restore();
     }
-    ctx.font = '500 11px Inter, "Malgun Gothic"';
-    ctx.fillStyle = (i === selectedIdx) ? '#7dd3d3' : '#6b768a';
-    ctx.fillText(`${i + 1}`, x + carW / 2 - 4, yTop + carH + 14);
-    ctx.font = '500 10px Inter, "Malgun Gothic"';
-    ctx.fillStyle = (i === selectedIdx) ? '#e8edf5' : '#8e98ac';
-    const pct = `${Math.round(o * 100)}%`;
-    ctx.fillText(pct, x + carW / 2 - ctx.measureText(pct).width / 2, yTop + carH + 26);
-    // 절전 표시 — 점유 < 30% 칸
+
+    // 절전 아이콘 (점유 < 30%)
     if (o < 0.30) {
-      ctx.fillStyle = 'rgba(167,139,250,0.85)';   // 보라 (절전)
-      ctx.font = '600 12px sans-serif';
-      ctx.fillText('⚡', x + carW / 2 - 5, yTop + 14);
+      ctx.fillStyle = 'rgba(167,139,250,0.9)';
+      ctx.font = `${Math.min(11, carW * 0.35)}px sans-serif`;
+      ctx.fillText('⚡', x + carW / 2 - 5, yTop + 13);
     }
+
+    // car_summary 세부 표시 (착석/기립/우선)
+    if (cs && carW > 22) {
+      ctx.font = `500 ${Math.min(9, carW * 0.28)}px Inter, "Malgun Gothic"`;
+      const mid = x + carW / 2;
+      const bY = yTop + carH - 10;
+      if (cs.seated > 0) {
+        ctx.fillStyle = 'rgba(125,211,211,0.85)';
+        ctx.fillText(`💺${cs.seated}`, mid - carW * 0.25, bY);
+      }
+      if (cs.standing > 0) {
+        ctx.fillStyle = 'rgba(248,186,70,0.85)';
+        ctx.fillText(`🧍${cs.standing}`, mid + (cs.seated > 0 ? carW * 0.05 : -carW * 0.15), bY);
+      }
+    }
+
+    // 호차 번호 + 점유 %
+    ctx.font = `500 11px Inter, "Malgun Gothic"`;
+    ctx.fillStyle = (i === selectedIdx) ? '#7dd3d3' : '#6b768a';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${i + 1}`, x + carW / 2, yTop + carH + 13);
+    ctx.font = `500 10px Inter, "Malgun Gothic"`;
+    ctx.fillStyle = (i === selectedIdx) ? '#e8edf5' : '#8e98ac';
+    ctx.fillText(`${Math.round(o * 100)}%`, x + carW / 2, yTop + carH + 25);
   }
+  ctx.textAlign = 'left';
+
   // 절전 카운트 + 절감 kW 추정 (한 칸 평균 12kW * 30% = 3.6kW 절감)
   const psCount = occs.filter(o => o < 0.30).length;
   const psKw = (psCount * 3.6).toFixed(1);
@@ -1039,19 +1079,27 @@ if (SR) {
     if (p.car_summary && p.car_summary.length === 10) {
       const newOccs = p.car_summary.map(c => c.occ_pct);
       lastOccs = newOccs;
-      const hour = +(document.getElementById('hour')?.value || new Date().getHours());
+      lastCarSummary = p.car_summary;   // 세부 정보 전달
       drawStrip(newOccs, selected);
-      // 추천 칸 업데이트
+      // 추천 칸 업데이트 (착석 여유 우선)
       let mi = 0, mv = newOccs[0];
       newOccs.forEach((o, i) => { if (o < mv) { mv = o; mi = i; } });
       const recEl = document.getElementById('rec-car');
       if (recEl) recEl.textContent = `${mi + 1}호차`;
       const recMeta = document.getElementById('rec-meta');
-      if (recMeta) recMeta.textContent = `실시간 CV · ${Math.round(mv * 100)}% 점유 · LIVE`;
+      const cs = p.car_summary[mi];
+      if (recMeta) recMeta.textContent = cs
+        ? `실시간 CV · 착석 ${cs.seated} / 기립 ${cs.standing} · LIVE`
+        : `실시간 CV · ${Math.round(mv * 100)}% 점유 · LIVE`;
       // 병목 경보
       const bottleneck = p.car_summary.filter(c => c.bottleneck);
       if (bottleneck.length > 0 && typeof maybeAlertBanner === 'function') {
         maybeAlertBanner(`문 구역 병목 — ${bottleneck.map(c => c.car + '호차').join(', ')} 기립 밀집`, 'warn');
+      }
+      // 우선석 점유 경보
+      const priorOcc = p.car_summary.filter(c => c.priority_occ > 0);
+      if (priorOcc.length > 0 && typeof maybeAlertBanner === 'function') {
+        maybeAlertBanner(`우선석 점유 — ${priorOcc.map(c => c.car + '호차').join(', ')} (배려 안내 권고)`, 'warn');
       }
     }
     evalCong();

@@ -45,7 +45,7 @@
   }
   header button:disabled { opacity: .55; cursor: not-allowed; }
   main {
-    display: grid; grid-template-columns: 1.6fr 1fr 1.2fr; gap: 8px;
+    display: grid; grid-template-columns: 1.5fr 1fr 1.1fr; gap: 8px;
     padding: 8px; height: calc(100vh - 60px);
   }
   .panel {
@@ -77,7 +77,11 @@
     transform-origin: top left;
   }
   .col-stack {
-    display: grid; grid-template-rows: 1fr 1fr; gap: 8px;
+    display: grid; grid-template-rows: 1.1fr 0.95fr 0.7fr; gap: 8px;
+    height: 100%;
+  }
+  .col-stack-2 {
+    display: grid; grid-template-rows: 1.1fr 1fr; gap: 8px;
     height: 100%;
   }
   .stage-banner {
@@ -111,13 +115,23 @@
       <iframe id="if-pwa" src="passenger_app/index.html"></iframe>
     </div>
     <div class="panel">
+      <div class="panel-head bus"><span class="led"></span>운영자 콘솔 — 버스</div>
+      <iframe id="if-bus" src="operator_web/bus.html"></iframe>
+    </div>
+    <div class="panel">
       <div class="panel-head ads"><span class="led"></span>광고 단가 라이브</div>
       <iframe id="if-ad" src="operator_web/ad_pricing.html"></iframe>
     </div>
   </div>
-  <div class="panel">
-    <div class="panel-head cam"><span class="led"></span>실 카메라 BEV (3D)</div>
-    <iframe id="if-cam" src="operator_web/realbev.html"></iframe>
+  <div class="col-stack-2">
+    <div class="panel">
+      <div class="panel-head cam"><span class="led"></span>실 카메라 BEV</div>
+      <iframe id="if-cam" src="operator_web/realbev.html"></iframe>
+    </div>
+    <div class="panel" style="position:relative;">
+      <div class="panel-head" style="background:rgba(16,185,129,.12);"><span class="led" style="background:#a78bfa;box-shadow:0 0 8px #a78bfa;"></span>정책 ROI 라이브</div>
+      <iframe id="if-pitch" src="pitch.html" style="padding-top:28px;"></iframe>
+    </div>
   </div>
 </main>
 <div class="stage-banner" id="stage"></div>
@@ -378,20 +392,21 @@ function showDispersionOverlay() {
 
 const SCRIPT = [
   // [ms, banner, action]
-  [0,     '🎬 잠실역 18시 — 평상 운영',                     null],
-  [5000,  '📊 광고 단가 라이브 시연 — 12 POI 분 단위 변동',   () => clickInside('if-ad', 'demo-trigger')],
-  [10000, '🤖 AI 자동 단가 근거 — Claude Haiku 라이브 (cycle 356)', showAiPricingOverlay],
-  [22000, '🚨 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s', () => clickInside('if-op', 'demo-trigger')],
-  [55000, '📷 실 카메라 BEV 시연 — 응급 골든타임 + AED 자동 안내', () => clickInside('if-cam', 'demo-trigger')],
-  [90000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200 차등)', null],
-  [110000,'🔔 IDEA-9 도착 알림 5중 모달리티 — 청각 약자/노이즈 캔슬링 배려', showIdea9Overlay],
-  [128000,'🪙 backend krw 누적 → 운영자 ROI 라이브 갱신',     null],
-  [150000,'🚨 A* 비상 동선 강화 — Hungarian + 출구 차단 + ETA (cycle 358)', showEvacOverlay],
-  [180000,'🚨 incident_summary broadcast → 모든 페이지 동기화', null],
+  [0,     '🎬 잠실역 18시 — 평상 운영 (지하철+버스+시민+광고 4도메인)',  null],
+  [5000,  '📊 광고 단가 라이브 — 12 POI × 분 단위 실시간 변동',          () => clickInside('if-ad', 'demo-trigger')],
+  [10000, '🤖 AI 자동 단가 근거 — Claude Haiku 4.5 라이브 (80자 요약)', showAiPricingOverlay],
+  [22000, '🚇 지하철 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s',     () => clickInside('if-op', 'demo-trigger')],
+  [40000, '🚌 버스 운영자 시연 — 차내 BEV 3구역 실시간 + 문 병목 감지',  () => clickInside('if-bus', 'demo-trigger')],
+  [55000, '📷 실 카메라 BEV — 응급 골든타임 + AED 위치 자동 안내',        () => clickInside('if-cam', 'demo-trigger')],
+  [90000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200~₩400 차등)',      null],
+  [110000,'🔔 IDEA-9 도착 알림 5중 모달리티 — 청각 약자/노캔 배려',       showIdea9Overlay],
+  [128000,'🪙 분산 누적 → 사회적 가치 ROI 라이브 갱신',                  null],
+  [150000,'🚨 A* 비상 동선 — Hungarian + 출구 차단 + ETA (K=4)',         showEvacOverlay],
+  [180000,'🚨 incident_summary broadcast → 4 도메인 동기화',            null],
   [210000,'📈 실 데이터 분산 효과 — σ −9% / 피크 −13.5% / 비피크 +5.6%', showDispersionOverlay],
-  [222000,'🔀 환승역 비대칭 — 충무로 4호선 vs 3호선 +1.56 (분산 우선)', showTransferOverlay],
-  [240000,'🎯 호선별 ROI 우선순위 — ₩400M 예산은 2호선 1순위 (cycle 360)', showLineRoiOverlay],
-  [275000,'⏱ 5분 시연 종료 — pitch.html ROI 슬라이더로 마무리', null],
+  [222000,'🔀 환승역 비대칭 — 충무로 4호선 vs 3호선 +1.56 (분산 우선)',   showTransferOverlay],
+  [240000,'🎯 호선별 ROI — 2호선 708x 1순위 · 9호선 236x · 7호선 224x', showLineRoiOverlay],
+  [275000,'⏱ 5분 시연 완료 — ROI 슬라이더로 정책 답 시연',               null],
 ];
 
 let started = false;

@@ -790,6 +790,70 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </p>
 </div>
 
+<!-- 호선별 ROI 라이브 API 바 차트 (cycle 433) -->
+<div id="line-roi-live" hidden style="margin: 20px 0; padding: 14px 18px; background: var(--panel); border: 1px solid rgba(167,139,250,.35); border-radius: 12px;">
+  <div style="font-size: 10px; color: #a78bfa; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;">🎯 호선별 ROI 우선순위 — /api/v1/line_roi 라이브 <span id="lrl-peak" style="margin-left:8px; font-weight:500; color:var(--warn);"></span></div>
+  <canvas id="line-roi-canvas" width="900" height="100" style="width:100%;height:100px;border-radius:6px;"></canvas>
+  <div id="lrl-rec" style="margin-top:8px;font-size:11px;color:var(--muted);line-height:1.5;"></div>
+</div>
+<script>
+(async function pollLineRoi() {
+  const url = (location.protocol === 'https:' ? `https://${location.host}` : 'http://localhost:8765') + '/api/v1/line_roi';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) throw new Error('fail');
+    const j = await r.json();
+    if (!j.ok || !j.lines) throw new Error('no data');
+    document.getElementById('line-roi-live').hidden = false;
+    const peakEl = document.getElementById('lrl-peak');
+    if (peakEl) peakEl.textContent = j.peak ? '🔥 피크 시간대' : `${j.current_hour}시 (비피크)`;
+    const recEl = document.getElementById('lrl-rec');
+    if (recEl && j.recommendation) {
+      recEl.innerHTML = `🏆 예산 1순위: <b style="color:#10b981;">${j.recommendation.budget_1st}</b> · ${j.recommendation.rationale} · <span style="color:var(--muted-2);">${j.recommendation.ci}</span>`;
+    }
+    // 바 차트 렌더링
+    const cv = document.getElementById('line-roi-canvas');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr;
+    ctx.scale(dpr, dpr);
+    const W = cv.clientWidth, H = cv.clientHeight;
+    ctx.clearRect(0, 0, W, H);
+    const lines = j.lines;
+    const maxRoi = Math.max(...lines.map(l => l.roi_x));
+    const pad = 4, gap = 3;
+    const barW = (W - pad * 2 - gap * (lines.length - 1)) / lines.length;
+    const COLORS = ['#a78bfa','#10b981','#f59e0b','#7dd3d3','#38bdf8','#f97316','#ec4899','#6366f1','#84cc16'];
+    lines.forEach((l, i) => {
+      const x = pad + i * (barW + gap);
+      const bh = Math.max(4, (l.roi_x / maxRoi) * (H - 28));
+      // bar
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.globalAlpha = 0.82;
+      ctx.beginPath();
+      ctx.roundRect(x, H - 22 - bh, barW, bh, [3, 3, 0, 0]);
+      ctx.fill();
+      ctx.globalAlpha = 1.0;
+      // roi label
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.font = `bold ${Math.min(10, barW * 0.45)}px Inter, sans-serif`;
+      ctx.textAlign = 'center';
+      if (bh > 14) ctx.fillText(`${l.roi_x}x`, x + barW / 2, H - 26 - bh + 14);
+      // line name
+      ctx.fillStyle = '#8a8a96';
+      ctx.font = `${Math.min(9, barW * 0.38)}px Inter, "Malgun Gothic", sans-serif`;
+      ctx.fillText(l.line.replace('호선', ''), x + barW / 2, H - 10);
+      ctx.fillStyle = '#5a5a66';
+      ctx.font = `${Math.min(8, barW * 0.33)}px Inter, sans-serif`;
+      ctx.fillText(`${l.rank}위`, x + barW / 2, H - 2);
+    });
+    ctx.textAlign = 'left';
+  } catch {}
+  setTimeout(pollLineRoi, 60000);
+})();
+</script>
+
 <h2>실 데이터 분산 효과 — 평탄화 정량 검증</h2>
 <p>
   ROI v3 의 응답률 30% 가정이 *실제로* 시간대 곡선을 어떻게 평탄화시키는지 직접 시뮬.
@@ -1171,6 +1235,42 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
   </div>
 </div>
+
+<!-- 라이브 API 상태 위젯 — /api/v1/data_sources 폴링 -->
+<div id="ds-live" hidden style="margin: 14px 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;">
+  <div style="font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;">🟢 API 활성 상태 — 실시간 /api/v1/data_sources</div>
+  <div id="ds-chips" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+  <div id="ds-summary" style="margin-top: 8px; font-size: 11px; color: var(--muted-2);"></div>
+</div>
+<script>
+(async function pollDataSources() {
+  const url = (location.protocol === 'https:' ? `https://${location.host}` : 'http://localhost:8765') + '/api/v1/data_sources';
+  try {
+    const r = await fetch(url, { cache: 'no-cache' });
+    if (!r.ok) throw new Error('fail');
+    const j = await r.json();
+    if (!j.ok || !j.data_sources) throw new Error('no data');
+    document.getElementById('ds-live').hidden = false;
+    const chips = document.getElementById('ds-chips');
+    chips.innerHTML = j.data_sources.map(ds => {
+      const live = ds.live;
+      const active = ds.active !== false;
+      const color = !live ? 'rgba(125,211,211,.15)' : active ? 'rgba(16,185,129,.15)' : 'rgba(245,158,11,.15)';
+      const border = !live ? 'rgba(125,211,211,.35)' : active ? 'rgba(16,185,129,.45)' : 'rgba(245,158,11,.45)';
+      const dot = !live ? '⚪' : active ? '🟢' : '🟡';
+      return `<span style="padding:3px 10px;background:${color};border:1px solid ${border};border-radius:999px;font-size:10px;color:#e8e8ee;">
+        ${dot} <b>${ds.id}</b> <em style="opacity:.6;font-style:normal;">${ds.type}</em>
+      </span>`;
+    }).join('');
+    const sm = j.summary;
+    if (sm) {
+      document.getElementById('ds-summary').textContent =
+        `총 ${sm.total_sources}개 데이터셋 · 실시간 ${sm.live_sources}개 · 활성 키 ${sm.active_keys}개`;
+    }
+  } catch {}
+  setTimeout(pollDataSources, 30000);
+})();
+</script>
 
 <h2>EDA v3 — 실 CardSubwayTime 직접 회귀 <span class="badge">R²=0.931</span></h2>
 <p style="color: var(--muted); font-size: 13px; margin: 0 0 12px;">
