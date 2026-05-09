@@ -431,6 +431,32 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
         <div class="fc-sub" id="fc-cmrcl-sub">LIVE_CMRCL_STTS</div>
       </div>
     </div>
+
+    <!-- 칸별 CV 에너지/좌석 KPI strip (car_summary 수신 시 표시) -->
+    <div id="car-detail-strip" style="display:none; justify-content:space-around; align-items:center; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 14px; margin:2px 0 6px; font-size:13px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+        <span id="cd-cars" style="font-size:18px;font-weight:700;color:#7dd3fc;">—</span>
+        <small style="color:var(--muted);">칸 감지</small>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+        <span id="cd-low" style="font-size:18px;font-weight:700;color:#10b981;">—</span>
+        <small style="color:var(--muted);">저점유 칸</small>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+        <span id="cd-energy" style="font-size:18px;font-weight:700;color:#34d399;">—</span>
+        <small style="color:var(--muted);">kW 절감 추정</small>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+        <span id="cd-priority" style="font-size:18px;font-weight:700;color:#a78bfa;">—</span>
+        <small style="color:var(--muted);">우선석 점유 칸</small>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
+        <span id="cd-bottle" style="font-size:18px;font-weight:700;color:#f59e0b;">—</span>
+        <small style="color:var(--muted);">병목 칸</small>
+      </div>
+      <div id="cd-minibars" style="display:flex;gap:2px;height:24px;align-items:flex-end;"></div>
+    </div>
+
     <div class="impact-card" id="impact-card" hidden>
       <div class="ic-num"><span id="ic-count">0</span><small>회</small></div>
       <div class="ic-meta">
@@ -644,6 +670,16 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
             <span id="kpi-tier-text">기본 0 / OD 0 / 환승 0</span>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="tile" style="padding: 12px 14px;">
+      <h3><b>⑥ 에너지 절감 추정</b><span style="color: var(--muted); font-weight: 400;">칸별 점유율 → HVAC 절감</span></h3>
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 0;">
+        <div><span style="color: var(--muted); font-size: 11px;">저점유 칸 (30% 미만)</span><br><b id="e-low-cars" style="color: #10b981; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 12px;"> 칸</span></div>
+        <div><span style="color: var(--muted); font-size: 11px;">HVAC 절감 추정</span><br><b id="e-kw" style="color: #34d399; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 12px;"> kW</span></div>
+        <div><span style="color: var(--muted); font-size: 11px;">CO₂ 절감 추정</span><br><b id="e-co2" style="color: #6ee7b7; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 12px;"> g/분</span></div>
+        <div id="e-car-bars" style="display:flex;gap:2px;height:28px;align-items:flex-end;margin-top:4px;border-radius:4px;overflow:hidden;"></div>
+        <div style="font-size:10px;color:var(--muted-2);">■ 초록 &lt;50% · ■ 노랑 &lt;80% · ■ 빨강 ≥80%</div>
       </div>
     </div>
   </section>
@@ -2055,14 +2091,79 @@ const Fusion = (() => {
     if (n >= 1000) return (n/1000).toFixed(1) + 'K';
     return String(n);
   }
+  let _carAlertTs = { priority: 0, bottleneck: 0 };
   function applyBev(p) {
     lastBev = p;
     const personN = (p.tracks || []).filter(t => t.class === 'person').length;
     const card = document.getElementById('fc-cv');
     card.classList.remove('dim'); card.classList.add('ok');
-    document.getElementById('fc-cv-v').innerHTML = `${personN}<span class="unit">명</span>`;
-    document.getElementById('fc-cv-sub').textContent =
-      `YOLO ${(p.fps ?? 0).toFixed(1)} fps · ${(p.tracks || []).length} 트랙`;
+
+    const cs = Array.isArray(p.car_summary) && p.car_summary.length ? p.car_summary : null;
+    if (cs) {
+      const totalSeated   = cs.reduce((a, c) => a + (c.seated   || 0), 0);
+      const totalStanding = cs.reduce((a, c) => a + (c.standing || 0), 0);
+      document.getElementById('fc-cv-v').innerHTML = `${personN}<span class="unit">명</span>`;
+      document.getElementById('fc-cv-sub').textContent =
+        `YOLO ${(p.fps ?? 0).toFixed(1)} fps · 착석 ${totalSeated} 기립 ${totalStanding}`;
+
+      const lowCars       = cs.filter(c => (c.occ_pct || 0) < 0.30).length;
+      const kwSaved       = +(lowCars * 3.6).toFixed(1);
+      const co2GPerMin    = +(kwSaved * 0.4594 / 60 * 1000).toFixed(1);
+      const priorCars     = cs.filter(c => (c.priority_occ || 0) > 0);
+      const bottleCars    = cs.filter(c => c.bottleneck);
+
+      // 상단 car-detail-strip
+      const strip = document.getElementById('car-detail-strip');
+      if (strip) {
+        document.getElementById('cd-cars').textContent    = cs.length;
+        document.getElementById('cd-low').textContent     = lowCars;
+        document.getElementById('cd-energy').textContent  = kwSaved.toFixed(1);
+        document.getElementById('cd-priority').textContent = priorCars.length;
+        document.getElementById('cd-bottle').textContent  = bottleCars.length;
+        const barsEl = document.getElementById('cd-minibars');
+        if (barsEl) {
+          barsEl.innerHTML = cs.map((c, i) => {
+            const pct   = Math.round((c.occ_pct || 0) * 100);
+            const color = pct >= 80 ? '#ef4444' : pct >= 50 ? '#f59e0b' : '#10b981';
+            return `<div title="${i+1}호 ${pct}%" style="flex:1;background:${color};height:${Math.max(3,Math.round(pct*0.24))}px;border-radius:2px;"></div>`;
+          }).join('');
+        }
+        strip.style.display = 'flex';
+      }
+
+      // 사이드바 ⑥ 에너지 타일
+      const elEl = document.getElementById('e-low-cars');
+      const kwEl = document.getElementById('e-kw');
+      const co2El = document.getElementById('e-co2');
+      const barsEl2 = document.getElementById('e-car-bars');
+      if (elEl)   elEl.textContent  = lowCars;
+      if (kwEl)   kwEl.textContent  = kwSaved.toFixed(1);
+      if (co2El)  co2El.textContent = co2GPerMin.toFixed(1);
+      if (barsEl2) {
+        barsEl2.innerHTML = cs.map((c, i) => {
+          const pct   = Math.round((c.occ_pct || 0) * 100);
+          const color = pct >= 80 ? '#ef4444' : pct >= 50 ? '#f59e0b' : '#10b981';
+          return `<div title="${i+1}호 ${pct}%" style="flex:1;background:${color};height:${Math.max(4,Math.round(pct*0.28))}px;border-radius:2px;" ></div>`;
+        }).join('');
+      }
+
+      // 우선석/병목 토스트 (60초 쿨다운)
+      const now = Date.now();
+      if (priorCars.length > 0 && now - _carAlertTs.priority > 60000) {
+        _carAlertTs.priority = now;
+        pushIncidentToast({ type: 'priority', severity: 'med', icon: '♿', title: '우선석 점유',
+          msg: `${priorCars.map(c => c.car + '호').join(', ')} 칸 — 배려석 안내 권고` });
+      }
+      if (bottleCars.length > 0 && now - _carAlertTs.bottleneck > 60000) {
+        _carAlertTs.bottleneck = now;
+        pushIncidentToast({ type: 'bottleneck', severity: 'high', icon: '🚪', title: '출입문 병목',
+          msg: `${bottleCars.map(c => c.car + '호').join(', ')} 칸 — 혼잡 고위험 (분산 권고)` });
+      }
+    } else {
+      document.getElementById('fc-cv-v').innerHTML = `${personN}<span class="unit">명</span>`;
+      document.getElementById('fc-cv-sub').textContent =
+        `YOLO ${(p.fps ?? 0).toFixed(1)} fps · ${(p.tracks || []).length} 트랙`;
+    }
     evalCongest();
   }
   function applyArrival(j) {
@@ -2382,9 +2483,9 @@ function pushIncidentToast(ev) {
     document.body.appendChild(toast);
     toast.addEventListener('click', () => toast.remove());
   }
-  const icon = ev.type === 'emergency' ? '🚨' : '🎒';
-  const title = ev.type === 'emergency' ? '응급 의심' : '분실물 후보';
-  toast.innerHTML = `<div style="font-weight:700;margin-bottom:4px;color:${ev.type==='emergency'?'#ff5e57':'#f0b46a'}">${icon} ${title}</div><div style="font-size:11px;opacity:0.85;line-height:1.5">${ev.msg}</div><div style="font-size:9px;opacity:0.5;margin-top:4px;">클릭으로 닫기</div>`;
+  const icon  = ev.icon  || (ev.type === 'emergency' ? '🚨' : '🎒');
+  const title = ev.title || (ev.type === 'emergency' ? '응급 의심' : '분실물 후보');
+  toast.innerHTML = `<div style="font-weight:700;margin-bottom:4px;color:${isCrit?'#ff5e57':'#f0b46a'}">${icon} ${title}</div><div style="font-size:11px;opacity:0.85;line-height:1.5">${ev.msg}</div><div style="font-size:9px;opacity:0.5;margin-top:4px;">클릭으로 닫기</div>`;
   // 30초 자동 제거
   setTimeout(() => { try { toast.remove(); } catch {} }, 30000);
 }

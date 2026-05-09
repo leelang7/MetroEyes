@@ -352,8 +352,14 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
       <span>실시간 BEV · <span id="mini-title">5호차</span></span>
       <span class="bev-people"><b id="bev-cnt">—</b>명 검출</span>
       <span class="live">LIVE</span>
+      <span id="bev-freshness" style="display:none;margin-left:4px;font-size:10px;font-weight:600;padding:2px 6px;border-radius:999px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);transition:all .4s;">방금</span>
     </div>
     <canvas id="bev"></canvas>
+    <div id="bev-bus-status" style="display:none;margin-top:6px;font-size:11px;padding:5px 8px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:6px;">
+      <span id="bev-sig-icon" style="font-size:14px;">📶</span>
+      <span id="bev-sig-text" style="color:var(--muted);flex:1;">버스 카메라 대기 중</span>
+      <span id="bev-fps-badge" style="color:#7dd3fc;font-weight:700;">—fps</span>
+    </div>
   </section>
 
   <section class="compare">
@@ -822,6 +828,11 @@ function setMode(m) {
   if (mode === m) return;
   mode = m;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === m));
+  // 버스 모드 전환 시 BEV 신호 UI 표시/숨김
+  const busStatusEl = document.getElementById('bev-bus-status');
+  const freshnessEl = document.getElementById('bev-freshness');
+  if (busStatusEl) busStatusEl.style.display = m === 'bus' ? 'flex' : 'none';
+  if (freshnessEl) freshnessEl.style.display = m === 'bus' ? 'inline' : 'none';
   makeSim();
   applyAll();
 }
@@ -1078,8 +1089,10 @@ const LIVE = (() => {
   }
 
   // 버스 차내 BEV → 시민 앱 버스 탭 업데이트
+  let _lastBusBevTs = 0;
   function applyBusBevPax(p) {
     if (mode !== 'bus') return;
+    _lastBusBevTs = Date.now();
     const n = p.total_pax || 0;
     const occ = Math.round((p.occ_pct || 0) * 100);
     const seated = p.seated || 0;
@@ -1117,6 +1130,24 @@ const LIVE = (() => {
     // 버스 탭 라이브 라벨 업데이트
     const liveEl = document.getElementById('live-label');
     if (liveEl) liveEl.textContent = `LIVE · ${(p.fps||0).toFixed(1)} fps · ${n} 명 · ${cng}`;
+
+    // 버스 카메라 신호 상태 표시
+    const busStatus = document.getElementById('bev-bus-status');
+    const sigText = document.getElementById('bev-sig-text');
+    const fpsBadge = document.getElementById('bev-fps-badge');
+    if (busStatus) busStatus.style.display = 'flex';
+    if (sigText) sigText.textContent = `${route}번 · ${dest} 방향 · ${cng}`;
+    if (fpsBadge) fpsBadge.textContent = `${(p.fps||0).toFixed(1)}fps`;
+
+    // 신선도 배지: 방금 표시 후 ticker가 시간 갱신
+    const freshEl = document.getElementById('bev-freshness');
+    if (freshEl) {
+      freshEl.style.display = 'inline';
+      freshEl.textContent = '방금';
+      freshEl.style.background = 'rgba(16,185,129,0.15)';
+      freshEl.style.color = '#10b981';
+      freshEl.style.borderColor = 'rgba(16,185,129,0.3)';
+    }
 
     // 점유율 시각화
     const alertEl = document.getElementById('alert');
@@ -1474,6 +1505,43 @@ const LIVE = (() => {
     }
     try { updateMiniMap(null, null, curStation); } catch {}
   }
+
+  // ── 버스 BEV 신선도 ticker (1초 간격) ──────────────────────────────
+  setInterval(() => {
+    if (mode !== 'bus' || !_lastBusBevTs) return;
+    const sec = Math.floor((Date.now() - _lastBusBevTs) / 1000);
+    const freshEl  = document.getElementById('bev-freshness');
+    const sigIcon  = document.getElementById('bev-sig-icon');
+    if (!freshEl) return;
+    freshEl.style.display = 'inline';
+    if (sec < 3) {
+      freshEl.textContent = '방금';
+      freshEl.style.background = 'rgba(16,185,129,0.15)';
+      freshEl.style.color = '#10b981';
+      freshEl.style.borderColor = 'rgba(16,185,129,0.3)';
+      if (sigIcon) sigIcon.textContent = '📶';
+    } else if (sec < 10) {
+      freshEl.textContent = `${sec}초 전`;
+      freshEl.style.background = 'rgba(245,158,11,0.15)';
+      freshEl.style.color = '#f59e0b';
+      freshEl.style.borderColor = 'rgba(245,158,11,0.3)';
+      if (sigIcon) sigIcon.textContent = '📶';
+    } else if (sec < 30) {
+      freshEl.textContent = `${sec}초 전`;
+      freshEl.style.background = 'rgba(239,68,68,0.15)';
+      freshEl.style.color = '#ef4444';
+      freshEl.style.borderColor = 'rgba(239,68,68,0.3)';
+      if (sigIcon) sigIcon.textContent = '⚠️';
+    } else {
+      freshEl.textContent = `${sec}초 지남`;
+      freshEl.style.background = 'rgba(239,68,68,0.25)';
+      freshEl.style.color = '#fca5a5';
+      freshEl.style.borderColor = 'rgba(239,68,68,0.5)';
+      if (sigIcon) sigIcon.textContent = '❌';
+      const sigText = document.getElementById('bev-sig-text');
+      if (sigText) sigText.textContent = '카메라 신호 없음 — 재연결 대기 중';
+    }
+  }, 1000);
 
   // ═══════════════════════════════════════════════════════════════════
   // 🗺️ 3D OpenFreeMap mini-map (cycle 425) — MapLibre GL JS + liberty 3D
