@@ -64,7 +64,7 @@ def test_dday_checklist_present() -> None:
     t = _txt()
     assert "D-Day 5/13 18:00" in t or "D-Day" in t, "D-day deadline missing"
     assert "submission_check.py" in t, "submission_check command missing"
-    assert "이상철_" in t, "naming convention 이상철_X 누락"
+    assert "이석창_" in t, "naming convention 이석창_X 누락"
 
 
 def test_one_line_pitch_present() -> None:

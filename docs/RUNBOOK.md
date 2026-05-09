@@ -202,6 +202,6 @@ python scripts/submission_check.py
 
 ## 사고 대응 연락
 
-- **개발자**: 이상철 · leescvsir@gmail.com
+- **개발자**: 이석창 · leescvsir@gmail.com
 - **GitHub Issues**: https://github.com/leelang7/MetroEyes/issues
 - **공지**: 본선 평가 직전 1시간에는 새 commit 금지 (회귀 위험)

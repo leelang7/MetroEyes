@@ -39,6 +39,10 @@ env/
 .gongmoon_text.txt
 *공고문*.hwpx
 *공모문*.hwpx
+*상세기획서*.ppt
+*상세기획서*.pptx
+*경진대회*.ppt
+*경진대회*.pptx
 
 # OS
 .DS_Store

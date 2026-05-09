@@ -78,5 +78,5 @@ Apache 2.0 — 자유롭게 fork / 학습 / 수정 / 재배포.
 
 ## 연락
 
-- 개발: 이상철 · leescvsir@gmail.com
+- 개발: 이석창 · leescvsir@gmail.com
 - Issues: https://github.com/leelang7/MetroEyes/issues

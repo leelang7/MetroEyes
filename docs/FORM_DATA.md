@@ -5,10 +5,10 @@
 
 ---
 
-## 1. 참가신청서 (이상철_참가신청서.pdf)
+## 1. 참가신청서 (이석창_참가신청서.pdf)
 
 ### 기본 정보
-- **참가자 성명**: 이상철
+- **참가자 성명**: 이석창
 - **이메일**: leescvsir@gmail.com
 - **참가 부문**: 창업 부문
 - **출품작 명**: MetroEyes (코드명: SubwayBEV)
@@ -84,14 +84,14 @@
 
 ---
 
-## 4. 상세기획서 (이상철_MetroEyes_상세기획서.pdf)
+## 4. 상세기획서 (이석창_MetroEyes_상세기획서.pdf)
 
 ### 변환 방법 — 3가지 (`docs/SUBMISSION_GUIDE.md` §2 참조)
 
 **방법 A — HTML → 브라우저 인쇄 PDF (권장)**:
 1. `docs/SLIDES.html` 크롬 열기 → Ctrl+P → PDF 저장
 2. 용지 1280×720 사용자 정의 + 여백 없음 + 배경 그래픽 ✓
-3. 파일명: `이상철_MetroEyes_상세기획서.pdf`
+3. 파일명: `이석창_MetroEyes_상세기획서.pdf`
 
 **방법 B — 한쇼/PowerPoint 직접**:
 1. `docs/SLIDES_DECK.md` 텍스트 → 한쇼 빈 16:9 슬라이드 복사
@@ -100,7 +100,7 @@
 
 **방법 C — Pandoc**:
 ```bash
-pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
+pandoc docs/SLIDES_DECK.md -o 이석창_MetroEyes_상세기획서.pdf \
        --pdf-engine=xelatex -V mainfont="Malgun Gothic"
 ```
 
@@ -125,7 +125,7 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 
 ---
 
-## 5. 화면 캡처 (이상철_화면이미지.png)
+## 5. 화면 캡처 (이석창_화면이미지.png)
 
 `outputs/demo/operator_realbev.png` 가 가장 임팩트 큼 (3D BEV 콘솔 + 실 카메라).
 
@@ -135,7 +135,7 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 
 ---
 
-## 6. 로고 (이상철_로고이미지.png)
+## 6. 로고 (이석창_로고이미지.png)
 
 - 원본: `assets/metroeyes_logo.svg`
 - 변환: Inkscape 또는 cloudconvert.com (1024×1024 권장)
@@ -153,7 +153,7 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 □ 화면 캡처 1장 선택
 
 [D-Day 5/13 18:00]
-□ 6개 파일 모두 명명규칙 확인 (이상철_X.pdf/png)
+□ 6개 파일 모두 명명규칙 확인 (이석창_X.pdf/png)
 □ python scripts/submission_check.py — 12 항목 PASS 확인
 □ python -m pytest tests/ -q — 243+ tests passed 확인
 □ 한 번에 제출 (마이박스 또는 대회 사이트)

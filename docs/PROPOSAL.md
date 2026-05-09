@@ -219,7 +219,7 @@ GitHub: https://github.com/leelang7/MetroEyes
 
 ## 10. 팀 / 연락처
 
-- 개발: 이상철 (이메일: leescvsir@gmail.com)
+- 개발: 이석창 (이메일: leescvsir@gmail.com)
 - 자율주행 CV 출신, 풀스택 솔로
 - 인프라: GitHub Pages + Cloudflare 영구 도메인 + 자체 백엔드
 

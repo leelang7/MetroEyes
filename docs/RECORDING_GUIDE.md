@@ -78,5 +78,5 @@ python -m src.cv.lite_server --port 8765 --demo
 
 ## 제출 (5/13 마감)
 
-영상 파일명: `이상철_MetroEyes_시연영상.mp4`
+영상 파일명: `이석창_MetroEyes_시연영상.mp4`
 크기 권장: 100MB 이하 (메일 첨부 가능 범위) — 더 크면 GitHub Releases 또는 마이박스 링크.

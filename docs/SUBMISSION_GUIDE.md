@@ -1,6 +1,6 @@
 # 1차 접수 제출 체크리스트 — 2026 서울시 빅데이터 활용 경진대회
 
-> 마감: **2026-05-13 18:00** · 창업 부문 · 서비스명 **MetroEyes** · 참가자 **이상철**
+> 마감: **2026-05-13 18:00** · 창업 부문 · 서비스명 **MetroEyes** · 참가자 **이석창**
 >
 > **상태 (D-5, 2026-05-08)**: 자동 모드 v6.7 — 🎉 386 사이클 완료. **10 REST endpoint** + 11 페이지 4언어 i18n
 > + Monte Carlo 1,000회 95% CI [1,064~1,808억] + 호선별 ROI 708x + 호선×시간 매트릭스 + K-means(K=4) + 헝가리안 1:1 출구 매칭 + ETA 초 변환
@@ -24,12 +24,12 @@
 
 | # | 파일명 (예시) | 형식 | 위치 / 작성자 |
 |---|---|---|---|
-| 1 | `이상철_참가신청서.pdf` | PDF | 마이박스 양식 다운 → 한컴 작성 → PDF 저장 |
-| 2 | `이상철_개인정보 수집 및 이용동의서.pdf` | PDF | 마이박스 양식 |
-| 3 | `이상철_사회조사서.pdf` | PDF | 마이박스 양식 |
-| 4 | **`이상철_MetroEyes_상세기획서.pdf`** | PDF (PPT→PDF) | [docs/SLIDES.html](SLIDES.html) → 인쇄 PDF / [docs/SLIDES_DECK.md](SLIDES_DECK.md) → 한쇼 |
-| 5 | `이상철_로고이미지.png` | PNG | [assets/metroeyes_logo.svg](../assets/metroeyes_logo.svg) → PNG export |
-| 6 | `이상철_화면이미지.png` | PNG | [outputs/demo/operator_realbev.png](../outputs/demo/operator_realbev.png) |
+| 1 | `이석창_참가신청서.pdf` | PDF | 마이박스 양식 다운 → 한컴 작성 → PDF 저장 |
+| 2 | `이석창_개인정보 수집 및 이용동의서.pdf` | PDF | 마이박스 양식 |
+| 3 | `이석창_사회조사서.pdf` | PDF | 마이박스 양식 |
+| 4 | **`이석창_MetroEyes_상세기획서.pdf`** | PDF (PPT→PDF) | [docs/SLIDES.html](SLIDES.html) → 인쇄 PDF / [docs/SLIDES_DECK.md](SLIDES_DECK.md) → 한쇼 |
+| 5 | `이석창_로고이미지.png` | PNG | [assets/metroeyes_logo.svg](../assets/metroeyes_logo.svg) → PNG export |
+| 6 | `이석창_화면이미지.png` | PNG | [outputs/demo/operator_realbev.png](../outputs/demo/operator_realbev.png) |
 
 ## 2. 상세기획서 PDF 변환 방법 (3가지)
 
@@ -41,7 +41,7 @@
 4. 용지 크기: 사용자 정의 (1280 × 720) 또는 A4 가로
 5. 여백: 없음
 6. 옵션 → "배경 그래픽" 체크 (★ 필수)
-7. 저장: 이상철_MetroEyes_상세기획서.pdf
+7. 저장: 이석창_MetroEyes_상세기획서.pdf
 ```
 ※ 단점: 한쇼/PPT 추후 수정 어려움 (PDF 직접).
 
@@ -62,7 +62,7 @@
 choco install pandoc miktex
 
 # 변환
-pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
+pandoc docs/SLIDES_DECK.md -o 이석창_MetroEyes_상세기획서.pdf \
        --pdf-engine=xelatex -V mainfont="Malgun Gothic"
 ```
 
@@ -73,7 +73,7 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 1. Inkscape에서 assets/metroeyes_logo.svg 열기
 2. 파일 → 내보내기 → PNG
 3. 해상도: 1024 × 1024 (또는 512 × 512)
-4. 저장: 이상철_로고이미지.png
+4. 저장: 이석창_로고이미지.png
 ```
 
 ### 또는 온라인 변환
@@ -87,12 +87,12 @@ pandoc docs/SLIDES_DECK.md -o 이상철_MetroEyes_상세기획서.pdf \
 - `operator_bus.png` (버스)
 - `citizen_pwa.png` (시민 PWA)
 
-가장 임팩트 큰 1장 — `operator_realbev.png` 를 `이상철_화면이미지.png` 로 복사 사용.
+가장 임팩트 큰 1장 — `operator_realbev.png` 를 `이석창_화면이미지.png` 로 복사 사용.
 
 ## 5. 상세기획서 작성 체크리스트 (양식 준수)
 
 - [x] **페이지 분량**: 21장 (10~30 범위 충족)
-- [x] **개인정보 기재 금지**: 표지에만 "이상철" — 본문은 모두 "MetroEyes" 팀명만
+- [x] **개인정보 기재 금지**: 표지에만 "이석창" — 본문은 모두 "MetroEyes" 팀명만
 - [x] **공공데이터 목록 정확 기재**: Slide 5 — `서울 열린데이터광장 - 데이터셋명` 형식
 - [x] **7개 섹션 모두 작성**:
   - [x] 1. 제안배경 및 출품작 소개 (Slide 1-3)
