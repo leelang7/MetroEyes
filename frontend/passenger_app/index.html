@@ -1088,6 +1088,17 @@ const LIVE = (() => {
     const route = p.route || '—';
     const dest = p.dest || '—';
 
+    // 구역 여유 분석 → 승차 권고 도어
+    const zs = p.zone_summary || {};
+    let recZone = null, recDoor = null;
+    const fCnt = (zs.front || {}).count || 0;
+    const mCnt = (zs.mid   || {}).count || 0;
+    const rCnt = (zs.rear  || {}).count || 0;
+    if (fCnt <= mCnt && fCnt <= rCnt) { recZone = '전부'; recDoor = '전문(앞문)'; }
+    else if (rCnt <= fCnt && rCnt <= mCnt) { recZone = '후부'; recDoor = '후문(뒷문)'; }
+    else { recZone = '중부'; recDoor = '전문 또는 후문'; }
+    const zoneTag = recZone ? `<span style="color:#f97316;font-weight:700;">→ ${recZone} 구역 (${recDoor})</span>` : '';
+
     // 대표 카드 업데이트 — 버스 모드일 때만
     const carEl = document.getElementById('d-car');
     if (carEl) carEl.textContent = `${route}번 버스`;
@@ -1096,19 +1107,25 @@ const LIVE = (() => {
     const peopleEl = document.getElementById('d-people');
     if (peopleEl) peopleEl.textContent = n;
     const capEl = document.getElementById('d-cap');
-    if (capEl) capEl.textContent = 55; // 버스 정원
+    if (capEl) capEl.textContent = 55;
     const densityEl = document.getElementById('d-density');
-    if (densityEl) densityEl.textContent = (n / 12).toFixed(1); // 12m² 버스 바닥
+    if (densityEl) densityEl.textContent = (n / 12).toFixed(1);
     const whyEl = document.getElementById('d-why');
-    if (whyEl) whyEl.innerHTML = `${dest} 방면 · 착석 <b>${seated}</b>명 / 기립 <b>${standing}</b>명 · ${cng}`;
+    if (whyEl) whyEl.innerHTML =
+      `${dest} 방면 · 착석 <b>${seated}</b> / 기립 <b>${standing}</b> · ${cng}<br>${zoneTag}`;
 
     // 버스 탭 라이브 라벨 업데이트
     const liveEl = document.getElementById('live-label');
-    if (liveEl) liveEl.textContent = `LIVE · ${(p.fps||0).toFixed(1)} fps · ${n} 명`;
+    if (liveEl) liveEl.textContent = `LIVE · ${(p.fps||0).toFixed(1)} fps · ${n} 명 · ${cng}`;
 
     // 점유율 시각화
     const alertEl = document.getElementById('alert');
     if (alertEl) alertEl.classList.toggle('show', occ >= 90);
+
+    // 초과 혼잡 시 IDEA-9 햅틱 진동 (버스 버전)
+    if (occ >= 90 && navigator.vibrate) {
+      try { navigator.vibrate([200, 100, 200]); } catch {}
+    }
 
     if (sim) { sim.setTargetOccupancy(occ / 100); sim.forceRebuild(occ / 100); }
   }

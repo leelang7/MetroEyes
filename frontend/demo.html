@@ -96,7 +96,15 @@
 </head>
 <body>
 <header>
-  <div class="brand" id="brand-text">MetroEyes 통합 시연<small id="brand-sub">SubwayBEV — 운영자 + 시민 + 디스플레이 양면 가치 사슬</small></div>
+  <div class="brand" id="brand-text">MetroEyes 통합 시연<small id="brand-sub">SubwayBEV — 5도메인 · 실시간 CV + 빅데이터 + AI</small></div>
+  <!-- 라이브 사회적 가치 누적 카운터 -->
+  <div id="demo-impact" hidden style="display:flex;gap:10px;align-items:center;padding:4px 10px;background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.35);border-radius:8px;font-size:11px;font-variant-numeric:tabular-nums;">
+    <span style="color:#10b981;font-weight:700;font-size:10px;letter-spacing:.8px;">🎯 LIVE</span>
+    <span style="color:var(--muted);">분산 <b id="dh-cnt" style="color:#e8e8ee;">0</b>명</span>
+    <span style="color:var(--muted);">절감 <b id="dh-min" style="color:#7dd3d3;">0</b>분</span>
+    <span style="color:var(--muted);">가치 <b id="dh-val" style="color:#10b981;">₩0</b></span>
+    <span style="color:var(--muted);">ROI <b id="dh-roi" style="color:#a78bfa;">—x</b></span>
+  </div>
   <a href="pitch.html" style="padding: 4px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
   <button id="lang-toggle" style="padding: 4px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language toggle">🇰🇷</button>
   <div class="scenario" id="scenario">▶︎ <b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span></div>
@@ -208,10 +216,20 @@ window.addEventListener('DOMContentLoaded', applyDemoI18n);
     const j = await r.json();
     const im = j.impact;
     if (im && im.total_count > 0) {
-      const scen = document.getElementById('scenario');
-      if (scen) {
-        const fmt = w => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
-        scen.innerHTML = `🟢 <b>라이브</b> · 분산 ${im.total_count}명 · ⏱${Math.round(im.saved_min_total)}분 · 💰${fmt(im.value_won)} · ROI ${Math.round(im.roi_x||0)}x`;
+      const fmt = w => w >= 100000000 ? `₩${(w/100000000).toFixed(2)}억` : w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
+      // 헤더 impact 카운터 갱신
+      const di = document.getElementById('demo-impact');
+      if (di) {
+        di.style.display = 'flex'; di.hidden = false;
+        document.getElementById('dh-cnt').textContent = im.total_count.toLocaleString();
+        document.getElementById('dh-min').textContent = Math.round(im.saved_min_total).toLocaleString();
+        document.getElementById('dh-val').textContent = fmt(im.value_won);
+        document.getElementById('dh-roi').textContent = Math.round(im.roi_x || 0) + 'x';
+      }
+      // scenario 텍스트 갱신 (시연 시작 전만)
+      if (!window._demoStarted) {
+        const scen = document.getElementById('scenario');
+        if (scen) scen.innerHTML = `🟢 <b>라이브</b> · 분산 ${im.total_count.toLocaleString()}명 · ⏱${Math.round(im.saved_min_total).toLocaleString()}분 · 💰${fmt(im.value_won)} · ROI ${Math.round(im.roi_x||0)}x`;
       }
     }
   } catch {}
@@ -413,9 +431,10 @@ let started = false;
 startBtn.addEventListener('click', () => {
   if (started) return;
   started = true;
+  window._demoStarted = true;
   startBtn.disabled = true;
   startBtn.textContent = '시연 진행 중...';
-  scen.innerHTML = '<b>시연 진행 중</b> — 운영자/시민/광고/실카메라 4-패널 동시 모니터링';
+  scen.innerHTML = '<b>시연 진행 중</b> — 운영자/버스/시민/광고/실카메라 5-도메인 동시 모니터링';
   const t0 = Date.now();
   SCRIPT.forEach(([ms, msg, act]) => {
     setTimeout(() => {
