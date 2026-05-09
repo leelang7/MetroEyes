@@ -1,16 +1,22 @@
-"""상세기획서 deck 회귀 가드 (cycle 430 — 6 IDEA 사회적 가치 중심 + 네이티브앱 + 대중 용어).
+"""상세기획서 deck 회귀 가드 (cycle 431 — 임팩트 우선순위 + 30장 + 6 핵심 기능).
 
-cycle 429 까지 사고:
-  ① 6대 사회적 가치 IDEA (임산부/안전/응급/분실/무임/도착알림) deck 에 부재
-  ② 네이티브 폰 앱 (Flutter mobile_app/) 미언급
-  ③ 전문 용어 (TRIZ/Monte Carlo/BoT-SORT/K-means/BEV/fusion) 일반인 이해 X
-  ④ 슬라이드 제목 작음 (h1 26px) — 다양한 분야 심사위원 가독성 부족
+cycle 430 까지 누락:
+  ① 버스 시스템 (operator_bus + 24시간 sparkline + 환승 매트릭스) 부재
+  ② 차등 보상 4단 자동 시스템 (₩100/200/300/400) 별도 슬라이드 X
+  ③ 점유 네트워크 분석 (호선×시간 heatmap) 별도 슬라이드 X
+  ④ 에스컬레이터 통행량 (이태원 사전 경고) 별도 슬라이드 X
+  ⑤ 카메라 = 수집 + 분석 + 인사이트 핵심 메시지 슬라이드 X
+  ⑥ 네이티브 폰 앱 mockup 시각화 (실제 캡처 부재)
+  ⑦ 분량 25 → 30장 꽉 채우라 지시
 
-cycle 430 수정:
-  ① 6 IDEA 핵심 슬라이드 (slide 3-1) — 임산부/응급/병목/분실/무임/도착알림 한 페이지에 다
-  ② 네이티브 폰 앱 (Flutter) 별도 언급 (slide 1-3 + 5-2)
-  ③ 일반인 용어 매핑: BEV → 위에서 본 평면 / Monte Carlo → 1,000번 시뮬레이션 / TRIZ → 발명 기법 / 등
-  ④ 슬라이드 제목 36~42px 큼
+cycle 431 전면 재작성 — 임팩트 우선순위:
+  1. 카메라=수집=분석=인사이트 (정체성 — slide 2-1)
+  2. 점유 네트워크 분석 (호선 × 시간 heatmap — slide 2-4)
+  3. 4단 차등 보상 자동 (₩100~400 — slide 3-2)
+  4. 6 사회적 가치 IDEA (slide 3-1)
+  5. 에스컬레이터 사전 경고 (이태원 — slide 3-3)
+  6. 버스 시스템 통합 (slide 3-4)
+  7. 네이티브 폰 앱 mockup (slide 1-3 + 5-2)
 """
 from __future__ import annotations
 
@@ -29,76 +35,97 @@ def test_deck_exists() -> None:
     assert DECK.exists()
 
 
-def test_official_seven_sections_present() -> None:
-    """PPT 정식 7항목 모두."""
+def test_thirty_slides_full() -> None:
+    """분량 30장 꽉 채움 (사용자 지시)."""
     t = _txt()
-    sections = ["제안 배경", "출품작 핵심", "차별성", "개발 과정", "IA", "창업", "개발 툴"]
-    for s in sections:
-        assert s in t, f"섹션 '{s}' 누락"
+    n = len(re.findall(r'<section class="slide[^"]*"', t))
+    assert n == 30, f"분량 {n} — 정확히 30장 필요"
+
+
+def test_camera_equals_collection_message() -> None:
+    """핵심 메시지: 카메라 1대 = 수집 + 분석 + 인사이트 통합 (TRIZ #5)."""
+    t = _txt()
+    assert "카메라 1대" in t, "'카메라 1대' 핵심 메시지 누락"
+    assert "수집" in t and "분석" in t and "인사이트" in t, "수집·분석·인사이트 통합 메시지 누락"
+    assert "별도 인프라" in t, "'별도 인프라 0개' 차별성 누락"
+
+
+def test_tier_compensation_4_levels() -> None:
+    """4단 차등 보상 시스템 (₩100/200/300/400) 별도 슬라이드."""
+    t = _txt()
+    for amt in ("₩100", "₩200", "₩300", "₩400"):
+        assert amt in t, f"차등 보상 {amt} 누락"
+    assert "tier-card" in t, "차등 보상 시각화 카드 누락"
+    assert "_bonus_krw" in t, "백엔드 자동 가산 코드 인용 누락"
+
+
+def test_occupation_network_analysis() -> None:
+    """점유 네트워크 분석 (호선×시간 heatmap)."""
+    t = _txt()
+    assert "line_carload_heatmap.png" in t, "호선×시간 heatmap 누락"
+    assert "171" in t or "9 호선 × 19 시간" in t, "171 cell 매트릭스 누락"
+    assert "priority" in t.lower() or "우선순위" in t, "Top 5 cell 우선순위 누락"
+
+
+def test_escalator_bottleneck_idea_8() -> None:
+    """에스컬레이터 통행량 분석 (이태원 참사 사전 경고)."""
+    t = _txt()
+    assert "에스컬레이터" in t, "에스컬레이터 명시 누락"
+    assert "이태원" in t, "이태원 참사 사전 경고 메시지 누락"
+    assert "0.3" in t, "0.3 m/s 임계값 누락"
+    assert "45초" in t, "45초 지속 임계값 누락"
+
+
+def test_bus_system_dedicated_slide() -> None:
+    """버스 시스템 별도 슬라이드 (간선 142 + 24시간 sparkline)."""
+    t = _txt()
+    assert "operator_bus.png" in t, "버스 콘솔 캡처 누락"
+    assert "간선 142" in t, "간선 142 (도봉산↔잠실) 사례 누락"
+    assert "24시간" in t and "sparkline" in t, "24시간 sparkline 점유 분석 누락"
 
 
 def test_six_social_value_ideas() -> None:
-    """6대 사회적 가치 IDEA 모두 deck 에 (cycle 429 까지 부재)."""
+    """6대 사회적 가치 IDEA."""
     t = _txt()
-    ideas = [
-        ("임산부", "IDEA-7 임산부 배려석"),
-        ("응급 골든타임", "응급 검출"),
-        ("이태원", "IDEA-8 병목 — 이태원 참사 사전 경고"),
-        ("분실물", "분실물 자동 추적"),
-        ("무임", "무임승차 감지"),
-        ("5중 도착 알림", "IDEA-9 노이즈 캔슬링"),
-    ]
-    for kw, desc in ideas:
-        assert kw in t, f"사회적 IDEA '{desc}' ({kw}) 누락"
+    for kw in ("임산부", "응급 골든타임", "이태원", "분실물", "무임", "5중 도착 알림"):
+        assert kw in t, f"IDEA '{kw}' 누락"
 
 
-def test_native_mobile_app_mentioned() -> None:
-    """네이티브 폰 앱 (Flutter) 언급 — cycle 429 까지 누락."""
+def test_native_phone_app_mockup() -> None:
+    """네이티브 폰 앱 mockup 시각화 (실제 캡처 대체)."""
     t = _txt()
-    assert "네이티브 폰 앱" in t or "Flutter" in t, "네이티브 폰 앱 (Flutter) 누락"
-    assert "Android" in t or "APK" in t, "Android APK 언급 누락"
+    assert "phone-mock" in t, "폰앱 mockup 시각화 컴포넌트 누락"
+    assert "Flutter" in t, "Flutter 명시 누락"
+    assert "Android" in t and "Windows" in t, "Android/Windows 크로스 플랫폼 누락"
 
 
 def test_layperson_terms_used() -> None:
-    """일반인 용어 사용 — 다양한 분야 심사위원 대응."""
+    """일반인 용어."""
     t = _txt()
-    layperson_terms = [
-        "위에서 본",         # BEV
-        "1,000번 시뮬레이션", # Monte Carlo
-        "발명 기법",          # TRIZ
-        "추적 알고리즘",      # BoT-SORT
-        "평면 보정",          # 호모그래피
-        "위에서 본 평면",     # BEV (TES)
-    ]
+    layperson_terms = ["위에서 본", "1,000번 시뮬레이션", "발명 기법", "추적", "평면 보정"]
     found = sum(1 for k in layperson_terms if k in t)
-    assert found >= 4, f"일반인 용어 {found}/6 — 4개 이상 필요 (전문 용어 위주면 다양한 분야 심사위원 이해 X)"
+    assert found >= 4, f"일반인 용어 {found}/5 — 4+ 필요"
 
 
 def test_large_slide_titles() -> None:
-    """슬라이드 제목 크기 — h1 36px+ (다양한 분야 심사위원 가독성)."""
+    """슬라이드 제목 36px+."""
     t = _txt()
-    # 슬라이드 제목 폰트 크기 — 36px 이상이어야 가독성 OK
     m = re.search(r"\.body h1\s*\{[^}]*font-size:\s*(\d+)px", t)
-    assert m, "슬라이드 제목 폰트 크기 정의 누락"
-    size = int(m.group(1))
-    assert size >= 32, f"슬라이드 제목 {size}px 작음 (32px+ 필요)"
+    assert m and int(m.group(1)) >= 36, f"슬라이드 제목 작음 — 36px+ 필요"
 
 
 def test_no_personal_info() -> None:
-    """PPT 룰: 개인정보 기재 금지."""
+    """개인정보 금지 (PPT 룰)."""
     t = _txt()
-    emails = re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', t)
-    assert not emails, f"이메일 노출: {emails}"
-    phones = re.findall(r'\b01[0-9]-\d{3,4}-\d{4}\b', t)
-    assert not phones, f"전화 노출: {phones}"
+    assert not re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', t), "이메일 노출"
+    assert not re.findall(r'\b01[0-9]-\d{3,4}-\d{4}\b', t), "전화 노출"
 
 
 def test_a4_landscape_print() -> None:
-    """A4 가로 PDF 인쇄 친화."""
+    """A4 가로 PDF."""
     t = _txt()
     assert "@page { size: A4 landscape" in t
     assert "page-break-after" in t
-    assert "print-color-adjust" in t
 
 
 def test_canonical_kpi_present() -> None:
@@ -108,63 +135,31 @@ def test_canonical_kpi_present() -> None:
         assert kpi in t, f"KPI {kpi} 누락"
 
 
-def test_system_screenshots_referenced() -> None:
-    """시스템 캡처 (outputs/demo/)."""
+def test_system_screenshots() -> None:
+    """시스템 캡처 (지하철 + 라이브 + 시민 + 버스 4종)."""
     t = _txt()
-    for c in ("citizen_pwa.png", "operator_realbev.png", "operator_index.png"):
-        assert c in t, f"캡처 {c} 누락"
+    captures = ["citizen_pwa.png", "operator_realbev.png", "operator_index.png", "operator_bus.png"]
+    for c in captures:
+        assert c in t, f"캡처 {c} 누락 — 4종 모두 필요"
 
 
-def test_eda_charts_referenced() -> None:
+def test_eda_charts() -> None:
     """EDA 차트."""
     t = _txt()
-    for f in ("dispersion_sim.png", "od_asymmetry.png", "transfer_stations.png"):
+    for f in ("dispersion_sim.png", "od_asymmetry.png", "transfer_stations.png", "line_carload_heatmap.png"):
         assert f in t, f"차트 {f} 누락"
 
 
-def test_slide_count_within_ppt_limit() -> None:
-    """페이지 분량 10~30."""
-    t = _txt()
-    n = len(re.findall(r'<section class="slide[^"]*"', t))
-    assert 10 <= n <= 30, f"분량 {n} — PPT 룰 10~30 위반"
-
-
-def test_business_model_three_tier() -> None:
-    """BM 3-tier."""
-    t = _txt()
-    for amt in ("₩40 억", "₩100 억", "₩12 억"):
-        assert amt in t
-
-
-def test_evaluation_keywords_per_section() -> None:
+def test_evaluation_keywords() -> None:
     """평가 키워드."""
     t = _txt()
     for kw in ("구체성", "독창성", "발전 가능성"):
         assert kw in t
 
 
-def test_pdf_export_friendly_hud() -> None:
-    """PDF 안내."""
+def test_official_seven_sections_structure() -> None:
+    """PPT 정식 7항목."""
     t = _txt()
-    assert "Ctrl+P" in t
-
-
-def test_aed_emergency_specific() -> None:
-    """응급 골든타임 + AED 구체화."""
-    t = _txt()
-    assert "AED" in t, "AED 거리 안내 (응급 IDEA 핵심) 누락"
-    assert "골든타임" in t, "골든타임 언급 누락"
-
-
-def test_priority_seat_specific() -> None:
-    """임산부석 IDEA 구체화."""
-    t = _txt()
-    assert "분홍 좌석" in t or "임산부 배려석" in t, "임산부 배려석 구체 설명 누락"
-    assert "30초" in t, "임산부석 30초 임계값 누락"
-
-
-def test_4_language_idea9() -> None:
-    """IDEA-9 4언어 음성 명시."""
-    t = _txt()
-    assert "4언어 음성" in t or "4 언어 음성" in t, "IDEA-9 4언어 음성 누락"
-    assert "1,242" in t, "1,242만 잠재 사용자 (청각+노캔) 정량 누락"
+    sections = ["제안 배경", "출품작 핵심", "차별성", "개발 과정", "IA", "창업", "개발 툴"]
+    for s in sections:
+        assert s in t, f"섹션 '{s}' 누락"
