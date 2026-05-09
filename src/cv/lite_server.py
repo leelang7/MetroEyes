@@ -303,6 +303,92 @@ async def fetch_arrival(station: str, line: int | None) -> dict:
     }
 
 
+async def fetch_citydata(poi: str) -> dict:
+    """citydata 통합 API (cycle 427) — WEATHER_STTS + EVENT_STTS + ROAD_TRAFFIC_STTS + LIVE_PPLTN_STTS.
+
+    이전엔 lite_server 가 citydata_query 를 받으면 ppltn 만 type 바꿔치기로 반환 →
+    광고 페이지의 PM2.5/UV 수신 영원히 안 옴 + events_query 빈 배열. 정식 fix.
+
+    응답 사용처:
+      - frontend/operator_web/ad_pricing.html: PM2.5/UV chip (cycle 394) 라이브 표시
+      - frontend/passenger_app/index.html: citydata_query / events_query 통합 응답
+    """
+    if not SEOUL_KEY:
+        return {"type": "citydata", "poi": poi, "error": "SEOUL_OPENDATA_API_KEY 미설정"}
+    url = f"http://openapi.seoul.go.kr:8088/{SEOUL_KEY}/json/citydata/1/5/{urllib.parse.quote(poi)}"
+    _t0 = time.time()
+    raw = await asyncio.get_event_loop().run_in_executor(None, http_get, url)
+    _api_track("citydata", _t0, error=bool(raw.get("_error")))
+
+    val = raw.get("CITYDATA") if isinstance(raw, dict) else None
+    if not isinstance(val, dict):
+        # 응답 형식 변경 fallback (서울 OpenAPI 가 가끔 키 다르게 줌)
+        return {"type": "citydata", "poi": poi, "error": raw.get("_error") or "CITYDATA 키 부재"}
+
+    # 1) 인구 (LIVE_PPLTN_STTS — citydata_ppltn 와 동일 필드)
+    ppltn_arr = val.get("LIVE_PPLTN_STTS") or []
+    p = ppltn_arr[0] if isinstance(ppltn_arr, list) and ppltn_arr else {}
+    ppltn_min = _to_int(p.get("AREA_PPLTN_MIN"))
+    ppltn_max = _to_int(p.get("AREA_PPLTN_MAX"))
+
+    # 2) 날씨 + 대기질 (WEATHER_STTS)
+    w_arr = val.get("WEATHER_STTS") or []
+    w = w_arr[0] if isinstance(w_arr, list) and w_arr else {}
+
+    def _to_float(x):
+        try: return float(x) if x not in (None, "", "-") else None
+        except (TypeError, ValueError): return None
+
+    # 3) 문화행사 (EVENT_STTS)
+    ev_arr = val.get("EVENT_STTS") or []
+    events = []
+    if isinstance(ev_arr, list):
+        for e in ev_arr[:5]:
+            events.append({
+                "name": e.get("EVENT_NM"),
+                "place": e.get("EVENT_PLACE"),
+                "start": e.get("EVENT_PERIOD"),
+                "x": e.get("EVENT_X"), "y": e.get("EVENT_Y"),
+                "url": e.get("URL"),
+                "fee": e.get("PAY_YN") == "Y",
+            })
+
+    # 4) 도로 교통 평균
+    rd_arr = val.get("ROAD_TRAFFIC_STTS") or []
+    rd = rd_arr[0] if isinstance(rd_arr, list) and rd_arr else {}
+    if isinstance(rd, dict) and "AVG_ROAD_DATA" in rd:
+        rd = rd.get("AVG_ROAD_DATA") or {}
+
+    return {
+        "type": "citydata",
+        "poi": poi,
+        "fetched_at": time.time(),
+        # 인구 (호환 필드)
+        "area_nm": p.get("AREA_NM") or poi,
+        "congest_lvl": p.get("AREA_CONGEST_LVL"),
+        "congest_msg": p.get("AREA_CONGEST_MSG"),
+        "ppltn_min": ppltn_min,
+        "ppltn_max": ppltn_max,
+        "ppltn_time": p.get("PPLTN_TIME"),
+        # 날씨 (광고 페이지 cycle 394 chip 수신처)
+        "temp": _to_float(w.get("TEMP")),
+        "precipitation": w.get("PRECIPITATION"),
+        "pcp_msg": w.get("PCP_MSG"),
+        "pm25": _to_float(w.get("PM25")),
+        "pm10": _to_float(w.get("PM10")),
+        "air_idx": w.get("AIR_IDX"),
+        "uv_idx": w.get("UV_INDEX_LVL") or w.get("UV_INDEX"),
+        "weather_time": w.get("WEATHER_TIME"),
+        # 문화행사
+        "events": events,
+        "events_count": len(events),
+        # 도로 교통
+        "road_idx": rd.get("ROAD_TRAFFIC_IDX") if isinstance(rd, dict) else None,
+        "road_msg": rd.get("ROAD_MSG_IDX") if isinstance(rd, dict) else None,
+        "error": raw.get("_error"),
+    }
+
+
 # ============== 인파 폭증 → 네이버 + LLM 컨텍스트 ==============
 
 async def _check_surge_and_broadcast(poi: str, ppltn_payload: dict):
@@ -470,19 +556,30 @@ async def handler(websocket):
                 payload = await fetch_population(req["poi"])
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
             elif t == "citydata_query" and req.get("poi"):
-                # 통합 — 일단 인구만 반환 (fallback). 정식은 fetch_citydata 추가 필요
-                payload = await fetch_population(req["poi"])
-                payload["type"] = "citydata"
+                # cycle 427 — 정식 citydata 통합 호출 (이전엔 ppltn fake)
+                payload = await fetch_citydata(req["poi"])
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
             elif t == "arrival_query" and req.get("stationName"):
                 payload = await fetch_arrival(req["stationName"], req.get("line"))
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
             elif t == "events_query":
-                # 행사는 lite 에선 빈 응답
-                await websocket.send(json.dumps({
-                    "type": "events", "poi": req.get("poi"),
-                    "events": [], "total_count": 0, "total_capacity": 0,
-                }, ensure_ascii=False))
+                # cycle 427 — citydata.EVENT_STTS 추출 (이전엔 빈 배열 하드코딩)
+                poi = req.get("poi")
+                if poi:
+                    cd = await fetch_citydata(poi)
+                    evs = cd.get("events") or []
+                    await websocket.send(json.dumps({
+                        "type": "events", "poi": poi,
+                        "events": evs,
+                        "total_count": len(evs),
+                        "total_capacity": 0,    # citydata 에 capacity 미포함
+                        "fetched_at": time.time(),
+                        "error": cd.get("error"),
+                    }, ensure_ascii=False))
+                else:
+                    await websocket.send(json.dumps({
+                        "type": "events", "events": [], "total_count": 0, "total_capacity": 0,
+                    }, ensure_ascii=False))
             elif t == "impact_log":
                 saved = float(req.get("saved_pct") or 0)
                 raw_krw = int(req.get("krw") or 0)

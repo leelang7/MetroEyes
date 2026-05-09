@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-5 회귀 가드 257건 + link checker + ad env + dday.ps1/sh/Makefile + 3D OpenFreeMap + FORM_DATA + cycle 374 회복 (2026-05-08 cycle 391-426)
+## v6.8 — D-4 회귀 가드 264건 + citydata 통합 + 3D OpenFreeMap + dday.ps1/sh/Makefile + link checker + ad env + FORM_DATA + cycle 374 회복 (2026-05-08~09 cycle 391-427)
 
-### v6.8 cycle 414-426 (3rd platform parity + install + Quick Start + body drift + 3D map + 광고 차별성)
+### v6.8 cycle 414-427 (3rd platform parity + install + Quick Start + body drift + 3D map + citydata fetch)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -104,6 +104,15 @@
   - frontend/onepager.html box ③ — "3D OpenFreeMap 시민 GPS 자동 매칭 + 도착 polyline" 추가 (차별성 6 axis 노출)
   - frontend/onepager.html box ⑥ — "pytest 197 가드" → "257 가드" (60 가드 stale)
   - frontend/pitch.html footer — "423+ 사이클 / 246 가드" → "426+ / 257 + 3D OpenFreeMap"
+- cycle 427: 🌐 **citydata 통합 라이브 정식 구현** (사용자 재점검 발견 사고 회복)
+  - 발견: lite_server `citydata_query` 가 실제 citydata API 안 부르고 ppltn 만 type 바꿔치기 →
+    광고 ad_pricing.html 의 PM2.5/UV chip 라이브 수신 영원히 안 옴 + events_query 빈 배열 하드코딩
+  - 수정: `fetch_citydata(poi)` 신규 — `/json/citydata/` 엔드포인트로 LIVE_PPLTN_STTS + WEATHER_STTS (TEMP/PM2.5/PM10/UV/강수) + EVENT_STTS (문화행사) + ROAD_TRAFFIC_STTS 통합 추출
+  - citydata_query / events_query 핸들러 둘 다 fetch_citydata 호출로 교체
+  - 라이브 검증: 강남역 응답 TEMP=20.1°C / PM2.5=10 / PM10=32 / UV=7 / PPLTN=50,000명 (2026-05-09 14시)
+  - 새 가드 7건 (test_citydata_integration.py): 함수 정의 / 엔드포인트 / WEATHER 필드 / EVENT 필드 / 핸들러 wiring 2건 / api_track
+  - PROPOSAL drift fix: 헤더 "D-6 333 사이클 / 182 가드" → "D-4 427 사이클 / 264 가드", §6 데이터 활용 7개 분야 + cycle 427 정식 구현 명시
+  - 264 passed (+7) · ship-gate 10/10
 
 
 

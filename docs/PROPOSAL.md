@@ -5,19 +5,21 @@
 **도메인**: 도시 교통 안전·효율 / 빅데이터 + AI / 컴퓨터비전
 **제출일**: 2026-05-13
 
-> **D-6 (2026-05-07) 자동 모드 v6.2 — 333 사이클 누적**: 차등 인센티브 4단 정책 (₩100/₩200/₩300/₩400) backend `_bonus_krw()` 자동 가산 + tier 6P 동기화 +
+> **D-4 (2026-05-09) 자동 모드 v6.8 — 427 사이클 누적**: 차등 인센티브 4단 정책 (₩100/₩200/₩300/₩400) backend `_bonus_krw()` 자동 가산 + tier 6P 동기화 +
 > **10 REST endpoint** (OpenAPI 3.0) + 3 EDA 실 데이터 검증 (분산 σ −9% / OD 12x / 환승 +1.56) +
 > K-means(K=4) + 헝가리안 1:1 출구 매칭 비상 동선 + ROI v3 ±15% 민감도 CI band + 11페이지 4언어 i18n + **8단 양면 가치 사슬** +
 > **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (칸 단위 BEV ROI 응용, cycle 226) +
 > **IDEA-9 도착 알림 5중 모달리티 + 6단 견고화** (cycle 286-299, PWA v4.11) — 청각 42만 + 노캔 1,200만 잠재 사용자, 접근성 제도 직결 (M8 모순) +
-> **CI 15 jobs + pytest 회귀 가드 182건** (cycle 318-383 — 광고 수치 ↔ 코드 ↔ 그림 ↔ canonical JSON 자동 정합).
+> **3D OpenFreeMap mini-map** (cycle 425, PWA v4.15) — MapLibre GL JS + liberty 스타일 3D buildings + GPS 자동 매칭 시각화 +
+> **citydata 통합 라이브** (cycle 427) — WEATHER + EVENT + ROAD + 인구 한 번에 (광고 단가 PM2.5/UV chip 라이브 수신) +
+> **CI 15 jobs + pytest 회귀 가드 264건** (cycle 318-427 — 광고 수치 ↔ 코드 ↔ 그림 ↔ canonical JSON 자동 정합).
 
 ---
 
 ## 1. 한 줄 요약
 
 > **테슬라가 도로를 BEV로 보듯, 우리는 칸 내부와 역세권을 BEV 평면에서 본다.**
-> 자체 CV 백엔드 + 7+개 공공 API fusion + TRIZ 발명원리 5개 적용 → **연 1.27조원 사회적 가치, ROI 3,700x**.
+> 자체 CV 백엔드 + 9 공공 API fusion (citydata 통합/realtimeArrival/CardSubwayTime/문화행사/대기질/SPOP/Naver/Claude) + TRIZ 발명원리 5개 적용 → **연 1.27조원 사회적 가치, ROI 3,700x**.
 
 라이브 데모: https://leelang7.github.io/MetroEyes/  
 백엔드(WebSocket): wss://app.allthatai.kr  
@@ -163,13 +165,18 @@ GitHub: https://github.com/leelang7/MetroEyes
 
 **서울 열린데이터광장** (필수):
 1. CardSubwayTime — 시간대 승하차 (모델 학습 + 클러스터링 K=3, silhouette 0.387, PCA 84.1%)
-2. realtimeStationArrival — 분 단위 도착정보
-3. citydata / citydata_ppltn — 110개 POI 분 단위 인구·날씨·공기·도로·따릉이·주차
-4. ListPublicReservationCulture — 행사·문화행사 (인구 영향 신호)
-5. TimeAverageAirQuality — 자치구 시간당 외기 (CO₂ weak supervision)
-6. SPOP_DAILYSUM_JACHI — 자치구 일별 인구 흐름
+2. realtimeStationArrival — 분 단위 도착정보 (lite_server `fetch_arrival`, ws `arrival_query`)
+3. **citydata 통합** — 110개 POI 분 단위 (cycle 427 lite_server `fetch_citydata` 정식 구현):
+   - LIVE_PPLTN_STTS (인구) · WEATHER_STTS (TEMP/PM2.5/PM10/UV/강수)
+   - EVENT_STTS (문화행사) · ROAD_TRAFFIC_STTS (도로 혼잡)
+   - PRK_STTS (주차) · BIKE_STN_STTS (따릉이) · SUB_STTS (지하철 혼잡)
+   - 광고 ad_pricing.html 의 PM2.5/UV chip 라이브 수신처
+4. citydata_ppltn — 110개 POI 분 단위 인구 (단독, surge 감지 fast path)
+5. ListPublicReservationCulture — 행사·문화행사 (보조 신호)
+6. TimeAverageAirQuality — 자치구 시간당 외기 (CO₂ weak supervision)
+7. SPOP_DAILYSUM_JACHI — 자치구 일별 인구 흐름
 
-**가점 차원** — 6+개 분야 결합 (교통·환경·문화·인구·기상·도로). TRIZ #5 통합 원리.
+**가점 차원** — 7+개 분야 결합 (교통·환경·문화·인구·기상·도로·자전거). TRIZ #5 통합 원리.
 
 ---
 
@@ -265,7 +272,7 @@ GitHub: https://github.com/leelang7/MetroEyes
 2. **칸 컬럼 부재 정량 입증** (1주차 EDA 골든) — 다른 팀은 가정조차 못 함
 3. **9 공공 API fusion** — TOPIS / citydata 110 POI / CardSubway / ListPublicReservationCulture 등 통합 호출 코드 1년치 누적
 4. **ko/en/zh/ja 4언어 11페이지** — 외국인 시민/광고주 동시 포용 (글로벌 확장 base)
-5. **CI 15 jobs + 182 회귀 가드 + canonical KPI drift 자동 차단** — production-grade 신뢰성 (광고 수치 ↔ 코드 ↔ 그림 ↔ JSON 동시 정합)
+5. **CI 15 jobs + 264 회귀 가드 + canonical KPI drift 자동 차단** — production-grade 신뢰성 (광고 수치 ↔ 코드 ↔ 그림 ↔ JSON 동시 정합)
 6. **TRIZ 8 모순 9 IDEA** — 발명 방법론 정량 분석 (논문화 가능)
 7. **IDEA-9 접근성 제도 연결** — 청각장애인 42만 명 + 노캔 1,200만 잠재 사용자, 장애인차별금지법/교통약자법 직결 (정부 정책 우선순위)
 
