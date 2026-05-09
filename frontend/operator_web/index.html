@@ -1021,10 +1021,40 @@ if (SR) {
   function setCard(id, cls) { const c = document.getElementById(id); if (!c) return; c.classList.remove('dim','ok','warn','crit'); c.classList.add(cls); const v = c.querySelector('div:nth-child(2)'); if (v) v.style.color = cls === 'ok' ? 'var(--accent)' : cls === 'warn' ? 'var(--warn)' : cls === 'crit' ? 'var(--crit)' : 'var(--muted)'; }
   function applyBev(p) {
     lastBev = p;
-    const n = (p.tracks || []).filter(t => t.class === 'person').length;
+    const persons = (p.tracks || []).filter(t => t.class === 'person' || t.cls === 'person');
+    const n = persons.length;
+    const seated = persons.filter(t => t.seat).length;
+    const standing = n - seated;
+    const priority_occ = persons.filter(t => t.priority).length;
+    const static12 = persons.filter(t => (t.static_sec || 0) >= 12).length;
     document.getElementById('fc-cv-v').textContent = `${n}명`;
-    document.getElementById('fc-cv-sub').textContent = `YOLO ${(p.fps ?? 0).toFixed(1)} fps · ${(p.tracks || []).length} 트랙`;
-    setCard('fc-cv', 'ok'); evalCong();
+    let sub = `YOLO ${(p.fps ?? 0).toFixed(1)} fps · ${n} 트랙`;
+    if (seated > 0) sub += ` · 착석 ${seated} / 기립 ${standing}`;
+    if (priority_occ > 0) sub += ` · ⚠ 우선석 ${priority_occ}`;
+    if (static12 > 0) sub += ` · 🔴 정지12s+ ${static12}`;
+    document.getElementById('fc-cv-sub').textContent = sub;
+    setCard('fc-cv', n > 25 ? 'crit' : n > 15 ? 'warn' : 'ok');
+
+    // 호차별 실시간 점유 — car_summary 있으면 model 오버라이드
+    if (p.car_summary && p.car_summary.length === 10) {
+      const newOccs = p.car_summary.map(c => c.occ_pct);
+      lastOccs = newOccs;
+      const hour = +(document.getElementById('hour')?.value || new Date().getHours());
+      drawStrip(newOccs, selected);
+      // 추천 칸 업데이트
+      let mi = 0, mv = newOccs[0];
+      newOccs.forEach((o, i) => { if (o < mv) { mv = o; mi = i; } });
+      const recEl = document.getElementById('rec-car');
+      if (recEl) recEl.textContent = `${mi + 1}호차`;
+      const recMeta = document.getElementById('rec-meta');
+      if (recMeta) recMeta.textContent = `실시간 CV · ${Math.round(mv * 100)}% 점유 · LIVE`;
+      // 병목 경보
+      const bottleneck = p.car_summary.filter(c => c.bottleneck);
+      if (bottleneck.length > 0 && typeof maybeAlertBanner === 'function') {
+        maybeAlertBanner(`문 구역 병목 — ${bottleneck.map(c => c.car + '호차').join(', ')} 기립 밀집`, 'warn');
+      }
+    }
+    evalCong();
   }
   function applyArrival(j) {
     let best = null;

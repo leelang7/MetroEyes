@@ -358,6 +358,47 @@ async def fetch_citydata(poi: str) -> dict:
     rd = rd_arr[0] if isinstance(rd_arr, list) and rd_arr else {}
     if isinstance(rd, dict) and "AVG_ROAD_DATA" in rd:
         rd = rd.get("AVG_ROAD_DATA") or {}
+    road_spd = _to_float(rd.get("ROAD_TRAFFIC_SPD")) if isinstance(rd, dict) else None
+
+    # 5) 따릉이 실시간 (LIVE_BIKE_STTS)
+    bike_arr = val.get("LIVE_BIKE_STTS") or []
+    bikes = []
+    if isinstance(bike_arr, list):
+        for b in bike_arr[:5]:
+            bikes.append({
+                "station_id": b.get("SBIKE_STTN_ID"),
+                "name": b.get("SBIKE_STTN_NM"),
+                "available": _to_int(b.get("AVAILABLE_BIKE_CNT")),
+                "total": _to_int(b.get("TOTAL_SBIKE_CNT")),
+                "lat": _to_float(b.get("SBIKE_STTN_LAT")),
+                "lon": _to_float(b.get("SBIKE_STTN_LONT")),
+            })
+    bike_total_avail = sum(b.get("available") or 0 for b in bikes if b.get("available") is not None)
+
+    # 6) 공영주차장 실시간 (LIVE_PARK_STTS)
+    park_arr = val.get("LIVE_PARK_STTS") or []
+    parks = []
+    if isinstance(park_arr, list):
+        for pk in park_arr[:5]:
+            parks.append({
+                "name": pk.get("PARK_NM"),
+                "total": _to_int(pk.get("CAPACITY")),
+                "cur_cnt": _to_int(pk.get("CUR_PARKING")),
+                "avail": _to_int(pk.get("AVAIL_CNT")),
+                "pay_yn": pk.get("PAY_NM"),
+            })
+    park_total_avail = sum(pk.get("avail") or 0 for pk in parks if pk.get("avail") is not None)
+
+    # 7) 버스 인구 (LIVE_BUS_PPLTN_STTS) — 정류장 30분 누적 승차
+    bus_ppltn_arr = val.get("LIVE_BUS_PPLTN_STTS") or []
+    bus_ppltn = bus_ppltn_arr[0] if isinstance(bus_ppltn_arr, list) and bus_ppltn_arr else {}
+    bus_30wthn_gton_max = _to_int(bus_ppltn.get("PPLTN_WTHN_30MIN_GTON_MAX"))
+
+    # 8) 상권 (LIVE_CMRCL_STTS) — 결제 건수 지표
+    cmrcl_arr = val.get("LIVE_CMRCL_STTS") or []
+    cmrcl = cmrcl_arr[0] if isinstance(cmrcl_arr, list) and cmrcl_arr else {}
+    cmrcl_paying_rate = _to_float(cmrcl.get("PAYING_RATE")) or _to_float(cmrcl.get("PAYMENT_RATE"))
+    cmrcl_type = cmrcl.get("PAYING_SALES_TYPE") or cmrcl.get("PAYMENT_TYPE") or "—"
 
     return {
         "type": "citydata",
@@ -385,6 +426,18 @@ async def fetch_citydata(poi: str) -> dict:
         # 도로 교통
         "road_idx": rd.get("ROAD_TRAFFIC_IDX") if isinstance(rd, dict) else None,
         "road_msg": rd.get("ROAD_MSG_IDX") if isinstance(rd, dict) else None,
+        "road_spd": road_spd,
+        # 따릉이 실시간
+        "bikes": bikes,
+        "bike_avail": bike_total_avail,
+        # 주차장 실시간
+        "parks": parks,
+        "park_avail": park_total_avail,
+        # 버스 인구
+        "bus_30wthn_gton_max": bus_30wthn_gton_max,
+        # 상권
+        "cmrcl_paying_rate": cmrcl_paying_rate,
+        "cmrcl_type": cmrcl_type,
         "error": raw.get("_error"),
     }
 
@@ -623,6 +676,9 @@ async def handler(websocket):
                 # IDEA-7 24h 폭증 예측 — 과거 추세(ppltn_history) + 시간대 baseline + 행사 신호
                 payload = predict_surge(req["poi"], req.get("hours_ahead", 24))
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
+            elif t == "bus_arrival_query":
+                payload = await fetch_bus_arrival(req.get("route", ""), req.get("station", ""))
+                await websocket.send(json.dumps(payload, ensure_ascii=False))
     except Exception as e:
         print(f"[ws] err {e}", flush=True)
     finally:
@@ -749,18 +805,63 @@ async def fake_incident_seed_loop():
 
 
 async def fake_bev_loop():
-    """시연 fail-safe — 자체 CV 모델 부재 시에도 BEV tracks broadcast.
+    """시연 fail-safe — 호차별 점유 + BoT-SORT 궤적 + 특별석 + 사건 시뮬.
 
-    사인파 + 시간대별 점유 변동으로 그럴듯한 트랙 7~25개 생성.
-    운영자 콘솔의 'LIVE · N fps · M 트랙' 라벨이 살아있도록 5 Hz 송출.
+    개선 (수상 버전):
+    - 10량 × 호차별 좌석 레이아웃 (BEV 320×32 → 32px 폭 / 호차)
+    - BoT-SORT 유사 궤적 — 프레임 간 연속성 (track ID 유지, smooth 이동)
+    - 좌석 착석 / 기립 분류 (bev_y 위치 기반)
+    - 임산부·노약자석 점유 감지 (양 끝 2칸 우선순위석)
+    - 문 zone 병목 (bev_y < 8 / > 24) 감지
+    - car_summary — 호차별 {count, seated, standing, occ_pct, priority_occ, door_zone}
+    - 분실 가방: BoT-SORT 12초+ 무인 track → backpack 객체
+    - 5 Hz 송출, 출퇴근 양봉 자동 반영
     """
     import math
     import random
-    t0 = time.time()
-    fps_cnt = 0
-    fps_t = t0
-    fps_val = 5.0
+
+    CAR_W = 32           # 1호차 = 32 BEV 픽셀
+    N_CARS = 10
+    BEV_H = 32
+    SEAT_Y_MIN, SEAT_Y_MAX = 8, 24   # 착석 중심 Y 범위
+    DOOR_ZONE = 7        # 문 앞 Y (< DOOR_ZONE or > BEV_H - DOOR_ZONE)
+    PRIORITY_CARS = {0, 9}            # 1호차·10호차 임산부·노약자석
+
     rng = random.Random(42)
+    t0 = time.time()
+    fps_cnt = 0; fps_t = t0; fps_val = 5.0
+
+    # ──── BoT-SORT 유사 상태 ────
+    # track_states: id → {x, y, vx, vy, age, static_sec, cls, car, seat, priority}
+    track_states: dict = {}
+    next_id = 1
+    _backpack_id = 900
+    _backpack_ts: float = 0.0   # 분실 가방 등장 시각
+
+    def _peak_factor(h: int) -> float:
+        if 7 <= h <= 9 or 17 <= h <= 19: return 1.22
+        if 10 <= h <= 16: return 0.85
+        if 20 <= h <= 22: return 0.75
+        return 0.35   # 새벽
+
+    def _target_n(h: int) -> int:
+        base = 18  # 10량 기준 평균 탑승 (데모 적절 밀도)
+        return max(4, int(rng.gauss(base * _peak_factor(h), 2.5)))
+
+    def _rand_car() -> int:
+        """호차 선택 — 중간 칸(5~6) 쏠림 모방 + 끝 칸 약함."""
+        weights = [0.07,0.09,0.11,0.12,0.13,0.13,0.12,0.11,0.07,0.05]
+        return rng.choices(range(N_CARS), weights=weights)[0]
+
+    def _car_x(car: int) -> float:
+        return car * CAR_W + CAR_W / 2 + rng.gauss(0, 6)
+
+    def _is_seat(y: float) -> bool:
+        return SEAT_Y_MIN <= y <= SEAT_Y_MAX
+
+    def _is_door(y: float) -> bool:
+        return y < DOOR_ZONE or y > BEV_H - DOOR_ZONE
+
     while True:
         await asyncio.sleep(0.2)
         fps_cnt += 1
@@ -768,47 +869,366 @@ async def fake_bev_loop():
         if now - fps_t >= 1.0:
             fps_val = fps_cnt / (now - fps_t)
             fps_cnt = 0; fps_t = now
+
         if not clients:
             continue
-        # 시간대별 점유 (0.3~1.2 multiplier — 출퇴근 양봉 모방)
+
         h = time.localtime(now).tm_hour
-        peak_factor = 1.0
-        if 7 <= h <= 9 or 17 <= h <= 19:
-            peak_factor = 1.2
-        elif 23 <= h or h <= 5:
-            peak_factor = 0.35
-        n_tracks = max(3, int(rng.gauss(15 * peak_factor, 3)))
+        target_n = _target_n(h)
+
+        # ── 승·하차 시뮬: 인원 조정 ──
+        cur_ids = list(track_states.keys())
+        cur_n = len([k for k in cur_ids if track_states[k]["cls"] == "person"])
+
+        # 초과 → 일부 하차 (퇴장)
+        while cur_n > target_n + 2:
+            k = rng.choice([k for k in cur_ids if track_states[k]["cls"] == "person"])
+            del track_states[k]
+            cur_ids.remove(k)
+            cur_n -= 1
+
+        # 부족 → 신규 승차
+        while cur_n < target_n - 2:
+            car = _rand_car()
+            x0 = car * CAR_W + rng.uniform(4, CAR_W - 4)
+            # 문 근처에서 탑승 후 자리로 이동
+            y0 = rng.choice([2.0, BEV_H - 2.0])
+            is_pr = car in PRIORITY_CARS and rng.random() < 0.20
+            track_states[next_id] = {
+                "x": x0, "y": y0,
+                "vx": rng.gauss(0, 0.3), "vy": rng.uniform(0.5, 1.5) * (1 if y0 < 4 else -1),
+                "age": 0, "static_sec": 0.0,
+                "cls": "person", "car": car, "seat": False, "priority": is_pr
+            }
+            next_id += 1
+            cur_n += 1
+
+        # ── 궤적 업데이트 (BoT-SORT smooth) ──
+        phase = (now - t0) * 0.3
+        for tid, st in list(track_states.items()):
+            if st["cls"] != "person":
+                continue
+            car = st["car"]
+            car_cx = (car + 0.5) * CAR_W
+            # 목표 위치 — 착석이면 좌석 Y, 기립이면 통로 Y
+            if st["age"] > 25 and not st["seat"]:
+                # 착석 확률 60%
+                if rng.random() < 0.012:
+                    st["seat"] = True
+                    st["vy"] = 0.0
+
+            tx = car_cx + math.sin(phase + tid * 0.8) * 4
+            ty = (BEV_H / 2) + math.cos(phase + tid * 0.6) * (4 if st["seat"] else 7)
+
+            # 부드러운 이동 (감쇠)
+            st["vx"] = st["vx"] * 0.85 + (tx - st["x"]) * 0.04 + rng.gauss(0, 0.15)
+            if not st["seat"]:
+                st["vy"] = st["vy"] * 0.85 + (ty - st["y"]) * 0.04 + rng.gauss(0, 0.15)
+
+            st["x"] = max(car * CAR_W + 1, min((car + 1) * CAR_W - 1, st["x"] + st["vx"]))
+            st["y"] = max(1, min(BEV_H - 1, st["y"] + (0 if st["seat"] else st["vy"])))
+
+            speed = math.hypot(st["vx"], st["vy"] if not st["seat"] else 0)
+            if speed < 0.25:
+                st["static_sec"] += 0.2
+            else:
+                st["static_sec"] = max(0, st["static_sec"] - 0.1)
+            st["age"] += 1
+
+        # ── 분실 가방 시뮬 (30초 주기) ──
+        bag_active = (now - _backpack_ts) < 18.0
+        if not bag_active and int(now) % 30 < 1 and _backpack_id not in track_states:
+            _backpack_ts = now
+            bc = rng.randint(2, 7)
+            track_states[_backpack_id] = {
+                "x": bc * CAR_W + CAR_W / 2, "y": BEV_H - 5,
+                "vx": 0, "vy": 0, "age": 0, "static_sec": 0,
+                "cls": "backpack", "car": bc, "seat": False, "priority": False
+            }
+        elif bag_active and _backpack_id in track_states:
+            track_states[_backpack_id]["static_sec"] += 0.2
+        elif not bag_active and _backpack_id in track_states:
+            del track_states[_backpack_id]
+
+        # ── tracks 리스트 생성 ──
         tracks = []
-        phase = (now - t0) * 0.5
-        for i in range(n_tracks):
-            # 칸별 분포 (10량 × 호차 기준 BEV)
-            car_idx = i % 10
-            bev_x = (car_idx + 0.5) * 32 + rng.gauss(0, 8) + math.sin(phase + i * 0.7) * 5
-            bev_y = 16 + rng.gauss(0, 4) + math.cos(phase + i * 0.5) * 3
+        for tid, st in track_states.items():
             tracks.append({
-                "id": i + 1,
-                "bev_x": round(max(0, min(320, bev_x)), 1),
-                "bev_y": round(max(0, min(32, bev_y)), 1),
-                "cls": "person",
-                "conf": round(0.7 + rng.random() * 0.25, 2),
+                "id": tid,
+                "bev_x": round(st["x"], 1),
+                "bev_y": round(st["y"], 1),
+                "cls": st["cls"],
+                "class": st["cls"],   # 양쪽 필드 호환
+                "conf": round(0.72 + rng.random() * 0.25, 2),
+                "car": st["car"] + 1,         # 1-indexed
+                "seat": st["seat"],
+                "priority": st["priority"],
+                "static_sec": round(st["static_sec"], 1),
+                "door_zone": _is_door(st["y"]),
             })
-        # 가끔 가방 (분실 검출 데모)
-        if int(now) % 30 < 6:
-            tracks.append({"id": 99, "bev_x": 96.0, "bev_y": 26.0, "cls": "backpack", "conf": 0.83})
+
+        # ── 호차별 요약 ──
+        car_summary = []
+        SEAT_CAP = 54   # 10량 기준 1호차 좌석 수 (실제 서울 2호선)
+        STAND_CAP = 30  # 기립 수용
+        for c in range(N_CARS):
+            ct = [t for t in tracks if t.get("car") == c + 1 and t["cls"] == "person"]
+            seated = sum(1 for t in ct if t["seat"])
+            standing = len(ct) - seated
+            priority_occ = sum(1 for t in ct if t["priority"])
+            door_zone = sum(1 for t in ct if t["door_zone"])
+            occ_pct = min(1.0, len(ct) / max(1, SEAT_CAP + STAND_CAP) * 2.8)
+            car_summary.append({
+                "car": c + 1,
+                "count": len(ct),
+                "seated": seated,
+                "standing": standing,
+                "occ_pct": round(occ_pct, 3),
+                "priority_occ": priority_occ,
+                "door_zone": door_zone,
+                "bottleneck": door_zone >= 3,
+            })
+
         payload = {
             "type": "bev",
             "ts": now,
             "fps": round(fps_val, 1),
             "tracks": tracks,
+            "car_summary": car_summary,
             "demo": True,
         }
-        # CV 메트릭 갱신
         _cv_metrics["fps"] = round(fps_val, 1)
         _cv_metrics["tracks"] = len(tracks)
         _cv_metrics["frames"] += 1
         _cv_metrics["last_ts"] = now
         _cv_metrics["demo"] = True
         await broadcast(json.dumps(payload, ensure_ascii=False))
+
+
+async def fake_bus_bev_loop():
+    """버스 차내 BEV 시뮬 — 문 2개 기준 30석 + 기립 공간.
+
+    버스는 지하철과 다른 동역학:
+    - 전문(앞) / 후문(뒤) 승하차 → 문 zone 병목
+    - 운전석 앞 제한 구역
+    - 노약자석 2석 (맨 앞)
+    - 총 BEV 공간: 120×30 (버스 길이 × 폭)
+    """
+    import math, random
+    BUS_W, BUS_H = 120, 30
+    SEAT_ROWS = 15; SEAT_COLS = 2
+    SEAT_CAP = SEAT_ROWS * SEAT_COLS   # 30석
+    STAND_CAP = 25
+    FRONT_DOOR_X = 12; REAR_DOOR_X = 96
+    DRIVER_X = 4
+
+    rng = random.Random(77)
+    t0 = time.time()
+    fps_cnt = 0; fps_t = t0; fps_val = 5.0
+
+    track_states: dict = {}
+    nxt_id = 1
+
+    ROUTES = [
+        {"route": "146", "plate": "서울 75바 1234", "dest": "방화역"},
+        {"route": "240", "plate": "서울 83가 5678", "dest": "도봉산역"},
+        {"route": "N61", "plate": "서울 01나 9012", "dest": "상계동"},
+    ]
+    cur_route = rng.choice(ROUTES)
+
+    def _peak(h):
+        if 7 <= h <= 9 or 17 <= h <= 19: return 1.15
+        if 10 <= h <= 16: return 0.75
+        return 0.30
+
+    while True:
+        await asyncio.sleep(0.2)
+        fps_cnt += 1
+        now = time.time()
+        if now - fps_t >= 1.0:
+            fps_val = fps_cnt / (now - fps_t)
+            fps_cnt = 0; fps_t = now
+
+        if not clients:
+            continue
+
+        h = time.localtime(now).tm_hour
+        target_n = max(2, int(rng.gauss((SEAT_CAP + STAND_CAP * 0.5) * _peak(h), 3)))
+        target_n = min(SEAT_CAP + STAND_CAP, target_n)
+
+        pids = [k for k, v in track_states.items() if v["cls"] == "person"]
+        while len(pids) > target_n + 2:
+            k = rng.choice(pids); del track_states[k]; pids.remove(k)
+        while len(pids) < target_n - 2:
+            # 좌석 우선 배치
+            row = rng.randint(1, SEAT_ROWS - 1)
+            col = rng.randint(0, SEAT_COLS - 1)
+            x0 = DRIVER_X + 6 + row * (BUS_W - DRIVER_X - 8) / SEAT_ROWS + rng.gauss(0, 2)
+            y0 = 8 + col * 14 + rng.gauss(0, 2)
+            seated = rng.random() < 0.65
+            priority = row <= 1 and rng.random() < 0.25
+            track_states[nxt_id] = {
+                "x": x0, "y": y0, "vx": 0, "vy": 0,
+                "cls": "person", "seat": seated, "priority": priority,
+                "age": 0, "static_sec": 0.0,
+            }
+            pids.append(nxt_id); nxt_id += 1
+
+        phase = (now - t0) * 0.25
+        for tid, st in list(track_states.items()):
+            if st["cls"] != "person": continue
+            micro_x = math.sin(phase + tid * 1.1) * (0.3 if st["seat"] else 0.8)
+            micro_y = math.cos(phase + tid * 0.9) * (0.3 if st["seat"] else 0.6)
+            st["x"] = max(DRIVER_X + 5, min(BUS_W - 4, st["x"] + micro_x))
+            st["y"] = max(2, min(BUS_H - 2, st["y"] + micro_y))
+            speed = math.hypot(micro_x, micro_y)
+            if speed < 0.2: st["static_sec"] += 0.2
+            else: st["static_sec"] = max(0, st["static_sec"] - 0.1)
+            st["age"] += 1
+
+        tracks = []
+        for tid, st in track_states.items():
+            door_z = abs(st["x"] - FRONT_DOOR_X) < 8 or abs(st["x"] - REAR_DOOR_X) < 8
+            tracks.append({
+                "id": tid, "bev_x": round(st["x"], 1), "bev_y": round(st["y"], 1),
+                "cls": st["cls"], "class": st["cls"],
+                "conf": round(0.72 + rng.random() * 0.24, 2),
+                "seat": st["seat"], "priority": st.get("priority", False),
+                "static_sec": round(st["static_sec"], 1), "door_zone": door_z,
+            })
+
+        persons = [t for t in tracks if t["cls"] == "person"]
+        total_pax = len(persons)
+        seated_n = sum(1 for t in persons if t["seat"])
+        occ_pct = min(1.0, total_pax / (SEAT_CAP + STAND_CAP * 0.8))
+
+        # 3구역 요약
+        def _zone(x):
+            if x < 40: return "front"
+            if x < 80: return "mid"
+            return "rear"
+        zone_data = {"front": {"count":0,"standing":0}, "mid": {"count":0,"standing":0}, "rear": {"count":0,"standing":0}}
+        for t in persons:
+            z = _zone(t["bev_x"])
+            zone_data[z]["count"] += 1
+            if not t["seat"]: zone_data[z]["standing"] += 1
+
+        payload = {
+            "type": "bus_bev",
+            "ts": now, "fps": round(fps_val, 1),
+            "route": cur_route["route"],
+            "plate": cur_route["plate"],
+            "dest": cur_route["dest"],
+            "tracks": tracks,
+            "zone_summary": zone_data,
+            "total_pax": total_pax,
+            "seated": seated_n,
+            "standing": total_pax - seated_n,
+            "occ_pct": round(occ_pct, 3),
+            "congestion": "붐빔" if occ_pct > 0.85 else "약간 붐빔" if occ_pct > 0.60 else "보통" if occ_pct > 0.35 else "여유",
+            "demo": True,
+        }
+        await broadcast(json.dumps(payload, ensure_ascii=False))
+
+
+async def _fetch_aed_nearby(lat: str | None, lon: str | None) -> dict:
+    """AED 위치 — 서울시 자동심장충격기(AED) 위치정보 공공데이터.
+
+    lat/lon 제공 시 가장 가까운 5개 반환 (단순 유클리드 거리 정렬).
+    없으면 주요 지하철역 근처 AED 샘플 반환.
+    """
+    import math
+    if not SEOUL_KEY:
+        return {"ok": False, "error": "SEOUL_OPENDATA_API_KEY 미설정", "aed": []}
+    url = f"http://openapi.seoul.go.kr:8088/{SEOUL_KEY}/json/InjuryCenterInfo/1/50/"
+    _t0 = time.time()
+    raw = await asyncio.get_event_loop().run_in_executor(None, http_get, url)
+    _api_track("aed_location", _t0, error=bool(raw.get("_error")))
+
+    rows = []
+    try:
+        val = raw.get("InjuryCenterInfo") or {}
+        for r in (val.get("row") or []):
+            rlat = _to_float_safe(r.get("Y_WGS84") or r.get("LATITUDE"))
+            rlon = _to_float_safe(r.get("X_WGS84") or r.get("LONGITUDE"))
+            if rlat is None or rlon is None: continue
+            dist_m = None
+            if lat and lon:
+                try:
+                    dy = (rlat - float(lat)) * 111139
+                    dx = (rlon - float(lon)) * 111139 * math.cos(math.radians(float(lat)))
+                    dist_m = round(math.hypot(dx, dy))
+                except Exception: pass
+            rows.append({
+                "name": r.get("INSTIT_NM") or r.get("NAME"),
+                "addr": r.get("ADDR") or r.get("ADDRESS"),
+                "lat": rlat, "lon": rlon,
+                "dist_m": dist_m,
+                "phone": r.get("TEL") or r.get("PHONE"),
+            })
+    except Exception:
+        pass
+
+    if lat and lon:
+        rows.sort(key=lambda x: x.get("dist_m") or 999999)
+
+    # 응답 없으면 지하철역 근처 AED 시뮬 데이터
+    if not rows:
+        rows = [
+            {"name": "잠실역 1번출구 AED", "addr": "서울 송파구 잠실동", "lat": 37.5133, "lon": 127.1001, "dist_m": 28, "phone": "02-6110-1234"},
+            {"name": "강남역 환승통로 AED", "addr": "서울 강남구 역삼동", "lat": 37.4980, "lon": 127.0277, "dist_m": 52, "phone": "02-6110-5678"},
+        ]
+    return {"ok": True, "aed": rows[:5], "fetched_at": time.time(), "simulated": not raw or bool(raw.get("_error"))}
+
+
+def _to_float_safe(v):
+    try: return float(v) if v not in (None, "", "-") else None
+    except (TypeError, ValueError): return None
+
+
+async def fetch_bus_arrival(route_id: str, station_id: str) -> dict:
+    """버스 실시간 도착 정보 — data.go.kr BIS API (없으면 시뮬 반환)."""
+    BIS_KEY = os.environ.get("DATA_GO_KR_API_KEY", "")
+    if BIS_KEY:
+        url = ("http://apis.data.go.kr/1613000/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList"
+               f"?serviceKey={urllib.parse.quote(BIS_KEY)}&pageNo=1&numOfRows=5"
+               f"&cityCode=11&nodeId={urllib.parse.quote(station_id)}&_type=json")
+        _t0 = time.time()
+        raw = await asyncio.get_event_loop().run_in_executor(None, http_get, url)
+        _api_track("bis_arrival", _t0, error=bool(raw.get("_error")))
+        items = []
+        try:
+            body = raw.get("response", {}).get("body", {})
+            for it in ((body.get("items") or {}).get("item") or []):
+                if isinstance(it, dict):
+                    items.append({
+                        "route": it.get("routeno") or it.get("routeid"),
+                        "arrival_sec": _to_int(it.get("arrtime")),
+                        "vehicle_no": it.get("vehicleno"),
+                        "stop_cnt": _to_int(it.get("arrprevstationcnt")),
+                    })
+        except Exception:
+            pass
+        if items:
+            return {"type": "bus_arrival", "route": route_id, "station": station_id,
+                    "items": items, "simulated": False, "fetched_at": time.time()}
+
+    # fallback 시뮬 (BIS 키 없거나 실패)
+    import random, math
+    rng = random.Random(int(time.time() // 60))
+    h = time.localtime().tm_hour
+    freq_min = 4 if (7 <= h <= 9 or 17 <= h <= 19) else 8 if 10 <= h <= 22 else 15
+    items_sim = []
+    for i in range(3):
+        base = (i * freq_min + rng.randint(0, freq_min - 1)) * 60
+        items_sim.append({
+            "route": route_id or "146",
+            "arrival_sec": base,
+            "vehicle_no": f"서울{70+i:02d}바{rng.randint(1000,9999)}",
+            "stop_cnt": rng.randint(1, 5),
+        })
+    return {"type": "bus_arrival", "route": route_id, "station": station_id,
+            "items": items_sim, "simulated": True, "fetched_at": time.time()}
 
 
 CORS_HEADERS = [
@@ -1106,6 +1526,20 @@ async def http_health(path, headers):
         except Exception:
             pass
         return (404, [("content-type", "text/plain")] + CORS_HEADERS, b"openapi.yaml not found")
+    if path.startswith("/api/v1/aed"):
+        # AED 위치 — 서울시 자동심장충격기(AED) 위치 정보
+        qs = path.split("?", 1)[1] if "?" in path else ""
+        params = dict(urllib.parse.parse_qsl(qs))
+        lat = params.get("lat"); lon = params.get("lon")
+        aed_payload = await _fetch_aed_nearby(lat, lon)
+        body = json.dumps(aed_payload, ensure_ascii=False).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path.startswith("/api/v1/bus_arrival"):
+        qs = path.split("?", 1)[1] if "?" in path else ""
+        params = dict(urllib.parse.parse_qsl(qs))
+        payload = await fetch_bus_arrival(params.get("route", "146"), params.get("station", ""))
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path == "/api/v1/roi_curve":
         body = json.dumps({
             "ok": True,
@@ -1213,6 +1647,7 @@ async def main():
             print("[seed] 4 warm incident seeds (admin timeline 즉시 라이브)", flush=True)
             print("[lite_server] DEMO mode — fake_incident_seed_loop 5분마다 자동 사고", flush=True)
             asyncio.create_task(fake_bev_loop())
+            asyncio.create_task(fake_bus_bev_loop())
             asyncio.create_task(fake_impact_seed_loop())
             asyncio.create_task(fake_incident_seed_loop())
         await asyncio.Future()  # run forever

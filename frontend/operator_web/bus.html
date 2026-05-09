@@ -237,6 +237,39 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
     </div>
   </section>
 
+  <!-- 버스 차내 BEV 실시간 (fake_bus_bev_loop 수신) -->
+  <section style="background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+      <h3 style="margin:0; font-size:11px; text-transform:uppercase; letter-spacing:1.4px; color:var(--muted); font-weight:500;">
+        🚌 차내 BEV — YOLO11 + BoT-SORT <span id="bus-bev-route" style="color:var(--accent); font-size:12px; font-weight:600; text-transform:none; margin-left:8px;">—번</span>
+      </h3>
+      <span id="bus-bev-status" style="font-size:10px; color:var(--muted);">대기 중</span>
+    </div>
+    <!-- 구역 요약 (3칸) -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px;">
+      <div class="fusion-card dim" id="fc-bus-front" style="background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-height:60px;">
+        <div class="fc-label" style="font-size:10px; letter-spacing:1.2px; color:var(--muted);">전부 구역</div>
+        <div class="fc-value" style="font-size:20px; color:var(--muted); font-weight:300;">—명</div>
+        <div class="fc-sub" style="font-size:10px; color:var(--muted-2);">전문 승하차 구역</div>
+      </div>
+      <div class="fusion-card dim" id="fc-bus-mid" style="background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-height:60px;">
+        <div class="fc-label" style="font-size:10px; letter-spacing:1.2px; color:var(--muted);">중부 구역</div>
+        <div class="fc-value" style="font-size:20px; color:var(--muted); font-weight:300;">—명</div>
+        <div class="fc-sub" style="font-size:10px; color:var(--muted-2);">착석 밀집 구역</div>
+      </div>
+      <div class="fusion-card dim" id="fc-bus-rear" style="background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-height:60px;">
+        <div class="fc-label" style="font-size:10px; letter-spacing:1.2px; color:var(--muted);">후부 구역</div>
+        <div class="fc-value" style="font-size:20px; color:var(--muted); font-weight:300;">—명</div>
+        <div class="fc-sub" style="font-size:10px; color:var(--muted-2);">후문 승하차 구역</div>
+      </div>
+    </div>
+    <canvas id="bus-bev-canvas" style="width:100%; height:90px; display:block; border-radius:8px; background:#04060a;"></canvas>
+    <div style="display:flex; gap:12px; margin-top:6px; font-size:10px; color:var(--muted);">
+      <span>● 착석</span><span style="color:#7dd3d3;">● 기립</span>
+      <span style="color:#a78bfa;">● 노약자석</span><span style="color:#f59e0b;">● 문 구역</span>
+    </div>
+  </section>
+
   <section class="train-strip">
     <div class="train-strip-head">
       <h2><b>간선 142 · 도봉산↔잠실</b><span style="color: var(--muted)">접근 중인 3대 점유 BEV</span></h2>
@@ -999,11 +1032,121 @@ if (SR) {
   function setCard(id, cls) { const c = document.getElementById(id); if (!c) return; c.classList.remove('dim','ok','warn','crit'); c.classList.add(cls); const v = c.querySelector('div:nth-child(2)'); if (v) v.style.color = cls === 'ok' ? 'var(--accent)' : cls === 'warn' ? 'var(--warn)' : cls === 'crit' ? 'var(--crit)' : 'var(--muted)'; }
   function applyBev(p) {
     lastBev = p;
-    const n = (p.tracks || []).filter(t => t.class === 'person').length;
-    const v = (p.tracks || []).filter(t => ['bus','car','truck'].includes(t.class)).length;
+    const persons = (p.tracks || []).filter(t => t.class === 'person' || t.cls === 'person');
+    const n = persons.length;
+    const v = (p.tracks || []).filter(t => ['bus','car','truck'].includes(t.class || t.cls || '')).length;
     document.getElementById('fc-cv-v').textContent = `${n}명`;
     document.getElementById('fc-cv-sub').textContent = `보행 ${n} · 차량 ${v} · YOLO ${(p.fps ?? 0).toFixed(1)} fps`;
     setCard('fc-cv', 'ok'); evalCong();
+  }
+
+  // 버스 차내 BEV — bus_bev 타입 전용 핸들러
+  let _lastBusBev = null;
+  function applyBusBev(p) {
+    _lastBusBev = p;
+    const n = p.total_pax || 0;
+    const occ = Math.round((p.occ_pct || 0) * 100);
+    const seated = p.seated || 0;
+    const standing = p.standing || 0;
+    const cng = p.congestion || '—';
+    const route = p.route || '—';
+    const dest = p.dest || '—';
+
+    // 헤더 라우트 태그
+    const routeEl = document.getElementById('bus-bev-route');
+    if (routeEl) routeEl.textContent = `${route}번 → ${dest}`;
+    const statusEl = document.getElementById('bus-bev-status');
+    if (statusEl) statusEl.textContent = `${cng} · ${occ}% 점유 · LIVE`;
+
+    // fc-cv 카드 업데이트
+    document.getElementById('fc-cv-v').textContent = `${n}명`;
+    document.getElementById('fc-cv-sub').textContent =
+      `${route}번→${dest} · 착석 ${seated}/기립 ${standing} · ${occ}% 점유`;
+    setCard('fc-cv', occ >= 85 ? 'crit' : occ >= 60 ? 'warn' : 'ok');
+
+    // 구역별 요약 카드 업데이트 (있을 경우)
+    const zs = p.zone_summary || {};
+    const _zCard = (id, zone) => {
+      const card = document.getElementById(id);
+      if (!card || !zs[zone]) return;
+      const cnt = zs[zone].count || 0;
+      const sta = zs[zone].standing || 0;
+      card.querySelector && (card.querySelector('.fc-value') || {}).textContent != null
+        && (card.querySelector('.fc-value').textContent = `${cnt}명`);
+      const sub = card.querySelector && card.querySelector('.fc-sub');
+      if (sub) sub.textContent = `기립 ${sta}명`;
+      if (card.classList) { card.classList.remove('dim','ok','warn','crit'); card.classList.add(cnt > 15 ? 'crit' : cnt > 8 ? 'warn' : 'ok'); }
+    };
+    _zCard('fc-bus-front', 'front');
+    _zCard('fc-bus-mid',   'mid');
+    _zCard('fc-bus-rear',  'rear');
+
+    // BEV canvas 렌더
+    _drawBusBev(p);
+    evalCong();
+  }
+
+  function _drawBusBev(p) {
+    const cv = document.getElementById('bus-bev-canvas');
+    if (!cv) return;
+    const ctx = cv.getContext('2d');
+    const W = cv.clientWidth || 480, H = cv.clientHeight || 100;
+    cv.width = W * (window.devicePixelRatio || 1);
+    cv.height = H * (window.devicePixelRatio || 1);
+    ctx.setTransform(window.devicePixelRatio || 1, 0, 0, window.devicePixelRatio || 1, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    // 버스 외형
+    ctx.fillStyle = 'rgba(20,20,30,0.9)';
+    ctx.strokeStyle = 'rgba(125,211,211,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(4, 4, W - 8, H - 8, 8); ctx.fill(); ctx.stroke();
+
+    // 운전석 영역 (좌 10%)
+    const driverW = W * 0.08;
+    ctx.fillStyle = 'rgba(125,211,211,0.08)';
+    ctx.fillRect(6, 6, driverW, H - 12);
+    ctx.fillStyle = 'rgba(125,211,211,0.4)';
+    ctx.font = '8px ui-sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('운전', 6 + driverW / 2, H / 2);
+
+    // 전문/후문 표시
+    const frontDoorX = W * 0.12;
+    const rearDoorX = W * 0.82;
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+    ctx.setLineDash([3, 3]);
+    [frontDoorX, rearDoorX].forEach(dx => {
+      ctx.beginPath(); ctx.moveTo(dx, 6); ctx.lineTo(dx, H - 6); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    // 구역 레이블
+    ctx.fillStyle = 'rgba(125,211,211,0.5)'; ctx.font = '9px ui-sans-serif';
+    const zones = p.zone_summary || {};
+    const zLabels = [
+      ['전부', (frontDoorX + W * 0.08) / 2, zones.front],
+      ['중부', (frontDoorX + rearDoorX) / 2, zones.mid],
+      ['후부', (rearDoorX + W) / 2 - 4, zones.rear],
+    ];
+    zLabels.forEach(([lbl, cx, z]) => {
+      const cnt = z ? z.count : 0;
+      ctx.fillStyle = cnt > 15 ? '#ff5e57' : cnt > 8 ? '#f59e0b' : 'rgba(125,211,211,0.7)';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${lbl} ${cnt}명`, cx, H - 8);
+    });
+
+    // 탑승자 dots
+    const tracks = p.tracks || [];
+    const bW = 120, bH = 30;  // BEV 좌표계
+    const scaleX = (x) => driverW + (x / bW) * (W - driverW - 6);
+    const scaleY = (y) => 8 + (y / bH) * (H - 16);
+    tracks.forEach(t => {
+      if (t.cls !== 'person' && t.class !== 'person') return;
+      ctx.beginPath();
+      ctx.arc(scaleX(t.bev_x), scaleY(t.bev_y), t.seat ? 3 : 4, 0, Math.PI * 2);
+      ctx.fillStyle = t.priority ? '#a78bfa' : t.door_zone ? '#f59e0b' : t.seat ? 'rgba(125,211,211,0.7)' : '#7dd3d3';
+      ctx.fill();
+    });
   }
   function applyPpltn(j) {
     lastPop = j;
@@ -1058,7 +1201,8 @@ if (SR) {
         const j = JSON.parse(ev.data);
         if (j.type === 'population') applyPpltn(j);
         else if (j.type === 'citydata') applyCitydata(j);
-        else if (j.type === 'arrival' || j.type === 'occupancy_predict') {}
+        else if (j.type === 'bus_bev') applyBusBev(j);
+        else if (j.type === 'arrival' || j.type === 'occupancy_predict' || j.type === 'bev') {}
         else applyBev(j);
       } catch {}
     };

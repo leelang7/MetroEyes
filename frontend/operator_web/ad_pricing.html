@@ -674,6 +674,83 @@ function applyLiveDensity() {
   }
 }
 
+// ======= 실시간 가격 변동 Ticker =======
+const _ticker = { events: [], prevPrices: {} };
+
+function _tickerPush(poi, oldPrice, newPrice, lvl) {
+  const pct = oldPrice > 0 ? ((newPrice - oldPrice) / oldPrice * 100).toFixed(1) : null;
+  if (pct == null || Math.abs(parseFloat(pct)) < 0.5) return;
+  const up = newPrice > oldPrice;
+  _ticker.events.unshift({
+    ts: new Date().toLocaleTimeString('ko', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    poi: poi.replace('관광특구', '').replace('카페거리', '').slice(0, 6),
+    price: newPrice, pct, up, lvl,
+  });
+  if (_ticker.events.length > 20) _ticker.events.pop();
+  _renderTicker();
+}
+
+function _renderTicker() {
+  const el = document.getElementById('ad-ticker-list');
+  if (!el) return;
+  el.innerHTML = _ticker.events.slice(0, 8).map(e =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+      <span style="color:var(--muted);font-size:10px;min-width:52px;">${e.ts}</span>
+      <span style="color:var(--fg);font-size:11px;min-width:56px;">${e.poi}</span>
+      <span style="font-size:11px;font-weight:500;color:${e.up?'#ff5e57':'#7dd3d3'};min-width:56px;">${Math.round(e.price).toLocaleString()}원</span>
+      <span style="font-size:10px;color:${e.up?'#ff5e57':'#7dd3d3'};font-weight:700;">${e.up?'▲':'▼'}${Math.abs(parseFloat(e.pct))}%</span>
+    </div>`
+  ).join('');
+}
+
+// KPI 플래시 애니메이션
+function _kpiFlash(id, up) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const col = up ? 'rgba(255,94,87,0.25)' : 'rgba(125,211,211,0.25)';
+  el.style.transition = 'background 0.1s';
+  el.style.background = col;
+  setTimeout(() => { el.style.background = ''; }, 600);
+}
+
+// applyLiveDensity를 호출할 때 ticker 업데이트
+const _origApplyLiveDensity = applyLiveDensity;
+function applyLiveDensity() {
+  _origApplyLiveDensity();
+  // 가격 변동 감지 + ticker push
+  const nowH = new Date().getHours();
+  for (const poi of STATIONS) {
+    const live = liveDensity[poi];
+    if (!live) continue;
+    const newPrice = Math.round(BASE_PRICE * (0.6 + 1.4 * live.density));
+    const oldPrice = _ticker.prevPrices[poi];
+    if (oldPrice != null && oldPrice !== newPrice) {
+      _tickerPush(poi, oldPrice, newPrice, live.lvl);
+      _kpiFlash('kpi-avg', newPrice > oldPrice);
+    }
+    _ticker.prevPrices[poi] = newPrice;
+  }
+}
+
+// Ticker DOM 삽입 (insight 섹션 앞에 동적 추가)
+window.addEventListener('DOMContentLoaded', () => {
+  const insertBefore = document.querySelector('.insight');
+  if (!insertBefore) return;
+  const tickerDiv = document.createElement('div');
+  tickerDiv.style.cssText = 'background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 14px;';
+  tickerDiv.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3 style="margin:0;font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);font-weight:500;">
+        📈 실시간 단가 변동 Ticker <span style="color:var(--accent);font-size:9px;padding:1px 5px;background:rgba(125,211,211,0.10);border-radius:4px;text-transform:none;margin-left:6px;">LIVE</span>
+      </h3>
+      <span style="font-size:10px;color:var(--muted);">인구밀도 변화 → 자동 단가 재산정</span>
+    </div>
+    <div id="ad-ticker-list" style="font-family:ui-monospace,Consolas,monospace;min-height:40px;color:var(--muted-2);font-size:11px;">
+      <div style="padding:8px 0;color:var(--muted);">WS 연결 후 라이브 단가 변동 표시 ↑</div>
+    </div>`;
+  insertBefore.parentNode.insertBefore(tickerDiv, insertBefore);
+});
+
 connectAdLive();
 // 60초마다 라이브 갱신
 setInterval(() => { if (_ws && _ws.readyState === 1) requestAllPois(); }, 60000);

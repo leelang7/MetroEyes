@@ -1077,6 +1077,42 @@ const LIVE = (() => {
     }
   }
 
+  // 버스 차내 BEV → 시민 앱 버스 탭 업데이트
+  function applyBusBevPax(p) {
+    if (mode !== 'bus') return;
+    const n = p.total_pax || 0;
+    const occ = Math.round((p.occ_pct || 0) * 100);
+    const seated = p.seated || 0;
+    const standing = p.standing || 0;
+    const cng = p.congestion || '—';
+    const route = p.route || '—';
+    const dest = p.dest || '—';
+
+    // 대표 카드 업데이트 — 버스 모드일 때만
+    const carEl = document.getElementById('d-car');
+    if (carEl) carEl.textContent = `${route}번 버스`;
+    const pctEl = document.getElementById('d-pct');
+    if (pctEl) pctEl.textContent = occ;
+    const peopleEl = document.getElementById('d-people');
+    if (peopleEl) peopleEl.textContent = n;
+    const capEl = document.getElementById('d-cap');
+    if (capEl) capEl.textContent = 55; // 버스 정원
+    const densityEl = document.getElementById('d-density');
+    if (densityEl) densityEl.textContent = (n / 12).toFixed(1); // 12m² 버스 바닥
+    const whyEl = document.getElementById('d-why');
+    if (whyEl) whyEl.innerHTML = `${dest} 방면 · 착석 <b>${seated}</b>명 / 기립 <b>${standing}</b>명 · ${cng}`;
+
+    // 버스 탭 라이브 라벨 업데이트
+    const liveEl = document.getElementById('live-label');
+    if (liveEl) liveEl.textContent = `LIVE · ${(p.fps||0).toFixed(1)} fps · ${n} 명`;
+
+    // 점유율 시각화
+    const alertEl = document.getElementById('alert');
+    if (alertEl) alertEl.classList.toggle('show', occ >= 90);
+
+    if (sim) { sim.setTargetOccupancy(occ / 100); sim.forceRebuild(occ / 100); }
+  }
+
   // 24h 폭증 예측 카드
   function applyForecast(j) {
     const card = document.getElementById('forecast-card');
@@ -1327,6 +1363,7 @@ const LIVE = (() => {
         else if (j.type === 'context') { applyContext(j); }
         else if (j.type === 'surge_forecast') { applyForecast(j); }
         else if (j.type === 'incident_summary') { applyIncidentNotice(j); }
+        else if (j.type === 'bus_bev') { applyBusBevPax(j); }
         else if (j.type === 'impact_summary') {
           // 🌱 CO₂ 절감 카드 라이브 갱신 (시민 PWA — ESG 5점)
           try { if (typeof _updateCO2Card === 'function') _updateCO2Card(j.total_count || 0); } catch {}

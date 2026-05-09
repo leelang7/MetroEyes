@@ -329,10 +329,50 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 </script>
   </div>
   <div class="controls">
-    <span class="tag">파이프라인<b>Browser Cam → BG-sub → Three.js 3D BEV</b></span>
+    <span class="tag gps-tag" style="cursor:default; padding: 4px 10px;">
+      <span class="gps-led"></span>
+      <select id="ctrl-station-sel" style="background:transparent; border:none; color:var(--fg); font-size:12px; font-weight:700; cursor:pointer; outline:none; min-width:120px;">
+        <option value="잠실|2|잠실역">잠실역 (2호선)</option>
+        <option value="강남|2|강남역">강남역 (2호선)</option>
+        <option value="홍대입구|2|홍대 관광특구">홍대입구 (2호선)</option>
+        <option value="서울역|1|서울역">서울역 (1호선)</option>
+        <option value="광화문|5|광화문·덕수궁">광화문역 (5호선)</option>
+        <option value="신촌|2|신촌·이대역">신촌역 (2호선)</option>
+        <option value="사당|2|사당역">사당역 (2호선)</option>
+        <option value="건대입구|2|건대입구역">건대입구 (2호선)</option>
+        <option value="김포공항|5|김포공항">김포공항 (5호선)</option>
+        <option value="합정|2|합정역">합정역 (2호선)</option>
+        <option value="신림|2|신림역">신림역 (2호선)</option>
+        <option value="구로디지털단지|2|구로디지털단지역">구로디지털단지 (2호선)</option>
+        <option value="고속터미널|3|고속터미널역">고속터미널 (3호선)</option>
+        <option value="잠실새내|2|잠실새내역">잠실새내 (2호선)</option>
+        <option value="왕십리|2|왕십리역">왕십리역 (2호선)</option>
+      </select>
+    </span>
+    <span class="tag">파이프라인<b>Browser Cam → YOLO11 → Three.js 3D BEV</b></span>
     <div class="realbev-status" id="status"><span class="led"></span><span id="status-text">대기</span></div>
   </div>
 </header>
+<script>
+(function() {
+  const ctrl = document.getElementById('ctrl-station-sel');
+  if (!ctrl) return;
+  ctrl.addEventListener('change', () => {
+    const panel = document.getElementById('fc-station-sel');
+    if (!panel) return;
+    panel.value = ctrl.value;
+    // dispatchEvent triggers the WS query handlers
+    panel.dispatchEvent(new Event('change'));
+    // update header label text to confirm selection
+    const opt = ctrl.options[ctrl.selectedIndex];
+    if (opt) ctrl.title = opt.textContent;
+  });
+  window.addEventListener('DOMContentLoaded', () => {
+    const panel = document.getElementById('fc-station-sel');
+    if (panel && panel.value) ctrl.value = panel.value;
+  });
+})();
+</script>
 
 <main>
   <section class="train-strip">
@@ -483,6 +523,12 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
         <option value="사당|2|사당역">사당 (2호선)</option>
         <option value="건대입구|2|건대입구역">건대입구 (2호선)</option>
         <option value="김포공항|5|김포공항">김포공항 (5호선)</option>
+        <option value="합정|2|합정역">합정 (2호선)</option>
+        <option value="신림|2|신림역">신림 (2호선)</option>
+        <option value="구로디지털단지|2|구로디지털단지역">구로디지털단지 (2호선)</option>
+        <option value="고속터미널|3|고속터미널역">고속터미널 (3호선)</option>
+        <option value="잠실새내|2|잠실새내역">잠실새내 (2호선)</option>
+        <option value="왕십리|2|왕십리역">왕십리 (2호선)</option>
       </select>
     </div>
     <div class="cam-picker">
@@ -1895,21 +1941,23 @@ const Fusion = (() => {
   }
   function applyCitydata(j) {
     if (j.error) return;
-    // 도로
-    if (j.road_avg_speed != null) {
+    // 도로 — road_spd (신) / road_avg_speed (구) 호환
+    const roadSpd = j.road_spd ?? j.road_avg_speed;
+    if (roadSpd != null) {
       const card = document.getElementById('fc-road');
-      card.classList.remove('dim','crit'); card.classList.add(j.road_avg_speed < 15 ? 'crit' : j.road_avg_speed < 25 ? 'warn' : 'ok');
-      document.getElementById('fc-road-v').innerHTML = `${j.road_avg_speed.toFixed(0)}<span class="unit">km/h</span>`;
-      document.getElementById('fc-road-sub').textContent = `${j.road_avg_idx || '—'} · 통행 평균`;
+      card.classList.remove('dim','crit'); card.classList.add(roadSpd < 15 ? 'crit' : roadSpd < 25 ? 'warn' : 'ok');
+      document.getElementById('fc-road-v').innerHTML = `${parseFloat(roadSpd).toFixed(0)}<span class="unit">km/h</span>`;
+      document.getElementById('fc-road-sub').textContent = `${j.road_idx || j.road_avg_idx || '—'} · 도로 평균`;
     }
-    // 환승
-    const bikeShared = (j.sbike || []).reduce((a, b) => a + (b.shared || 0), 0);
-    const prkAvail = (j.parking || []).reduce((a, b) => a + Math.max(0, (b.cap || 0) - (b.cur || 0)), 0);
-    if (bikeShared || prkAvail) {
+    // 따릉이 + 주차 — bikes/parks (신) / sbike/parking (구) 호환
+    const bikeAvail = j.bike_avail ?? (j.sbike || []).reduce((a, b) => a + (b.shared || 0), 0);
+    const parkAvail = j.park_avail ?? (j.parking || []).reduce((a, b) => a + Math.max(0, (b.cap||0)-(b.cur||0)), 0);
+    const bikeStations = (j.bikes || j.sbike || []).length;
+    if (bikeAvail || parkAvail) {
       const card = document.getElementById('fc-trans');
       card.classList.remove('dim'); card.classList.add('ok');
-      document.getElementById('fc-trans-v').innerHTML = `${bikeShared}<span class="unit">대</span>`;
-      document.getElementById('fc-trans-sub').textContent = `따릉이 ${(j.sbike||[]).length}곳 ${bikeShared}대 · 주차 ${prkAvail}자리`;
+      document.getElementById('fc-trans-v').innerHTML = `${bikeAvail}<span class="unit">대</span>`;
+      document.getElementById('fc-trans-sub').textContent = `따릉이 ${bikeStations}곳 ${bikeAvail}대 · 주차 ${parkAvail}자리`;
     }
     // 날씨
     if (j.temp != null) {
@@ -1920,13 +1968,20 @@ const Fusion = (() => {
       const hum = j.humidity != null ? `습도 ${j.humidity.toFixed(0)}%` : '';
       document.getElementById('fc-wx-sub').textContent = [sens, hum].filter(Boolean).join(' · ');
     }
-    // 상권
-    if (j.cmrcl_lvl) {
+    // 상권 — cmrcl_paying_rate (신) / cmrcl_lvl (구) 호환
+    const cmrclRate = j.cmrcl_paying_rate;
+    const cmrclLvl = j.cmrcl_lvl;
+    if (cmrclRate != null || cmrclLvl) {
       const card = document.getElementById('fc-cmrcl');
       card.classList.remove('dim'); card.classList.add('ok');
-      document.getElementById('fc-cmrcl-v').textContent = j.cmrcl_lvl;
-      const topRsb = (j.cmrcl_rsb || []).slice(0, 2).map(r => `${r.ctgr} ${r.lvl}`).join(' · ');
-      document.getElementById('fc-cmrcl-sub').textContent = topRsb || `결제 ${j.cmrcl_payment_cnt ?? '—'}건/시간`;
+      if (cmrclRate != null) {
+        document.getElementById('fc-cmrcl-v').textContent = `${parseFloat(cmrclRate).toFixed(0)}%`;
+        document.getElementById('fc-cmrcl-sub').textContent = `결제 비율 · ${j.cmrcl_type || '—'}`;
+      } else {
+        document.getElementById('fc-cmrcl-v').textContent = cmrclLvl;
+        const topRsb = (j.cmrcl_rsb || []).slice(0, 2).map(r => `${r.ctgr} ${r.lvl}`).join(' · ');
+        document.getElementById('fc-cmrcl-sub').textContent = topRsb || `결제 ${j.cmrcl_payment_cnt ?? '—'}건/시간`;
+      }
     }
     // 도로 list (가장 느린/빠른 5개)
     const roadsCard = document.getElementById('roads-card');
@@ -2085,7 +2140,25 @@ const Fusion = (() => {
       `CV ${personN ?? '—'}명 · 인구 ${popLvl ?? '—'} · 융합점수 ${(combined * 100).toFixed(0)}`;
   }
   stationSel.addEventListener('change', () => {
-    if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); }
+    // 헤더 ctrl-station-sel 동기화
+    const ctrlSel = document.getElementById('ctrl-station-sel');
+    if (ctrlSel && ctrlSel.value !== stationSel.value) ctrlSel.value = stationSel.value;
+    // WS 연결 여부 무관하게 fusion 카드 초기화 (역 전환 시 이전 데이터 지움)
+    ['fc-arr-v','fc-pop-v','fc-road-v','fc-trans-v','fc-wx-v','fc-cmrcl-v'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '—';
+    });
+    document.getElementById('fc-cong-v').textContent = '—';
+    if (ws && ws.readyState === 1) {
+      queryArrival();
+      queryPpltn();
+      queryCitydata();
+      queryEvents();
+    }
+    // 24h 예측 sparkline 업데이트
+    if (window.MLChart && typeof MLChart.fetch24h === 'function') {
+      MLChart.fetch24h(station());
+    }
   });
   return { startPolling, stopPolling, applyBev, applyArrival, applyPopulation, applyCitydata, applyEvents };
 })();
@@ -2322,12 +2395,31 @@ window._emergencyListener = pushIncidentToast;
 // 같은 사람 트랙이 같은 위치에 머무름 → 의식 잃은 환자 가능성
 const _personStill = new Map();   // id → { since, x, y, alerted }
 const _STILL_THRESHOLD_MS = 30000;
-// 가상 AED 좌표 (역사 평면 2~3 곳 가정)
-const AED_LOCATIONS = [
+// AED 위치 — 서울시 공공데이터 API 로드 (fallback: 역사 내 시뮬)
+let AED_LOCATIONS = [
   { id: 'AED-1', label: '1번 출구 옆', x: 0.10, y: 0.10 },
   { id: 'AED-2', label: '환승 통로', x: 0.50, y: 0.50 },
   { id: 'AED-3', label: '역무실', x: 0.90, y: 0.90 },
 ];
+(async () => {
+  try {
+    const apiBase = location.hostname.endsWith('github.io') ? 'https://app.allthatai.kr' : 'http://localhost:8765';
+    const r = await fetch(`${apiBase}/api/v1/aed`, { cache: 'no-cache' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j.aed && j.aed.length > 0) {
+        AED_LOCATIONS = j.aed.slice(0, 5).map((a, i) => ({
+          id: `AED-${i+1}`,
+          label: (a.name || `AED ${i+1}`).slice(0, 16),
+          dist_m: a.dist_m,
+          // BEV 좌표 계산 불가 (GPS → BEV 변환 불가) — 거리만 사용
+          x: [0.10, 0.50, 0.90, 0.25, 0.75][i] || 0.5,
+          y: [0.10, 0.50, 0.90, 0.25, 0.75][i] || 0.5,
+        }));
+      }
+    }
+  } catch {}
+})();
 
 function checkEmergency(persons) {
   const now = Date.now();
@@ -2352,7 +2444,7 @@ function checkEmergency(persons) {
         const d = Math.hypot(p.bev_x - a.x, p.bev_y - a.y);
         if (d < minD) { minD = d; nearest = a; }
       }
-      const distM = Math.round(minD * 30); // BEV 1.0 = 약 30m 가정
+      const distM = nearest.dist_m ?? Math.round(minD * 30); // API 응답 우선, 없으면 BEV 거리 추정
       const incident = {
         id: `emer-${id}`, type: 'emergency', severity: 'high',
         msg: `🚨 사람 트랙 #${id} ${((now-exist.since)/1000).toFixed(0)}초 정지 — AED ${nearest.label} (${distM}m) · 119 자동 통보 권장`,
