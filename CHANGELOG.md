@@ -63,9 +63,9 @@
 
 ---
 
-## v6.8 — D-4 회귀 가드 264건 + citydata 통합 + 3D OpenFreeMap + dday.ps1/sh/Makefile + link checker + ad env + FORM_DATA + cycle 374 회복 (2026-05-08~09 cycle 391-427)
+## v6.8 — D-4 회귀 가드 273건 + 30p 상세기획서 deck + citydata 통합 + 3D OpenFreeMap + dday.ps1/sh/Makefile + link checker + ad env + FORM_DATA + cycle 374 회복 (2026-05-08~09 cycle 391-428)
 
-### v6.8 cycle 414-427 (3rd platform parity + install + Quick Start + body drift + 3D map + citydata fetch)
+### v6.8 cycle 414-428 (3rd platform parity + install + Quick Start + body drift + 3D map + citydata fetch + 30p deck)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -104,6 +104,17 @@
   - frontend/onepager.html box ③ — "3D OpenFreeMap 시민 GPS 자동 매칭 + 도착 polyline" 추가 (차별성 6 axis 노출)
   - frontend/onepager.html box ⑥ — "pytest 197 가드" → "257 가드" (60 가드 stale)
   - frontend/pitch.html footer — "423+ 사이클 / 246 가드" → "426+ / 257 + 3D OpenFreeMap"
+- cycle 428: 📑 **30 슬라이드 상세기획서 HTML deck** (사용자 직접 지시 — PPT 템플릿 → HTML 30p)
+  - docs/proposal_deck.html 신규 (1,564줄, 95KB) — 2026 서울시 빅데이터 활용 경진대회 (창업 부문)
+  - 30 슬라이드 A4 가로 PDF 인쇄 친화 (@page A4 landscape, page-break-after: always)
+  - 4 섹션 분류: I. 개요(1~5) · II. 문제+EDA(6~13) · III. 솔루션+차별성(14~22) · IV. 사업화(23~30)
+  - 사진/도표 풍부: PNG 차트 5종 (dispersion/OD/transfer/per_line/heatmap) + 30+ 데이터 표 + 50+ 색상 카드
+  - canonical KPI 7종 (1,393억/347×/473.4M/157M/708×/CI [1,064~1,808]) 모두 포함 — drift 차단
+  - 비즈니스 모델 3-tier (B2G ₩40억 + B2B 광고 ₩100억 + B2B Data ₩12억) + 매출 시뮬 + 6 분기 로드맵
+  - 자기 채점 1차 105 + 2차 100 = 205/205 + ESG 5축
+  - HUD: Ctrl+P PDF 저장 안내 (배경 그래픽 ✓)
+  - 새 가드 9건 (test_proposal_deck.py): 슬라이드 30 / A4 print / canonical KPI 7 / 차트 5 / BM tier / 205 score / 표 20+
+  - 273 passed (+9) · ship-gate 10/10
 - cycle 427: 🌐 **citydata 통합 라이브 정식 구현** (사용자 재점검 발견 사고 회복)
   - 발견: lite_server `citydata_query` 가 실제 citydata API 안 부르고 ppltn 만 type 바꿔치기 →
     광고 ad_pricing.html 의 PM2.5/UV chip 라이브 수신 영원히 안 옴 + events_query 빈 배열 하드코딩
