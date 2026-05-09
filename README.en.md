@@ -209,5 +209,5 @@ Includes:
 
 ## Contact
 
-- Lee Seok-chang · leescvsir@gmail.com
+- Lee Seok-chang
 - 2026 Seoul Big Data Competition (Startup Track) submission · Deadline 2026-05-13
