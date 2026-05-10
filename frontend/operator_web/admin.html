@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MetroEyes — 관리자 콘솔</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--card:#111827;--card2:#1a2236;--border:#1f2d45;
+  --blue:#3b82f6;--green:#22c55e;--yellow:#eab308;--red:#ef4444;
+  --purple:#a855f7;--cyan:#06b6d4;--text:#e2e8f0;--muted:#64748b;
+  --font:'Pretendard Variable',Pretendard,system-ui,sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh}
+header{
+  display:flex;align-items:center;gap:12px;padding:14px 24px;
+  background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100
+}
+header h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+header h1 span{color:var(--blue)}
+.badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase}
+.badge-live{background:#052e16;color:var(--green);border:1px solid #166534}
+.badge-warn{background:#422006;color:var(--yellow);border:1px solid #92400e}
+.badge-err{background:#450a0a;color:var(--red);border:1px solid #991b1b}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
+#hdr-time{font-variant-numeric:tabular-nums}
+.grid{display:grid;gap:16px;padding:20px;grid-template-columns:repeat(4,1fr)}
+@media(max-width:1200px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+.card-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.stat-big{font-size:36px;font-weight:700;line-height:1;letter-spacing:-1px}
+.stat-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.col-green{color:var(--green)} .col-blue{color:var(--blue)} .col-yellow{color:var(--yellow)} .col-red{color:var(--red)} .col-purple{color:var(--purple)} .col-cyan{color:var(--cyan)}
+
+/* 2-wide cards */
+.span2{grid-column:span 2}
+.span4{grid-column:span 4}
+@media(max-width:1200px){.span2{grid-column:span 2}.span4{grid-column:span 2}}
+@media(max-width:640px){.span2,.span4{grid-column:span 1}}
+
+/* API health */
+.api-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.api-row:last-child{border:0}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-g{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot-y{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.dot-r{background:var(--red);box-shadow:0 0 6px var(--red)}
+.api-name{flex:1;font-size:13px}
+.api-calls{font-size:11px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.api-lat{font-size:11px;padding:1px 6px;border-radius:4px;background:var(--card2);min-width:52px;text-align:right}
+
+/* Bus BEV panel */
+.zone-bars{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.zone-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.zone-label{width:60px;color:var(--muted);flex-shrink:0}
+.zone-bar-bg{flex:1;height:8px;background:var(--card2);border-radius:4px;overflow:hidden}
+.zone-bar-fill{height:100%;border-radius:4px;transition:width .6s}
+.zone-val{width:36px;text-align:right;font-size:11px;font-variant-numeric:tabular-nums}
+
+/* indoor air */
+.air-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+.air-box{background:var(--card2);border-radius:8px;padding:10px;text-align:center}
+.air-label{font-size:10px;color:var(--muted);margin-bottom:4px}
+.air-val{font-size:22px;font-weight:700}
+.air-unit{font-size:10px;color:var(--muted)}
+
+/* elevator */
+.elev-list{display:flex;flex-direction:column;gap:5px;margin-top:4px}
+.elev-item{display:flex;align-items:center;gap:8px;padding:5px 8px;background:var(--card2);border-radius:6px;font-size:12px}
+.elev-id{flex:1;font-weight:500}
+.elev-status{font-size:11px;padding:2px 6px;border-radius:4px}
+.s-ok{background:#052e16;color:var(--green)} .s-maint{background:#422006;color:var(--yellow)} .s-err{background:#450a0a;color:var(--red)}
+
+/* incident log */
+.inc-table{width:100%;border-collapse:collapse;font-size:12px}
+.inc-table th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--muted);font-weight:500;font-size:11px}
+.inc-table td{padding:6px 8px;border-bottom:1px solid #0d1627}
+.inc-table tr:hover td{background:var(--card2)}
+.inc-icon{font-size:16px}
+.sev-high{color:var(--red)} .sev-mid{color:var(--yellow)} .sev-low{color:var(--green)}
+
+/* mini line chart */
+canvas.sparkline{display:block;width:100%;height:40px}
+
+/* KPI row */
+.kpi-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.kpi-box{background:var(--card2);border-radius:8px;padding:10px 14px;flex:1;min-width:100px;text-align:center}
+.kpi-box .kv{font-size:20px;font-weight:700}
+.kpi-box .kl{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ws status */
+#ws-dot{width:10px;height:10px;border-radius:50%;background:var(--muted);display:inline-block;vertical-align:middle;margin-right:4px}
+.ws-on{background:var(--green)!important;box-shadow:0 0 6px var(--green)!important}
+.ws-off{background:var(--red)!important}
+</style>
+</head>
+<body>
+<header>
+  <div style="width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">👁</div>
+  <h1>Metro<span>Eyes</span> <span style="font-weight:400;color:var(--muted);font-size:14px">관리자 콘솔</span></h1>
+  <span class="badge badge-live">LIVE</span>
+  <div class="hdr-right">
+    <span><span id="ws-dot"></span><span id="ws-label">연결 중…</span></span>
+    <span id="hdr-time">--:--:--</span>
+  </div>
+</header>
+
+<div class="grid">
+
+  <!-- 요약 KPI 4개 -->
+  <div class="card">
+    <div class="card-title">🚇 총 재차 인원</div>
+    <div class="stat-big col-blue" id="kpi-pax">—</div>
+    <div class="stat-sub">현재 감지 인원 (5Hz BEV)</div>
+  </div>
+  <div class="card">
+    <div class="card-title">⚡ 에너지 절감</div>
+    <div class="stat-big col-green" id="kpi-kw">—<span style="font-size:16px;margin-left:4px">kW</span></div>
+    <div class="stat-sub">저점유 칸 HVAC 절감 추정</div>
+  </div>
+  <div class="card">
+    <div class="card-title">🌿 CO₂ 절감</div>
+    <div class="stat-big col-cyan" id="kpi-co2">—<span style="font-size:16px;margin-left:4px">g/min</span></div>
+    <div class="stat-sub">kW × 0.4594 / 60 × 1000</div>
+  </div>
+  <div class="card">
+    <div class="card-title">🚨 미해결 인시던트</div>
+    <div class="stat-big col-red" id="kpi-inc">0</div>
+    <div class="stat-sub">응급·분실·병목·우선석</div>
+  </div>
+
+  <!-- Bus BEV 구역 -->
+  <div class="card span2">
+    <div class="card-title">🚌 버스 BEV — 구역별 점유율 <span id="bus-fps" style="margin-left:auto;color:var(--muted);font-size:11px">-- FPS</span></div>
+    <div class="zone-bars" id="bus-zones">
+      <div class="zone-row"><div class="zone-label">앞문</div><div class="zone-bar-bg"><div class="zone-bar-fill" id="z-front" style="width:0%;background:var(--blue)"></div></div><div class="zone-val" id="zv-front">0%</div></div>
+      <div class="zone-row"><div class="zone-label">중간</div><div class="zone-bar-bg"><div class="zone-bar-fill" id="z-mid" style="width:0%;background:var(--cyan)"></div></div><div class="zone-val" id="zv-mid">0%</div></div>
+      <div class="zone-row"><div class="zone-label">뒷문</div><div class="zone-bar-bg"><div class="zone-bar-fill" id="z-rear" style="width:0%;background:var(--purple)"></div></div><div class="zone-val" id="zv-rear">0%</div></div>
+    </div>
+    <div class="kpi-row" style="margin-top:12px">
+      <div class="kpi-box"><div class="kv col-blue" id="bus-total">—</div><div class="kl">총 승객</div></div>
+      <div class="kpi-box"><div class="kv col-yellow" id="bus-occ">—</div><div class="kl">전체 점유율</div></div>
+      <div class="kpi-box"><div class="kv col-green" id="bus-ts">—</div><div class="kl">마지막 BEV</div></div>
+    </div>
+  </div>
+
+  <!-- API 상태 -->
+  <div class="card span2">
+    <div class="card-title">🔌 외부 API 상태 (10개 소스)</div>
+    <div id="api-list"></div>
+  </div>
+
+  <!-- 실내 공기질 -->
+  <div class="card span2">
+    <div class="card-title">💨 역사 실내 공기질 <span id="air-station" style="margin-left:6px;color:var(--cyan)">성수역</span> <button onclick="fetchAir()" style="margin-left:auto;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:2px 8px;border-radius:4px;cursor:pointer;font-size:11px">새로고침</button></div>
+    <div class="air-grid">
+      <div class="air-box"><div class="air-label">CO₂</div><div class="air-val col-yellow" id="air-co2">—</div><div class="air-unit">ppm</div></div>
+      <div class="air-box"><div class="air-label">PM2.5</div><div class="air-val col-cyan" id="air-pm25">—</div><div class="air-unit">μg/m³</div></div>
+      <div class="air-box"><div class="air-label">온도</div><div class="air-val col-blue" id="air-temp">—</div><div class="air-unit">°C</div></div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)" id="air-status">—</div>
+  </div>
+
+  <!-- 엘리베이터 현황 -->
+  <div class="card span2">
+    <div class="card-title">♿ 엘리베이터 운행 현황 <button onclick="fetchElev()" style="margin-left:auto;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:2px 8px;border-radius:4px;cursor:pointer;font-size:11px">새로고침</button></div>
+    <div class="elev-list" id="elev-list"><div style="color:var(--muted);font-size:12px;padding:8px 0">로딩 중…</div></div>
+  </div>
+
+  <!-- 인시던트 로그 -->
+  <div class="card span4">
+    <div class="card-title">📋 인시던트 로그 <span id="inc-count" style="margin-left:6px;color:var(--red)"></span></div>
+    <table class="inc-table">
+      <thead><tr><th>시각</th><th>아이콘</th><th>유형</th><th>위치</th><th>심각도</th><th>상태</th></tr></thead>
+      <tbody id="inc-tbody"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">인시던트 없음</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- 24h 점유 예측 -->
+  <div class="card span2">
+    <div class="card-title">📈 24시간 점유율 예측 <span id="fc-station" style="color:var(--cyan);margin-left:6px">성수역</span></div>
+    <canvas class="sparkline" id="fc-canvas" height="60"></canvas>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">
+      <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
+    </div>
+    <div id="fc-peak" style="font-size:12px;color:var(--yellow);margin-top:6px"></div>
+  </div>
+
+  <!-- 데이터 소스 통계 -->
+  <div class="card span2">
+    <div class="card-title">📊 데이터 소스 활용 통계</div>
+    <div id="ds-stats" style="font-size:12px;color:var(--muted)">로딩 중…</div>
+  </div>
+
+</div>
+
+<script>
+const BASE = location.origin.replace(/:\d+$/, '') + ':8000';
+const WS_URL = 'ws://' + location.hostname + ':8765';
+let ws, _incidents = [], _busLastTs = 0;
+
+// ---- clock ----
+setInterval(() => {
+  document.getElementById('hdr-time').textContent = new Date().toLocaleTimeString('ko-KR');
+}, 1000);
+
+// ---- WS ----
+function connectWs() {
+  ws = new WebSocket(WS_URL);
+  const dot = document.getElementById('ws-dot');
+  const lbl = document.getElementById('ws-label');
+  ws.onopen = () => { dot.className = 'ws-on'; lbl.textContent = '연결됨'; };
+  ws.onclose = () => { dot.className = 'ws-off'; lbl.textContent = '재연결…'; setTimeout(connectWs, 3000); };
+  ws.onmessage = e => {
+    try { handleMsg(JSON.parse(e.data)); } catch {}
+  };
+}
+
+function handleMsg(d) {
+  if (d.type === 'bev' && d.cars) applySubwayBev(d);
+  if (d.type === 'bus_bev' && d.zones) applyBusBev(d);
+  if (d.incident || d.type === 'incident') appendIncident(d);
+  if (d.type === 'indoor_air') applyAir(d);
+  if (d.type === 'elevator_status') applyElev(d);
+}
+
+function applySubwayBev(d) {
+  let totalPax = 0, lowCars = 0, kw = 0;
+  (d.cars || []).forEach(c => {
+    totalPax += (c.seated||0) + (c.standing||0);
+    if ((c.occ_pct||0) < 0.3) { lowCars++; }
+  });
+  kw = lowCars * 3.6;
+  const co2 = kw * 0.4594 / 60 * 1000;
+  document.getElementById('kpi-pax').textContent = totalPax.toLocaleString();
+  document.getElementById('kpi-kw').innerHTML = kw.toFixed(1) + '<span style="font-size:16px;margin-left:4px">kW</span>';
+  document.getElementById('kpi-co2').innerHTML = co2.toFixed(1) + '<span style="font-size:16px;margin-left:4px">g/min</span>';
+}
+
+function applyBusBev(d) {
+  _busLastTs = Date.now();
+  const z = d.zones || {};
+  const zones = [
+    ['front','앞문',z.front||0], ['mid','중간',z.mid||0], ['rear','뒷문',z.rear||0]
+  ];
+  zones.forEach(([id, ,v]) => {
+    const pct = Math.min(100, Math.round(v * 100));
+    document.getElementById('z-'+id).style.width = pct + '%';
+    document.getElementById('zv-'+id).textContent = pct + '%';
+    // color by level
+    const fill = document.getElementById('z-'+id);
+    fill.style.background = pct > 80 ? 'var(--red)' : pct > 60 ? 'var(--yellow)' : 'var(--blue)';
+  });
+  document.getElementById('bus-total').textContent = (d.total_count||0).toLocaleString();
+  const occ = d.occ_pct != null ? Math.round(d.occ_pct * 100) + '%' : '—';
+  document.getElementById('bus-occ').textContent = occ;
+  if (d.fps) document.getElementById('bus-fps').textContent = d.fps.toFixed(1) + ' FPS';
+  document.getElementById('bus-ts').textContent = '방금';
+}
+
+setInterval(() => {
+  if (!_busLastTs) return;
+  const sec = Math.round((Date.now() - _busLastTs) / 1000);
+  const el = document.getElementById('bus-ts');
+  if (sec < 10) el.textContent = '방금';
+  else if (sec < 60) { el.textContent = sec + '초 전'; el.style.color = 'var(--yellow)'; }
+  else { el.textContent = Math.floor(sec/60) + '분 전'; el.style.color = 'var(--red)'; }
+}, 1000);
+
+function appendIncident(d) {
+  const icon = d.icon || '🚨';
+  const title = d.title || d.type || '이벤트';
+  const loc = d.location || d.station || d.car ? `${d.car||''}호차` : '—';
+  const sev = d.severity || 'mid';
+  const now = new Date().toLocaleTimeString('ko-KR');
+  _incidents.unshift({ icon, title, loc, sev, ts: now, resolved: false });
+  if (_incidents.length > 50) _incidents.pop();
+  renderIncidents();
+  document.getElementById('kpi-inc').textContent = _incidents.filter(x=>!x.resolved).length;
+  document.getElementById('inc-count').textContent = `(${_incidents.length}건)`;
+}
+
+function renderIncidents() {
+  const tbody = document.getElementById('inc-tbody');
+  if (!_incidents.length) { tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">인시던트 없음</td></tr>'; return; }
+  tbody.innerHTML = _incidents.slice(0,20).map(i => `
+    <tr>
+      <td style="color:var(--muted)">${i.ts}</td>
+      <td class="inc-icon">${i.icon}</td>
+      <td>${i.title}</td>
+      <td>${i.loc}</td>
+      <td class="sev-${i.sev}">${i.sev === 'high' ? '긴급' : i.sev === 'mid' ? '경고' : '정보'}</td>
+      <td><span style="cursor:pointer;color:var(--blue)" onclick="resolveInc(this)">해결</span></td>
+    </tr>`).join('');
+}
+
+window.resolveInc = function(el) {
+  const row = el.closest('tr');
+  const idx = Array.from(row.parentNode.children).indexOf(row);
+  if (_incidents[idx]) { _incidents[idx].resolved = true; }
+  el.textContent = '✓'; el.style.color = 'var(--green)';
+  document.getElementById('kpi-inc').textContent = _incidents.filter(x=>!x.resolved).length;
+};
+
+// ---- Air Quality ----
+async function fetchAir(station = '성수') {
+  try {
+    const r = await fetch(`${BASE}/api/v1/indoor_air?station=${encodeURIComponent(station)}`);
+    const d = await r.json();
+    applyAir(d);
+  } catch(e) { document.getElementById('air-status').textContent = '오류: ' + e.message; }
+}
+
+function applyAir(d) {
+  if (!d) return;
+  document.getElementById('air-co2').textContent = d.co2 != null ? d.co2.toFixed(0) : '—';
+  document.getElementById('air-pm25').textContent = d.pm25 != null ? d.pm25.toFixed(1) : '—';
+  document.getElementById('air-temp').textContent = d.temperature != null ? d.temperature.toFixed(1) : '—';
+  const co2 = d.co2 || 0;
+  const el = document.getElementById('air-co2');
+  el.style.color = co2 > 1500 ? 'var(--red)' : co2 > 1000 ? 'var(--yellow)' : 'var(--green)';
+  const sim = d.simulated ? '시뮬레이션 데이터' : '실측값';
+  document.getElementById('air-status').textContent = `${d.station||'성수역'} | ${sim} | ${new Date((d.fetched_at||0)*1000).toLocaleTimeString('ko-KR')}`;
+  document.getElementById('air-station').textContent = (d.station||'성수') + '역';
+}
+
+// ---- Elevator ----
+async function fetchElev(station = '성수') {
+  try {
+    const r = await fetch(`${BASE}/api/v1/elevator?station=${encodeURIComponent(station)}`);
+    const d = await r.json();
+    applyElev(d);
+  } catch(e) {}
+}
+
+function applyElev(d) {
+  const list = document.getElementById('elev-list');
+  const elevs = d.elevators || [];
+  if (!elevs.length) { list.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:8px 0">엘리베이터 정보 없음</div>'; return; }
+  list.innerHTML = elevs.map(ev => {
+    const sc = ev.status === '정상' ? 's-ok' : ev.status === '점검중' ? 's-maint' : 's-err';
+    return `<div class="elev-item"><span class="elev-id">${ev.id || ev.name || '엘리베이터'}</span><span class="elev-status ${sc}">${ev.status||'—'}</span><span style="font-size:10px;color:var(--muted);margin-left:8px">${ev.location||''}</span></div>`;
+  }).join('');
+}
+
+// ---- Occupancy Forecast ----
+async function fetchForecast(station = '성수') {
+  try {
+    const r = await fetch(`${BASE}/api/v1/occupancy_forecast?station=${encodeURIComponent(station)}&hours=24`);
+    const d = await r.json();
+    drawForecast(d);
+  } catch(e) {}
+}
+
+function drawForecast(d) {
+  const canvas = document.getElementById('fc-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 400, H = 60;
+  canvas.width = W; canvas.height = H;
+  const pts = d.hourly || [];
+  if (!pts.length) return;
+  const maxV = Math.max(...pts.map(p => p.occ||0)) || 1;
+  ctx.clearRect(0,0,W,H);
+  // gradient fill
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(59,130,246,0.6)');
+  grad.addColorStop(1,'rgba(59,130,246,0.05)');
+  ctx.beginPath();
+  pts.forEach((p,i) => {
+    const x = (i/(pts.length-1))*W;
+    const y = H - (p.occ/maxV)*(H-8) - 4;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+  // line
+  ctx.beginPath();
+  ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2;
+  pts.forEach((p,i) => {
+    const x = (i/(pts.length-1))*W;
+    const y = H - (p.occ/maxV)*(H-8) - 4;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  // peak label
+  const peakIdx = pts.reduce((mi,p,i,a) => p.occ > a[mi].occ ? i : mi, 0);
+  const peakH = d.peak_hour || peakIdx;
+  document.getElementById('fc-peak').textContent = `예측 피크: ${peakH}:00 — ${Math.round((pts[peakIdx]?.occ||0)*100)}%`;
+  document.getElementById('fc-station').textContent = (d.station||'성수') + '역';
+}
+
+// ---- API Health ----
+async function fetchApiHealth() {
+  try {
+    const r = await fetch(`${BASE}/api/v1/data_sources`);
+    const d = await r.json();
+    renderApiList(d);
+    renderDsStats(d);
+  } catch(e) {}
+}
+
+function renderApiList(d) {
+  const sources = d.data_sources || [];
+  const stats = (d.summary || {}).api_stats || {};
+  const list = document.getElementById('api-list');
+  list.innerHTML = sources.map(s => {
+    const active = s.live === false ? null : s.active;
+    const dotCls = s.live === false ? 'dot-y' : active ? 'dot-g' : 'dot-r';
+    const calls = stats[s.id] || 0;
+    return `<div class="api-row">
+      <div class="dot ${dotCls}"></div>
+      <div class="api-name">${s.name.split('—')[0].trim()}</div>
+      <div class="api-calls">${calls > 0 ? calls + '회' : ''}</div>
+      <div class="api-lat" style="color:${s.live===false?'var(--muted)':active?'var(--green)':'var(--red)'}">${s.live===false?'정적':active?'활성':'비활성'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDsStats(d) {
+  const s = d.summary || {};
+  document.getElementById('ds-stats').innerHTML = `
+    <div class="kpi-row">
+      <div class="kpi-box"><div class="kv col-blue">${s.total_sources||0}</div><div class="kl">총 소스</div></div>
+      <div class="kpi-box"><div class="kv col-green">${s.live_sources||0}</div><div class="kl">실시간</div></div>
+      <div class="kpi-box"><div class="kv col-yellow">${s.active_keys||0}</div><div class="kl">활성 키</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted)">
+      API 호출 통계: ${Object.entries(s.api_stats||{}).map(([k,v])=>`${k} ${v}회`).join(' · ') || '아직 없음'}
+    </div>`;
+}
+
+// ---- Init ----
+connectWs();
+fetchAir();
+fetchElev();
+fetchForecast();
+fetchApiHealth();
+setInterval(fetchApiHealth, 30000);
+setInterval(fetchAir, 300000);
+setInterval(fetchElev, 120000);
+setInterval(fetchForecast, 600000);
+
+// demo incident injection for empty state
+setTimeout(() => {
+  if (!_incidents.length) {
+    appendIncident({ icon: '♿', title: '우선석 점유', location: '3호차', severity: 'mid' });
+    appendIncident({ icon: '🚪', title: '병목 감지', location: '4호차 앞문', severity: 'low' });
+  }
+}, 2000);
+</script>
+</body>
+</html>

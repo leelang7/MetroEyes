@@ -657,44 +657,95 @@ function getI18nLang() {
   return I18N_REWARD[lang] ? lang : 'ko';
 }
 
-// 인센티브 보상 toast — 분산 액션 → 즉각 시각 피드백 + aria-live + 다국어
+// 인센티브 보상 toast — Toss 스타일 코인 폭발 + 카운트업 + 다국어
 function showRewardToast(krw, savedPct) {
   const lang = getI18nLang();
   const t18 = I18N_REWARD[lang];
-  let t = document.getElementById('reward-toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'reward-toast';
-    t.setAttribute('role', 'status');
-    t.setAttribute('aria-live', 'polite');
-    t.setAttribute('aria-atomic', 'true');
-    t.style.cssText = 'position:fixed;left:50%;top:30%;transform:translateX(-50%) scale(.85);padding:18px 24px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:18px;font-weight:800;font-size:18px;box-shadow:0 12px 36px rgba(16,185,129,.45);z-index:9999;text-align:center;opacity:0;transition:opacity .25s,transform .25s cubic-bezier(.2,1.4,.4,1);pointer-events:none;';
-    document.body.appendChild(t);
+
+  // ── CSS 한 번만 주입
+  if (!document.getElementById('_reward-style')) {
+    const s = document.createElement('style');
+    s.id = '_reward-style';
+    s.textContent = `
+@keyframes _coinPop{0%{transform:translateY(0) scale(1);opacity:1}60%{opacity:1}100%{transform:translateY(-80px) scale(.5) rotate(30deg);opacity:0}}
+@keyframes _badgePop{0%{transform:translateX(-50%) scale(.7);opacity:0}60%{transform:translateX(-50%) scale(1.08);opacity:1}80%{transform:translateX(-50%) scale(.97)}100%{transform:translateX(-50%) scale(1);opacity:1}}
+@keyframes _badgeFade{0%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(.85) translateY(8px)}}
+@keyframes _ripple{0%{transform:translate(-50%,-50%) scale(0);opacity:.7}100%{transform:translate(-50%,-50%) scale(4);opacity:0}}
+._coin-particle{position:fixed;pointer-events:none;z-index:10001;font-size:22px;animation:_coinPop .9s ease-out forwards}
+#_reward-badge{position:fixed;left:50%;bottom:22vh;z-index:10000;padding:0;background:transparent;pointer-events:none;text-align:center;min-width:200px}
+#_reward-ripple{position:fixed;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.6),transparent 70%);pointer-events:none;z-index:9999;animation:_ripple .6s ease-out forwards}
+`;
+    document.head.appendChild(s);
   }
-  t.innerHTML = `<div style="font-size:32px;margin-bottom:6px;" aria-hidden="true">🪙</div><div>+₩${krw.toLocaleString()} ${t18.title}</div><div style="font-size:11px;font-weight:600;opacity:.85;margin-top:4px;">${t18.sub(savedPct)}</div>`;
-  // Web Speech API — 분산 보상 음성 안내 (조용히, 짧게)
+
+  // ── 파티클 폭발 (코인 5개)
+  const cx = window.innerWidth / 2, cy = window.innerHeight * 0.78;
+  for (let i = 0; i < 5; i++) {
+    const p = document.createElement('div');
+    p.className = '_coin-particle';
+    p.textContent = '🪙';
+    p.style.left = (cx + (Math.random() - .5) * 120) + 'px';
+    p.style.top = cy + 'px';
+    p.style.animationDelay = (i * 80) + 'ms';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1200);
+  }
+
+  // ── 리플 효과
+  const rpl = document.createElement('div');
+  rpl.id = '_reward-ripple';
+  rpl.style.left = cx + 'px'; rpl.style.top = cy + 'px';
+  document.body.appendChild(rpl);
+  setTimeout(() => rpl.remove(), 700);
+
+  // ── 배지 카드
+  let badge = document.getElementById('_reward-badge');
+  if (!badge) { badge = document.createElement('div'); badge.id = '_reward-badge'; document.body.appendChild(badge); }
+  badge.style.animation = 'none'; badge.offsetHeight; // reflow
+  badge.innerHTML = `
+    <div style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);border-radius:24px;padding:18px 28px;box-shadow:0 16px 48px rgba(16,185,129,.55),0 4px 12px rgba(0,0,0,.35);border:1.5px solid rgba(255,255,255,.20);">
+      <div style="font-size:13px;font-weight:600;opacity:.85;margin-bottom:4px;">${t18.title}</div>
+      <div id="_reward-count" style="font-size:40px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;">+₩0</div>
+      <div style="font-size:11px;font-weight:600;opacity:.75;margin-top:6px;">${t18.sub(savedPct)}</div>
+    </div>`;
+  badge.style.animation = '_badgePop .45s cubic-bezier(.2,1.4,.4,1) forwards';
+
+  // ── 카운트업
+  const start = Date.now(), dur = 700;
+  const tick = () => {
+    const el = document.getElementById('_reward-count');
+    if (!el) return;
+    const progress = Math.min(1, (Date.now() - start) / dur);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = '+₩' + Math.round(eased * krw).toLocaleString();
+    if (progress < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+
+  // ── 페이드아웃
+  setTimeout(() => {
+    badge.style.animation = '_badgeFade .4s ease-in forwards';
+    setTimeout(() => { badge.innerHTML = ''; }, 500);
+  }, 1800);
+
+  // ── 헤더 배지 펄스
+  const hdr = document.getElementById('header-reward');
+  if (hdr) {
+    hdr.style.transform = 'scale(1.25)';
+    hdr.style.transition = 'transform .2s cubic-bezier(.2,1.4,.4,1)';
+    setTimeout(() => { hdr.style.transform = ''; }, 400);
+  }
+
+  // Web Speech API
   try {
     if ('speechSynthesis' in window) {
-      const utterMap = {
-        ko: `${krw}원 분산 보상`,
-        en: `Reward ${krw} won earned`,
-        zh: `分散奖励 ${krw} 韩元`,
-        ja: `${krw}ウォン分散ボーナス`,
-      };
+      const utterMap = { ko: `${krw}원 분산 보상`, en: `Reward ${krw} won`, zh: `奖励 ${krw} 韩元`, ja: `${krw}ウォン獲得` };
       const u = new SpeechSynthesisUtterance(utterMap[lang] || utterMap.ko);
       u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang];
       u.volume = 0.6; u.rate = 1.1;
       window.speechSynthesis.speak(u);
     }
   } catch {}
-  requestAnimationFrame(() => {
-    t.style.opacity = '1';
-    t.style.transform = 'translateX(-50%) scale(1)';
-  });
-  setTimeout(() => {
-    t.style.opacity = '0';
-    t.style.transform = 'translateX(-50%) scale(.85)';
-  }, 1300);
 }
 
 // 누적 보상/임팩트 요약 — 임팩트 카드 + 헤더 배지 동시 갱신
