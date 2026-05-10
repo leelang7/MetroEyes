@@ -1572,19 +1572,32 @@ const LIVE = (() => {
     const container = document.getElementById('mini-map');
     if (!container) return;
     try {
+      // 타일 스타일 순서: OpenFreeMap → CARTO dark → demotiles fallback
+      const MM_STYLES = [
+        'https://tiles.openfreemap.org/styles/liberty',
+        'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        'https://demotiles.maplibre.org/style.json',
+      ];
+      let _mmStyleIdx = 0;
       _mmMap = new maplibregl.Map({
         container: 'mini-map',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: [127.0276, 37.4980],   // 강남역 default
+        style: MM_STYLES[0],
+        center: [127.0276, 37.4980],
         zoom: 13,
-        pitch: 50,                      // 3D 시점 (지면에서 50도 기울임)
+        pitch: 50,
         bearing: -10,
         antialias: true,
         attributionControl: { compact: true }
       });
       _mmMap.on('error', (e) => {
-        if (e && e.error && /style/i.test(String(e.error.message || ''))) {
-          _markMmFailed('style load error');
+        const msg = String((e && e.error && e.error.message) || '');
+        if (/style|fetch|network/i.test(msg) || (e && e.error && e.error.status >= 400)) {
+          _mmStyleIdx++;
+          if (_mmStyleIdx < MM_STYLES.length) {
+            try { _mmMap.setStyle(MM_STYLES[_mmStyleIdx]); } catch {}
+          } else {
+            _markMmFailed('all styles failed');
+          }
         }
       });
       _mmMap.on('load', () => {
