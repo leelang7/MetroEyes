@@ -221,24 +221,36 @@ function startEtaCountdown(seconds) {
     if (remaining <= 0) {
       clearInterval(_etaTimer);
       el.innerHTML = '<span style="color: #10b981; font-weight: 800;">✅ 도착</span>';
-      // 도착 시 누적 보상 안내
+      // 도착 시 Toss 스타일 파티클 + 누적 보상 안내
       try {
         const my = JSON.parse(localStorage.getItem('metroeyes_my_impact') || '{}');
+        const krw = my.krw || 0;
+        const lang = (navigator.language || 'ko').slice(0, 2);
+        // 파티클 폭발
+        if (!document.getElementById('_ob-style')) {
+          const s = document.createElement('style');
+          s.id = '_ob-style';
+          s.textContent = `@keyframes _obCoin{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-100px) scale(.4) rotate(40deg);opacity:0}} ._ob-coin{position:fixed;pointer-events:none;z-index:9999;font-size:24px;animation:_obCoin 1.1s ease-out forwards} @keyframes _obBadge{0%{opacity:0;transform:translateX(-50%) scale(.7)}60%{transform:translateX(-50%) scale(1.06)}100%{opacity:1;transform:translateX(-50%) scale(1)}} #_ob-badge{position:fixed;left:50%;bottom:15vh;transform:translateX(-50%) scale(.7);opacity:0;z-index:9998;animation:_obBadge .5s cubic-bezier(.2,1.4,.4,1) forwards;text-align:center;pointer-events:none}`;
+          document.head.appendChild(s);
+        }
+        const cx = window.innerWidth / 2, cy = window.innerHeight * 0.5;
+        for (let i = 0; i < 7; i++) {
+          const p = document.createElement('div'); p.className = '_ob-coin'; p.textContent = '🪙';
+          p.style.left = (cx + (Math.random() - .5) * 160) + 'px';
+          p.style.top = cy + 'px';
+          p.style.animationDelay = (i * 70) + 'ms';
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 1400);
+        }
+        // 배지
+        let badge = document.getElementById('_ob-badge');
+        if (!badge) { badge = document.createElement('div'); badge.id = '_ob-badge'; document.body.appendChild(badge); }
+        const stopName = cfg.nextStop ? cfg.nextStop(hour) : '목적지';
+        badge.innerHTML = `<div style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);border-radius:20px;padding:16px 26px;box-shadow:0 12px 40px rgba(16,185,129,.5);color:#fff;"><div style="font-size:28px;margin-bottom:4px;">✅</div><div style="font-size:16px;font-weight:800;">${stopName} 도착</div>${krw > 0 ? `<div style="font-size:13px;opacity:.85;margin-top:4px;">누적 적립 ₩${krw.toLocaleString()}</div>` : ''}</div>`;
+        setTimeout(() => { badge.style.opacity = '0'; badge.style.transition = 'opacity .4s'; setTimeout(() => badge.remove(), 500); }, 2500);
         if (my.n) {
-          const krw = my.krw || 0;
-          const lang = (navigator.language || 'ko').slice(0, 2);
-          const msg = {
-            ko: `${cfg.nextStop(hour)} 도착. 누적 ${krw.toLocaleString()}원 적립 중`,
-            en: `Arrived at ${cfg.nextStop(hour)}. Total ${krw.toLocaleString()} won earned`,
-            zh: `到达 ${cfg.nextStop(hour)}。累计 ${krw} 韩元`,
-            ja: `${cfg.nextStop(hour)} 到着。累計 ${krw} ウォン`,
-          }[lang] || `${cfg.nextStop(hour)} 도착. 누적 ${krw.toLocaleString()}원 적립`;
-          if ('speechSynthesis' in window) {
-            const u = new SpeechSynthesisUtterance(msg);
-            u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR';
-            u.volume = 0.6; u.rate = 1.0;
-            window.speechSynthesis.speak(u);
-          }
+          const msg = { ko: `${stopName} 도착. 누적 ${krw.toLocaleString()}원 적립`, en: `Arrived at ${stopName}. Total ${krw.toLocaleString()} won`, zh: `到达 ${stopName}。累计 ${krw} 韩元`, ja: `${stopName} 到着。累計 ${krw} ウォン` }[lang] || `${stopName} 도착`;
+          if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(msg); u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR'; u.volume = 0.6; u.rate = 1.0; window.speechSynthesis.speak(u); }
         }
       } catch {}
       return;

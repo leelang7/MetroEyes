@@ -1952,9 +1952,12 @@ async def http_health(path, headers):
             }
         body = json.dumps({
             "ok": True, "mode": "lite",
+            "version": "v6.9-cycle437",
+            "data_sources": 10,
             "keys": {
                 "seoul": bool(SEOUL_KEY), "subway": bool(SUBWAY_KEY),
                 "naver": bool(NAVER_ID), "anthropic": bool(ANTHROPIC_KEY),
+                "data_go_kr": bool(os.environ.get("DATA_GO_KR_API_KEY", "")),
             },
             "clients": len(clients),
             "impact": _build_impact_summary() if _impact_total["count"] > 0 else None,
