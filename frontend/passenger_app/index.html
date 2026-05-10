@@ -81,6 +81,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
       <span class="gps-pulse" id="gps-pulse" title="GPS로 자동 매칭됨"></span>
       <span id="ctx-name">잠실역</span>
       <small id="ctx-meta">2호선 · 잠실행</small>
+      <span id="cluster-badge" style="display:none;margin-left:4px;padding:1px 5px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.3px;"></span>
       <span class="picker-arrow">▾</span>
     </div>
     <!-- ♿ 접근성 toggle (cycle 354 — 시각 약자/고령층 + IDEA-9 chain 확장) -->
@@ -2522,6 +2523,32 @@ const LIVE = (() => {
       card.hidden = true;
     }
   }
+  // 역 클러스터 배지 (EDA K=3 결과: 오피스/주거/환승)
+  const _CLUSTER_LABELS = {
+    office: { ko: '오피스형', color: '#3b82f6', bg: 'rgba(59,130,246,.18)', border: 'rgba(59,130,246,.5)' },
+    residential: { ko: '주거형', color: '#22c55e', bg: 'rgba(34,197,94,.18)', border: 'rgba(34,197,94,.5)' },
+    hub: { ko: '환승 허브', color: '#a855f7', bg: 'rgba(168,85,247,.18)', border: 'rgba(168,85,247,.5)' },
+  };
+  // 주요 역 클러스터 매핑 (scripts/cluster_stations.py 결과)
+  const _STATION_CLUSTER = {
+    '강남': 'office', '역삼': 'office', '선릉': 'office', '삼성': 'office', '성수': 'office',
+    '여의도': 'office', '을지로입구': 'office', '종각': 'office', '광화문': 'office',
+    '신림': 'residential', '사당': 'residential', '신도림': 'residential', '당산': 'residential',
+    '서울대입구': 'residential', '이수': 'residential', '방학': 'residential',
+    '서울역': 'hub', '잠실': 'hub', '홍대입구': 'hub', '고속터미널': 'hub',
+    '구로디지털단지': 'hub', '강변': 'hub', '왕십리': 'hub', '신촌': 'hub',
+  };
+  function _updateClusterBadge(stationName) {
+    const badge = document.getElementById('cluster-badge');
+    if (!badge) return;
+    const clean = stationName.replace('역', '').trim();
+    const cluster = _STATION_CLUSTER[clean];
+    if (!cluster) { badge.style.display = 'none'; return; }
+    const c = _CLUSTER_LABELS[cluster];
+    badge.textContent = c.ko;
+    badge.style.cssText = `display:inline;margin-left:4px;padding:1px 5px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.3px;color:${c.color};background:${c.bg};border:1px solid ${c.border}`;
+  }
+
   // 🌬️ 실내 공기질 + 엘리베이터 카드 — /api/v1/indoor_air + /api/v1/elevator
   const _API_BASE = location.origin.replace(/:\d+$/, '') + ':8000';
   let _airLastStation = null, _elevLastStation = null;
@@ -2586,6 +2613,7 @@ const LIVE = (() => {
   // 역 변경 시 공기질/엘리베이터 자동 갱신
   function _refreshEnvCards(station) {
     if (!station) return;
+    _updateClusterBadge(station);
     if (station !== _airLastStation) { _airLastStation = station; _fetchAirQuality(station); }
     if (station !== _elevLastStation) { _elevLastStation = station; _fetchElevator(station); }
   }
