@@ -53,6 +53,7 @@ body {
   border-top: 1px solid #e5e7eb;
 }
 .foot .pgnum b { color: #1a1a1f; }
+.foot .pgnum::after { content: ' / 26'; color: #94a3b8; font-size: 9px; }
 
 .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; }
 .cards.c3 { grid-template-columns: repeat(3, 1fr); }
@@ -291,7 +292,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>출처: 1주차 EDA · CardSubwayTime 2026-02 · 서울교통공사 2023</span><span class="pgnum"><b>1-1</b></span></div>
+  <div class="foot"><span>출처: 1주차 EDA · CardSubwayTime 2026-02 · 서울교통공사 2023</span><span class="pgnum"><b>1쪽</b></span></div>
 </section>
 
 <!-- 1-2 -->
@@ -320,7 +321,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>scripts/policy_roi_v3.py · 1,000회 시뮬 · seed=42 재현 가능</span><span class="pgnum"><b>1-2</b></span></div>
+  <div class="foot"><span>scripts/policy_roi_v3.py · 1,000회 시뮬 · seed=42 재현 가능</span><span class="pgnum"><b>2쪽</b></span></div>
 </section>
 
 <!-- 1-3 — 3 채널 듀얼 도메인 + 네이티브앱 -->
@@ -356,7 +357,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>실제 캡처: outputs/demo/ · 폰 앱 코드: mobile_app/ (Flutter)</span><span class="pgnum"><b>1-3</b></span></div>
+  <div class="foot"><span>실제 캡처: outputs/demo/ · 폰 앱 코드: mobile_app/ (Flutter)</span><span class="pgnum"><b>3쪽</b></span></div>
 </section>
 
 <!-- ════════ §2 cover ════════ -->
@@ -408,7 +409,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>TRIZ 발명 기법 #5 통합 원리 — 별도 인프라 없이 카메라 한 대로 모든 가치 추출</span><span class="pgnum"><b>2-1</b></span></div>
+  <div class="foot"><span>TRIZ 발명 기법 #5 통합 원리 — 별도 인프라 없이 카메라 한 대로 모든 가치 추출</span><span class="pgnum"><b>4쪽</b></span></div>
 </section>
 
 <!-- 2-2 자체 카메라 시스템 -->
@@ -441,7 +442,7 @@ table td.win { color: #047857; font-weight: 700; }
       <div class="diff-box green"><h3>🔌 데모 모드</h3><p><code>--demo</code> 인자 시 모델 없어도 가짜 데이터 동작 — 시연 fail-safe</p></div>
     </div>
   </div>
-  <div class="foot"><span>코드: src/cv/tesla_bev.py · 6 클래스 (사람/자전거/차/오토바이/버스/트럭)</span><span class="pgnum"><b>2-2</b></span></div>
+  <div class="foot"><span>코드: src/cv/tesla_bev.py · 6 클래스 (사람/자전거/차/오토바이/버스/트럭)</span><span class="pgnum"><b>5쪽</b></span></div>
 </section>
 
 <!-- 2-3 9 공공데이터 -->
@@ -476,7 +477,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>코드: src/cv/lite_server.py fetch_citydata() · OpenAPI 명세: /api/openapi.yaml</span><span class="pgnum"><b>2-3</b></span></div>
+  <div class="foot"><span>코드: src/cv/lite_server.py fetch_citydata() · OpenAPI 명세: /api/openapi.yaml</span><span class="pgnum"><b>6쪽</b></span></div>
 </section>
 
 <!-- 2-4 점유 네트워크 분석 -->
@@ -514,7 +515,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>scripts/eda_line_hour_priority.py · scripts/eda_line_priority_roi.py</span><span class="pgnum"><b>2-4</b></span></div>
+  <div class="foot"><span>scripts/eda_line_hour_priority.py · scripts/eda_line_priority_roi.py</span><span class="pgnum"><b>7쪽</b></span></div>
 </section>
 
 <!-- 2-5 분산 효과 EDA -->
@@ -549,7 +550,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>scripts/eda_dispersion_sim.py · 응답률 30% / 분산률 45% / 시드 42</span><span class="pgnum"><b>2-5</b></span></div>
+  <div class="foot"><span>scripts/eda_dispersion_sim.py · 응답률 30% / 분산률 45% / 시드 42</span><span class="pgnum"><b>8쪽</b></span></div>
 </section>
 
 <!-- 2-6 OD + 환승 + 통계 검증 -->
@@ -587,7 +588,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>scripts/policy_roi_v3.py · scripts/eda_od_asymmetry.py · seed=42</span><span class="pgnum"><b>2-6</b></span></div>
+  <div class="foot"><span>scripts/policy_roi_v3.py · scripts/eda_od_asymmetry.py · seed=42</span><span class="pgnum"><b>9쪽</b></span></div>
 </section>
 
 <!-- ════════ §3 cover ════════ -->
@@ -652,7 +653,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>이 6 IDEA 가 MetroEyes 의 정체성. 기존 공공 CCTV 인프라 위에 SW만 — 추가 하드웨어 0원.</span><span class="pgnum"><b>3-1</b></span></div>
+  <div class="foot"><span>이 6 IDEA 가 MetroEyes 의 정체성. 기존 공공 CCTV 인프라 위에 SW만 — 추가 하드웨어 0원.</span><span class="pgnum"><b>10쪽</b></span></div>
 </section>
 
 <!-- 3-1b. 알람 UI 캡쳐 — 분실·무임·응급 toast -->
@@ -709,7 +710,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>frontend/operator_web/realbev.html · IDEA-6 응급 · IDEA-7 분실 · 무임승차 감지 · 우선석/병목 toast</span><span class="pgnum"><b>3-1b</b></span></div>
+  <div class="foot"><span>frontend/operator_web/realbev.html · IDEA-6 응급 · IDEA-7 분실 · 무임승차 감지 · 우선석/병목 toast</span><span class="pgnum"><b>11쪽</b></span></div>
 </section>
 
 <!-- 3-2. 4단 차등 보상 자동 시스템 (핵심) -->
@@ -771,7 +772,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>src/cv/lite_server.py _bonus_krw() · TRANSFER_STATIONS 37곳 + OD_HOTSPOTS 12곳 (현 시각 자동)</span><span class="pgnum"><b>3-2</b></span></div>
+  <div class="foot"><span>src/cv/lite_server.py _bonus_krw() · TRANSFER_STATIONS 37곳 + OD_HOTSPOTS 12곳 (현 시각 자동)</span><span class="pgnum"><b>12쪽</b></span></div>
 </section>
 
 <!-- 3-3. 에스컬레이터 + 통행량 (군중밀집 사전경보) -->
@@ -822,7 +823,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>코드: incident_log {ev_type:'bottleneck'} 누적 → 정체 hot-spot 통계 + 정책 근거</span><span class="pgnum"><b>3-3</b></span></div>
+  <div class="foot"><span>코드: incident_log {ev_type:'bottleneck'} 누적 → 정체 hot-spot 통계 + 정책 근거</span><span class="pgnum"><b>13쪽</b></span></div>
 </section>
 
 <!-- 3-4 버스 시스템 -->
@@ -860,7 +861,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>frontend/operator_web/bus.html · 24시간 sparkline + 점유 가장 낮은 차량 추천</span><span class="pgnum"><b>3-4</b></span></div>
+  <div class="foot"><span>frontend/operator_web/bus.html · 24시간 sparkline + 점유 가장 낮은 차량 추천</span><span class="pgnum"><b>14쪽</b></span></div>
 </section>
 
 <!-- 3-5 4 도시 비교 + 발명 기법 -->
@@ -901,7 +902,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>발명 기법 = TRIZ 발명 문제 해결 기법 (1956 Altshuller) + onepager 4 도시 카드</span><span class="pgnum"><b>3-5</b></span></div>
+  <div class="foot"><span>발명 기법 = TRIZ 발명 문제 해결 기법 (1956 Altshuller) + onepager 4 도시 카드</span><span class="pgnum"><b>15쪽</b></span></div>
 </section>
 
 <!-- 4-1 9일 사이클 + AI 협업 -->
@@ -946,7 +947,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>D-9 ~ D-4 (2026-05-01 ~ 05-09) · 자동 모드 v6.8 · CHANGELOG.md 누적 추적</span><span class="pgnum"><b>4-1</b></span></div>
+  <div class="foot"><span>D-9 ~ D-4 (2026-05-01 ~ 05-09) · 자동 모드 v6.8 · CHANGELOG.md 누적 추적</span><span class="pgnum"><b>16쪽</b></span></div>
 </section>
 
 <!-- 4-2 안정성 -->
@@ -994,7 +995,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       <p>· Windows: <code>./scripts/dday.ps1 -Quick</code> · Mac/Linux: <code>./scripts/dday.sh --quick</code> · Make: <code>make verify</code><br>모두 10초 안 282 가드 + 제출 검증 통과.</p>
     </div>
   </div>
-  <div class="foot"><span>docs/RUNBOOK.md · scripts/dday.ps1/sh + Makefile · 빌트인 8단 안전망</span><span class="pgnum"><b>4-2</b></span></div>
+  <div class="foot"><span>docs/RUNBOOK.md · scripts/dday.ps1/sh + Makefile · 빌트인 8단 안전망</span><span class="pgnum"><b>17쪽</b></span></div>
 </section>
 
 <!-- 4-3 양면 가치사슬 -->
@@ -1028,7 +1029,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>src/cv/lite_server.py + frontend/operator_web/ + frontend/passenger_app/ + mobile_app/</span><span class="pgnum"><b>4-3</b></span></div>
+  <div class="foot"><span>src/cv/lite_server.py + frontend/operator_web/ + frontend/passenger_app/ + mobile_app/</span><span class="pgnum"><b>18쪽</b></span></div>
 </section>
 
 <!-- ════════ §5 cover ════════ -->
@@ -1093,7 +1094,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>5 계층 · 11 페이지 4언어 동기화 · CI 15 작업 자동 검증</span><span class="pgnum"><b>5-1</b></span></div>
+  <div class="foot"><span>5 계층 · 11 페이지 4언어 동기화 · CI 15 작업 자동 검증</span><span class="pgnum"><b>19쪽</b></span></div>
 </section>
 
 <!-- 5-2 시민 웹앱 + 네이티브 폰앱 -->
@@ -1130,7 +1131,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>frontend/passenger_app/ + mobile_app/ (Flutter, Android/Windows/Web 동일)</span><span class="pgnum"><b>5-2</b></span></div>
+  <div class="foot"><span>frontend/passenger_app/ + mobile_app/ (Flutter, Android/Windows/Web 동일)</span><span class="pgnum"><b>20쪽</b></span></div>
 </section>
 
 <!-- 5-3 운영자 콘솔 (지하철 + 버스 + 광고 + admin) -->
@@ -1181,7 +1182,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>frontend/operator_web/{realbev,index,bus,ad_pricing}.html + admin.html</span><span class="pgnum"><b>5-3</b></span></div>
+  <div class="foot"><span>frontend/operator_web/{realbev,index,bus,ad_pricing}.html + admin.html</span><span class="pgnum"><b>21쪽</b></span></div>
 </section>
 
 <!-- 5-4 6 IDEA 화면 매핑 -->
@@ -1243,7 +1244,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>심사위원 평가 가이드 — 6 IDEA 5분 안에 모두 체험 가능</span><span class="pgnum"><b>5-4</b></span></div>
+  <div class="foot"><span>심사위원 평가 가이드 — 6 IDEA 5분 안에 모두 체험 가능</span><span class="pgnum"><b>22쪽</b></span></div>
 </section>
 
 <!-- 6-1 비즈니스 모델 -->
@@ -1292,7 +1293,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>3-tier 비즈니스 모델 · 보수 시뮬</span><span class="pgnum"><b>6-1</b></span></div>
+  <div class="foot"><span>3-tier 비즈니스 모델 · 보수 시뮬</span><span class="pgnum"><b>23쪽</b></span></div>
 </section>
 
 <!-- 6-2 시장 + 매출 시뮬 합침 -->
@@ -1342,7 +1343,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>3년 합산: R&amp;D ₩57억 / 매출 ₩266억+ / 매출 비율 4.7× / 영업이익률 80%+</span><span class="pgnum"><b>6-2</b></span></div>
+  <div class="foot"><span>3년 합산: R&amp;D ₩57억 / 매출 ₩266억+ / 매출 비율 4.7× / 영업이익률 80%+</span><span class="pgnum"><b>24쪽</b></span></div>
 </section>
 
 <!-- 6-3 ESG + 탑승보상 + 비콘 + CO₂ -->
@@ -1394,7 +1395,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>scripts/eda_co2_savings.py · ESG 5축 정량 · BLE 비콘 기존 인프라 재활용 · 탑승→즉시 보상 UX</span><span class="pgnum"><b>6-3</b></span></div>
+  <div class="foot"><span>scripts/eda_co2_savings.py · ESG 5축 정량 · BLE 비콘 기존 인프라 재활용 · 탑승→즉시 보상 UX</span><span class="pgnum"><b>25쪽</b></span></div>
 </section>
 
 <!-- 7-1 기술 스택 + 출처 -->
@@ -1452,7 +1453,7 @@ def _bonus_krw(station: str) -&gt; tuple[int, str]:
       </div>
     </div>
   </div>
-  <div class="foot"><span>requirements.txt · 56 dependencies · Apache 2.0 오픈 소스</span><span class="pgnum"><b>7-1</b></span></div>
+  <div class="foot"><span>requirements.txt · 56 dependencies · Apache 2.0 오픈 소스</span><span class="pgnum"><b>26쪽</b></span></div>
 </section>
 
 </div>
