@@ -2030,7 +2030,37 @@ async def main():
             asyncio.create_task(fake_bus_bev_loop())
             asyncio.create_task(fake_impact_seed_loop())
             asyncio.create_task(fake_incident_seed_loop())
-        await asyncio.Future()  # run forever
+
+    # 주기적 indoor_air + elevator broadcast
+    asyncio.create_task(_periodic_env_broadcast())
+    await asyncio.Future()  # run forever
+
+
+async def _periodic_env_broadcast():
+    """5분마다 실내공기질, 2분마다 엘리베이터 상태를 WS broadcast."""
+    import random as _rnd
+    _stations = ["성수", "강남", "서울역", "잠실", "홍대입구"]
+    last_elev = 0.0
+    while True:
+        now = time.time()
+        try:
+            loop = asyncio.get_event_loop()
+            station = _rnd.choice(_stations)
+            air = await loop.run_in_executor(None, fetch_indoor_air, station)
+            air["type"] = "indoor_air"
+            await broadcast(json.dumps(air, ensure_ascii=False))
+        except Exception as _e:
+            print(f"[env-broadcast] air err: {_e}", flush=True)
+        if now - last_elev >= 120:
+            try:
+                station = _rnd.choice(_stations)
+                elev = await loop.run_in_executor(None, fetch_elevator_status, station)
+                elev["type"] = "elevator_status"
+                await broadcast(json.dumps(elev, ensure_ascii=False))
+                last_elev = now
+            except Exception as _e:
+                print(f"[env-broadcast] elev err: {_e}", flush=True)
+        await asyncio.sleep(300)
 
 
 if __name__ == "__main__":

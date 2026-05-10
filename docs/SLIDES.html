@@ -241,7 +241,7 @@ li strong { color: #e63946; }
     <div class="section-num">01</div>
     <div class="section-divider"></div>
     <div class="section-title">제안배경 및 출품작 소개</div>
-    <p class="section-desc">서울 지하철 일평균 700만 통행에서 "보이지 않는 30%"가 무엇이며, 왜 지금 풀어야 하는가.</p>
+    <p class="section-desc">서울 지하철·버스 일평균 1,700만 통행에서 "보이지 않는 30%"가 무엇이며, 왜 지금 풀어야 하는가.</p>
   </div>
   <div class="foot"><span class="brand">METROEYES</span><span class="page">02</span></div>
 </section>
@@ -257,7 +257,7 @@ li strong { color: #e63946; }
   </div>
   <div class="body">
     <h1 class="headline">우리는 "어느 칸이 비었는지" 모르고 있다</h1>
-    <p class="subhead">서울 지하철 운영의 4단 패러독스 — 정보 부재로 가치가 새고 있다.</p>
+    <p class="subhead">서울 대중교통(지하철·버스) 운영의 4단 패러독스 — 정보 부재로 가치가 새고 있다.</p>
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:48px; margin-top:24px;">
       <div>
@@ -820,6 +820,309 @@ li strong { color: #e63946; }
   <div class="foot"><span class="brand">METROEYES</span><span class="page">17</span></div>
 </section>
 
+<!-- ==================== 12a. 운영자 콘솔 전체 대시보드 화면 ==================== -->
+<section class="slide">
+  <div class="head">
+    <div class="left">
+      <span class="sec-num">05</span>
+      <span class="sec-name">화면 구성 · 운영자 콘솔 4도메인 통합</span>
+    </div>
+    <div class="right">2026 서울시 빅데이터 활용 경진대회</div>
+  </div>
+  <div class="body" style="padding:18px 40px 10px;">
+    <h1 class="headline" style="font-size:28px; margin-bottom:6px;">운영자 콘솔 — 지하철·버스·실카메라·광고 4탭 통합 대시보드</h1>
+    <p class="subhead" style="margin-bottom:10px; font-size:13px;">단일 WebSocket 백엔드 — 탭 전환만으로 4개 도메인 실시간 관제. 버스 탭 활성 상태.</p>
+
+    <div style="border:2px solid #1d3557; border-radius:8px; overflow:hidden; font-size:11px;">
+      <!-- Nav bar mockup -->
+      <div style="background:#0d1b2a; padding:7px 14px; display:flex; align-items:center; gap:3px;">
+        <span style="color:#7dd3d3; font-size:12px; font-weight:700; margin-right:10px;">● MetroEyes</span>
+        <span style="background:rgba(255,255,255,0.06); color:#7aaccc; padding:5px 11px; border-radius:4px 4px 0 0; font-size:10px;">🚇 지하철</span>
+        <span style="background:#2a9d8f; color:#fff; padding:5px 11px; border-radius:4px 4px 0 0; font-size:10px; font-weight:700; box-shadow:0 -2px 8px rgba(42,157,143,0.5);">🚌 버스</span>
+        <span style="background:rgba(255,255,255,0.06); color:#7aaccc; padding:5px 11px; border-radius:4px 4px 0 0; font-size:10px;">📷 실 카메라</span>
+        <span style="background:rgba(255,255,255,0.06); color:#7aaccc; padding:5px 11px; border-radius:4px 4px 0 0; font-size:10px;">📺 디스플레이</span>
+        <span style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+          <span style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:3px 8px; border-radius:4px; font-size:9px; font-weight:700;">🟢 LIVE  분산효과 σ−8.3%</span>
+          <span style="background:linear-gradient(135deg,#f59e0b,#ef4444); color:#fff; padding:4px 10px; border-radius:4px; font-size:9px; font-weight:700;">▶ 시연 모드</span>
+        </span>
+      </div>
+      <!-- Controls strip -->
+      <div style="background:#0a1628; padding:6px 14px; display:flex; gap:10px; border-bottom:1px solid #1a2f4a; font-size:10px; color:#7aaccc;">
+        <span style="display:flex; align-items:center; gap:4px;"><span style="width:6px; height:6px; background:#10b981; border-radius:50%; animation:none;"></span>잠실역.7번출구</span>
+        <span>노선 <b style="color:#fff;">간선 142</b></span>
+        <span>아키타입 <b style="color:#2a9d8f;">환승 허브</b></span>
+        <span>시각 <b style="color:#f59e0b;">18시</b></span>
+      </div>
+      <!-- Main content area -->
+      <div style="background:#0a1628; display:grid; grid-template-columns:1fr 260px; height:310px;">
+        <!-- Map area -->
+        <div style="padding:10px; border-right:1px solid #1a2f4a;">
+          <div style="color:#2a9d8f; font-size:9px; font-weight:700; letter-spacing:1px; margin-bottom:6px;">BIS 실시간 · 서울 버스 노선망 (간선/지선/순환)</div>
+          <svg width="100%" height="256" viewBox="0 0 640 256" style="background:#061018; border-radius:6px;">
+            <!-- Grid faint -->
+            <line x1="0" y1="85" x2="640" y2="85" stroke="#0d2035" stroke-width="1"/>
+            <line x1="0" y1="170" x2="640" y2="170" stroke="#0d2035" stroke-width="1"/>
+            <line x1="160" y1="0" x2="160" y2="256" stroke="#0d2035" stroke-width="1"/>
+            <line x1="320" y1="0" x2="320" y2="256" stroke="#0d2035" stroke-width="1"/>
+            <line x1="480" y1="0" x2="480" y2="256" stroke="#0d2035" stroke-width="1"/>
+            <!-- Bus routes -->
+            <polyline points="30,210 100,175 200,155 320,130 440,108 560,88 620,78" fill="none" stroke="#e63946" stroke-width="3" stroke-linecap="round"/>
+            <polyline points="30,80 120,95 230,115 320,135 430,155 540,172 620,180" fill="none" stroke="#2a9d8f" stroke-width="3" stroke-linecap="round"/>
+            <polyline points="60,230 170,200 290,178 400,160 510,145 610,135" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6,3"/>
+            <!-- Stop circles -->
+            <circle cx="200" cy="155" r="5" fill="#e63946"/><circle cx="320" cy="130" r="6" fill="#e63946" stroke="#fff" stroke-width="2"/>
+            <circle cx="440" cy="108" r="5" fill="#e63946"/>
+            <circle cx="230" cy="115" r="5" fill="#2a9d8f"/><circle cx="320" cy="135" r="6" fill="#2a9d8f" stroke="#fff" stroke-width="2"/>
+            <circle cx="430" cy="155" r="5" fill="#2a9d8f"/>
+            <!-- Live bus icon -->
+            <g transform="translate(355,118)"><rect width="22" height="13" rx="3" fill="#e63946" opacity="0.95"/><text x="4" y="10" fill="#fff" font-size="7" font-weight="bold">BUS</text></g>
+            <!-- Labels -->
+            <text x="305" y="122" fill="#fff" font-size="9">강남역</text>
+            <text x="205" y="148" fill="#ccc" font-size="8">선릉역</text>
+            <text x="445" y="100" fill="#ccc" font-size="8">삼성역</text>
+            <!-- Congestion heat blob near Jamsil -->
+            <ellipse cx="320" cy="133" rx="30" ry="20" fill="#e63946" opacity="0.12"/>
+            <text x="290" y="105" fill="#e63946" font-size="8" font-weight="bold">⚠ 잠실 혼잡</text>
+            <!-- Legend -->
+            <line x1="20" y1="246" x2="44" y2="246" stroke="#e63946" stroke-width="3"/><text x="48" y="250" fill="#aaa" font-size="8">간선 142</text>
+            <line x1="105" y1="246" x2="129" y2="246" stroke="#2a9d8f" stroke-width="3"/><text x="133" y="250" fill="#aaa" font-size="8">지선 463</text>
+            <line x1="190" y1="246" x2="214" y2="246" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5,2"/><text x="218" y="250" fill="#aaa" font-size="8">광역 순환</text>
+          </svg>
+        </div>
+        <!-- KPI Panel -->
+        <div style="padding:10px; display:flex; flex-direction:column; gap:7px; overflow:hidden;">
+          <div style="color:#2a9d8f; font-size:8px; font-weight:700; letter-spacing:1px; padding-bottom:5px; border-bottom:1px solid #1a2f4a;">KPI · 실시간</div>
+          <div style="background:#0d1b2a; padding:8px; border-radius:4px;">
+            <div style="color:#7aaccc; font-size:8px;">활성 노선</div>
+            <div style="color:#fff; font-size:20px; font-weight:800; font-variant-numeric:tabular-nums;">142<span style="font-size:10px; color:#7aaccc; margin-left:2px;">개 간선</span></div>
+          </div>
+          <div style="background:#0d1b2a; padding:8px; border-radius:4px;">
+            <div style="color:#7aaccc; font-size:8px;">BIS 연계 정류소</div>
+            <div style="color:#2a9d8f; font-size:20px; font-weight:800; font-variant-numeric:tabular-nums;">7,542<span style="font-size:10px; color:#7aaccc; margin-left:2px;">개</span></div>
+          </div>
+          <div style="background:#0d1b2a; padding:8px; border-radius:4px;">
+            <div style="color:#7aaccc; font-size:8px;">실시간 도착 예고</div>
+            <div style="color:#f59e0b; font-size:18px; font-weight:800;">3분 후</div>
+            <div style="color:#7aaccc; font-size:8px; margin-top:2px;">간선142 → 잠실역 7번</div>
+          </div>
+          <div style="background:#0d1b2a; padding:8px; border-radius:4px; border-left:2px solid #a78bfa;">
+            <div style="color:#a78bfa; font-size:8px; font-weight:700;">📍 분산 우선순위 (OD)</div>
+            <div style="color:#fff; font-size:11px; margin-top:3px;">선릉→강남 승객<br>왕십리 방면 우회 권장</div>
+          </div>
+          <div style="background:#fef2f3; padding:7px; border-radius:4px; border-left:2px solid #e63946;">
+            <div style="color:#e63946; font-size:8px; font-weight:700;">⚠ 혼잡 경보</div>
+            <div style="color:#e63946; font-size:12px; font-weight:700;">잠실역 정류소</div>
+            <div style="color:#6c757d; font-size:8px; margin-top:1px;">대기인원 34명 ↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:6px; font-size:10px; color:#6c757d; text-align:center;">
+      실제 동작 화면 · <strong>leelang7.github.io/MetroEyes/frontend/operator_web/bus.html</strong>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">METROEYES</span><span class="page">17a</span></div>
+</section>
+
+<!-- ==================== 12b. 버스 도메인 상세 ==================== -->
+<section class="slide">
+  <div class="head">
+    <div class="left">
+      <span class="sec-num">05</span>
+      <span class="sec-name">화면 구성 · 버스 도메인 상세</span>
+    </div>
+    <div class="right">2026 서울시 빅데이터 활용 경진대회</div>
+  </div>
+  <div class="body">
+    <h1 class="headline">버스 도메인 — 지하철 OD로 버스를 분산시킨다</h1>
+    <p class="subhead">국토교통부 BIS API + 서울 열린데이터 OD 흐름 결합 → 지하철 혼잡을 버스 노선으로 흡수.</p>
+
+    <div class="cards c3" style="margin-top:14px;">
+      <div class="card" style="border-top:3px solid #2a9d8f;">
+        <div class="label">BIS 실시간 연계</div>
+        <div class="num tone">142<span class="unit">노선</span></div>
+        <div class="body-text">국토교통부 BIS 정류소·노선 공공데이터 — 실시간 버스 위치·도착 예보. 지하철 연계 환승 정류소 우선 매핑.</div>
+        <div class="desc" style="margin-top:6px;">데이터: 공공데이터포털 BIS (갱신 분)</div>
+      </div>
+      <div class="card" style="border-top:3px solid #a78bfa;">
+        <div class="label">OD 비대칭 분산 우선순위</div>
+        <div class="num" style="color:#a78bfa;">σ −8.3<span class="unit">%</span></div>
+        <div class="body-text">지하철 OD 행렬 비대칭 분석 → 과밀 방향 승객에게 버스 대안 경로 자동 제시. 승차 분산 실측 σ 감소.</div>
+        <div class="desc" style="margin-top:6px;">CardSubwayTime 월 OD + citydata 분 단위 실시간</div>
+      </div>
+      <div class="card" style="border-top:3px solid #f59e0b;">
+        <div class="label">지하철 ↔ 버스 환승 흐름</div>
+        <div class="num" style="color:#f59e0b;">3<span class="unit">계층</span></div>
+        <div class="body-text">기본(이동 최단) · OD(분산 우선) · 환승(환승허브 연계) 3단 차등 인센티브. 버스 탑승 시 ₩100~₩400 즉시 지급.</div>
+        <div class="desc" style="margin-top:6px;">시민 앱 FlutterAndroid → 버스 정류소 도착 자동 감지</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;">
+      <div class="box tone">
+        <strong>버스 도메인 단독 가치</strong><br>
+        지하철 혼잡 → 버스 흡수 = <em class="red">전체 대중교통 피크 분산</em>.<br>
+        지하철 단독으로는 불가능한 양면 분산 전략.
+      </div>
+      <div class="box accent">
+        <strong>운영자 실측 지표</strong><br>
+        버스 분산 응답률: <strong>30%</strong> (시뮬 기준) &nbsp;·&nbsp; 피크 감소: <strong>−5.2%</strong><br>
+        OD 비대칭 해소율: 환승허브 85역 중심 우선 개입
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">METROEYES</span><span class="page">17b</span></div>
+</section>
+
+<!-- ==================== 12c. 실 카메라 BEV 파이프라인 ==================== -->
+<section class="slide">
+  <div class="head">
+    <div class="left">
+      <span class="sec-num">05</span>
+      <span class="sec-name">화면 구성 · 실 카메라 BEV 파이프라인</span>
+    </div>
+    <div class="right">2026 서울시 빅데이터 활용 경진대회</div>
+  </div>
+  <div class="body" style="padding:16px 44px 10px;">
+    <h1 class="headline" style="font-size:26px; margin-bottom:6px;">실 카메라 → YOLO11s 사람 탐지 → 호모그래피 → BEV 탑뷰 투영</h1>
+    <p class="subhead" style="font-size:13px; margin-bottom:10px;">4점 캘리브레이션으로 카메라 원본을 BEV 평면에 투영 — 사람 위치만 집계, 개인 ID 비생성.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 52px 1fr; gap:0; align-items:center;">
+      <!-- Camera feed with YOLO bboxes -->
+      <div>
+        <div style="font-size:9px; color:#6c757d; font-weight:700; letter-spacing:1.2px; margin-bottom:5px; text-transform:uppercase;">① 카메라 원본 + YOLO11s 탐지 (사람 bbox)</div>
+        <svg width="100%" viewBox="0 0 500 290" style="background:#0a0f1e; border-radius:8px; border:1px solid #1d3557; display:block;">
+          <!-- Dark scene background -->
+          <defs><linearGradient id="floorG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#141830"/><stop offset="100%" stop-color="#0d1422"/></linearGradient></defs>
+          <rect width="500" height="290" fill="url(#floorG)"/>
+          <!-- Platform floor perspective -->
+          <polygon points="0,195 500,175 500,290 0,290" fill="#181e30" opacity="0.8"/>
+          <!-- Yellow safety line -->
+          <line x1="0" y1="195" x2="500" y2="175" stroke="#f59e0b" stroke-width="2" stroke-dasharray="10,6" opacity="0.8"/>
+          <!-- Subway wall -->
+          <rect x="0" y="0" width="500" height="80" fill="#101828" opacity="0.6"/>
+          <!-- Sign boards on wall -->
+          <rect x="40" y="20" width="60" height="30" rx="3" fill="#1d3557" opacity="0.7"/>
+          <text x="48" y="38" fill="#7aaccc" font-size="9">2호선</text>
+          <rect x="200" y="18" width="80" height="30" rx="3" fill="#1d3557" opacity="0.7"/>
+          <text x="212" y="36" fill="#7aaccc" font-size="9">강남역 →</text>
+
+          <!-- Person 1 (tall, center-left) — CLEAR GREEN BBOX -->
+          <rect x="72" y="95" width="52" height="98" fill="none" stroke="#00e676" stroke-width="2.5"/>
+          <text x="73" y="91" fill="#00e676" font-size="9" font-weight="bold">person  0.93</text>
+          <!-- Person body -->
+          <ellipse cx="98" cy="87" rx="16" ry="18" fill="#c8956a" opacity="0.85"/>
+          <rect x="82" y="105" width="32" height="46" fill="#3a5fa0" opacity="0.85"/>
+          <rect x="82" y="151" width="13" height="38" fill="#1a2a40" opacity="0.9"/>
+          <rect x="96" y="151" width="13" height="38" fill="#1a2a40" opacity="0.9"/>
+
+          <!-- Person 2 (middle) — CLEAR GREEN BBOX -->
+          <rect x="188" y="100" width="48" height="90" fill="none" stroke="#00e676" stroke-width="2.5"/>
+          <text x="189" y="96" fill="#00e676" font-size="9" font-weight="bold">person  0.90</text>
+          <ellipse cx="212" cy="93" rx="14" ry="16" fill="#d4a06a" opacity="0.85"/>
+          <rect x="196" y="109" width="30" height="42" fill="#c25a6a" opacity="0.85"/>
+          <rect x="196" y="151" width="12" height="35" fill="#222" opacity="0.9"/>
+          <rect x="209" y="151" width="12" height="35" fill="#222" opacity="0.9"/>
+
+          <!-- Person 3 (right of center) — CLEAR GREEN BBOX -->
+          <rect x="302" y="108" width="44" height="83" fill="none" stroke="#00e676" stroke-width="2.5"/>
+          <text x="303" y="104" fill="#00e676" font-size="9" font-weight="bold">person  0.87</text>
+          <ellipse cx="324" cy="101" rx="13" ry="15" fill="#c8a06a" opacity="0.85"/>
+          <rect x="310" y="116" width="28" height="40" fill="#5a3e8e" opacity="0.85"/>
+          <rect x="310" y="156" width="11" height="31" fill="#1a1a2a" opacity="0.9"/>
+          <rect x="322" y="156" width="11" height="31" fill="#1a1a2a" opacity="0.9"/>
+
+          <!-- Person 4 (far right, partial) — YELLOW BBOX (near edge) -->
+          <rect x="418" y="118" width="38" height="75" fill="none" stroke="#ffcc00" stroke-width="2.5"/>
+          <text x="419" y="114" fill="#ffcc00" font-size="9" font-weight="bold">person  0.79</text>
+          <ellipse cx="437" cy="111" rx="12" ry="14" fill="#b8906a" opacity="0.85"/>
+          <rect x="424" y="125" width="26" height="38" fill="#3a7a6a" opacity="0.85"/>
+
+          <!-- Track IDs (BoT-SORT) -->
+          <text x="116" y="110" fill="#7dd3d3" font-size="8">#ID:01</text>
+          <text x="228" y="114" fill="#7dd3d3" font-size="8">#ID:02</text>
+          <text x="338" y="122" fill="#7dd3d3" font-size="8">#ID:03</text>
+
+          <!-- Bottom status bar -->
+          <rect x="0" y="262" width="500" height="28" fill="#000" opacity="0.75"/>
+          <text x="8" y="280" fill="#00e676" font-size="9">YOLO11s-pose  |  4 persons detected  |  28 FPS  |  conf ≥ 0.65</text>
+          <text x="360" y="280" fill="#7dd3d3" font-size="9">BoT-SORT tracking</text>
+        </svg>
+      </div>
+
+      <!-- Arrow + label -->
+      <div style="text-align:center; padding:0 4px;">
+        <div style="font-size:26px; color:#1d3557; font-weight:800;">→</div>
+        <div style="font-size:8px; color:#6c757d; margin-top:4px; line-height:1.4;">호모그래피<br>행렬 H<br>(4점 캘리브)</div>
+      </div>
+
+      <!-- BEV top-down view -->
+      <div>
+        <div style="font-size:9px; color:#6c757d; font-weight:700; letter-spacing:1.2px; margin-bottom:5px; text-transform:uppercase;">② BEV 탑뷰 — 4분면 점유 + 비상 동선 추론</div>
+        <svg width="100%" viewBox="0 0 400 290" style="background:#061018; border-radius:8px; border:1px solid #1d3557; display:block;">
+          <defs>
+            <radialGradient id="hotspot" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#e63946" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#e63946" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="400" height="290" fill="#061018"/>
+          <!-- Subway car top-view outline -->
+          <rect x="40" y="18" width="320" height="248" rx="12" fill="#0d1e30" stroke="#1d4a6e" stroke-width="2"/>
+          <!-- Quadrant dividers -->
+          <line x1="200" y1="18" x2="200" y2="266" stroke="#1d4a6e" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <line x1="40" y1="142" x2="360" y2="142" stroke="#1d4a6e" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <!-- Door markers -->
+          <rect x="40" y="68" width="9" height="28" rx="2" fill="#2a9d8f" opacity="0.9"/>
+          <rect x="40" y="152" width="9" height="28" rx="2" fill="#2a9d8f" opacity="0.9"/>
+          <rect x="351" y="68" width="9" height="28" rx="2" fill="#2a9d8f" opacity="0.9"/>
+          <rect x="351" y="152" width="9" height="28" rx="2" fill="#2a9d8f" opacity="0.9"/>
+          <!-- Seat outlines -->
+          <rect x="52" y="26" width="18" height="7" rx="2" fill="#1d4a6e" opacity="0.5"/>
+          <rect x="72" y="26" width="18" height="7" rx="2" fill="#1d4a6e" opacity="0.5"/>
+          <rect x="330" y="26" width="18" height="7" rx="2" fill="#1d4a6e" opacity="0.5"/>
+          <rect x="310" y="26" width="18" height="7" rx="2" fill="#1d4a6e" opacity="0.5"/>
+          <rect x="52" y="257" width="18" height="7" rx="2" fill="#1d4a6e" opacity="0.5"/>
+          <rect x="330" y="257" width="18" height="7" rx="2" fill="#1d4a6e" opacity="0.5"/>
+          <!-- Heatmap overlays -->
+          <rect x="40" y="18" width="160" height="124" fill="#e63946" opacity="0.10" rx="0"/>
+          <rect x="200" y="18" width="160" height="124" fill="#e63946" opacity="0.07" rx="0"/>
+          <rect x="40" y="142" width="160" height="124" fill="#2a9d8f" opacity="0.08" rx="0"/>
+          <rect x="200" y="142" width="160" height="124" fill="#2a9d8f" opacity="0.06" rx="0"/>
+          <!-- Hotspot cluster Q1 -->
+          <ellipse cx="130" cy="90" rx="40" ry="30" fill="url(#hotspot)"/>
+          <!-- Person dots — clearly visible, colored by ID -->
+          <circle cx="112" cy="82" r="9" fill="#e63946" stroke="#fff" stroke-width="1.5" opacity="0.95"/>
+          <text x="107" y="86" fill="#fff" font-size="7.5" font-weight="bold">P1</text>
+          <circle cx="148" cy="105" r="9" fill="#e63946" stroke="#fff" stroke-width="1.5" opacity="0.95"/>
+          <text x="143" y="109" fill="#fff" font-size="7.5" font-weight="bold">P2</text>
+          <circle cx="255" cy="75" r="9" fill="#f59e0b" stroke="#fff" stroke-width="1.5" opacity="0.95"/>
+          <text x="250" y="79" fill="#fff" font-size="7.5" font-weight="bold">P3</text>
+          <circle cx="296" cy="108" r="9" fill="#f59e0b" stroke="#fff" stroke-width="1.5" opacity="0.95"/>
+          <text x="291" y="112" fill="#fff" font-size="7.5" font-weight="bold">P4</text>
+          <!-- Empty quadrant arrows (recommended move) -->
+          <text x="65" y="220" fill="#2a9d8f" font-size="9">Q3  □  비어있음</text>
+          <text x="220" y="220" fill="#2a9d8f" font-size="9">Q4  □  비어있음</text>
+          <text x="65" y="52" fill="#e63946" font-size="9">Q1  ■  50%</text>
+          <text x="220" y="52" fill="#f59e0b" font-size="9">Q2  ▪  50%</text>
+          <!-- Emergency exit arrow (when congestion) -->
+          <path d="M 130,200 L 50,200 L 50,142" fill="none" stroke="#e63946" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowhead)" opacity="0.7"/>
+          <text x="54" y="198" fill="#e63946" font-size="8">비상 → Q3 출구</text>
+          <!-- Status bar -->
+          <rect x="0" y="266" width="400" height="24" fill="#000" opacity="0.75"/>
+          <text x="8" y="282" fill="#2a9d8f" font-size="8.5">4명 탐지 | Q3·Q4 비어있음 → 이동 권장 | WebSocket 전송: (x,y,t) 익명</text>
+        </svg>
+      </div>
+    </div>
+
+    <div style="margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="box" style="padding:8px 14px; font-size:12px;"><strong>프라이버시</strong> &nbsp; BEV 투영 후 개인 ID 완전 제거 — 집계 좌표 (x,y,t)만 전송. 얼굴·체형 데이터 비보존.</div>
+      <div class="box tone" style="padding:8px 14px; font-size:12px;"><strong>실 카메라 페이지</strong> &nbsp; realbev.html — 3D Tesla-style HUD. YOLO→WebSocket→Three.js 실시간 렌더링.</div>
+    </div>
+  </div>
+  <div class="foot"><span class="brand">METROEYES</span><span class="page">17c</span></div>
+</section>
+
 <!-- ==================== [SECTION 6] ==================== -->
 <section class="slide section-cover">
   <div class="section-content">
@@ -958,7 +1261,7 @@ li strong { color: #e63946; }
           <tr style="background:#fff5f5;"><td><strong>🇰🇷 MetroEyes</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td></tr>
         </table>
         <div style="font-size:11px; margin-top:10px; color:#6c757d; line-height:1.6;">
-          <strong style="color:#1d3557;">7-Moat</strong>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 9 공공 API fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/182 가드 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 (장애인차별금지법/교통약자법)
+          <strong style="color:#1d3557;">7-Moat</strong>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10 공공 API fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/182 가드 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 (장애인차별금지법/교통약자법)
         </div>
       </div>
     </div>
@@ -1004,7 +1307,7 @@ li strong { color: #e63946; }
         <div style="font-size:12px; line-height:1.7; color:#1d3557;">
           • citydata 110 POI 분 단위 (2024-) — 5년 전엔 불가능<br>
           • Jetson Orin Nano ₩30만 — 5년 전 ₩200만 (1/7 가격)<br>
-          • 이태원 참사 2022 → 분산 정책 정치 우선순위 ↑<br>
+          • 대규모 군중밀집 사고(2022) → 분산 정책 정치 우선순위 ↑<br>
           • 청각 약자 42만 + 노캔 1,200만 잠재 (IDEA-9)<br>
           • 자율주행 BEV 솔로 인재 합류 timing
         </div>

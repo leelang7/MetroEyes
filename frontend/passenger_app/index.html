@@ -126,6 +126,30 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     <span style="padding: 1px 6px; background: rgba(16,185,129,.18); border: 1px solid rgba(16,185,129,.45); border-radius: 999px; color: #10b981; font-size: 9px; font-weight: 600;">탄소중립</span>
   </div>
 
+  <!-- 🌬️ 역사 실내 공기질 카드 (IndoorAirQualityMeasure API) -->
+  <div id="air-quality-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(6,182,212,.12), rgba(59,130,246,.06)); border: 1px solid rgba(6,182,212,.35); border-radius: 10px; font-size: 12px; color: #fff; display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 18px;">💨</span>
+    <div style="flex: 1; min-width: 0;">
+      <div style="font-size: 9px; letter-spacing: 1.0px; color: #06b6d4; font-weight: 700; margin-bottom: 2px;">역사 실내 공기질</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <span>CO₂ <b id="aq-co2" style="color:#fbbf24">—</b><span style="font-size:10px;color:var(--muted)"> ppm</span></span>
+        <span>PM2.5 <b id="aq-pm25" style="color:#34d399">—</b><span style="font-size:10px;color:var(--muted)"> μg</span></span>
+        <span>온도 <b id="aq-temp" style="color:#93c5fd">—</b><span style="font-size:10px;color:var(--muted)"> °C</span></span>
+      </div>
+    </div>
+    <span id="aq-badge" style="padding:1px 6px;background:rgba(6,182,212,.18);border:1px solid rgba(6,182,212,.45);border-radius:999px;color:#06b6d4;font-size:9px;font-weight:600;">측정중</span>
+  </div>
+
+  <!-- ♿ 엘리베이터 현황 카드 (SubwayElevatorStatus API) -->
+  <div id="elev-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(168,85,247,.10), rgba(99,102,241,.06)); border: 1px solid rgba(168,85,247,.35); border-radius: 10px; font-size: 12px; color: #fff; display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 18px;">🛗</span>
+    <div style="flex: 1; min-width: 0;">
+      <div style="font-size: 9px; letter-spacing: 1.0px; color: #a855f7; font-weight: 700; margin-bottom: 2px;">엘리베이터 현황</div>
+      <div id="elev-summary" style="font-size:12px;">로딩 중…</div>
+    </div>
+    <button id="elev-route-btn" style="padding:3px 8px;background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.45);color:#a855f7;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;" onclick="showElevDetail()">경로</button>
+  </div>
+
   <!-- 역 picker 모달 (시민 수동 선택, mode: 'cur' 또는 'dest') -->
   <div class="station-modal" id="station-modal" hidden>
     <div class="modal-bg" id="modal-bg"></div>
@@ -1535,6 +1559,7 @@ const LIVE = (() => {
           gpsPulse.title = `GPS 매칭 — 거리 ${distLabel}`;
         }
         if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); queryForecast(); }
+        if (typeof _refreshEnvCards === 'function') { _airLastStation = null; _elevLastStation = null; _refreshEnvCards(r.station.name); }
         // 🗺️ mini-map sync (cycle 425)
         try { updateMiniMap(pos.coords.latitude, pos.coords.longitude, r.station); } catch {}
       },
@@ -1790,6 +1815,8 @@ const LIVE = (() => {
       gpsPulse.classList.add('locked');
     }
     if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); }
+    // 환경 카드 갱신 (공기질 + 엘리베이터)
+    if (typeof _refreshEnvCards === 'function') { _airLastStation = null; _elevLastStation = null; _refreshEnvCards(s.name); }
     // 보너스 역 즉시 피드백 (수동 선택 시만 — GPS 자동 매칭 시 distKm null 아님)
     if (distKm == null && (s.od || s.transfer)) {
       try { showStationBonusToast(s); } catch {}
@@ -2439,6 +2466,85 @@ const LIVE = (() => {
       card.hidden = true;
     }
   }
+  // 🌬️ 실내 공기질 + 엘리베이터 카드 — /api/v1/indoor_air + /api/v1/elevator
+  const _API_BASE = location.origin.replace(/:\d+$/, '') + ':8000';
+  let _airLastStation = null, _elevLastStation = null;
+
+  async function _fetchAirQuality(station) {
+    try {
+      const r = await fetch(`${_API_BASE}/api/v1/indoor_air?station=${encodeURIComponent(station)}`);
+      if (!r.ok) return;
+      const d = await r.json();
+      const card = document.getElementById('air-quality-card');
+      if (!card) return;
+      const co2 = d.co2 != null ? Math.round(d.co2) : null;
+      const pm25 = d.pm25 != null ? d.pm25.toFixed(1) : null;
+      const temp = d.temperature != null ? d.temperature.toFixed(1) : null;
+      document.getElementById('aq-co2').textContent = co2 ?? '—';
+      document.getElementById('aq-pm25').textContent = pm25 ?? '—';
+      document.getElementById('aq-temp').textContent = temp ?? '—';
+      // CO₂ 색상 경고
+      const co2El = document.getElementById('aq-co2');
+      if (co2 > 1500) co2El.style.color = '#ef4444';
+      else if (co2 > 1000) co2El.style.color = '#fbbf24';
+      else co2El.style.color = '#34d399';
+      // 배지 상태
+      const badge = document.getElementById('aq-badge');
+      if (co2 > 1500) { badge.textContent = '주의'; badge.style.color = '#ef4444'; badge.style.borderColor = 'rgba(239,68,68,.45)'; }
+      else if (co2 > 1000) { badge.textContent = '보통'; badge.style.color = '#fbbf24'; badge.style.borderColor = 'rgba(251,191,36,.45)'; }
+      else { badge.textContent = '쾌적'; badge.style.color = '#34d399'; badge.style.borderColor = 'rgba(52,211,153,.45)'; }
+      card.hidden = false;
+    } catch {}
+  }
+
+  async function _fetchElevator(station) {
+    try {
+      const r = await fetch(`${_API_BASE}/api/v1/elevator?station=${encodeURIComponent(station)}`);
+      if (!r.ok) return;
+      const d = await r.json();
+      const card = document.getElementById('elev-card');
+      const summary = document.getElementById('elev-summary');
+      if (!card || !summary) return;
+      const elevs = d.elevators || [];
+      if (!elevs.length) { summary.textContent = '정보 없음'; return; }
+      const ok = elevs.filter(e => e.status === '정상').length;
+      const fault = elevs.filter(e => e.status !== '정상').length;
+      summary.innerHTML = `<span style="color:#22c55e">✓ 정상 ${ok}대</span>${fault ? `<span style="color:#ef4444;margin-left:8px">⚠ 고장/점검 ${fault}대</span>` : ''} <span style="color:var(--muted);font-size:10px;margin-left:8px">총 ${elevs.length}대</span>`;
+      // 고장 있으면 카드 강조
+      if (fault > 0) { card.style.borderColor = 'rgba(239,68,68,.55)'; card.style.background = 'linear-gradient(135deg,rgba(239,68,68,.10),rgba(168,85,247,.06))'; }
+      else { card.style.borderColor = 'rgba(168,85,247,.35)'; card.style.background = 'linear-gradient(135deg,rgba(168,85,247,.10),rgba(99,102,241,.06))'; }
+      card.hidden = false;
+      // 전역 저장 (경로 버튼용)
+      window._elevData = d;
+    } catch {}
+  }
+
+  window.showElevDetail = function() {
+    const d = window._elevData;
+    if (!d) return;
+    const elevs = (d.elevators || []);
+    const lines = elevs.map(e => `${e.id||e.name||'엘리베이터'}: ${e.status||'—'} ${e.location ? '('+e.location+')' : ''}`).join('\n');
+    alert(`♿ 엘리베이터 현황 — ${d.station||''}역\n\n${lines || '정보 없음'}`);
+  };
+
+  // 역 변경 시 공기질/엘리베이터 자동 갱신
+  function _refreshEnvCards(station) {
+    if (!station) return;
+    if (station !== _airLastStation) { _airLastStation = station; _fetchAirQuality(station); }
+    if (station !== _elevLastStation) { _elevLastStation = station; _fetchElevator(station); }
+  }
+
+  // 초기 로드 + 2분마다 갱신
+  setTimeout(() => {
+    const stn = document.getElementById('ctx-name')?.textContent?.replace('역','').trim() || '성수';
+    _refreshEnvCards(stn);
+  }, 1500);
+  setInterval(() => {
+    const stn = document.getElementById('ctx-name')?.textContent?.replace('역','').trim() || '성수';
+    _airLastStation = null; _elevLastStation = null;
+    _refreshEnvCards(stn);
+  }, 120000);
+
   // 사전 테스트: 청각 약자/이어폰 사용자가 알림 동작 확인 — 도착 직전 강한 알림과 동일
   const destTest = document.getElementById('dest-test');
   if (destTest) destTest.addEventListener('click', () => {
