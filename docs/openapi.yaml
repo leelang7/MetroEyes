@@ -265,6 +265,97 @@ paths:
                   static:
                     type: object
 
+  /api/v1/indoor_air:
+    get:
+      summary: 지하철 역사 실내 공기질 — CO₂, PM2.5, 온도
+      description: |
+        IndoorAirQualityMeasureService API 호출 (TTL=300s). 실패 시 혼잡도 기반 시뮬레이션 자동 폴백.
+        CO₂ = 420 + congestion × 580 ppm (EDA 기반 추정). 심사용 라이브 검증 가능.
+      parameters:
+        - name: station
+          in: query
+          required: false
+          schema: { type: string, default: "성수", example: "강남" }
+          description: 역명 (한글)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  station: { type: string }
+                  co2: { type: number, description: CO₂ ppm }
+                  pm25: { type: number, description: PM2.5 μg/m³ }
+                  temperature: { type: number, description: 온도 °C }
+                  simulated: { type: boolean, description: 시뮬레이션 여부 }
+                  fetched_at: { type: number, format: float }
+
+  /api/v1/elevator:
+    get:
+      summary: 지하철역 엘리베이터 운행 현황 — 접근성
+      description: |
+        SubwayElevatorStatus API 호출 (TTL=120s). 실패 시 역 유형별 시뮬레이션 폴백.
+        환승역 4~8대, 일반역 2~4대 가정. 교통약자 경로 안내에 활용.
+      parameters:
+        - name: station
+          in: query
+          required: false
+          schema: { type: string, default: "성수", example: "잠실" }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  station: { type: string }
+                  elevators:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        status: { type: string, enum: ["정상", "점검중", "고장"] }
+                        location: { type: string }
+                  simulated: { type: boolean }
+
+  /api/v1/occupancy_forecast:
+    get:
+      summary: 24시간 점유율 예측 — 역 클러스터 K=3 기반
+      description: |
+        EDA K=3 클러스터(오피스/주거/환승) × 시간대 패턴으로 미래 24시간 점유율 예측.
+        CardSubwayTime 202602 분석 결과 기반. 운영자 콘솔 및 관리자 대시보드에 표출.
+      parameters:
+        - name: station
+          in: query
+          required: false
+          schema: { type: string, default: "성수" }
+        - name: hours
+          in: query
+          required: false
+          schema: { type: integer, default: 24, minimum: 1, maximum: 48 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  station: { type: string }
+                  cluster: { type: string, enum: ["office", "residential", "hub"] }
+                  peak_hour: { type: integer }
+                  hourly:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hour: { type: integer }
+                        occ: { type: number, description: 예측 점유율 0~1 }
+
   /api/docs:
     get:
       summary: API 문서 HTML
