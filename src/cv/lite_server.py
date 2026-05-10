@@ -921,6 +921,29 @@ async def handler(websocket):
                 payload = _predict_occupancy_24h(station, hours)
                 payload["type"] = "occupancy_forecast"
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
+            elif t == "citizen_report":
+                inc_type = req.get("incident_type", "lost")
+                station = req.get("station", "알 수 없음")
+                sev_map = {"emergency": "high", "lost": "low", "priority_seat": "med"}
+                icon_map = {"emergency": "🚨", "lost": "🎒", "priority_seat": "♿"}
+                title_map = {"emergency": "시민 응급 신고", "lost": "시민 분실물 신고", "priority_seat": "시민 배려 요청"}
+                event = {
+                    "type": "incident",
+                    "incident_type": inc_type,
+                    "severity": sev_map.get(inc_type, "low"),
+                    "icon": icon_map.get(inc_type, "📢"),
+                    "title": title_map.get(inc_type, "시민 신고"),
+                    "location": station,
+                    "ts": time.time(),
+                    "source": "citizen-app",
+                    "msg": f"{station} — {title_map.get(inc_type,'신고')} (시민 제보)",
+                }
+                if inc_type in _incident_total:
+                    _incident_total[inc_type] += 1
+                _incident_total["events"].insert(0, event)
+                if len(_incident_total["events"]) > 30:
+                    _incident_total["events"].pop()
+                await broadcast(json.dumps(event, ensure_ascii=False))
     except Exception as e:
         print(f"[ws] err {e}", flush=True)
     finally:

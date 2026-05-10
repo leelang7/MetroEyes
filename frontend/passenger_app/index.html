@@ -295,6 +295,18 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     <div id="impact-detail" style="font-size: 10px; color: var(--muted); margin-top: 4px;"></div>
   </div>
   <div id="my-reward-line" hidden style="margin: -6px 0 10px; padding: 8px 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.32); border-radius: 10px; font-size: 11px;"></div>
+  <!-- 🎒 시민 신고 버튼 — 분실물 / 응급 -->
+  <div style="margin: 4px 14px 8px; display: flex; gap: 6px;">
+    <button id="btn-report-lost" onclick="reportIncident('lost')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(245,158,11,.15), rgba(245,158,11,.05)); border: 1px solid rgba(245,158,11,.50); color: #fbbf24; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
+      🎒 분실물 신고
+    </button>
+    <button id="btn-report-emg" onclick="reportIncident('emergency')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(239,68,68,.15), rgba(239,68,68,.05)); border: 1px solid rgba(239,68,68,.50); color: #f87171; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
+      🚨 응급 신고
+    </button>
+    <button id="btn-report-priority" onclick="reportIncident('priority_seat')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(168,85,247,.15), rgba(168,85,247,.05)); border: 1px solid rgba(168,85,247,.50); color: #c084fc; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
+      ♿ 배려 요청
+    </button>
+  </div>
   <div id="incident-notice" hidden role="alert" aria-live="polite" style="margin: 4px 0 10px; padding: 10px 14px; background: linear-gradient(135deg, rgba(239,68,68,.14), rgba(245,158,11,.06)); border: 1px solid rgba(239,68,68,.45); border-radius: 12px; font-size: 12px;">
     <div style="font-weight: 700; color: #ef4444; margin-bottom: 4px;">🚨 인근 사고 알림 <span style="font-size: 9px; color: var(--muted); font-weight: 500; margin-left: 4px;">backend 동기화</span></div>
     <div id="incident-notice-text" style="color: var(--text);">—</div>
@@ -897,6 +909,50 @@ function applyIncidentNotice(j) {
   // 5분 후 자동 hide
   clearTimeout(el._t);
   el._t = setTimeout(() => { el.hidden = true; }, 5 * 60 * 1000);
+}
+
+// 시민 직접 신고 — WS로 운영자 콘솔에 즉시 브로드캐스트
+let _reportCooldown = {};
+window.reportIncident = function(type) {
+  const now = Date.now();
+  if (_reportCooldown[type] && now - _reportCooldown[type] < 30000) {
+    // 30초 쿨다운
+    const rem = Math.ceil((30000 - (now - _reportCooldown[type])) / 1000);
+    showReportFeedback(type, false, `${rem}초 후 다시 신고 가능`);
+    return;
+  }
+  _reportCooldown[type] = now;
+  const station = document.getElementById('ctx-name')?.textContent || '알 수 없음';
+  const payload = {
+    type: 'citizen_report',
+    incident_type: type,
+    station,
+    ts: now / 1000,
+    source: 'citizen-app',
+  };
+  if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
+    window.LIVE_WS.send(JSON.stringify(payload));
+    showReportFeedback(type, true);
+  } else {
+    showReportFeedback(type, false, '오프라인 — 서버 연결 필요');
+  }
+};
+
+function showReportFeedback(type, success, msg) {
+  const icons = { lost: '🎒', emergency: '🚨', priority_seat: '♿' };
+  const labels = { lost: '분실물 신고', emergency: '응급 신고', priority_seat: '배려 요청' };
+  let fb = document.getElementById('_report-fb');
+  if (!fb) {
+    fb = document.createElement('div');
+    fb.id = '_report-fb';
+    fb.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;color:#fff;pointer-events:none;transition:opacity .3s;box-shadow:0 4px 16px rgba(0,0,0,.4)';
+    document.body.appendChild(fb);
+  }
+  fb.style.background = success ? 'linear-gradient(135deg,#10b981,#059669)' : 'linear-gradient(135deg,#ef4444,#dc2626)';
+  fb.style.opacity = '1';
+  fb.textContent = success ? `${icons[type]} ${labels[type]} 전송 완료` : `${msg || '전송 실패'}`;
+  clearTimeout(fb._t);
+  fb._t = setTimeout(() => { fb.style.opacity = '0'; }, 2500);
 }
 
 function setMode(m) {
