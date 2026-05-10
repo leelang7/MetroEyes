@@ -488,15 +488,19 @@ async def fetch_indoor_air(station: str) -> dict:
                     def _f(x):
                         try: return float(x)
                         except: return None
+                    co2v = _f(r.get("CO2") or r.get("CO2_CONC"))
+                    pm25v = _f(r.get("PM25") or r.get("PM25_CONC"))
+                    tempv = _f(r.get("TEMP") or r.get("TEMPERATURE"))
                     payload.update({
-                        "co2_ppm": _f(r.get("CO2") or r.get("CO2_CONC")),
+                        "co2": co2v, "co2_ppm": co2v,  # alias
                         "pm10":    _f(r.get("PM10") or r.get("PM10_CONC")),
-                        "pm25":    _f(r.get("PM25") or r.get("PM25_CONC")),
-                        "temp":    _f(r.get("TEMP") or r.get("TEMPERATURE")),
+                        "pm25": pm25v,
+                        "temp": tempv, "temperature": tempv,  # alias
                         "humi":    _f(r.get("HUMI") or r.get("HUMIDITY")),
                         "measure_dt": r.get("MEASURE_DT") or r.get("MEAS_DT"),
                         "source": "live",
                         "service": svc,
+                        "simulated": False,
                     })
                     _indoor_air_cache[station] = (time.time(), payload)
                     return payload
@@ -524,13 +528,14 @@ async def fetch_indoor_air(station: str) -> dict:
     humi = round(45 + congestion_factor * 15 + rng.gauss(0, 3), 1)
 
     payload.update({
-        "co2_ppm": co2,
+        "co2": co2, "co2_ppm": co2,  # alias for frontend compat
         "pm10": pm10,
         "pm25": pm25,
-        "temp": temp,
+        "temp": temp, "temperature": temp,  # alias
         "humi": humi,
         "measure_dt": time.strftime("%Y-%m-%d %H:%M"),
         "source": "simulated",
+        "simulated": True,
         "co2_grade": "나쁨" if co2 > 900 else "보통" if co2 > 600 else "좋음",
         "pm_grade": "나쁨" if pm10 > 35 else "보통" if pm10 > 25 else "좋음",
         "occupancy_estimate": round(congestion_factor * 160),
@@ -644,26 +649,36 @@ def _get_cluster(station: str) -> str:
         if k in station: return v
     return "hub"
 
-def _predict_occupancy_24h(station: str) -> list:
+def _predict_occupancy_24h(station: str, hours: int = 24) -> dict:
     """24시간 점유율 예측 — 클러스터 패턴 × 과거 추세 × 요일 가중."""
-    import math
     cluster = _get_cluster(station)
     pattern = _CLUSTER_PATTERNS[cluster]["weights"]
     total = sum(pattern)
     normalized = [w / total for w in pattern]
-    # 요일 가중 (월~금 출퇴근 강화, 주말 감쇄)
     dow = time.localtime().tm_wday  # 0=월
     weekend_factor = 0.65 if dow >= 5 else 1.0
-    result = []
-    for h, w in enumerate(normalized):
+    hourly = []
+    for h in range(min(hours, 24)):
+        w = normalized[h % 24]
         occ = min(1.0, w * 24 * weekend_factor)
-        result.append({
+        hourly.append({
             "hour": h,
             "occ": round(occ, 3),
             "pct": round(occ * 100, 1),
             "level": "혼잡" if occ > 0.75 else "보통" if occ > 0.45 else "여유",
         })
-    return result
+    peak_idx = max(range(len(hourly)), key=lambda i: hourly[i]["occ"])
+    return {
+        "ok": True,
+        "station": station,
+        "cluster": cluster,
+        "cluster_label": {"office": "오피스형", "residential": "주거형", "hub": "환승 허브"}.get(cluster, cluster),
+        "peak_hour": hourly[peak_idx]["hour"],
+        "peak_occ": hourly[peak_idx]["occ"],
+        "hourly": hourly,
+        "dow": dow,
+        "weekend": dow >= 5,
+    }
 
 
 # ============== 인파 폭증 → 네이버 + LLM 컨텍스트 ==============
@@ -905,14 +920,12 @@ async def handler(websocket):
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
             elif t == "indoor_air_query":
                 station = req.get("station", "성수")
-                loop = asyncio.get_event_loop()
-                payload = await loop.run_in_executor(None, fetch_indoor_air, station)
+                payload = await fetch_indoor_air(station)
                 payload["type"] = "indoor_air"
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
             elif t == "elevator_query":
                 station = req.get("station", "성수")
-                loop = asyncio.get_event_loop()
-                payload = await loop.run_in_executor(None, fetch_elevator_status, station)
+                payload = await fetch_elevator_status(station)
                 payload["type"] = "elevator_status"
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
             elif t == "occupancy_forecast":
@@ -1814,13 +1827,13 @@ async def http_health(path, headers):
     if path_only == "/api/v1/indoor_air":
         station = params.get("station", "성수")
         loop = asyncio.get_event_loop()
-        payload = await loop.run_in_executor(None, fetch_indoor_air, station)
+        payload = await fetch_indoor_air(station)
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path_only == "/api/v1/elevator":
         station = params.get("station", "성수")
         loop = asyncio.get_event_loop()
-        payload = await loop.run_in_executor(None, fetch_elevator_status, station)
+        payload = await fetch_elevator_status(station)
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path_only == "/api/v1/occupancy_forecast":
@@ -2070,9 +2083,8 @@ async def _periodic_env_broadcast():
     while True:
         now = time.time()
         try:
-            loop = asyncio.get_event_loop()
             station = _rnd.choice(_stations)
-            air = await loop.run_in_executor(None, fetch_indoor_air, station)
+            air = await fetch_indoor_air(station)
             air["type"] = "indoor_air"
             await broadcast(json.dumps(air, ensure_ascii=False))
         except Exception as _e:
@@ -2080,7 +2092,7 @@ async def _periodic_env_broadcast():
         if now - last_elev >= 120:
             try:
                 station = _rnd.choice(_stations)
-                elev = await loop.run_in_executor(None, fetch_elevator_status, station)
+                elev = await fetch_elevator_status(station)
                 elev["type"] = "elevator_status"
                 await broadcast(json.dumps(elev, ensure_ascii=False))
                 last_elev = now
