@@ -519,6 +519,56 @@ class _HomeScreenState extends State<HomeScreen> {
     return best;
   }
 
+  void _showReportDialog() {
+    final types = [
+      {'type': 'emergency', 'icon': '🚨', 'label': '응급 신고', 'color': const Color(0xFFEF4444)},
+      {'type': 'lost',      'icon': '🎒', 'label': '분실물 신고', 'color': const Color(0xFFF59E0B)},
+      {'type': 'priority_seat', 'icon': '♿', 'label': '배려석 요청', 'color': const Color(0xFFA855F7)},
+    ];
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF111827),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text('시민 신고', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 4),
+            Text('$_stationName · 운영자 콘솔 즉시 전달', style: const TextStyle(color: _muted, fontSize: 12)),
+            const SizedBox(height: 16),
+            ...types.map((t) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: (t['color'] as Color).withValues(alpha: 0.15),
+                  foregroundColor: t['color'] as Color,
+                  side: BorderSide(color: (t['color'] as Color).withValues(alpha: 0.5)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                icon: Text(t['icon'] as String, style: const TextStyle(fontSize: 18)),
+                label: Text(t['label'] as String, style: const TextStyle(fontWeight: FontWeight.w700)),
+                onPressed: () {
+                  _bev.citizenReport(incidentType: t['type'] as String, station: _stationName);
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${t["icon"]} ${t["label"]} 전송 완료'),
+                      backgroundColor: t['color'] as Color,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showSettings() async {
     final ctrl = TextEditingController(text: _wsUrl);
     final newUrl = await showModalBottomSheet<String>(
@@ -581,6 +631,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final opt = _options[_selected];
     final scale = _a11y ? 1.18 : 1.0;
     return Scaffold(
+      floatingActionButton: _wsState == SocketState.connected
+          ? FloatingActionButton.extended(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+              icon: const Text('🚨', style: TextStyle(fontSize: 18)),
+              label: const Text('신고', style: TextStyle(fontWeight: FontWeight.w700)),
+              onPressed: _showReportDialog,
+            )
+          : null,
       body: SafeArea(
         child: Stack(
           children: [

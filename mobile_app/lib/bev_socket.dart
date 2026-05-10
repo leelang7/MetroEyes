@@ -384,6 +384,20 @@ class BevSocket {
     } catch (_) {}
   }
 
+  void citizenReport({required String incidentType, required String station}) {
+    final ws = _ws;
+    if (ws == null) return;
+    try {
+      ws.add(jsonEncode({
+        'type': 'citizen_report',
+        'incident_type': incidentType,
+        'station': station,
+        'source': 'flutter-app',
+        'ts': DateTime.now().millisecondsSinceEpoch / 1000.0,
+      }));
+    } catch (_) {}
+  }
+
   void _emit(SocketState s) {
     _current = s;
     _stateCtrl.add(s);
