@@ -12,7 +12,7 @@
 > **IDEA-9 도착 알림 5중 모달리티 + 6단 견고화** (cycle 286-299, PWA v4.11) — 청각 42만 + 노캔 1,200만 잠재 사용자, 접근성 제도 직결 (M8 모순) +
 > **3D OpenFreeMap mini-map** (cycle 425, PWA v4.15) — MapLibre GL JS + liberty 스타일 3D buildings + GPS 자동 매칭 시각화 +
 > **citydata 통합 라이브** (cycle 427) — WEATHER + EVENT + ROAD + 인구 한 번에 (광고 단가 PM2.5/UV chip 라이브 수신) +
-> **CI 15 jobs + pytest 회귀 가드 264건** (cycle 318-427 — 광고 수치 ↔ 코드 ↔ 그림 ↔ canonical JSON 자동 정합).
+> **CI 15 jobs + pytest 회귀 가드 332건** (cycle 318-466 — 광고 수치 ↔ 코드 ↔ 그림 ↔ canonical JSON 자동 정합).
 
 ---
 
