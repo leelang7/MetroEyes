@@ -124,3 +124,10 @@ def test_append_incident_loc_precedence_fixed() -> None:
     html = _html()
     assert "d.location || d.station || (d.car" in html, \
         "appendIncident loc 연산자 우선순위 버그 (d.location truthy 시 d.car호차 오표시)"
+
+
+def test_handle_msg_routes_citizen_report() -> None:
+    """handleMsg 가 citizen_report 타입을 applyCitizenReport 로 라우팅."""
+    html = _html()
+    assert "citizen_report" in html, "citizen_report 라우팅 누락"
+    assert "applyCitizenReport" in html, "applyCitizenReport 함수 누락"

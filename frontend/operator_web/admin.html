@@ -241,6 +241,15 @@ function handleMsg(d) {
   if (d.type === 'elevator_status') applyElev(d);
   if (d.type === 'occupancy_forecast') drawForecast(d);
   if (d.type === 'env_broadcast') applyEnvBroadcast(d);
+  if (d.type === 'citizen_report') applyCitizenReport(d);
+}
+function applyCitizenReport(d) {
+  const itype = d.incident_type || 'unknown';
+  appendIncident({ type: 'citizen_report', ev_type: itype === 'emergency' ? 'emergency'
+    : itype === 'lost_item' ? 'lost' : 'priority_seat',
+    severity: itype === 'emergency' ? 'high' : 'low',
+    msg: `시민신고 ${({emergency:'🚨응급',lost_item:'🎒분실',care:'♿배려'}[itype]||itype)}${d.desc ? ' — '+d.desc : ''}`,
+    station: d.station || '', source: 'citizen' });
 }
 
 function applySubwayBev(d) {

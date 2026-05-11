@@ -42,7 +42,7 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 341건 + mobile_app Flutter 회귀 가드 + 시민신고 오프라인큐 + admin 시민신고LIVE + 8-Moat + i18n4언어 (2026-05-11 cycle 469-489)
+## v6.11 — D-2 회귀 가드 342건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-494)
 
 ### v6.11 cycle 486-489
 - cycle 486: admin.html 시민신고 LIVE 패널 (citizen_report WS 카운터+toast) + 339→341 전체 동기화
