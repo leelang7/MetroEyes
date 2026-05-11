@@ -96,6 +96,14 @@
 **근거 (15초)**: `frontend/demo.html` 4-패널 동시 + 자동 SCRIPT (cycle 496). 16 stage timestamp 정합 + AI 단가 / A* 강화 / 호선 ROI overlay 자동 표시.
 **증거**: `tests/test_demo_orchestration.py` 5 가드 + `docs/RECORDING_NARRATION.md` 4 언어 narration 16 stage × 4 = 64 블록.
 
+### Q18-A. "역당 인프라 ₩300만이 실제 가능한가? 과소 추정 아닌가?"
+**근거 (20초)**: Jetson Orin Nano 공식 가격 ₩30만 × 8칸 = ₩240만 + 기존 CCTV 배선 활용 설치비 ₩60만 = ₩300만/역. 기존 DVR 서버 교체 방식 ₩2,000만 대비 1/7. 9호선 38역 총 CapEx ₩1.14억 = 광고 Rev share 1개월치 (₩1.7억/월)로 회수. **CapEx 회수 0.7개월**.
+**증거**: `scripts/poc_impact_estimate.py` CONSTANTS + `docs/SLIDES.html` 단위경제 박스.
+
+### Q18-B. "PoC에서 σ −9% 달성이 가능한가?"
+**근거 (20초)**: `scripts/eda_dispersion_sim.py` 순수 Python 시뮬레이션 — 응답률 30% × PEAK_AM/PM × DISPERSE_FRAC=0.3 → 평균 σ −9.x% 재현 가능. 764 회귀 가드 중 `test_disperse_std_reduction` 이 이를 자동 검증. TfL 런던 오프피크 인센티브 실증 σ 감소 8~12%와 정합.
+**증거**: `tests/test_dispersion_sim.py:test_disperse_std_reduction` · `poc_impact_estimate.py:SIGMA_REDUCTION=0.09`.
+
 ### Q18. "수상 후 다음 단계?"
 **근거 (15초)**: 2026 Q4 서울교통공사 PoC → 2027 H1 부산·대구·인천 확장 → 2027 H2 Series A ₩50억 → 2028 Y2 ₩100억 매출 → 2029 Y3 ₩200억 + 사회 가치 1,393억/년 정량.
 **증거**: `docs/PROPOSAL.md` §14 3년 로드맵.
@@ -110,7 +118,7 @@
 | 호선별 정책 답 | "2호선 ROI 708x · 157M분" | `admin.html` 라이브 추천 패널 |
 | 운영 안정성 | "8단 fail-safe + RUNBOOK 9 시나리오" | `docs/RUNBOOK.md` 표 |
 | AI 혁신성 | "AI 4축 + Claude Haiku 라이브 컨텍스트" | `admin.html` AI 패널 |
-| 사업화 | "B2G/B2B 3-tier Y3 ₩200억" | `onepager.html` 사업화 카드 |
+| 사업화 | "B2G/B2B 3-tier Y3 ₩200억 · 역당 CapEx ₩300만 · 회수 0.7개월" | `onepager.html` 사업화 + 단위경제 |
 | 약자 보호 | "IDEA-9 5중 모달리티 + ESG 5축" | `admin.html` ESG 라이브 |
 | 시민 참여 | "시민 신고 FAB 3종 + 오프라인 큐 + admin LIVE 패널" | `passenger_app/index.html` 신고 → `admin.html` 시민신고LIVE |
 
