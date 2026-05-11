@@ -932,7 +932,7 @@ window.flushReportQueue = function() {
       localStorage.setItem(_REPORT_Q_KEY, JSON.stringify(remaining));
       if (remaining.length === 0) {
         const pending = q.length - remaining.length;
-        showReportFeedback(q[0].incident_type, true, `대기 신고 ${pending}건 전송 완료`);
+        { const _l=(typeof getI18nLang==='function')?getI18nLang():'ko'; const _qmsgs={ko:`대기 신고 ${pending}건 전송 완료`,en:`${pending} queued report(s) sent`,zh:`${pending}条待发报告已发送`,ja:`${pending}件のキュー送信完了`}; showReportFeedback(q[0].incident_type, true, (_qmsgs[_l]||_qmsgs.ko)); }
       }
     }
   } catch {}
@@ -964,13 +964,26 @@ window.reportIncident = function(type) {
       q.push(payload);
       localStorage.setItem(_REPORT_Q_KEY, JSON.stringify(q.slice(-10))); // 최대 10건 보관
     } catch {}
-    showReportFeedback(type, false, '오프라인 — 재연결 시 자동 전송');
+    { const _l = (typeof getI18nLang==='function')?getI18nLang():'ko'; const _t=I18N_REPORT[_l]||I18N_REPORT.ko; showReportFeedback(type, false, _t.offline); }
   }
 };
 
+const I18N_REPORT = {
+  ko: { lost: '분실물 신고', emergency: '응급 신고', priority_seat: '배려 요청',
+        sent: '전송 완료', fail: '전송 실패', offline: '오프라인 — 재연결 시 자동 전송' },
+  en: { lost: 'Lost item report', emergency: 'Emergency report', priority_seat: 'Accessibility request',
+        sent: 'Sent', fail: 'Failed', offline: 'Offline — auto-send on reconnect' },
+  zh: { lost: '失物报告', emergency: '紧急报告', priority_seat: '无障碍请求',
+        sent: '已发送', fail: '发送失败', offline: '离线 — 重连时自动发送' },
+  ja: { lost: '落とし物報告', emergency: '緊急報告', priority_seat: '配慮リクエスト',
+        sent: '送信完了', fail: '送信失敗', offline: 'オフライン — 再接続時自動送信' },
+};
 function showReportFeedback(type, success, msg) {
-  const icons = { lost: '🎒', emergency: '🚨', priority_seat: '♿' };
-  const labels = { lost: '분실물 신고', emergency: '응급 신고', priority_seat: '배려 요청' };
+  const icons = { lost: '🎒', emergency: '🚨', priority_seat: '♿',
+                  lost_item: '🎒', care: '♿' };
+  const lang = (typeof getI18nLang === 'function') ? getI18nLang() : 'ko';
+  const t = I18N_REPORT[lang] || I18N_REPORT.ko;
+  const label = t[type] || t[type === 'lost_item' ? 'lost' : type === 'care' ? 'priority_seat' : type] || type;
   let fb = document.getElementById('_report-fb');
   if (!fb) {
     fb = document.createElement('div');
@@ -980,7 +993,7 @@ function showReportFeedback(type, success, msg) {
   }
   fb.style.background = success ? 'linear-gradient(135deg,#10b981,#059669)' : 'linear-gradient(135deg,#ef4444,#dc2626)';
   fb.style.opacity = '1';
-  fb.textContent = success ? `${icons[type]} ${labels[type]} 전송 완료` : `${msg || '전송 실패'}`;
+  fb.textContent = success ? `${icons[type]||''} ${label} ${t.sent}` : `${msg || t.fail}`;
   clearTimeout(fb._t);
   fb._t = setTimeout(() => { fb.style.opacity = '0'; }, 2500);
 }
