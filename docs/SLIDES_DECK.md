@@ -489,7 +489,7 @@ Y3: 12 → 25     (글로벌 sales 5 + 현지 운영팀 5 + R&D 3)
 백엔드:     Python 3.12, FastAPI + WebSockets, Pandas/Scipy/scikit-learn
 컴퓨터비전: YOLO11s (Ultralytics), BoT-SORT (Kalman + ReID)
 프론트:     Three.js + Vanilla JS (3D BEV)
-네이티브:   Flutter 3.41 + Dart 3.11 (Android APK)
+네이티브:   Flutter 3.41 + Dart 3.11 (Android APK) · 시민신고 오프라인큐 (터널 내 localStorage 보존 → 재연결 자동 전송)
 인프라:     GitHub Pages + Actions, Cloudflare named tunnel + 자체 도메인
 
 [참고문헌]
