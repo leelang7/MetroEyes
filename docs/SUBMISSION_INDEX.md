@@ -88,7 +88,7 @@
 
 | 점수 | 항목 | 산출물 |
 |---:|---|---|
-| 4 | **673 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
+| 4 | **692 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
 | 4 | **Live demo 가용성** (https://leelang7.github.io/MetroEyes/) | GitHub Pages + Cloudflare 터널 |
 | 3 | **8단 demo fail-safe + RUNBOOK** | docs/RUNBOOK.md |
 | 2 | **A4 1-Pager + 5분 영상 narration 4언어** | onepager.html + RECORDING_NARRATION.md |
