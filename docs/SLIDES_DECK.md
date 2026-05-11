@@ -13,7 +13,7 @@
 > - **8단 양면 가치 사슬** (CV → 도시 → 결정 → OD → 환승 → 시민 차등 → backend 자동 → ROI)
 > - **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (cycle 226 칸 단위 BEV ROI 응용)
 > - **IDEA-9 도착 알림 5중 모달리티 + 6단 견고화** (cycle 286-299, PWA v4.11 — 시각/햅틱/beep/4언어 음성/시스템 알림 + Wake Lock + SW + MRU + persistence + ETA + 사전 테스트 + 4언어 i18n)
-> - **CI 15 jobs + 182 pytest 회귀 가드** (cycle 318-383 — 광고 ↔ 코드 ↔ canonical JSON 동시 정합)
+> - **CI 15 jobs + 332 pytest 회귀 가드** (cycle 318-466 — 광고 ↔ 코드 ↔ canonical JSON 동시 정합)
 > - 발표 영상 5분 풀 캡처 가이드 (`docs/RECORDING_GUIDE.md`)
 
 ---
