@@ -172,6 +172,6 @@ pandoc docs/SLIDES_DECK.md -o 이석창_MetroEyes_상세기획서.pdf \
 
 > "MetroEyes는 자체 CV BEV + 10 공공 API + 시민 분산 인센티브 3축 통합 시스템으로,
 > Monte Carlo 1,000회 95% CI 통계 검증 사회 가치 1,393억/년 (CI 1,064~1,808억) 정량 도출.
-> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 342 회귀 가드 + 4언어 i18n production-grade."
+> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 347 회귀 가드 + 4언어 i18n production-grade."
 
 (글자수: 한국어 132자 / 영어 약 250자)

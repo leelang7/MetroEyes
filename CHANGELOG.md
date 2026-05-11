@@ -42,7 +42,11 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 342건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-494)
+## v6.11 — D-2 회귀 가드 347건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+
+### v6.11 cycle 495-496
+- cycle 495: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
+- cycle 496: passenger_app FAB 상태 머신 (스피너/_setReportBtnState/_updateQueueBadge/오프라인배지) + 342→347 가드 동기화
 
 ### v6.11 cycle 486-489
 - cycle 486: admin.html 시민신고 LIVE 패널 (citizen_report WS 카운터+toast) + 339→341 전체 동기화

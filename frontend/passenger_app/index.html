@@ -916,6 +916,49 @@ function applyIncidentNotice(j) {
 const _REPORT_Q_KEY = 'metroeyes_report_queue';
 let _reportCooldown = {};
 
+const _BTN_IDS = { lost: 'btn-report-lost', emergency: 'btn-report-emg', priority_seat: 'btn-report-priority' };
+const _BTN_LABELS = { lost: '🎒 분실물 신고', emergency: '🚨 응급 신고', priority_seat: '♿ 배려 요청' };
+
+function _updateQueueBadge() {
+  try {
+    const q = JSON.parse(localStorage.getItem(_REPORT_Q_KEY) || '[]');
+    const cnt = q.length;
+    Object.values(_BTN_IDS).forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      let badge = btn.querySelector('._q-badge');
+      if (cnt > 0) {
+        if (!badge) { badge = document.createElement('span'); badge.className = '_q-badge'; badge.style.cssText = 'position:absolute;top:-5px;right:-5px;background:#ef4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1'; btn.style.position = 'relative'; btn.appendChild(badge); }
+        badge.textContent = cnt;
+      } else if (badge) { badge.remove(); }
+    });
+  } catch {}
+}
+
+function _setReportBtnState(type, state) {
+  const id = _BTN_IDS[type]; if (!id) return;
+  const btn = document.getElementById(id); if (!btn) return;
+  btn.disabled = state === 'sending';
+  if (state === 'sending') {
+    btn.innerHTML = '<span style="display:inline-block;animation:_spin .7s linear infinite">⟳</span> 전송 중...';
+  } else if (state === 'ok') {
+    btn.innerHTML = '✓ 전송 완료';
+    btn.style.borderColor = '#10b981';
+    setTimeout(() => { _setReportBtnState(type, 'idle'); }, 2000);
+  } else {
+    btn.innerHTML = _BTN_LABELS[type] || type;
+    btn.style.borderColor = '';
+    _updateQueueBadge();
+  }
+}
+
+if (!document.querySelector('#_report-spin-css')) {
+  const s = document.createElement('style');
+  s.id = '_report-spin-css';
+  s.textContent = '@keyframes _spin{to{transform:rotate(360deg)}}';
+  document.head.appendChild(s);
+}
+
 window.flushReportQueue = function() {
   try {
     const q = JSON.parse(localStorage.getItem(_REPORT_Q_KEY) || '[]');
@@ -933,6 +976,7 @@ window.flushReportQueue = function() {
       if (remaining.length === 0) {
         const pending = q.length - remaining.length;
         { const _l=(typeof getI18nLang==='function')?getI18nLang():'ko'; const _qmsgs={ko:`대기 신고 ${pending}건 전송 완료`,en:`${pending} queued report(s) sent`,zh:`${pending}条待发报告已发送`,ja:`${pending}件のキュー送信完了`}; showReportFeedback(q[0].incident_type, true, (_qmsgs[_l]||_qmsgs.ko)); }
+        _updateQueueBadge();
       }
     }
   } catch {}
@@ -954,8 +998,10 @@ window.reportIncident = function(type) {
     ts: now / 1000,
     source: 'citizen-app',
   };
+  _setReportBtnState(type, 'sending');
   if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
     window.LIVE_WS.send(JSON.stringify(payload));
+    _setReportBtnState(type, 'ok');
     showReportFeedback(type, true);
   } else {
     // 오프라인 큐 — 재연결 시 자동 전송
@@ -964,6 +1010,7 @@ window.reportIncident = function(type) {
       q.push(payload);
       localStorage.setItem(_REPORT_Q_KEY, JSON.stringify(q.slice(-10))); // 최대 10건 보관
     } catch {}
+    _setReportBtnState(type, 'idle');
     { const _l = (typeof getI18nLang==='function')?getI18nLang():'ko'; const _t=I18N_REPORT[_l]||I18N_REPORT.ko; showReportFeedback(type, false, _t.offline); }
   }
 };

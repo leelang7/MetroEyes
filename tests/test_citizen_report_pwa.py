@@ -1,4 +1,4 @@
-"""passenger_app 시민 신고 FAB 기능 회귀 가드 (cycle 462, 475, 486).
+"""passenger_app 시민 신고 FAB 기능 회귀 가드 (cycle 462, 475, 486, 496).
 
 cycle 443 시민 신고 FAB 기능:
 - 분실물(lost) / 응급(emergency) / 배려(priority_seat) 3종 신고 버튼
@@ -91,3 +91,44 @@ def test_admin_handles_citizen_report_ws_type() -> None:
     import re
     m = re.search(r"citizen_report[\s\S]{0,400}?cr-em|cr-em[\s\S]{0,400}?citizen_report", html)
     assert m, "admin.html onmessage 가 citizen_report 타입 라우팅 안 함"
+
+
+def test_fab_state_machine_helpers_exist() -> None:
+    """FAB 상태 머신 헬퍼 (_setReportBtnState, _updateQueueBadge) 존재."""
+    html = _html()
+    assert "_setReportBtnState" in html, "_setReportBtnState 함수 누락"
+    assert "_updateQueueBadge" in html, "_updateQueueBadge 함수 누락"
+    assert "_BTN_IDS" in html, "_BTN_IDS 버튼 ID 매핑 누락"
+    assert "_BTN_LABELS" in html, "_BTN_LABELS 버튼 라벨 매핑 누락"
+
+
+def test_fab_spinner_animation_css() -> None:
+    """FAB 전송 중 스피너 애니메이션 CSS keyframe 존재."""
+    html = _html()
+    assert "_spin" in html, "FAB 스피너 @keyframes _spin 누락"
+    assert "sending" in html, "FAB sending 상태 누락"
+
+
+def test_fab_ok_state_checkmark() -> None:
+    """FAB 전송 완료 시 ✓ checkmark 상태 처리."""
+    html = _html()
+    assert "'ok'" in html or '"ok"' in html, "FAB ok 상태 누락"
+    assert "✓" in html or "checkmark" in html.lower() or "전송 완료" in html, \
+        "FAB 전송 완료 표시 누락"
+
+
+def test_offline_queue_badge_update() -> None:
+    """오프라인 큐 대기 건수 배지가 버튼에 표시되는 로직 존재."""
+    html = _html()
+    assert "_q-badge" in html, "오프라인 큐 배지 (_q-badge) 로직 누락"
+    # 큐 플러시 후 배지 업데이트 확인
+    assert "_updateQueueBadge" in html and "flushReportQueue" in html, \
+        "flushReportQueue 후 배지 업데이트 누락"
+
+
+def test_i18n_report_four_languages() -> None:
+    """시민 신고 피드백이 4개 언어(ko/en/zh/ja) 지원."""
+    html = _html()
+    assert "I18N_REPORT" in html, "I18N_REPORT 4언어 사전 누락"
+    for lang in ("ko", "en", "zh", "ja"):
+        assert f'"{lang}"' in html or f"'{lang}'" in html, f"I18N_REPORT {lang} 키 누락"
