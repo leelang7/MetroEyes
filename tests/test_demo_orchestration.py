@@ -18,9 +18,9 @@ def _html() -> str:
 
 
 def test_new_overlay_functions_defined() -> None:
-    """cycle 356/358/360 신규 overlay 함수 3개 모두 정의."""
+    """cycle 356/358/360/483 신규 overlay 함수 4개 모두 정의."""
     html = _html()
-    for fn in ("showAiPricingOverlay", "showEvacOverlay", "showLineRoiOverlay"):
+    for fn in ("showAiPricingOverlay", "showEvacOverlay", "showLineRoiOverlay", "showCitizenReportOverlay"):
         assert f"function {fn}(" in html, f"missing demo overlay: {fn}"
 
 
@@ -39,12 +39,14 @@ def test_new_overlay_branding() -> None:
 
 
 def test_script_includes_new_stages() -> None:
-    """SCRIPT timestamps 에 신규 3 stage 모두 등장 (cycle 356/358/360)."""
+    """SCRIPT timestamps 에 신규 4 stage 모두 등장 (cycle 356/358/360/483)."""
     html = _html()
     # cycle 363 에서 추가한 새 timestamp 들 — 광고 LLM (10s), A* (150s), 호선 ROI (240s)
     assert "showAiPricingOverlay" in html, "AI pricing stage not in SCRIPT"
     assert "showEvacOverlay" in html, "evac stage not in SCRIPT"
     assert "showLineRoiOverlay" in html, "line ROI stage not in SCRIPT"
+    # cycle 483 — 시민 신고 FAB 양면 가치 사슬
+    assert "showCitizenReportOverlay" in html, "citizen report stage not in SCRIPT"
     # 신규 stage 텍스트
     for kw in ("cycle 356", "cycle 358", "cycle 360"):
         assert kw in html, f"missing cycle reference in SCRIPT: {kw}"

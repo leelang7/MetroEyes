@@ -385,6 +385,34 @@ function showLineRoiOverlay() {
   setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
 }
 
+// 시민 신고 FAB 양면 가치 사슬 overlay — 5초
+function showCitizenReportOverlay() {
+  let ov = document.getElementById('citizen-report-overlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'citizen-report-overlay';
+    ov.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:9999;background:rgba(4,6,10,0.96);border:2px solid #a78bfa;border-radius:14px;padding:18px 24px;box-shadow:0 12px 40px rgba(0,0,0,0.6);max-width:620px;text-align:center;opacity:0;transition:opacity .35s';
+    ov.innerHTML = `
+      <div style="font:700 15px sans-serif;color:#a78bfa;letter-spacing:1.2px;margin-bottom:12px">📱 시민 신고 FAB — 양면 가치 사슬 완성</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:#7c3aed;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">🚨 응급 신고<br><span style="font-size:10px;font-weight:400">AED 위치 즉시 안내</span></div>
+        <div style="background:#1e40af;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">📦 분실물 신고<br><span style="font-size:10px;font-weight:400">역×시각 자동 기록</span></div>
+        <div style="background:#2a9d8f;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">♿ 배려 요청<br><span style="font-size:10px;font-weight:400">역무원 즉시 호출</span></div>
+      </div>
+      <div style="font:500 11px sans-serif;color:#fff;line-height:1.7">
+        시민 탭 1번 →
+        <span style="color:#a78bfa">WS citizen_report</span> →
+        <span style="color:#10b981">admin broadcast</span> →
+        <span style="color:#7dd3d3">운영자 콘솔 즉시 표시</span><br>
+        📶 오프라인(터널) 시 localStorage 큐 → 재연결 자동 전송
+      </div>
+    `;
+    document.body.appendChild(ov);
+  }
+  ov.style.opacity = '1';
+  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5000);
+}
+
 // 분산 효과 결과 overlay — 4초 표시
 function showDispersionOverlay() {
   let ov = document.getElementById('dispersion-overlay');
@@ -417,6 +445,7 @@ const SCRIPT = [
   [40000, '🚌 버스 운영자 시연 — 차내 BEV 3구역 실시간 + 문 병목 감지',  () => clickInside('if-bus', 'demo-trigger')],
   [55000, '📷 실 카메라 BEV — 응급 골든타임 + AED 위치 자동 안내',        () => clickInside('if-cam', 'demo-trigger')],
   [90000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200~₩400 차등)',      null],
+  [100000,'🆘 시민 신고 FAB — 응급/분실/배려 3종 → admin 즉시 broadcast',showCitizenReportOverlay],
   [110000,'🔔 IDEA-9 도착 알림 5중 모달리티 — 청각 약자/노캔 배려',       showIdea9Overlay],
   [128000,'🪙 분산 누적 → 사회적 가치 ROI 라이브 갱신',                  null],
   [150000,'🚨 A* 비상 동선 — Hungarian + 출구 차단 + ETA (K=4)',         showEvacOverlay],
