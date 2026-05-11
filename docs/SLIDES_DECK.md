@@ -430,7 +430,7 @@ TAM:  글로벌 580 도시      ₩6조/년     (도시철도 운영 100만+)
 SAM:  APAC+유럽+북미 250    ₩2.5조/년   (4언어 우선)
 SOM:  Y3 20 도시            ₩200억/년   (국내 8 + APAC 12)
 
-[Moat — 7개]
+[Moat — 8개]
 1. 자율주행 CV 백그라운드 (희소 인재)
 2. 칸 컬럼 부재 정량 입증 (1주차 EDA 골든)
 3. 10 공공 API fusion 1년치 누적
@@ -438,6 +438,7 @@ SOM:  Y3 20 도시            ₩200억/년   (국내 8 + APAC 12)
 5. CI 15 jobs + 341 회귀 가드 + canonical KPI drift 자동 차단 production-grade
 6. TRIZ 8 모순 9 IDEA 발명 분석 (논문화)
 7. IDEA-9 접근성 제도 직결 (장애인차별금지법/교통약자법)
+8. 시민신고 FAB + 오프라인큐 → 운영자 admin 즉시 broadcast → 양면 가치사슬 완성
 
 [경쟁 비교]
               | BEV | 칸 점유 | 분산 정책 | 4언어 | OpenAPI | Edge AI
