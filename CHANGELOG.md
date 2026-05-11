@@ -1,8 +1,8 @@
 # Changelog — MetroEyes (SubwayBEV)
 
-## 🎯 D-2 자동 모드 완성 (2026-05-11 cycle 356-460)
+## 🎯 D-2 자동 모드 완성 (2026-05-11 cycle 356-468)
 
-**2 세션 105 사이클 누적** — 356 → 460, 27 회귀 가드 → 321 (+294), CI 9 → 15 jobs (+6).
+**2 세션 113 사이클 누적** — 356 → 468, 27 회귀 가드 → 332 (+305), CI 9 → 15 jobs (+6).
 
 ### 주요 사고 + 회복 1 건
 - **cycle 374**: 광고 "2호선 단독 157M" ↔ cycle 360 EDA 결과 138M 5일간 미감지 →
@@ -42,7 +42,7 @@
 
 ---
 
-## v6.10 — D-2 회귀 가드 321건 + FORM_DATA 10API + admin 임팩트 패널 + 버그수정 (2026-05-11 cycle 447-460)
+## v6.10 — D-2 회귀 가드 332건 + FORM_DATA 10API + admin 임팩트 패널 + 버그수정 + 전체 동기화 (2026-05-11 cycle 447-468)
 
 ### v6.10 cycle 447-455 (문서 동기화 + UX 완성)
 - cycle 447: admin.html WS 핸들러 3종 추가 (incident_summary/occupancy_forecast/env_broadcast) + tests/test_admin_ws_handlers.py 11 가드 신규 + 가드수 315건 동기화
@@ -59,6 +59,14 @@
 - cycle 458: README.en + SLIDES 가드수 316→320, 사이클 450→455 동기화
 - cycle 459: proposal_deck 가드수 316→320 동기화
 - cycle 460: admin appendIncident loc 연산자 우선순위 버그 수정 + 가드 추가
+- cycle 461: README/CHANGELOG/FORM_DATA 460사이클·321가드 동기화
+- cycle 462: 시민신고 PWA 회귀 가드 6건 신규 (분실/응급/배려/쿨다운/station/오프라인)
+- cycle 463: SLIDES 시민신고·10공공API·ESG 가드 3건 추가
+- cycle 464: PROPOSAL Moat 9→10 공공API + 264→330 가드 + 시민신고 FAB 8번 추가
+- cycle 465: PROPOSAL 시민신고 Moat + 10공공API 회귀 가드 2건 추가
+- cycle 466: 9 공공API→10 일괄 동기화 (SLIDES/QA/ARCH/DECK/GUIDE/pitch) + QA 가드수 수식 갱신
+- cycle 467: INNOVATION_TRIZ + PROPOSAL 가드수 182/264→332 동기화
+- cycle 468: SLIDES_DECK 가드수 182→332 동기화 + README/CHANGELOG 468사이클·332가드
 
 ---
 
