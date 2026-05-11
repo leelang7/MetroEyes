@@ -146,12 +146,17 @@ function Start-Tunnel {
         Write-Color "  cloudflared-config.yml 없음 — skip" Yellow
         return
     }
-    Write-Host "  cloudflared 시작 ... " -NoNewline
-    $cfArgs = @('tunnel','--config',"$root\cloudflared-config.yml",'run','--logfile',$tunnelLog)
-    $p = Start-Process -FilePath $cfExe -ArgumentList $cfArgs -WorkingDirectory $root `
-                       -WindowStyle Hidden -PassThru
+    Write-Host "  cloudflared watchdog 시작 ... " -NoNewline
+    # 워치독 방식으로 시작 — 죽으면 5초 후 자동 재시작
+    $watchdog = "$root\scripts\cloudflared_watchdog.ps1"
+    $p = Start-Process -FilePath "powershell.exe" `
+        -ArgumentList "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$watchdog`"" `
+        -WorkingDirectory $root -WindowStyle Hidden -PassThru
     Save-Pid 'cloudflared' $p.Id
-    Write-Color "pid $($p.Id)" Green
+    Start-Sleep -Seconds 3
+    $cf = Get-Process cloudflared -ErrorAction SilentlyContinue
+    if ($cf) { Write-Color "pid $($cf.Id) (watchdog pid $($p.Id))" Green }
+    else     { Write-Color "watchdog pid $($p.Id) — tunnel connecting..." Yellow }
 }
 
 function Start-Publisher {
