@@ -1,4 +1,4 @@
-"""passenger_app 시민 신고 FAB 기능 회귀 가드 (cycle 462, 475).
+"""passenger_app 시민 신고 FAB 기능 회귀 가드 (cycle 462, 475, 486).
 
 cycle 443 시민 신고 FAB 기능:
 - 분실물(lost) / 응급(emergency) / 배려(priority_seat) 3종 신고 버튼
@@ -6,6 +6,7 @@ cycle 443 시민 신고 FAB 기능:
 - citizen_report WS 페이로드 형식 검증
 - 서버 미연결 시 오프라인 큐(localStorage) → 재연결 시 자동 전송
 - 각 신고 타입 backend 수신 후 broadcast
+cycle 486: admin.html 시민 신고 LIVE 패널 — citizen_report WS 실시간 표시 가드 추가
 """
 from __future__ import annotations
 
@@ -14,10 +15,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PWA = ROOT / "frontend" / "passenger_app" / "index.html"
+ADMIN = ROOT / "frontend" / "admin.html"
 
 
 def _html() -> str:
     return PWA.read_text(encoding="utf-8")
+
+
+def _admin() -> str:
+    return ADMIN.read_text(encoding="utf-8")
 
 
 def test_citizen_report_pwa_exists() -> None:
@@ -67,3 +73,21 @@ def test_offline_queue_localStorage() -> None:
         "오프라인 신고 큐 localStorage 키 누락"
     assert "flushReportQueue" in html, "flushReportQueue (재연결 시 큐 플러시) 함수 누락"
     assert "재연결 시 자동 전송" in html, "오프라인 큐 UX 피드백 메시지 누락"
+
+
+def test_admin_citizen_report_panel_exists() -> None:
+    """admin.html 에 시민 신고 LIVE 패널 존재 (양면 가치사슬 demo)."""
+    html = _admin()
+    assert "citizen-report-panel" in html or "시민 신고 LIVE" in html, \
+        "admin.html 시민 신고 LIVE 패널 누락"
+    assert "cr-em" in html, "시민 신고 응급 카운터 누락"
+    assert "cr-lo" in html, "시민 신고 분실물 카운터 누락"
+    assert "cr-ca" in html, "시민 신고 배려 카운터 누락"
+
+
+def test_admin_handles_citizen_report_ws_type() -> None:
+    """admin.html WS onmessage 가 citizen_report 타입 처리."""
+    html = _admin()
+    import re
+    m = re.search(r"citizen_report[\s\S]{0,400}?cr-em|cr-em[\s\S]{0,400}?citizen_report", html)
+    assert m, "admin.html onmessage 가 citizen_report 타입 라우팅 안 함"

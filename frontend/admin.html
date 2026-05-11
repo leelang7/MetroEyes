@@ -421,6 +421,19 @@
       <div id="ic-recent" style="margin-top: 8px; font-size: 10px; color: var(--muted);">최근 이벤트 없음</div>
     </div>
 
+    <!-- 🏙 시민 신고 LIVE 패널 (cycle 486) — citizen_report WS 실시간 -->
+    <div class="panel" id="citizen-report-panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(99,102,241,.08), rgba(236,72,153,.04));">
+      <h2>🏙 시민 신고 LIVE <span style="color: var(--muted); font-weight: 400;">(passenger_app → WS broadcast)</span>
+        <span id="cr-badge" style="float:right; font-size:10px; font-weight:700; color:#7dd3d3; letter-spacing:.5px;">총 <b id="cr-count">0</b>건</span>
+      </h2>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; font-size: 11px; margin-bottom:8px;">
+        <div class="stat" style="display:block;"><span style="color:#ff5e57;">🚨 응급</span> <b id="cr-em">0</b></div>
+        <div class="stat" style="display:block;"><span style="color:#7dd3d3;">🎒 분실물</span> <b id="cr-lo">0</b></div>
+        <div class="stat" style="display:block;"><span style="color:#ec4899;">♿ 배려</span> <b id="cr-ca">0</b></div>
+      </div>
+      <div id="cr-feed" style="font-size:10px; color:var(--muted); max-height:72px; overflow:auto; line-height:1.7;">대기 중 — 시민 앱 신고 수신 시 자동 표시</div>
+    </div>
+
     <div class="panel" style="margin-top:12px; background: linear-gradient(135deg, rgba(239,68,68,.06), rgba(125,211,211,.04));">
       <h2>📷 CV 메트릭 <span style="color: var(--muted); font-weight: 400;">(BEV broadcast)</span></h2>
       <div class="stat">FPS         <b id="cv-fps" class="ok">—</b></div>
@@ -564,6 +577,29 @@ function connectWs() {
       else if (t === 'impact_summary') {
         bucket = 'impact';
         applyImpactCard(j);
+      }
+      else if (t === 'citizen_report') {
+        bucket = 'other';
+        try {
+          const itype = j.incident_type || 'unknown';
+          const countMap = { emergency: 'cr-em', lost_item: 'cr-lo', care: 'cr-ca' };
+          const totalEl = document.getElementById('cr-count');
+          const typeEl = document.getElementById(countMap[itype]);
+          if (typeEl) typeEl.textContent = parseInt(typeEl.textContent || '0', 10) + 1;
+          if (totalEl) totalEl.textContent = parseInt(totalEl.textContent || '0', 10) + 1;
+          const feed = document.getElementById('cr-feed');
+          if (feed) {
+            const labels = { emergency: '🚨응급', lost_item: '🎒분실물', care: '♿배려' };
+            const ts = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.style.cssText = 'padding:1px 0; border-bottom:1px solid rgba(255,255,255,.04);';
+            entry.innerHTML = `<b style="color:#7dd3d3;">${labels[itype]||itype}</b> ${j.desc||''} <span style="color:var(--muted-2);">${ts}</span>`;
+            if (feed.firstChild && feed.firstChild.nodeValue === feed.textContent) feed.innerHTML = '';
+            feed.insertBefore(entry, feed.firstChild);
+            if (feed.children.length > 8) feed.removeChild(feed.lastChild);
+          }
+          showAdminToast(`${({ emergency:'🚨응급', lost_item:'🎒분실물', care:'♿배려' }[itype]||itype)} 시민 신고 접수`, itype === 'emergency' ? 'crit' : 'info');
+        } catch {}
       }
       // 🤖 LLM 자동 컨텍스트 (cycle 355/356) — Claude Haiku의 폭증 추론 결과 라이브 노출
       // backend tesla_bev.py 는 type='context' + summary 로 broadcast (cycle 356 fix)

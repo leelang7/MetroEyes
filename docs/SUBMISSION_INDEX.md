@@ -14,7 +14,7 @@
 |---:|---|---|---|
 | 15 | **CV 백엔드 자체 구현** | `src/cv/tesla_bev.py` (1,036 lines) · YOLO11n + BoT-SORT + 호모그래피 BEV | `tests/test_smoke.py` |
 | 10 | **10 공공 API 활용** | citydata_ppltn (110 POI 분단위) · CardSubway · TOPIS · IndoorAirQuality · SubwayElevator · 공공데이터포털 등 | README.md §"Data Sources" |
-| 10 | **REST API v1 + OpenAPI 3.0** | 9 endpoint + `/api/openapi.yaml` Swagger 호환 | `tests/test_openapi_spec.py` (4 가드) |
+| 10 | **REST API v1 + OpenAPI 3.0** | 13 endpoint (REST 10 + indoor_air/elevator/occupancy_forecast) + `/api/openapi.yaml` Swagger 호환 | `tests/test_openapi_spec.py` (4 가드) |
 | 10 | **알고리즘 정량 우위** | A*+K-means(K=4)+Hungarian 1:1 매칭 + 출구 차단 + ETA + 4분면 baseline | `tests/test_evac_strengthen.py` (5) |
 | 10 | **Monte Carlo 95% CI 통계 신뢰도** | scripts/policy_roi_v3.py 1,000회 perturbation × 5 시나리오 | `tests/test_roi_ci_band.py` (7) |
 | 5 | **광고-코드 자동 정합 시스템** | canonical KPI JSON · cross-file drift 가드 6건 | `tests/test_kpi_drift.py` (6) |
@@ -88,7 +88,7 @@
 
 | 점수 | 항목 | 산출물 |
 |---:|---|---|
-| 4 | **339 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
+| 4 | **341 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
 | 4 | **Live demo 가용성** (https://leelang7.github.io/MetroEyes/) | GitHub Pages + Cloudflare 터널 |
 | 3 | **8단 demo fail-safe + RUNBOOK** | docs/RUNBOOK.md |
 | 2 | **A4 1-Pager + 5분 영상 narration 4언어** | onepager.html + RECORDING_NARRATION.md |

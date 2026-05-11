@@ -42,7 +42,15 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 339건 + mobile_app Flutter 회귀 가드 + 시민신고 오프라인큐 + 전체 동기화 (2026-05-11 cycle 469-479)
+## v6.11 — D-2 회귀 가드 339건 + mobile_app Flutter 회귀 가드 + 시민신고 오프라인큐 + 13 endpoint + demo 시민신고 오버레이 (2026-05-11 cycle 469-485)
+
+### v6.11 cycle 480-485
+- cycle 480: test_openapi_spec 13 endpoint 검증으로 확장 (indoor_air/elevator/occupancy_forecast)
+- cycle 481: README 10→13 API endpoint 표 업데이트 + badge 동기화
+- cycle 482: pitch.html og:title v6.11 + "시민신고" 키워드 + footer 473+ cycles
+- cycle 483: demo.html 시민신고 FAB 오버레이 stage 추가 + test_demo_orchestration 동기화
+- cycle 484: PROPOSAL/QA/SLIDES/ARCHITECTURE_VIEW/SUBMISSION_INDEX 339가드·13endpoint 전체 동기화
+- cycle 485: FORM_DATA/onepager/pitch "9→13 endpoint" 수정 + SUBMISSION_INDEX "9→13 endpoint" 수정
 
 ### v6.11 cycle 469-479
 - cycle 469: README.en 471사이클·332가드 동기화

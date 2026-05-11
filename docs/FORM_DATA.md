@@ -37,7 +37,7 @@
 
 ### 기술 스택
 - **CV**: YOLO11n + BoT-SORT + 호모그래피 BEV (Edge AI Jetson Orin)
-- **Backend**: Python WebSocket + REST API v1 (9 endpoint, OpenAPI 3.0)
+- **Backend**: Python WebSocket + REST API v1 (13 endpoint, OpenAPI 3.0)
 - **Frontend**: 11 페이지 4언어 (ko/en/zh/ja) PWA + 운영자 콘솔
 - **AI**: Claude Haiku 4.5 (LLM 자동 컨텍스트) + GBR R²=0.931 + Web Speech STT
 
@@ -172,6 +172,6 @@ pandoc docs/SLIDES_DECK.md -o 이석창_MetroEyes_상세기획서.pdf \
 
 > "MetroEyes는 자체 CV BEV + 10 공공 API + 시민 분산 인센티브 3축 통합 시스템으로,
 > Monte Carlo 1,000회 95% CI 통계 검증 사회 가치 1,393억/년 (CI 1,064~1,808억) 정량 도출.
-> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 339 회귀 가드 + 4언어 i18n production-grade."
+> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 341 회귀 가드 + 4언어 i18n production-grade."
 
 (글자수: 한국어 132자 / 영어 약 250자)
