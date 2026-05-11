@@ -5,7 +5,7 @@
 [![Social Value](https://img.shields.io/badge/Social_Value-%E2%82%A9139.3B%2Fyr-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
 [![Cycles](https://img.shields.io/badge/Auto_Cycles-478-a78bfa.svg)](CHANGELOG.md)
-[![Tests](https://img.shields.io/badge/regression_tests-412_guards-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/regression_tests-419_guards-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"As Tesla sees the road as BEV, MetroEyes sees the entire urban transit network."*
@@ -39,7 +39,7 @@ Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dd
 
 **TL;DR**: In-house CV BEV + 10 public APIs + citizen redistribution incentives — 3-axis integrated system.
 Policy ROI v3 + Monte Carlo 1,000 simulations → social value **₩139.3B/yr [CI ₩106B~₩181B]**.
-Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 412 regression guards + 10 public APIs + 4-language i18n production-grade.
+Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 419 regression guards + 10 public APIs + 4-language i18n production-grade.
 
 **Additional docs (ops/incident)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 scenarios 1-line recovery · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — detailed proposal v3 · [📋 docs/FORM_DATA.md](docs/FORM_DATA.md) — pre-filled myBox submission form data
 
