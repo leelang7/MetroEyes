@@ -1,5 +1,13 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [cycle 525-527] 2026-05-11
+### Added
+- test_nowcasting_kalman.py: 칼만 필터 융합 RMSE 개선 10개 (cycle 525)
+- test_ad_pricing_page.py: 광고 단가 페이지 IDEA-4/heatmap/KPI 10개 (cycle 526)
+- test_safety_features_js.py: TTS 4언어/TYPE_LABEL/speak/announce 10개 (cycle 527)
+- 회귀 가드 632 → 662 (+30)
+
+
 ## [cycle 523-524] 2026-05-11
 ### Added
 - test_line_carload_eda.py: LINE_CARS/CAPACITY/HEADWAY + estimate_carload 10개
@@ -109,7 +117,7 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 632건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+## v6.11 — D-2 회귀 가드 662건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
 
 ### v6.11 cycle 570-496
 - cycle 570: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
