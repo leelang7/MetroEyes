@@ -91,8 +91,8 @@
 ### 변환 방법 — 3가지 (`docs/SUBMISSION_GUIDE.md` §2 참조)
 
 **방법 A — HTML → 브라우저 인쇄 PDF (권장)**:
-1. `docs/SLIDES.html` 크롬 열기 → Ctrl+P → PDF 저장
-2. 용지 1280×720 사용자 정의 + 여백 없음 + 배경 그래픽 ✓
+1. `docs/proposal_deck.html` 크롬 열기 → Ctrl+P → PDF 저장
+2. 용지 A4 가로 + 여백 없음 + 배경 그래픽 ✓ (34장)
 3. 파일명: `이석창_MetroEyes_상세기획서.pdf`
 
 **방법 B — 한쇼/PowerPoint 직접**:
@@ -150,14 +150,14 @@ pandoc docs/SLIDES_DECK.md -o 이석창_MetroEyes_상세기획서.pdf \
 [D-3 ~ D-1]
 □ 마이박스 양식 4종 다운로드
 □ 한컴에서 양식 4종 작성 → 각각 PDF 저장
-□ docs/SLIDES.html 인쇄 PDF → 상세기획서 PDF
+□ docs/proposal_deck.html Ctrl+P → 상세기획서 PDF (A4 가로, 34장)
 □ 로고 SVG → PNG 변환
 □ 화면 캡처 1장 선택
 
 [D-Day 5/13 18:00]
 □ 6개 파일 모두 명명규칙 확인 (이석창_X.pdf/png)
 □ python scripts/submission_check.py — 12 항목 PASS 확인
-□ python -m pytest tests/ -q — 337+ tests passed 확인
+□ python -m pytest tests/ -q — 832+ tests passed 확인
 □ 한 번에 제출 (마이박스 또는 대회 사이트)
 □ 제출 확인 메일 / 캡처 보관
 
