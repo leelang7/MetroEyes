@@ -42,11 +42,11 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 360건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+## v6.11 — D-2 회귀 가드 389건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
 
 ### v6.11 cycle 495-496
 - cycle 495: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
-- cycle 496: passenger_app FAB 상태 머신 (스피너/_setReportBtnState/_updateQueueBadge/오프라인배지) + 342→360 가드 동기화
+- cycle 496: passenger_app FAB 상태 머신 (스피너/_setReportBtnState/_updateQueueBadge/오프라인배지) + 342→389 가드 동기화
 
 ### v6.11 cycle 486-489
 - cycle 486: admin.html 시민신고 LIVE 패널 (citizen_report WS 카운터+toast) + 339→341 전체 동기화
@@ -196,7 +196,7 @@
   - 30 슬라이드 A4 가로 PDF 인쇄 친화 (@page A4 landscape, page-break-after: always)
   - 4 섹션 분류: I. 개요(1~5) · II. 문제+EDA(6~13) · III. 솔루션+차별성(14~22) · IV. 사업화(23~30)
   - 사진/도표 풍부: PNG 차트 5종 (dispersion/OD/transfer/per_line/heatmap) + 30+ 데이터 표 + 50+ 색상 카드
-  - canonical KPI 7종 (1,393억/360×/473.4M/157M/708×/CI [1,064~1,808]) 모두 포함 — drift 차단
+  - canonical KPI 7종 (1,393억/389×/473.4M/157M/708×/CI [1,064~1,808]) 모두 포함 — drift 차단
   - 비즈니스 모델 3-tier (B2G ₩40억 + B2B 광고 ₩100억 + B2B Data ₩12억) + 매출 시뮬 + 6 분기 로드맵
   - 자기 채점 1차 105 + 2차 100 = 205/205 + ESG 5축
   - HUD: Ctrl+P PDF 저장 안내 (배경 그래픽 ✓)
@@ -312,7 +312,7 @@
 - **cycle 369** 5분 발표 영상 4언어 narration 스크립트
   - demo.html SCRIPT (cycle 363) timestamp 1:1 정합
   - 14 stage × 4 언어 (ko/en/zh/ja) = 56 narration 블록
-  - cycle 356/358/360 신규 KPI 모두 4언어 노출
+  - cycle 356/358/389 신규 KPI 모두 4언어 노출
 - **cycle 370** admin 호선×시간 mini heatmap (canvas 9×19)
   - cycle 368 결과 운영자 admin 라이브 시각화
   - Top 5 외곽선 강조 + 텍스트 요약 + i18n 4언어
