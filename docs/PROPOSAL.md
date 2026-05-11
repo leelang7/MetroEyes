@@ -282,7 +282,7 @@ GitHub: https://github.com/leelang7/MetroEyes
 5. **CI 15 jobs + 341 회귀 가드 + canonical KPI drift 자동 차단** — production-grade 신뢰성 (광고 수치 ↔ 코드 ↔ 그림 ↔ JSON 동시 정합)
 6. **TRIZ 8 모순 9 IDEA** — 발명 방법론 정량 분석 (논문화 가능)
 7. **IDEA-9 접근성 제도 연결** — 청각장애인 42만 명 + 노캔 1,200만 잠재 사용자, 장애인차별금지법/교통약자법 직결 (정부 정책 우선순위)
-8. **시민 신고 FAB + 오프라인 큐** — 분실물/응급/배려 3종 실시간 신고 → localStorage 큐(터널 offline) → 재연결 시 자동 전송 → 운영자 admin 콘솔 즉시 broadcast → 양면 가치 사슬 완성
+8. **시민 신고 FAB + 오프라인 큐 + admin LIVE 패널** — 분실물/응급/배려 3종 실시간 신고 → localStorage 큐(터널 offline) → 재연결 시 자동 전송 → 운영자 admin "시민 신고 LIVE" 패널 즉시 카운터/toast → 양면 가치 사슬 완성 · 4언어 피드백 i18n
 
 ---
 
