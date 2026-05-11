@@ -88,7 +88,7 @@
 
 | 점수 | 항목 | 산출물 |
 |---:|---|---|
-| 4 | **320 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
+| 4 | **337 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
 | 4 | **Live demo 가용성** (https://leelang7.github.io/MetroEyes/) | GitHub Pages + Cloudflare 터널 |
 | 3 | **8단 demo fail-safe + RUNBOOK** | docs/RUNBOOK.md |
 | 2 | **A4 1-Pager + 5분 영상 narration 4언어** | onepager.html + RECORDING_NARRATION.md |
@@ -157,7 +157,7 @@
 - `scripts/eda_line_hour_priority.py` (호선×시간 2D 매트릭스)
 - `scripts/submission_check.py --ci` (10 fast 검사 < 1초)
 
-### CI / 회귀 가드 (320건 / 15 jobs)
+### CI / 회귀 가드 (337건 / 15 jobs)
 - `.github/workflows/ci.yml` — submission-ship-gate + frontend-features (14 테스트 파일) + ROI v3 + EDA dispersion/OD/transfer + bonus tier + figs + pitch 구조 + impact + RUNBOOK + line ROI EDA + submission
 
 ---

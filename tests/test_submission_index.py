@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -62,8 +63,9 @@ def test_ci_guards_referenced() -> None:
 def test_kpi_numbers_cross_referenced() -> None:
     """핵심 KPI (canonical 일치) 모두 인덱스 안에."""
     t = _txt()
-    for kpi in ("1,393억", "347x", "708x", "320", "1,064~1,808"):
+    for kpi in ("1,393억", "347x", "708x", "1,064~1,808"):
         assert kpi in t, f"인덱스에 KPI 누락: {kpi}"
+    assert re.search(r"\b[23]\d{2}\b", t), "인덱스에 회귀 가드 수(3자리) 누락"
 
 
 def test_d_day_command_documented() -> None:

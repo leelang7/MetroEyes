@@ -42,6 +42,17 @@
 
 ---
 
+## v6.11 — D-2 회귀 가드 337건 + mobile_app Flutter 회귀 가드 + README/CHANGELOG 473사이클 동기화 (2026-05-11 cycle 469-473)
+
+### v6.11 cycle 469-473
+- cycle 469: README.en 471사이클·332가드 동기화
+- cycle 470: frontend/index.html 푸터 v6.0→v6.10 / 316→469사이클 / 332가드 동기화
+- cycle 471: pitch.html 가드수·API수 동기화
+- cycle 472: README.en 455→471 사이클 동기화
+- cycle 473: mobile_app Flutter 회귀 가드 5건 신규 (시민신고 FAB 3종/citizenReport WS/population_query WS/README WS 프로토콜) → 337건
+
+---
+
 ## v6.10 — D-2 회귀 가드 332건 + FORM_DATA 10API + admin 임팩트 패널 + 버그수정 + 전체 동기화 (2026-05-11 cycle 447-468)
 
 ### v6.10 cycle 447-455 (문서 동기화 + UX 완성)
