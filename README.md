@@ -4,10 +4,10 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-428회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-446회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/regression_tests-273회귀_가드-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/regression_tests-304회귀_가드-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
@@ -21,7 +21,7 @@
 ```bash
 git clone https://github.com/leelang7/MetroEyes.git && cd MetroEyes
 make install      # pip install -r requirements.txt (cycle 421)
-make verify       # ship-gate 10/10 + pytest 273 가드 (10초)
+make verify       # ship-gate 10/10 + pytest 304 가드 (10초)
 make demo         # backend lite-server :8765 --demo (CV 모델 없이)
 ```
 Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dday.sh --quick`
@@ -40,9 +40,9 @@ Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dd
 | **4** | [🎯 docs/SUBMISSION_INDEX.md](docs/SUBMISSION_INDEX.md) | 평가 지표 ↔ 산출물 ↔ CI 가드 자기 채점 (1차 105 + 2차 100) | 3분 |
 | **5** | [💬 docs/QA_PREPARATION.md](docs/QA_PREPARATION.md) | 18 예상 질문 + 30초 self-pitch (5 카테고리) | 5분 |
 
-**짧은 요약**: 자체 CV BEV + 9 공공 API + 시민 인센티브 3 축 통합 시스템.
+**짧은 요약**: 자체 CV BEV + 10 공공 API + 시민 인센티브 3 축 통합 시스템.
 정책 ROI v3 + Monte Carlo 1,000 회 95% CI 로 사회 가치 **1,393억/년 [CI 1,064~1,808억]** 정량 도출.
-2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 273 회귀 가드 + 4 언어 i18n production-grade.
+2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 304 회귀 가드 + 4 언어 i18n production-grade.
 
 **문서 추가 (장애·운영)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 시나리오 1줄 복구 · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — 상세 기획서 v3 · [📋 docs/FORM_DATA.md](docs/FORM_DATA.md) — 마이박스 양식 사전 작성 데이터
 

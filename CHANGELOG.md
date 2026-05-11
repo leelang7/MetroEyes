@@ -1,8 +1,8 @@
 # Changelog — MetroEyes (SubwayBEV)
 
-## 🎯 D-5 자동 모드 완성 (2026-05-08 cycle 356-406)
+## 🎯 D-2 자동 모드 완성 (2026-05-11 cycle 356-446)
 
-**1 세션 51 사이클 누적** — 356 → 406, 27 회귀 가드 → 243 (+216), CI 9 → 15 jobs (+6).
+**2 세션 91 사이클 누적** — 356 → 446, 27 회귀 가드 → 304 (+277), CI 9 → 15 jobs (+6).
 
 ### 주요 사고 + 회복 1 건
 - **cycle 374**: 광고 "2호선 단독 157M" ↔ cycle 360 EDA 결과 138M 5일간 미감지 →
@@ -39,6 +39,30 @@
 - Internal links (10 docs + sweep): 10건
 - 기존 (OpenAPI/dispersion/OD/transfer/bonus/figs/pitch 구조/impact): 41건
 - ESG / canonical / structural: 67건
+
+---
+
+## v6.9 — D-2 회귀 가드 304건 + SLIDES 10종 + proposal 285가드 + citizen_report 환경 API + admin WS핸들러 (2026-05-11 cycle 429-446)
+
+### v6.9 cycle 429-446 (SLIDES deck v4 + 환경 API + 시민신고 + 관리자 UX)
+- cycle 429: heartbeat tick · 자율 루프 진입 (D-2)
+- cycle 430: SLIDES.html 10종 데이터소스 표 + IndoorAirQualityMeasureService 10행 추가
+- cycle 431: SLIDES.html 9종→10종 summary card 동기화
+- cycle 432: SLIDES.html 7개→10개 공공 API (아키텍처 step) 수정
+- cycle 433: SLIDES.html 7-Moat 가드 수 182→285 동기화
+- cycle 434: SLIDES.html 신규 6대 사회적 가치 슬라이드 (임산부/응급/군중밀집/분실/무임/5중 도착)
+- cycle 435: SLIDES.html 4단 차등 보상 + Flutter phone-mock 슬라이드
+- cycle 436: SLIDES.html 호선×시간 171셀 heatmap SVG + Top-5 priority 슬라이드
+- cycle 437: proposal_deck.html 가드 282→285 동기화 (4개소)
+- cycle 438: test_slides_v3_alignment 가드 10종 동기화 (새 가드 포함)
+- cycle 439: 시민신고 Flutter FAB citizenReport WS 메서드 완성
+- cycle 440: lite_server async/executor 버그수정 + 필드명 alias + predict 반환 dict화
+- cycle 441: tests/test_lite_server_env.py 19 가드 신규 (fetch_indoor_air/fetch_elevator_status/citizen_report/periodic_broadcast)
+- cycle 442: frontend/onepager.html 가드 수 233→285 + 메타 설명 갱신
+- cycle 443: Flutter citizenReport WS 통합 + FAB UI (mobile_app/)
+- cycle 444: proposal_deck.html 헤더 282→285 가드 동기화
+- cycle 445: SLIDES.html 대폭 보강 (9종→10종, 4슬라이드 추가, 29→32슬라이드)
+- cycle 446: operator_web/admin.html WS 핸들러 보강 (incident_summary/occupancy_forecast/env_broadcast) + tests/test_admin_ws_handlers.py 11 가드 신규 + README/CHANGELOG 304건 동기화
 
 ---
 

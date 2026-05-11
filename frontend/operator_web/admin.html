@@ -222,8 +222,11 @@ function handleMsg(d) {
   if (d.type === 'bev' && d.cars) applySubwayBev(d);
   if (d.type === 'bus_bev' && d.zones) applyBusBev(d);
   if (d.incident || d.type === 'incident') appendIncident(d);
+  if (d.type === 'incident_summary') applyIncidentSummary(d);
   if (d.type === 'indoor_air') applyAir(d);
   if (d.type === 'elevator_status') applyElev(d);
+  if (d.type === 'occupancy_forecast') drawForecast(d);
+  if (d.type === 'env_broadcast') applyEnvBroadcast(d);
 }
 
 function applySubwayBev(d) {
@@ -429,6 +432,26 @@ function renderDsStats(d) {
     <div style="margin-top:10px;font-size:11px;color:var(--muted)">
       API 호출 통계: ${Object.entries(s.api_stats||{}).map(([k,v])=>`${k} ${v}회`).join(' · ') || '아직 없음'}
     </div>`;
+}
+
+// ---- Incident Summary (broadcast from fake_incident_seed_loop) ----
+function applyIncidentSummary(d) {
+  const total = (d.emergency||0) + (d.suspicious||0) + (d.lost||0)
+              + (d.free_ride||0) + (d.priority_seat||0) + (d.bottleneck||0);
+  document.getElementById('kpi-inc').textContent = total;
+  (d.events || []).forEach(ev => {
+    const icon = ev.type === 'emergency' ? '🚨' : ev.type === 'lost' ? '🎒'
+               : ev.type === 'priority_seat' ? '♿' : ev.type === 'free_ride' ? '🎫'
+               : ev.type === 'bottleneck' ? '🚪' : '⚠️';
+    appendIncident({ icon, title: ev.msg || ev.type, location: ev.source || '—',
+                     severity: ev.severity || 'mid' });
+  });
+}
+
+// ---- Env broadcast (periodic indoor_air + elevator) ----
+function applyEnvBroadcast(d) {
+  if (d.air) applyAir(d.air);
+  if (d.elevator) applyElev(d.elevator);
 }
 
 // ---- Init ----
