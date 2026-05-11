@@ -93,8 +93,8 @@
 ## 🎯 카테고리 5 — 발표 흐름 / 전략
 
 ### Q17. "5분 시연이 너무 빠른데 모든 기능을 어떻게 다 보여주나?"
-**근거 (15초)**: `frontend/demo.html` 4-패널 동시 + 자동 SCRIPT (cycle 363). 14 stage timestamp 정합 + AI 단가 / A* 강화 / 호선 ROI overlay 자동 표시.
-**증거**: `tests/test_demo_orchestration.py` 5 가드 + `docs/RECORDING_NARRATION.md` 4 언어 narration 14 stage × 4 = 56 블록.
+**근거 (15초)**: `frontend/demo.html` 4-패널 동시 + 자동 SCRIPT (cycle 496). 16 stage timestamp 정합 + AI 단가 / A* 강화 / 호선 ROI overlay 자동 표시.
+**증거**: `tests/test_demo_orchestration.py` 5 가드 + `docs/RECORDING_NARRATION.md` 4 언어 narration 16 stage × 4 = 64 블록.
 
 ### Q18. "수상 후 다음 단계?"
 **근거 (15초)**: 2026 Q4 서울교통공사 PoC → 2027 H1 부산·대구·인천 확장 → 2027 H2 Series A ₩50억 → 2028 Y2 ₩100억 매출 → 2029 Y3 ₩200억 + 사회 가치 1,393억/년 정량.
