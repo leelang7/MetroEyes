@@ -117,7 +117,10 @@ def test_large_slide_titles() -> None:
 def test_no_personal_info() -> None:
     """개인정보 금지 (PPT 룰)."""
     t = _txt()
-    assert not re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', t), "이메일 노출"
+    # CDN/버전 패턴(pretendard@v1.3.9 등) 제외하고 이메일만 탐지
+    emails = [m for m in re.findall(r'[\w.+-]+@[\w-]+\.[\w.-]+', t)
+              if not re.match(r'.+@v[\d.]+', m)]
+    assert not emails, f"이메일 노출: {emails}"
     assert not re.findall(r'\b01[0-9]-\d{3,4}-\d{4}\b', t), "전화 노출"
 
 
@@ -158,8 +161,8 @@ def test_evaluation_keywords() -> None:
 
 
 def test_official_seven_sections_structure() -> None:
-    """PPT 정식 7항목."""
+    """PPT 정식 7항목 (템플릿 정렬 완료: §3=사업·서비스, §4=경쟁기술)."""
     t = _txt()
-    sections = ["제안 배경", "출품작 핵심", "차별성", "개발 과정", "IA", "창업", "개발 툴"]
+    sections = ["제안 배경", "출품작 핵심", "사업·서비스", "경쟁기술", "IA", "창업", "개발 툴"]
     for s in sections:
         assert s in t, f"섹션 '{s}' 누락"

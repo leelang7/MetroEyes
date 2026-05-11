@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css">
 <title>MetroEyes 상세기획서 · 2026 서울시 빅데이터 활용 경진대회 (창업 부문)</title>
 <style>
 @page { size: A4 landscape; margin: 0; }
@@ -53,7 +57,7 @@ body {
   border-top: 1px solid #e5e7eb;
 }
 .foot .pgnum b { color: #1a1a1f; }
-.foot .pgnum::after { content: ' / 26'; color: #94a3b8; font-size: 9px; }
+.foot .pgnum::after { content: ' / 27'; color: #94a3b8; font-size: 9px; }
 
 .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; }
 .cards.c3 { grid-template-columns: repeat(3, 1fr); }
@@ -221,6 +225,8 @@ table td.win { color: #047857; font-weight: 700; }
 .hero-camera .left .it, .hero-camera .right .it { padding: 2.5mm 3mm; background: #f8fafc; border-radius: 2mm; font-size: 10.5px; line-height: 1.45; border-left: 3px solid #10b981; }
 .hero-camera .right .it { border-left: none; border-right: 3px solid #6366f1; text-align: right; }
 
+
+@media screen { .slide { overflow: visible; } .body { overflow: visible; } }
 @media print { body { background: #fff; } .slide { margin: 0; box-shadow: none; } .deck { width: auto; } }
 @media screen and (max-width: 900px) { .slide { transform: scale(.5); transform-origin: top center; margin-bottom: -100mm; } }
 </style>
@@ -593,14 +599,146 @@ table td.win { color: #047857; font-weight: 700; }
 <!-- ════════ §3 cover ════════ -->
 <section class="slide section-cover">
   <div class="num">03</div>
-  <h1>기존 서비스와의<br>차별성</h1>
-  <div class="desc">· 6대 사회적 가치 IDEA<br>· 4단 차등 보상 자동 시스템<br>· 군중밀집 사고 사전 경고<br>· 버스 시스템 통합<br>· 글로벌 4개 도시 서비스가 충족하지 못한 5개 기준 동시 달성</div>
+  <h1>사업·서비스<br>계획</h1>
+  <div class="desc">· AI 협업 4축 통합 개발 (815 회귀 가드 · CI 15 jobs)<br>· 1인 production-grade 품질 지표<br>· 양면 가치사슬 — 시민 ↔ 운영자 ↔ 광고주<br>· 24시간 라이브 데모 · app.allthatai.kr</div>
+  <div class="judge"><b>평가 기준:</b> 사업·서비스 계획 (창업) — 개발 방법론, 기술 신뢰성, 가치사슬 및 지속 성장 구조</div>
 </section>
+
+<!-- 4-1 9일 사이클 + AI 협업 -->
+<section class="slide">
+  <div class="head">
+    <div class="section-num"><span class="pill">03</span><span class="ttl">사업·서비스 계획</span></div>
+    <div class="compete">1인 + AI 협업 production-grade</div>
+  </div>
+  <div class="body">
+    <h1>AI 협업 4축 통합 — 데이터 기반 개발</h1>
+    <div class="col2 uneven">
+      <div>
+        <h2>AI 협업 구성</h2>
+        <table>
+          <tr><th>역할</th><th>기능</th><th>도구</th></tr>
+          <tr><td>객체 인식</td><td>CV 파이프라인 + 다중 추적</td><td>PyTorch + CUDA</td></tr>
+          <tr><td>광고 자연어</td><td>인파 폭증 80자 요약</td><td>Claude Haiku 4.5</td></tr>
+          <tr><td>음성 입출력</td><td>도착지 STT / 4언어 안내</td><td>웹 음성 API</td></tr>
+          <tr><td>통계 분석</td><td>1,000회 시뮬 · 95% CI</td><td>NumPy / scikit-learn</td></tr>
+        </table>
+        <h2 style="margin-top: 4mm;">품질 지표</h2>
+        <table>
+          <tr><th>항목</th><th>수치</th></tr>
+          <tr><td>회귀 검증 가드</td><td class="win">815개</td></tr>
+          <tr><td>4언어 완전 i18n</td><td class="win">ko/en/zh/ja</td></tr>
+          <tr><td>3 플랫폼 동일 빌드</td><td class="win">Web/Android/Win</td></tr>
+          <tr><td>CI 자동 검증 (15 jobs)</td><td class="win">push마다 통과</td></tr>
+        </table>
+      </div>
+      <div>
+        <h2>구현 검증 현황</h2>
+        <div class="cards c2" style="grid-template-columns:1fr 1fr;">
+          <div class="card kpi"><div class="lbl">회귀 가드</div><div class="v">815<small>개</small></div><div class="ctx">전 기능 자동 검증</div></div>
+          <div class="card kpi"><div class="lbl">공개 API</div><div class="v">13<small>개</small></div><div class="ctx">OpenAPI 3.0 명세</div></div>
+          <div class="card kpi"><div class="lbl">라이브 데모</div><div class="v">24<small>h</small></div><div class="ctx">app.allthatai.kr</div></div>
+          <div class="card kpi"><div class="lbl">제출 검증</div><div class="v">10/10</div><div class="ctx">ship-gate 자동 통과</div></div>
+        </div>
+        <div class="diff-box green" style="margin-top: 3mm;">
+          <h3>공공데이터 라이브 검증</h3>
+          <p>· citydata 강남역 실호출 확인 (2026-05-09)<br>· 10개 API 응답 형식 자동 검증<br>· 회귀 가드 815개 — 기능 누락 즉시 차단</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>GitHub Actions CI 15 jobs · pytest 815 가드 · Apache 2.0</span><span class="pgnum"><b>10쪽</b></span></div>
+</section>
+
+<!-- 4-2 기술 신뢰성 -->
+<section class="slide">
+  <div class="head">
+    <div class="section-num"><span class="pill">03</span><span class="ttl">사업·서비스 계획</span></div>
+    <div class="compete">구체성 · 기술 신뢰성</div>
+  </div>
+  <div class="body">
+    <h1>기술 신뢰성 — 검증 완료 지표</h1>
+    <div class="col2">
+      <div>
+        <h2>구현 완성도</h2>
+        <table>
+          <tr><th>영역</th><th>내용</th><th>상태</th></tr>
+          <tr><td>백엔드 API</td><td>REST 13 엔드포인트 + WebSocket</td><td class="win">완료</td></tr>
+          <tr><td>공공데이터</td><td>10개 API 실호출 검증</td><td class="win">완료</td></tr>
+          <tr><td>시민 앱</td><td>PWA + GPS + 5중 알림</td><td class="win">완료</td></tr>
+          <tr><td>운영자 콘솔</td><td>지하철+버스+광고+실카메라 4탭</td><td class="win">완료</td></tr>
+          <tr><td>Flutter 폰앱</td><td>Android/Windows/Web 동일 빌드</td><td class="win">완료</td></tr>
+          <tr><td>4언어 i18n</td><td>ko/en/zh/ja 전 화면</td><td class="win">완료</td></tr>
+          <tr><td>CV 파이프라인</td><td>객체 인식 + 호모그래피 + BEV</td><td class="win">완료</td></tr>
+          <tr><td>4단 차등 보상</td><td>환승 37 + 핫스팟 12 자동 매핑</td><td class="win">완료</td></tr>
+        </table>
+      </div>
+      <div>
+        <h2>라이브 접속 경로</h2>
+        <div class="diff-box green" style="margin-bottom:3mm;">
+          <h3>🌐 외부 접속 (24시간)</h3>
+          <p style="font-family:monospace; font-size:10px;">app.allthatai.kr<br>leelang7.github.io/MetroEyes</p>
+        </div>
+        <div class="diff-box amber" style="margin-bottom:3mm;">
+          <h3>📱 Flutter 앱 설치</h3>
+          <p>· Android: APK 직접 설치<br>· Windows: Desktop 빌드<br>· 브라우저: Chrome 즉시 실행</p>
+        </div>
+        <div class="diff-box">
+          <h3>🔍 검증 방법</h3>
+          <p>· Windows: <code>scripts/dday.ps1 -Quick</code><br>· 815 가드 자동 통과 확인<br>· API 실호출 10초 이내 응답</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>GitHub Actions CI 15 jobs · 815 가드 · Apache 2.0 오픈소스</span><span class="pgnum"><b>11쪽</b></span></div>
+</section>
+
+<!-- 4-3 양면 가치사슬 -->
+<section class="slide">
+  <div class="head">
+    <div class="section-num"><span class="pill">03</span><span class="ttl">사업·서비스 계획</span></div>
+    <div class="compete">양면 가치사슬</div>
+  </div>
+  <div class="body">
+    <h1>가치 사슬 — 시민 1회 분산 → 모두에게 가치</h1>
+    <div class="flow" style="margin: 4mm 0;">
+      <div class="step"><div class="n">1 카메라</div><div class="h">📸 칸 안 인식</div><div class="d">CV 파이프라인 분 단위</div></div>
+      <div class="step"><div class="n">2 도시</div><div class="h">🌆 9 데이터 결합</div><div class="d">날씨·행사·인구</div></div>
+      <div class="step"><div class="n">3 결정</div><div class="h">🎯 우선순위 158</div><div class="d">2호선 9시 → ₩400</div></div>
+      <div class="step"><div class="n">4 OD</div><div class="h">↔️ 출퇴근</div><div class="d">출근 12배</div></div>
+    </div>
+    <div class="flow">
+      <div class="step"><div class="n">5 환승</div><div class="h">🔄 호선 차등</div><div class="d">충무로 +1.56</div></div>
+      <div class="step"><div class="n">6 시민</div><div class="h">👤 4단 분산</div><div class="d">웹·폰앱 5중 알림</div></div>
+      <div class="step"><div class="n">7 백엔드</div><div class="h">💰 자동 가산</div><div class="d">KRW 즉시</div></div>
+      <div class="step"><div class="n">8 운영자</div><div class="h">📈 ROI 라이브</div><div class="d">광고 +12% 자동</div></div>
+    </div>
+    <div class="col2" style="margin-top: 4mm;">
+      <div class="diff-box green">
+        <h3>네트워크 효과</h3>
+        <p>· 사용자 ↑ → 정확도 ↑ (다중 신호)<br>· 운영자 비용 0 → ROI 시간↗<br>· 광고 단가 동적 + 자연어 근거 → 광고주 LTV ↑<br>· 데이터 우위 → 진입 장벽</p>
+      </div>
+      <div class="diff-box amber">
+        <h3>실제 메시지 흐름 (1초 미만)</h3>
+        <p>시민 ws impact_log → backend _bonus_krw() → broadcast impact_summary → 운영자 dashboard tile → ad_pricing.html (광고 +12%)<br>전 과정 1초 안 끝남.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>src/cv/lite_server.py + frontend/operator_web/ + frontend/passenger_app/ + mobile_app/</span><span class="pgnum"><b>12쪽</b></span></div>
+</section>
+
+<!-- ════════ §4 cover ════════ -->
+<section class="slide section-cover">
+  <div class="num">04</div>
+  <h1>경쟁기술 및<br>현황</h1>
+  <div class="desc">· 6대 사회적 가치 IDEA<br>· 4단 차등 보상 자동 시스템<br>· 군중밀집 사고 사전 경고<br>· 버스 시스템 통합<br>· 글로벌 4개 도시 서비스가 충족하지 못한 5개 기준 동시 달성</div>
+  <div class="judge"><b>평가 기준:</b> 경쟁기술 및 현황 (제품·서비스 차별화) — 기존 솔루션 대비 독창성 + 기술 우위</div>
+</section>
+
 
 <!-- 3-1. 6대 사회적 가치 IDEA -->
 <section class="slide">
   <div class="head">
-    <div class="section-num"><span class="pill">03</span><span class="ttl">기존 서비스와의 차별성</span></div>
+    <div class="section-num"><span class="pill">04</span><span class="ttl">경쟁기술 및 현황</span></div>
     <div class="compete">6대 사회적 가치</div>
   </div>
   <div class="body">
@@ -651,13 +789,13 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>이 6 IDEA 가 MetroEyes 의 정체성. 기존 공공 CCTV 인프라 위에 SW만 — 추가 하드웨어 0원.</span><span class="pgnum"><b>10쪽</b></span></div>
+  <div class="foot"><span>이 6 IDEA 가 MetroEyes 의 정체성. 기존 공공 CCTV 인프라 위에 SW만 — 추가 하드웨어 0원.</span><span class="pgnum"><b>13쪽</b></span></div>
 </section>
 
 <!-- 3-1b. 알람 UI 캡쳐 — 분실·무임·응급 toast -->
 <section class="slide">
   <div class="head">
-    <div class="section-num"><span class="pill">03</span><span class="ttl">기존 서비스와의 차별성</span></div>
+    <div class="section-num"><span class="pill">04</span><span class="ttl">경쟁기술 및 현황</span></div>
     <div class="compete">알람 4종 — 실제 운영자 콘솔 화면</div>
   </div>
   <div class="body">
@@ -707,13 +845,13 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>frontend/operator_web/realbev.html · IDEA-6 응급 · IDEA-7 분실 · 무임승차 감지 · 우선석/병목 toast</span><span class="pgnum"><b>11쪽</b></span></div>
+  <div class="foot"><span>frontend/operator_web/realbev.html · IDEA-6 응급 · IDEA-7 분실 · 무임승차 감지 · 우선석/병목 toast</span><span class="pgnum"><b>14쪽</b></span></div>
 </section>
 
 <!-- 3-2. 4단 차등 보상 자동 시스템 (핵심) -->
 <section class="slide">
   <div class="head">
-    <div class="section-num"><span class="pill">03</span><span class="ttl">기존 서비스와의 차별성</span></div>
+    <div class="section-num"><span class="pill">04</span><span class="ttl">경쟁기술 및 현황</span></div>
     <div class="compete">독창성 — <b>4단 차등 보상 · 글로벌 최초</b></div>
   </div>
   <div class="body">
@@ -772,13 +910,13 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>src/cv/lite_server.py _bonus_krw() · TRANSFER_STATIONS 37곳 + OD_HOTSPOTS 12곳 (현 시각 자동)</span><span class="pgnum"><b>12쪽</b></span></div>
+  <div class="foot"><span>src/cv/lite_server.py _bonus_krw() · TRANSFER_STATIONS 37곳 + OD_HOTSPOTS 12곳 (현 시각 자동)</span><span class="pgnum"><b>15쪽</b></span></div>
 </section>
 
 <!-- 3-3. 에스컬레이터 + 통행량 (군중밀집 사전경보) -->
 <section class="slide">
   <div class="head">
-    <div class="section-num"><span class="pill">03</span><span class="ttl">기존 서비스와의 차별성</span></div>
+    <div class="section-num"><span class="pill">04</span><span class="ttl">경쟁기술 및 현황</span></div>
     <div class="compete">IDEA-8 군중밀집 사고 사전 경고</div>
   </div>
   <div class="body">
@@ -824,13 +962,13 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>코드: incident_log {ev_type:'bottleneck'} 누적 → 정체 hot-spot 통계 + 정책 근거</span><span class="pgnum"><b>13쪽</b></span></div>
+  <div class="foot"><span>코드: incident_log {ev_type:'bottleneck'} 누적 → 정체 hot-spot 통계 + 정책 근거</span><span class="pgnum"><b>16쪽</b></span></div>
 </section>
 
 <!-- 3-4 버스 시스템 -->
 <section class="slide">
   <div class="head">
-    <div class="section-num"><span class="pill">03</span><span class="ttl">기존 서비스와의 차별성</span></div>
+    <div class="section-num"><span class="pill">04</span><span class="ttl">경쟁기술 및 현황</span></div>
     <div class="compete"><b>버스 시스템 통합 — 듀얼 모드</b></div>
   </div>
   <div class="body">
@@ -862,13 +1000,13 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>frontend/operator_web/bus.html · 24시간 sparkline + 점유 가장 낮은 차량 추천</span><span class="pgnum"><b>14쪽</b></span></div>
+  <div class="foot"><span>frontend/operator_web/bus.html · 24시간 sparkline + 점유 가장 낮은 차량 추천</span><span class="pgnum"><b>17쪽</b></span></div>
 </section>
 
 <!-- 3-5 4 도시 비교 + 발명 기법 -->
 <section class="slide">
   <div class="head">
-    <div class="section-num"><span class="pill">03</span><span class="ttl">기존 서비스와의 차별성</span></div>
+    <div class="section-num"><span class="pill">04</span><span class="ttl">경쟁기술 및 현황</span></div>
     <div class="compete">글로벌 4개 도시 비교</div>
   </div>
   <div class="body">
@@ -903,129 +1041,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>발명 기법 = TRIZ 발명 문제 해결 기법 (1956 Altshuller) + onepager 4 도시 카드</span><span class="pgnum"><b>15쪽</b></span></div>
-</section>
-
-<!-- 4-1 9일 사이클 + AI 협업 -->
-<section class="slide">
-  <div class="head">
-    <div class="section-num"><span class="pill">04</span><span class="ttl">개발 과정 및 방법</span></div>
-    <div class="compete">1인 + AI 협업 production-grade</div>
-  </div>
-  <div class="body">
-    <h1>AI 협업 4축 통합 — 데이터 기반 개발</h1>
-    <div class="col2 uneven">
-      <div>
-        <h2>AI 협업 구성</h2>
-        <table>
-          <tr><th>역할</th><th>기능</th><th>도구</th></tr>
-          <tr><td>객체 인식</td><td>CV 파이프라인 + 다중 추적</td><td>PyTorch + CUDA</td></tr>
-          <tr><td>광고 자연어</td><td>인파 폭증 80자 요약</td><td>Claude Haiku 4.5</td></tr>
-          <tr><td>음성 입출력</td><td>도착지 STT / 4언어 안내</td><td>웹 음성 API</td></tr>
-          <tr><td>통계 분석</td><td>1,000회 시뮬 · 95% CI</td><td>NumPy / scikit-learn</td></tr>
-        </table>
-        <h2 style="margin-top: 4mm;">품질 지표</h2>
-        <table>
-          <tr><th>항목</th><th>수치</th></tr>
-          <tr><td>회귀 검증 가드</td><td class="win">815개</td></tr>
-          <tr><td>4언어 완전 i18n</td><td class="win">ko/en/zh/ja</td></tr>
-          <tr><td>3 플랫폼 동일 빌드</td><td class="win">Web/Android/Win</td></tr>
-          <tr><td>CI 자동 검증 (15 jobs)</td><td class="win">push마다 통과</td></tr>
-        </table>
-      </div>
-      <div>
-        <h2>구현 검증 현황</h2>
-        <div class="cards c2" style="grid-template-columns:1fr 1fr;">
-          <div class="card kpi"><div class="lbl">회귀 가드</div><div class="v">815<small>개</small></div><div class="ctx">전 기능 자동 검증</div></div>
-          <div class="card kpi"><div class="lbl">공개 API</div><div class="v">13<small>개</small></div><div class="ctx">OpenAPI 3.0 명세</div></div>
-          <div class="card kpi"><div class="lbl">라이브 데모</div><div class="v">24<small>h</small></div><div class="ctx">app.allthatai.kr</div></div>
-          <div class="card kpi"><div class="lbl">제출 검증</div><div class="v">10/10</div><div class="ctx">ship-gate 자동 통과</div></div>
-        </div>
-        <div class="diff-box green" style="margin-top: 3mm;">
-          <h3>공공데이터 라이브 검증</h3>
-          <p>· citydata 강남역 실호출 확인 (2026-05-09)<br>· 10개 API 응답 형식 자동 검증<br>· 회귀 가드 815개 — 기능 누락 즉시 차단</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="foot"><span>GitHub Actions CI 15 jobs · pytest 815 가드 · Apache 2.0</span><span class="pgnum"><b>16쪽</b></span></div>
-</section>
-
-<!-- 4-2 기술 신뢰성 -->
-<section class="slide">
-  <div class="head">
-    <div class="section-num"><span class="pill">04</span><span class="ttl">개발 과정 및 방법</span></div>
-    <div class="compete">구체성 · 기술 신뢰성</div>
-  </div>
-  <div class="body">
-    <h1>기술 신뢰성 — 검증 완료 지표</h1>
-    <div class="col2">
-      <div>
-        <h2>구현 완성도</h2>
-        <table>
-          <tr><th>영역</th><th>내용</th><th>상태</th></tr>
-          <tr><td>백엔드 API</td><td>REST 13 엔드포인트 + WebSocket</td><td class="win">완료</td></tr>
-          <tr><td>공공데이터</td><td>10개 API 실호출 검증</td><td class="win">완료</td></tr>
-          <tr><td>시민 앱</td><td>PWA + GPS + 5중 알림</td><td class="win">완료</td></tr>
-          <tr><td>운영자 콘솔</td><td>지하철+버스+광고+실카메라 4탭</td><td class="win">완료</td></tr>
-          <tr><td>Flutter 폰앱</td><td>Android/Windows/Web 동일 빌드</td><td class="win">완료</td></tr>
-          <tr><td>4언어 i18n</td><td>ko/en/zh/ja 전 화면</td><td class="win">완료</td></tr>
-          <tr><td>CV 파이프라인</td><td>객체 인식 + 호모그래피 + BEV</td><td class="win">완료</td></tr>
-          <tr><td>4단 차등 보상</td><td>환승 37 + 핫스팟 12 자동 매핑</td><td class="win">완료</td></tr>
-        </table>
-      </div>
-      <div>
-        <h2>라이브 접속 경로</h2>
-        <div class="diff-box green" style="margin-bottom:3mm;">
-          <h3>🌐 외부 접속 (24시간)</h3>
-          <p style="font-family:monospace; font-size:10px;">app.allthatai.kr<br>leelang7.github.io/MetroEyes</p>
-        </div>
-        <div class="diff-box amber" style="margin-bottom:3mm;">
-          <h3>📱 Flutter 앱 설치</h3>
-          <p>· Android: APK 직접 설치<br>· Windows: Desktop 빌드<br>· 브라우저: Chrome 즉시 실행</p>
-        </div>
-        <div class="diff-box">
-          <h3>🔍 검증 방법</h3>
-          <p>· Windows: <code>scripts/dday.ps1 -Quick</code><br>· 815 가드 자동 통과 확인<br>· API 실호출 10초 이내 응답</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="foot"><span>GitHub Actions CI 15 jobs · 815 가드 · Apache 2.0 오픈소스</span><span class="pgnum"><b>17쪽</b></span></div>
-</section>
-
-<!-- 4-3 양면 가치사슬 -->
-<section class="slide">
-  <div class="head">
-    <div class="section-num"><span class="pill">04</span><span class="ttl">개발 과정 및 방법</span></div>
-    <div class="compete">양면 가치사슬</div>
-  </div>
-  <div class="body">
-    <h1>가치 사슬 — 시민 1회 분산 → 모두에게 가치</h1>
-    <div class="flow" style="margin: 4mm 0;">
-      <div class="step"><div class="n">1 카메라</div><div class="h">📸 칸 안 인식</div><div class="d">CV 파이프라인 분 단위</div></div>
-      <div class="step"><div class="n">2 도시</div><div class="h">🌆 9 데이터 결합</div><div class="d">날씨·행사·인구</div></div>
-      <div class="step"><div class="n">3 결정</div><div class="h">🎯 우선순위 158</div><div class="d">2호선 9시 → ₩400</div></div>
-      <div class="step"><div class="n">4 OD</div><div class="h">↔️ 출퇴근</div><div class="d">출근 12배</div></div>
-    </div>
-    <div class="flow">
-      <div class="step"><div class="n">5 환승</div><div class="h">🔄 호선 차등</div><div class="d">충무로 +1.56</div></div>
-      <div class="step"><div class="n">6 시민</div><div class="h">👤 4단 분산</div><div class="d">웹·폰앱 5중 알림</div></div>
-      <div class="step"><div class="n">7 백엔드</div><div class="h">💰 자동 가산</div><div class="d">KRW 즉시</div></div>
-      <div class="step"><div class="n">8 운영자</div><div class="h">📈 ROI 라이브</div><div class="d">광고 +12% 자동</div></div>
-    </div>
-    <div class="col2" style="margin-top: 4mm;">
-      <div class="diff-box green">
-        <h3>네트워크 효과</h3>
-        <p>· 사용자 ↑ → 정확도 ↑ (다중 신호)<br>· 운영자 비용 0 → ROI 시간↗<br>· 광고 단가 동적 + 자연어 근거 → 광고주 LTV ↑<br>· 데이터 우위 → 진입 장벽</p>
-      </div>
-      <div class="diff-box amber">
-        <h3>실제 메시지 흐름 (1초 미만)</h3>
-        <p>시민 ws impact_log → backend _bonus_krw() → broadcast impact_summary → 운영자 dashboard tile → ad_pricing.html (광고 +12%)<br>전 과정 1초 안 끝남.</p>
-      </div>
-    </div>
-  </div>
-  <div class="foot"><span>src/cv/lite_server.py + frontend/operator_web/ + frontend/passenger_app/ + mobile_app/</span><span class="pgnum"><b>18쪽</b></span></div>
+  <div class="foot"><span>발명 기법 = TRIZ 발명 문제 해결 기법 (1956 Altshuller) + onepager 4 도시 카드</span><span class="pgnum"><b>18쪽</b></span></div>
 </section>
 
 <!-- ════════ §5 cover ════════ -->
@@ -1177,7 +1193,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>frontend/operator_web/{realbev,index,bus,ad_pricing}.html + admin.html</span><span class="pgnum"><b>21쪽</b></span></div>
+  <div class="foot"><span>frontend/operator_web/{realbev,index,bus,ad_pricing}.html</span><span class="pgnum"><b>21쪽</b></span></div>
 </section>
 
 <!-- 5-4 6 IDEA 화면 매핑 -->
@@ -1403,6 +1419,56 @@ table td.win { color: #047857; font-weight: 700; }
   <div class="foot"><span>scripts/eda_co2_savings.py · ESG 5축 정량 · BLE 비콘 기존 인프라 재활용 · 탑승→즉시 보상 UX · 시민 신고 3종</span><span class="pgnum"><b>25쪽</b></span></div>
 </section>
 
+<!-- 7-1 서비스 발전방향 -->
+<section class="slide">
+  <div class="head">
+    <div class="section-num"><span class="pill">07</span><span class="ttl">서비스 발전방향</span></div>
+    <div class="compete">글로벌 확장 · 기술 고도화 · 사회적 가치 확산</div>
+  </div>
+  <div class="body">
+    <h1>서비스 발전방향 — 단계별 확장 로드맵</h1>
+    <div class="col3">
+      <div class="diff-box green">
+        <h3>🚀 단기 (2026 H2)</h3>
+        <p>· 5호선 PoC 협약 체결<br>· CV 정확도 92% → 96%<br>· 광고 1사 파트너십<br>· Android 앱 스토어 출시<br>· 사회적 가치 1차 정량 인증</p>
+      </div>
+      <div class="diff-box amber">
+        <h3>📈 중기 (2027)</h3>
+        <p>· 서울 2·9호선 전체 확장<br>· 부산·대구 협약<br>· BLE 비콘 측위 연동<br>· 시리즈 시드 ₩10억 유치<br>· 도쿄 메트로 파이럿</p>
+      </div>
+      <div class="diff-box violet">
+        <h3>🌏 장기 (2028+)</h3>
+        <p>· 동남아 5개 도시 진출<br>· 버스 BRT 글로벌 확장<br>· 엣지 AI 독자 칩 개발<br>· Series A ₩50억<br>· 10개 도시 동시 운영</p>
+      </div>
+    </div>
+    <div class="col2" style="margin-top: 4mm;">
+      <div>
+        <h2>기술 고도화 로드맵</h2>
+        <table>
+          <tr><th>영역</th><th>현재</th><th>목표</th></tr>
+          <tr><td>CV 정확도</td><td class="num">92%</td><td class="num win">97%</td></tr>
+          <tr><td>Latency</td><td class="num">1.2초</td><td class="num win">0.3초</td></tr>
+          <tr><td>동시 카메라</td><td class="num">1대</td><td class="num win">32대</td></tr>
+          <tr><td>지원 언어</td><td class="num">4개</td><td class="num win">12개</td></tr>
+          <tr><td>역사 커버리지</td><td class="num">PoC</td><td class="num win">서울 전 역사</td></tr>
+        </table>
+      </div>
+      <div>
+        <h2>사회적 가치 확산</h2>
+        <div class="diff-box green">
+          <h3>🏛️ 공공 기여</h3>
+          <p>· 서울시 교통 빅데이터 포털 연동<br>· 군중밀집 사고 예방 통계 공개<br>· 청각 장애인 앱 무료 제공<br>· Apache 2.0 오픈소스 유지</p>
+        </div>
+        <div class="diff-box amber" style="margin-top:3mm;">
+          <h3>🌱 ESG 3년 목표</h3>
+          <p>· CO₂ 절감 1,000t/년 (3년차)<br>· 교통약자 접근성 개선 측정<br>· 무임승차 감소 → 운영 수익 환원</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>2026 Q2 대회 → 2028 글로벌 10개 도시 · 사회적 가치 + 기술 고도화 + 시장 확장</span><span class="pgnum"><b>26쪽</b></span></div>
+</section>
+
 <!-- 7-1 기술 스택 + 출처 -->
 <section class="slide">
   <div class="head">
@@ -1434,7 +1500,7 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
       <div class="diff-box">
         <h3>⚙️ DevOps</h3>
-        <p>· Docker + GitHub Actions 15 jobs<br>· pytest 711 가드<br>· 3 플랫폼 1줄 검증<br>· Apache 2.0</p>
+        <p>· Docker + GitHub Actions 15 jobs<br>· pytest 815 가드<br>· 3 플랫폼 1줄 검증<br>· Apache 2.0</p>
       </div>
     </div>
     <h2 style="margin-top: 3mm;">10 공공 데이터 출처 + 참고 문헌</h2>
@@ -1459,13 +1525,13 @@ table td.win { color: #047857; font-weight: 700; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>requirements.txt · 56 dependencies · Apache 2.0 오픈 소스</span><span class="pgnum"><b>26쪽</b></span></div>
+  <div class="foot"><span>requirements.txt · 56 dependencies · Apache 2.0 오픈 소스</span><span class="pgnum"><b>27쪽</b></span></div>
 </section>
 
 </div>
 
 <div style="position: fixed; bottom: 14px; right: 14px; padding: 8px 14px; background: rgba(15,118,110,.92); color: #fff; border-radius: 8px; font: 11px ui-sans-serif, system-ui; box-shadow: 0 4px 14px rgba(0,0,0,.4); z-index: 9999;" id="hud">
-  📄 30 슬라이드 · PPT 정식 7항목 · A4 가로 · <b>Ctrl+P</b> PDF 저장 (배경 그래픽 ✓)
+  📄 33 슬라이드 · PPT 정식 7항목 (템플릿 정렬 완료) · A4 가로 · <b>Ctrl+P</b> PDF 저장 (배경 그래픽 ✓)
   <button onclick="document.getElementById('hud').remove()" style="margin-left: 6px; background: transparent; border: 1px solid #fff; color: #fff; padding: 1px 6px; border-radius: 4px; font: 10px ui-sans-serif; cursor: pointer;">닫기</button>
 </div>
 
