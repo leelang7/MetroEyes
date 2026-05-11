@@ -319,7 +319,7 @@ class BevSocket {
       ws.add(jsonEncode({
         'type': 'arrival_query',
         'stationName': stationName,
-        if (line != null) 'line': line,
+        'line': ?line,
       }));
     } catch (_) {}
   }
@@ -377,8 +377,8 @@ class BevSocket {
         'type': 'phone_telemetry',
         'station': station,
         'accel_mag': accelMagnitude,
-        if (bleNearbyCount != null) 'ble_count': bleNearbyCount,
-        if (wifiProbeRssiMean != null) 'wifi_rssi_mean': wifiProbeRssiMean,
+        'ble_count': ?bleNearbyCount,
+        'wifi_rssi_mean': ?wifiProbeRssiMean,
         'ts_ms': DateTime.now().millisecondsSinceEpoch,
       }));
     } catch (_) {}

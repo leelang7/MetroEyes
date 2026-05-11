@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -825,7 +824,7 @@ class _Header extends StatelessWidget {
             decoration: BoxDecoration(
               color: _ledColor, shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(color: _ledColor.withOpacity(0.55), blurRadius: 10, spreadRadius: 1),
+                BoxShadow(color: _ledColor.withValues(alpha: 0.55), blurRadius: 10, spreadRadius: 1),
               ],
             ),
           ),
@@ -848,7 +847,7 @@ class _Header extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0x14F0B46A),
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: _warn.withOpacity(0.3)),
+                border: Border.all(color: _warn.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -874,7 +873,7 @@ class _Header extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _accentSoft,
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: _accent.withOpacity(0.25)),
+                border: Border.all(color: _accent.withValues(alpha: 0.25)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -932,7 +931,7 @@ class _ModeToggle extends StatelessWidget {
                   color: m == mode ? _accentSoft : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                   border: m == mode
-                      ? Border.all(color: _accent.withOpacity(0.25))
+                      ? Border.all(color: _accent.withValues(alpha: 0.25))
                       : null,
                 ),
                 child: Center(
@@ -1074,7 +1073,7 @@ class _PopulationStrip extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
             decoration: BoxDecoration(
-                color: lvlColor.withOpacity(0.15),
+                color: lvlColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(4)),
             child: Text(lvl,
                 style: TextStyle(
@@ -1131,9 +1130,9 @@ class _DecisionCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: const Alignment(-0.5, -1),
           end: const Alignment(0.7, 1),
-          colors: [_accent.withOpacity(0.08), _accent.withOpacity(0.02)],
+          colors: [_accent.withValues(alpha: 0.08), _accent.withValues(alpha: 0.02)],
         ),
-        border: Border.all(color: _accent.withOpacity(0.28)),
+        border: Border.all(color: _accent.withValues(alpha: 0.28)),
         borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
@@ -1406,11 +1405,11 @@ class BevMiniPainter extends CustomPainter {
     canvas.drawRRect(
         rr,
         Paint()
-          ..color = _accent.withOpacity(0.15)
+          ..color = _accent.withValues(alpha: 0.15)
           ..style = PaintingStyle.stroke);
 
     // 좌석
-    final seatPaint = Paint()..color = Colors.white.withOpacity(0.05);
+    final seatPaint = Paint()..color = Colors.white.withValues(alpha: 0.05);
     final seatBlocks = mode == VehicleMode.subway ? 6 : 4;
     final seatsPer = mode == VehicleMode.subway ? 7 : 4;
     const gap = 6.0;
@@ -1433,7 +1432,7 @@ class BevMiniPainter extends CustomPainter {
     // 출입문
     final doorXs =
         mode == VehicleMode.subway ? [0.18, 0.42, 0.58, 0.82] : [0.18, 0.55];
-    final doorPaint = Paint()..color = _accent.withOpacity(0.55);
+    final doorPaint = Paint()..color = _accent.withValues(alpha: 0.55);
     for (var i = 0; i < doorXs.length; i++) {
       final x = pad + doorXs[i] * w;
       canvas.drawRect(Rect.fromLTWH(x - 16, pad - 1, 32, 2), doorPaint);
@@ -1442,14 +1441,14 @@ class BevMiniPainter extends CustomPainter {
             Rect.fromLTWH(x - 16, pad + h - 1, 32, 2), doorPaint);
       } else {
         final color = i == 0 ? _accent : const Color(0xFFF0AA82);
-        final p = Paint()..color = color.withOpacity(0.55);
+        final p = Paint()..color = color.withValues(alpha: 0.55);
         canvas.drawRect(Rect.fromLTWH(x - 16, pad + h - 1, 32, 2), p);
       }
     }
     // 사람 점들
     final cnt = (occ * (mode == VehicleMode.subway ? 160 : 50)).round();
     final rng = math.Random(42);
-    final personPaint = Paint()..color = _fg.withOpacity(0.85);
+    final personPaint = Paint()..color = _fg.withValues(alpha: 0.85);
     for (var i = 0; i < cnt; i++) {
       final inSeat = i < seatBlocks * seatsPer * 2;
       double x, y;
@@ -1600,8 +1599,8 @@ class _AlertBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: _crit.withOpacity(0.10),
-        border: Border.all(color: _crit.withOpacity(0.35)),
+        color: _crit.withValues(alpha: 0.10),
+        border: Border.all(color: _crit.withValues(alpha: 0.35)),
         borderRadius: BorderRadius.circular(16),
       ),
       child: const Row(
@@ -1640,7 +1639,8 @@ class _A11yToggle extends StatelessWidget {
         Switch.adaptive(
           value: value,
           onChanged: onChanged,
-          activeColor: _accent,
+          activeThumbColor: _accent,
+          activeTrackColor: _accent.withValues(alpha: 0.6),
           inactiveTrackColor: const Color(0xFF1A2230),
         ),
       ]),
@@ -1676,7 +1676,7 @@ class _DemoTimeSlider extends StatelessWidget {
               activeTrackColor: _fg,
               inactiveTrackColor: _line2,
               thumbColor: _fg,
-              overlayColor: _fg.withOpacity(0.10),
+              overlayColor: _fg.withValues(alpha: 0.10),
             ),
             child: Slider(
               value: hour.toDouble(),
@@ -1730,7 +1730,7 @@ class _CTABar extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
             boxShadow: [
               BoxShadow(
-                  color: _accent.withOpacity(0.25),
+                  color: _accent.withValues(alpha: 0.25),
                   blurRadius: 24,
                   offset: const Offset(0, 8)),
             ],
@@ -1901,7 +1901,7 @@ class _RainBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: const Color(0x1A7DD3D3),
-        border: Border.all(color: _accent.withOpacity(0.30)),
+        border: Border.all(color: _accent.withValues(alpha: 0.30)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -1938,8 +1938,8 @@ class _SafetyBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.10),
-        border: Border.all(color: color.withOpacity(0.35)),
+        color: color.withValues(alpha: 0.10),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -1953,7 +1953,7 @@ class _SafetyBanner extends StatelessWidget {
                     color: color, fontSize: 12, fontWeight: FontWeight.w500)),
           ),
           Text('총 $n',
-              style: TextStyle(color: color.withOpacity(0.7), fontSize: 11)),
+              style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 11)),
         ],
       ),
     );
