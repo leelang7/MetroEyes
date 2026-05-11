@@ -13,7 +13,7 @@
 > - **8단 양면 가치 사슬** (CV → 도시 → 결정 → OD → 환승 → 시민 차등 → backend 자동 → ROI)
 > - **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (cycle 226 칸 단위 BEV ROI 응용)
 > - **IDEA-9 도착 알림 5중 모달리티 + 6단 견고화** (cycle 286-299, PWA v4.11 — 시각/햅틱/beep/4언어 음성/시스템 알림 + Wake Lock + SW + MRU + persistence + ETA + 사전 테스트 + 4언어 i18n)
-> - **CI 15 jobs + 337 pytest 회귀 가드** (cycle 318-473 — 광고 ↔ 코드 ↔ canonical JSON 동시 정합)
+> - **CI 15 jobs + 339 pytest 회귀 가드** (cycle 318-483 — 광고 ↔ 코드 ↔ canonical JSON 동시 정합)
 > - 발표 영상 5분 풀 캡처 가이드 (`docs/RECORDING_GUIDE.md`)
 
 ---
@@ -435,7 +435,7 @@ SOM:  Y3 20 도시            ₩200억/년   (국내 8 + APAC 12)
 2. 칸 컬럼 부재 정량 입증 (1주차 EDA 골든)
 3. 10 공공 API fusion 1년치 누적
 4. ko/en/zh/ja 4언어 11페이지
-5. CI 15 jobs + 337 회귀 가드 + canonical KPI drift 자동 차단 production-grade
+5. CI 15 jobs + 339 회귀 가드 + canonical KPI drift 자동 차단 production-grade
 6. TRIZ 8 모순 9 IDEA 발명 분석 (논문화)
 7. IDEA-9 접근성 제도 직결 (장애인차별금지법/교통약자법)
 
