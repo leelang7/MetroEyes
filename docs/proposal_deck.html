@@ -62,7 +62,30 @@ body {
 .head .compete b { color: var(--ink2); }
 
 /* ── Body ────────────────────────────────────────── */
-.body { flex: 1; padding: 4mm 11mm 3mm; display: flex; flex-direction: column; gap: 3mm; overflow: hidden; }
+.body { flex: 1; padding: 4mm 11mm 3mm; display: flex; flex-direction: column; gap: 3mm; overflow: hidden; justify-content: space-between; }
+/* 마지막 주요 콘텐츠 블록이 남은 공간 채움 */
+.body > .col2:last-child,
+.body > .col3:last-child,
+.body > .cards:last-child,
+.body > .hero-camera:last-child,
+.body > .tier-grid:last-child,
+.body > table:last-child,
+.body > div:last-child { flex: 1; min-height: 0; }
+.body > .col2:last-child,
+.body > .col3:last-child,
+.body > .cards:last-child { align-items: stretch; grid-auto-rows: 1fr; }
+/* 박스류 내부 flex 열 */
+.diff-box, .idea-box { display: flex; flex-direction: column; }
+.diff-box p, .idea-box p { flex: 1; }
+.idea-box .impact { margin-top: auto; }
+/* 그리드 직접 자식만 셀 채움 — 중첩 시 overflow 방지 */
+.col2 > .diff-box, .col3 > .diff-box,
+.cards > .diff-box, .cards > .idea-box { height: 100%; }
+.card.kpi { height: 100%; display: flex; flex-direction: column; }
+/* 래퍼 div: flex 열로 변환해 내부 diff-box 균등 배분 */
+.col2 > div:not([class]), .col3 > div:not([class]) { display: flex; flex-direction: column; gap: 2mm; }
+.col2 > div:not([class]) > *:last-child,
+.col3 > div:not([class]) > *:last-child { flex: 1; min-height: 0; }
 .body h1 {
   margin: 0 0 1mm; font-size: 26px; color: var(--ink);
   letter-spacing: -1.2px; line-height: 1.2; font-weight: 900;
@@ -420,20 +443,30 @@ table td.win { color: var(--g0); font-weight: 700; }
         </div>
       </div>
       <!-- 운영자 콘솔 -->
-      <div>
+      <div style="display:flex; flex-direction:column; gap:1.5mm;">
         <div style="font-size:9px; font-weight:700; color:#1d4ed8; margin-bottom:1.5mm;">🖥 운영자 콘솔 — 지하철 + 버스 + 실카메라</div>
-        <div class="shot" style="margin-bottom:2mm;">
-          <img src="../outputs/demo/operator_index.png" alt="운영자 콘솔" style="width:100%; height:55mm; object-fit:cover; object-position:top; border-radius:2mm;">
-          <div class="cap"><b>① 지하철 운영자 콘솔</b><br>operator_web/index.html · 10칸 BEV 라이브 · 4탭 네비</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5mm;">
+          <div class="shot">
+            <img src="../outputs/demo/operator_index.png" alt="지하철 콘솔" style="width:100%; height:42mm; object-fit:cover; object-position:top; border-radius:2mm;">
+            <div class="cap" style="font-size:7.5px;"><b>① 지하철 콘솔</b><br>10칸 BEV·KPI</div>
+          </div>
+          <div class="shot">
+            <img src="../outputs/demo/operator_realbev.png" alt="실카메라 BEV" style="width:100%; height:42mm; object-fit:cover; object-position:top; border-radius:2mm;">
+            <div class="cap" style="font-size:7.5px;"><b>② 실카메라+BEV</b><br>YOLO·호모그래피</div>
+          </div>
+          <div class="shot">
+            <img src="../outputs/demo/operator_bus.png" alt="버스 콘솔" style="width:100%; height:42mm; object-fit:cover; object-position:top; border-radius:2mm;">
+            <div class="cap" style="font-size:7.5px;"><b>③ 버스 콘솔</b><br>24h sparkline</div>
+          </div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:2mm;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:2mm; flex:1;">
           <div class="diff-box green" style="font-size:9px;">
             <h3 style="font-size:9.5px;">📺 24시간 라이브</h3>
-            <p style="font-family:monospace; font-size:8px;">app.allthatai.kr<br>Cloudflare wss 암호화</p>
+            <p style="font-family:monospace; font-size:8px;">app.allthatai.kr<br>Cloudflare wss 암호화<br>4탭 네비 · WebSocket</p>
           </div>
           <div class="diff-box amber" style="font-size:9px;">
             <h3 style="font-size:9.5px;">🚌 지하철+버스 양면</h3>
-            <p style="font-size:9px;">칸별·차량별 점유<br>동일 인터페이스</p>
+            <p style="font-size:9px;">칸별·차량별 점유<br>동일 인터페이스<br>알람 4종 자동 감지</p>
           </div>
         </div>
       </div>
@@ -1136,7 +1169,7 @@ table td.win { color: var(--g0); font-weight: 700; }
   </div>
   <div class="body">
     <h1>시스템 5 계층 — 카메라부터 화면까지</h1>
-    <div style="display: flex; flex-direction: column; gap: 3mm;">
+    <div style="display: flex; flex-direction: column; gap: 3mm; justify-content: space-between;">
       <div style="display: flex; gap: 3mm;">
         <div style="width: 30mm; background: #1a1a1f; color: #fff; padding: 4mm; border-radius: 2mm; font-size: 11px; font-weight: 800; display: flex; flex-direction: column; justify-content: center;">L1<br>입력</div>
         <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 3mm;">
