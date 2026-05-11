@@ -4,7 +4,7 @@
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
 [![Social Value](https://img.shields.io/badge/사회적_가치-1%2C393억%2F년-7dd3d3.svg)](frontend/pitch.html)
 [![EDA](https://img.shields.io/badge/EDA%20v3%20R²-0.931-f59e0b.svg)](scripts/eda_carload_v3_real.py)
-[![Cycles](https://img.shields.io/badge/자동_사이클-540회-a78bfa.svg)](CHANGELOG.md)
+[![Cycles](https://img.shields.io/badge/자동_사이클-541회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/regression_tests-832회귀_가드-10b981.svg)](tests/)
@@ -59,7 +59,7 @@ Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dd
 
 **진입**: [`frontend/index.html`](frontend/index.html) — 8장 카드 허브 (📊 정책 보고 / 🎬 통합 시연 / 🚇 운영자 / 📱 시민 / 🛠 디버그)
 
-**자동 540 사이클 누적 결과** (D-1, 2026-05-13 마감):
+**자동 541 사이클 누적 결과** (D-1, 2026-05-13 마감):
 - ✅ 양면 가치 사슬 5단계 (시민 분산 → backend krw → 운영자 ROI → backend incident → 시민 알림)
 - ✅ 시연 fail-safe **8중**: `--demo` + 30s 인젝터 + 5분 sticky bar + backend join summary + admin 단일 클릭 + fake impact seed + Docker compose + GitHub Actions CI
 - ✅ 다국어 4개 (ko/en/zh/ja) **11 페이지 패리티** (운영자 4 + 시민 2 + 메타 5) + Web Speech + ARIA
