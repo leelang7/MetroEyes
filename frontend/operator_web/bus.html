@@ -8,8 +8,9 @@
 <meta http-equiv="Expires" content="0">
 <title>MetroEyes — 운영자 콘솔 · 버스</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
-<script src="/js/metroeyes-config.js"></script>
-</head>
+<script>
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+</script></head>
 <body data-domain="bus">
 <script>
 // 자동 캐시 무효화 — sessionStorage 마커로 버전 다르면 1회 reload
@@ -1275,4 +1276,5 @@ if (SR) {
 <script src="../shared/health_pill.js" defer></script>
 </body>
 </html>
+
 

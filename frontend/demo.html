@@ -93,8 +93,9 @@
   }
   .stage-banner.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
-<script src="/js/metroeyes-config.js"></script>
-</head>
+<script>
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+</script></head>
 <body>
 <header>
   <div class="brand" id="brand-text">MetroEyes 통합 시연<small id="brand-sub">SubwayBEV — 5도메인 · 실시간 CV + 빅데이터 + AI</small></div>
@@ -491,4 +492,5 @@ startBtn.addEventListener('click', () => {
 </script>
 </body>
 </html>
+
 

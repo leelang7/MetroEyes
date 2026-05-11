@@ -96,8 +96,9 @@
   }
   footer code { background: rgba(255,255,255,.04); padding: 1px 6px; border-radius: 3px; }
 </style>
-<script src="/js/metroeyes-config.js"></script>
-</head>
+<script>
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+</script></head>
 <body>
   <div class="brand" style="position: relative;">
     <h1>MetroEyes</h1>
@@ -262,4 +263,5 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
   </footer>
 </body>
 </html>
+
 

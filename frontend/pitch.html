@@ -202,8 +202,9 @@
   .print-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(125,211,211,.30); }
   @media print { .print-btn { display: none !important; } }
 </style>
-<script src="/js/metroeyes-config.js"></script>
-</head>
+<script>
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+</script></head>
 <body>
 <header>
   <div class="brand">MetroEyes 정책 보고<small>분산 운임 인센티브 — ROI v3 정량 분석</small></div>
@@ -1755,5 +1756,6 @@ document.getElementById('api-curl-link').href = (location.protocol === 'https:'
 </main>
 </body>
 </html>
+
 
 
