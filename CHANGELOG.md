@@ -42,6 +42,21 @@
 
 ---
 
+## v6.10 — D-2 회귀 가드 320건 + FORM_DATA 10API + admin 임팩트 패널 + mobile README (2026-05-11 cycle 447-455)
+
+### v6.10 cycle 447-455 (문서 동기화 + UX 완성)
+- cycle 447: admin.html WS 핸들러 3종 추가 (incident_summary/occupancy_forecast/env_broadcast) + tests/test_admin_ws_handlers.py 11 가드 신규 + 가드수 315건 동기화
+- cycle 448: 문서·pitch 가드수·API수 315/10 동기화 (FORM_DATA/SUBMISSION_INDEX/pitch.html)
+- cycle 449: PROPOSAL.md §6 데이터소스 10개 명시 + test_proposal_v3_alignment 가드 추가
+- cycle 450: onepager.html 가드수 285→316 + 10공공API + 시민신고 반영
+- cycle 451: README.en 가드수·사이클·API수 동기화
+- cycle 452: SLIDES + proposal_deck 가드수 285→316 동기화
+- cycle 453: admin.html 사회적 가치 임팩트 패널 + 4 가드 신규 (social impact / tier_counts / setInterval)
+- cycle 454: mobile_app README citizen_report WS 명시
+- cycle 455: FORM_DATA 10 공공API 동기화 (IndoorAirQualityMeasureService/SubwayElevatorStatus 추가) + test_9→test_10 갱신
+
+---
+
 ## v6.9 — D-2 회귀 가드 304건 + SLIDES 10종 + proposal 285가드 + citizen_report 환경 API + admin WS핸들러 (2026-05-11 cycle 429-446)
 
 ### v6.9 cycle 429-446 (SLIDES deck v4 + 환경 API + 시민신고 + 관리자 UX)
