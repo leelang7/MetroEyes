@@ -39,7 +39,7 @@ Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dd
 
 **TL;DR**: In-house CV BEV + 10 public APIs + citizen redistribution incentives — 3-axis integrated system.
 Policy ROI v3 + Monte Carlo 1,000 simulations → social value **₩139.3B/yr [CI ₩106B~₩181B]**.
-Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 801 regression guards + 10 public APIs + 4-language i18n production-grade.
+Line 2 ROI 708x — instant policy answer. 8-layer fail-safe + 815 regression guards + 10 public APIs + 4-language i18n production-grade.
 
 **Additional docs (ops/incident)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 scenarios 1-line recovery · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — detailed proposal v3 · [📋 docs/FORM_DATA.md](docs/FORM_DATA.md) — pre-filled myBox submission form data
 

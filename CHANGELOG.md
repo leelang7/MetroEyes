@@ -1,5 +1,14 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [v6.13 — D-2 회귀 가드 815건] cycle 539 + GitHub Pages 루트 업데이트 2026-05-11
+### Added
+- scripts/eda_boarding_efficiency.py: 역별 탑승 dwell time 추정 + 혼잡 지수 (cycle 539)
+- tests/test_eda_boarding_efficiency.py: estimate_dwell_time/boarding_efficiency/congestion_index 14개
+- 회귀 가드 801 → 815 (+14)
+### Changed
+- .github/workflows/pages.yml: 루트 index.html을 frontend/index.html 기반으로 교체 (9카드 허브)
+- frontend/index.html: 푸터 버전 v6.12→v6.13, 692→815 가드 동기화
+
 ## [v6.12 — D-2 회귀 가드 801건] cycle 537-538 2026-05-11
 ### Added
 - scripts/eda_weekly_pattern.py: 요일별(주중/주말) 양봉/단봉 패턴 분석, 가설 ⑥ 정량화 (cycle 537)
