@@ -1,5 +1,12 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [cycle 532-533] 2026-05-11
+### Added
+- test_flutter_main.py: MetroEyesApp/StationCoord/haversine/_accent=#7DD3D3 9개 (cycle 532)
+- test_bev_socket_dart.py: BevPayload/SocketState/ArrivalRow/PopulationResponse/BevSocket WS 10개 (cycle 533)
+- 회귀 가드 692 → 711 (+19)
+
+
 ## [cycle 529-530] 2026-05-11
 ### Added
 - test_pwa_manifest.py: PWA manifest name/icons/theme_color/#7dd3d3 10개 (cycle 529)
@@ -130,7 +137,7 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 692건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+## v6.11 — D-2 회귀 가드 711건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
 
 ### v6.11 cycle 570-496
 - cycle 570: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
