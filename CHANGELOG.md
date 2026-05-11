@@ -42,14 +42,20 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 337건 + mobile_app Flutter 회귀 가드 + README/CHANGELOG 473사이클 동기화 (2026-05-11 cycle 469-473)
+## v6.11 — D-2 회귀 가드 339건 + mobile_app Flutter 회귀 가드 + 시민신고 오프라인큐 + 전체 동기화 (2026-05-11 cycle 469-479)
 
-### v6.11 cycle 469-473
+### v6.11 cycle 469-479
 - cycle 469: README.en 471사이클·332가드 동기화
 - cycle 470: frontend/index.html 푸터 v6.0→v6.10 / 316→469사이클 / 332가드 동기화
 - cycle 471: pitch.html 가드수·API수 동기화
 - cycle 472: README.en 455→471 사이클 동기화
 - cycle 473: mobile_app Flutter 회귀 가드 5건 신규 (시민신고 FAB 3종/citizenReport WS/population_query WS/README WS 프로토콜) → 337건
+- cycle 474: 가드수 332→337 전체 동기화 + test_submission_index 가드수 regex화
+- cycle 475: 시민신고 오프라인 큐 구현 (localStorage + flushReportQueue) + ARCHITECTURE_VIEW 동기화
+- cycle 476: index.html 475사이클·338가드 동기화 + PROPOSAL 오프라인큐 Moat + 가드 추가
+- cycle 477: QA_PREPARATION 시민신고 오프라인큐 Q15-A + 9→10 endpoint 동기화
+- cycle 478: SLIDES + SLIDES_DECK 시민신고 오프라인큐 명시
+- cycle 479: SUBMISSION_GUIDE/README 가드수 339·478사이클 동기화
 
 ---
 

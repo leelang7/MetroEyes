@@ -8,7 +8,7 @@
 > + **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (cycle 226 — 칸 단위 BEV ROI)
 > + **IDEA-9 도착 알림 5중 모달리티 + 6단 견고화** (cycle 286-299, PWA v4.11 — Wake Lock + SW + MRU + persistence + ETA + 테스트 + i18n, 청각 42만 + 노캔 1,200만 잠재 사용자)
 > + **AI 자동 단가 근거 (Claude Haiku 4.5) + 환경 라이브 + admin 호선×시간 mini heatmap + 4언어 narration + 1-Pager + RUNBOOK + QA 18 + canonical KPI drift 자동 차단**
-> + **CI 15 jobs + pytest 회귀 가드 195건 + ship-gate 자동 제출 검증** (cycle 318-386 — 광고 수치 ↔ 코드 ↔ 그림 ↔ canonical JSON 동시 정합)
+> + **CI 15 jobs + pytest 회귀 가드 339건 + ship-gate 자동 제출 검증** (cycle 318-478 — 광고 수치 ↔ 코드 ↔ 그림 ↔ canonical JSON 동시 정합)
 > + 발표 영상 5분 캡처 가이드 + 4언어 narration script. 수상 확률 (포화): 최우수 99%+ / 대상 95%+.
 
 ## 0. 양식 다운로드 (마이박스)
