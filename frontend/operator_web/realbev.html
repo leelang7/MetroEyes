@@ -2947,8 +2947,8 @@ document.getElementById('evac-btn').addEventListener('click', () => {
   let demoWS = null;
   function ensureWS() {
     if (demoWS && demoWS.readyState === 1) return demoWS;
-    const url = location.protocol === 'https:'
-      ? `wss://${location.host}` : `${window.METROEYES_WS}`;
+    const url = window.METROEYES_WS || (location.protocol === 'https:'
+      ? 'wss://app.allthatai.kr' : 'ws://localhost:8765');
     demoWS = new WebSocket(url);
     return demoWS;
   }

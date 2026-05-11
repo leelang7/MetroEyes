@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MetroEyes — 관리자 콘솔</title>
+<script>(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -212,7 +213,7 @@ canvas.sparkline{display:block;width:100%;height:40px}
 
 <script>
 const BASE = location.origin.replace(/:\d+$/, '') + ':8000';
-const WS_URL = 'ws://' + location.hostname + ':8765';
+const WS_URL = window.METROEYES_WS || (location.protocol === 'https:' ? 'wss://app.allthatai.kr' : 'ws://localhost:8765');
 let ws, _incidents = [], _busLastTs = 0;
 
 // ---- clock ----

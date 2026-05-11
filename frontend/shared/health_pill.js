@@ -6,13 +6,13 @@
   const POLL_MS = 8000;
 
   function deriveHealthURL() {
-    // 페이지 host 기반 기본 도출. window.LIVE_WS_URL 가 있으면 그쪽으로.
-    const wsUrl = window.LIVE_WS_URL || (
-      location.protocol === 'https:'
-        ? `wss://${location.host}`
-        : `ws://localhost:8765`
-    );
-    return wsUrl.replace(/^wss:\/\//, 'https://').replace(/^ws:\/\//, 'http://') + '/health';
+    if (window.METROEYES_BACKEND) return window.METROEYES_BACKEND + '/health';
+    if (window.LIVE_WS_URL) {
+      return window.LIVE_WS_URL.replace(/^wss:\/\//, 'https://').replace(/^ws:\/\//, 'http://') + '/health';
+    }
+    return location.protocol === 'https:'
+      ? 'https://app.allthatai.kr/health'
+      : 'http://localhost:8765/health';
   }
 
   function ensurePill() {
