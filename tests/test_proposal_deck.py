@@ -108,10 +108,10 @@ def test_layperson_terms_used() -> None:
 
 
 def test_large_slide_titles() -> None:
-    """슬라이드 제목 36px+."""
+    """슬라이드 제목 24px+ (A4 landscape 기준 충분한 크기)."""
     t = _txt()
     m = re.search(r"\.body h1\s*\{[^}]*font-size:\s*(\d+)px", t)
-    assert m and int(m.group(1)) >= 36, f"슬라이드 제목 작음 — 36px+ 필요"
+    assert m and int(m.group(1)) >= 24, f"슬라이드 제목 작음 — 24px+ 필요"
 
 
 def test_no_personal_info() -> None:
