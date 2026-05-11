@@ -60,3 +60,16 @@ def test_scripts_referenced() -> None:
     t = _txt()
     for script in ("policy_roi_v3.py", "eda_line_priority_roi.py", "eda_line_hour_priority.py"):
         assert script in t, f"PROPOSAL missing script reference: {script}"
+
+
+def test_ten_data_sources_listed() -> None:
+    """§6 데이터 활용에 10개 소스 모두 명시 (IndoorAirQuality + SubwayElevator 포함)."""
+    t = _txt()
+    # cycle 443 추가 2종
+    assert "IndoorAirQualityMeasureService" in t, "IndoorAirQualityMeasureService 누락"
+    assert "SubwayElevatorStatus" in t, "SubwayElevatorStatus 누락"
+    # 기존 핵심 소스들
+    assert "CardSubwayTime" in t, "CardSubwayTime 누락"
+    assert "citydata" in t, "citydata 누락"
+    # 10개 가점 주장
+    assert "10개" in t or "10 개" in t, "10개 분야 결합 주장 누락"

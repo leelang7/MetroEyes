@@ -176,7 +176,14 @@ GitHub: https://github.com/leelang7/MetroEyes
 6. TimeAverageAirQuality — 자치구 시간당 외기 (CO₂ weak supervision)
 7. SPOP_DAILYSUM_JACHI — 자치구 일별 인구 흐름
 
-**가점 차원** — 7+개 분야 결합 (교통·환경·문화·인구·기상·도로·자전거). TRIZ #5 통합 원리.
+**공공데이터포털** (추가):
+8. **IndoorAirQualityMeasureService** — 지하역사 실내 공기질 (CO₂ ppm · PM10 · TEMP · HUMI) — cycle 443 lite_server `fetch_indoor_air`, 운영자 admin 라이브 패널
+9. **SubwayElevatorStatus** — 서울시 지하철 엘리베이터 운행 현황 — cycle 443 lite_server `fetch_elevator_status`, 장애인 접근성 지원
+
+**민간 API** (보조):
+10. Naver 뉴스 검색 — 사건·이슈 감지 → Claude Haiku LLM 광고 단가 자동 설명 (ad_pricing.html)
+
+**가점 차원** — 10개 분야 결합 (교통·환경·문화·인구·기상·도로·자전거·실내공기·엘리베이터·뉴스). TRIZ #5 통합 원리.
 
 ---
 
