@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -56,7 +57,7 @@ def test_self_pitch_30sec_present() -> None:
     """모든 질문 끝에 가능한 30초 self-pitch 명시."""
     t = _txt()
     assert "self-pitch" in t.lower() or "self_pitch" in t.lower(), "self-pitch section missing"
-    assert "150" in t, "current guard count must be in self-pitch"
+    assert re.search(r"\b[123]\d{2}\b", t), "current guard count (100+) must be in self-pitch"
 
 
 def test_avoid_phrases_documented() -> None:

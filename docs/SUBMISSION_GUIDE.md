@@ -18,7 +18,7 @@
 3. 사회조사서
 4. 상세기획서 (이미 작성 — `docs/SLIDES.html` / `docs/SLIDES_DECK.md` 참조)
 
-> 💡 **양식 사전 작성 데이터**: [`docs/FORM_DATA.md`](FORM_DATA.md) (cycle 401) — 4종 양식 모든 필드 copy-paste 즉시 활용 가능 (KPI / 9 공공 API / ESG 5축 / 4 도시 비교 / 한 줄 자기 소개 132자).
+> 💡 **양식 사전 작성 데이터**: [`docs/FORM_DATA.md`](FORM_DATA.md) (cycle 401) — 4종 양식 모든 필드 copy-paste 즉시 활용 가능 (KPI / 10 공공 API / ESG 5축 / 4 도시 비교 / 한 줄 자기 소개 132자).
 
 ## 1. 제출 파일 인덱스
 
