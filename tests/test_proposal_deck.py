@@ -167,3 +167,35 @@ def test_official_seven_sections_structure() -> None:
     sections = ["제안 배경", "출품작 핵심", "사업·서비스", "경쟁기술", "IA", "창업", "개발 툴"]
     for s in sections:
         assert s in t, f"섹션 '{s}' 누락"
+
+
+def test_slide_fill_css_present() -> None:
+    """하단 여백 제거 CSS — flex fill 핵심 규칙."""
+    t = _txt()
+    assert "justify-content: space-between" in t, "body justify-content:space-between 누락"
+    assert "grid-auto-rows: 1fr" in t, "grid-auto-rows:1fr 누락 — 카드 그리드 등고 채움 필요"
+    assert "div:last-child" in t, ".body > div:last-child flex 채움 누락"
+
+
+def test_operator_three_screenshots_slide3() -> None:
+    """3쪽 운영자 콘솔 3종 캡처 — 지하철·실카메라·버스."""
+    t = _txt()
+    assert t.count("operator_index.png") >= 2, "operator_index.png 2회 이상 필요 (3쪽+21쪽)"
+    assert t.count("operator_realbev.png") >= 2, "operator_realbev.png 2회 이상 필요 (3쪽+5쪽+21쪽)"
+    assert t.count("operator_bus.png") >= 2, "operator_bus.png 2회 이상 필요 (3쪽+17쪽+21쪽)"
+
+
+def test_citizen_six_screenshots_present() -> None:
+    """시민 앱 6종 스크린샷 모두 있음."""
+    t = _txt()
+    for f in ("citizen_subway_main.png", "citizen_subway_detail.png",
+              "citizen_onboard_subway.png", "citizen_bus_main.png",
+              "citizen_bus_detail.png", "citizen_bus_onboard.png"):
+        assert f in t, f"시민 스크린샷 {f} 누락"
+
+
+def test_thirty_three_slides() -> None:
+    """분량 33장 확인 (30장 초과 유지)."""
+    t = _txt()
+    n = len(re.findall(r'<section class="slide[^"]*"', t))
+    assert n >= 33, f"슬라이드 {n}장 — 33장 이상 유지 필요"
