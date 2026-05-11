@@ -86,3 +86,10 @@ def test_moat_ten_public_api_in_moat() -> None:
     """§12.2 Moat에 10 공공 API fusion 명시."""
     t = _txt()
     assert "10 공공 API" in t or "10종" in t or "10개 공공" in t, "Moat에 10 공공 API 누락"
+
+
+def test_moat_offline_queue_mentioned() -> None:
+    """§12.2 Moat에 오프라인 큐(터널 내 신고 보존) 명시."""
+    t = _txt()
+    assert "오프라인 큐" in t or "offline" in t.lower() or "재연결 시 자동" in t, \
+        "Moat에 오프라인 신고 큐(지하 터널 내 연결 끊김 대응) 누락"
