@@ -66,3 +66,27 @@ def test_slides_html_line_hour_top5_referenced() -> None:
     t = _slides()
     assert "158" in t, "Top 5 priority score 158 missing"
     assert "9/17/19" in t or "9시" in t, "2호선 peak hours missing"
+
+
+def test_slides_citizen_report_slide_present() -> None:
+    """시민 신고 3종 (분실물/응급/배려) 슬라이드 존재 (cycle 434)."""
+    t = _slides()
+    assert "분실물" in t, "slides 분실물 신고 슬라이드 누락"
+    assert "응급" in t, "slides 응급 신고 슬라이드 누락"
+    assert "배려" in t or "priority_seat" in t, "slides 배려 요청 슬라이드 누락"
+
+
+def test_slides_ten_public_apis_slide() -> None:
+    """10종 공공데이터 슬라이드 (cycle 430) — CardSubwayTime + IndoorAirQuality 포함."""
+    t = _slides()
+    assert "CardSubwayTime" in t, "slides CardSubwayTime API 누락"
+    assert "IndoorAir" in t or "실내 공기" in t, "slides IndoorAirQuality API 누락"
+    assert "10종" in t or "10개" in t or "10 공공" in t, "slides 10종 공공데이터 선언 누락"
+
+
+def test_slides_esg_content_present() -> None:
+    """ESG 5축 내용 슬라이드 존재."""
+    t = _slides()
+    assert "CO₂" in t or "CO2" in t, "slides ESG CO₂ 절감 누락"
+    assert "청각" in t or "접근성" in t, "slides ESG 접근성 누락"
+    assert "FTE" in t or "고용" in t, "slides ESG 고용 누락"
