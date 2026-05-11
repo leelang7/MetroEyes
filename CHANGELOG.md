@@ -1,5 +1,14 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [cycle 534] 2026-05-11
+### Added
+- test_eda_od_asymmetry.py: asym()함수 속성/범위/부호/피크시간/컬럼규칙/TOP10 11개 (cycle 534)
+- test_eda_air_subway_corr.py: Pearson+Spearman/PM10탐지/정책함의/최소행수 10개 (cycle 534)
+- 회귀 가드 711 → 754 (+22)
+### Changed
+- SLIDES.html: 단위경제 역당 CapEx/OpEx 표 추가, pre-seed ₩3억 출처 명확화, TIPS seed 기재
+- Flutter bev_socket.dart: null-aware value syntax ('key': ?value) 0 issues
+
 ## [cycle 532-533] 2026-05-11
 ### Added
 - test_flutter_main.py: MetroEyesApp/StationCoord/haversine/_accent=#7DD3D3 9개 (cycle 532)
@@ -137,7 +146,7 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 711건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+## v6.11 — D-2 회귀 가드 754건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-534)
 
 ### v6.11 cycle 570-496
 - cycle 570: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화

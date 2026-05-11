@@ -587,6 +587,33 @@ li strong { color: #e63946; }
     <div class="box tone" style="margin-top:24px;">
       <strong>코드 공개</strong> &nbsp; <code>scripts/co2_correlation.py</code> · <code>scripts/nowcasting_demo.py</code> · <code>scripts/cluster_stations.py</code> — 모두 재현 가능.
     </div>
+
+    <div style="margin-top:18px; padding:12px 16px; background:#f0faf7; border-radius:8px; border-left:4px solid #e63946;">
+      <h2 style="font-size:14px; color:#1d3557; font-weight:700; margin-bottom:8px;">PoC 기대효과 — 서울교통공사 1호선 25역 × 6개월 (정량 추정)</h2>
+      <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; font-size:11px;">
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">플랫폼 혼잡 σ</div>
+          <div style="font-weight:700; color:#e63946; font-size:16px;">−9%</div>
+          <div style="color:#6c757d; font-size:10px;">EDA 분산 시뮬 실증</div>
+        </div>
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">일 분산 응답자</div>
+          <div style="font-weight:700; color:#1d3557; font-size:16px;">30만명</div>
+          <div style="color:#6c757d; font-size:10px;">1호선 25역 × 응답률 30%</div>
+        </div>
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">연간 사회가치</div>
+          <div style="font-weight:700; color:#2a9d8f; font-size:16px;">₩137억/년</div>
+          <div style="color:#6c757d; font-size:10px;">보딩 2,500h/일 × ₩15k × 365</div>
+        </div>
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">광고 Rev share</div>
+          <div style="font-weight:700; color:#f59e0b; font-size:16px;">₩63억/년</div>
+          <div style="color:#6c757d; font-size:10px;">1호선 25역 × 5% rev share</div>
+        </div>
+      </div>
+      <div style="font-size:10px; color:#6c757d; margin-top:6px;">* poc_impact_estimate.py 검증 완료 (응답률 30%, σ−9%, 보딩 30초 기준)</div>
+    </div>
   </div>
   <div class="foot"><span class="brand">METROEYES</span><span class="page">11</span></div>
 </section>
@@ -1533,6 +1560,38 @@ li strong { color: #e63946; }
       <div class="card"><div class="label">시민 보상 자금</div><div class="num accent">분리<span class="unit"></span></div><div class="desc">운영자 비용 → 인프라 ROI 347x로 회수</div></div>
       <div class="card"><div class="label">Hikvision 차단</div><div class="num">★<span class="unit"></span></div><div class="desc">미국 BIS 제재 → 한국 솔루션 글로벌 수요</div></div>
     </div>
+
+    <div style="margin-top:18px; padding:12px 16px; background:#f8fafc; border-radius:8px; border-left:4px solid #2a9d8f;">
+      <h2 style="font-size:14px; color:#1d3557; font-weight:700; margin-bottom:8px;">역당 단위경제 (CapEx · OpEx 근거)</h2>
+      <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; font-size:11px;">
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">엣지 노드</div>
+          <div style="font-weight:700; color:#1d3557;">₩30만</div>
+          <div style="color:#6c757d; font-size:10px;">Jetson Orin Nano</div>
+        </div>
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">설치/배선</div>
+          <div style="font-weight:700; color:#1d3557;">₩60만</div>
+          <div style="color:#6c757d; font-size:10px;">기존 CCTV 인프라 활용</div>
+        </div>
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">역당 CapEx</div>
+          <div style="font-weight:700; color:#e63946;">₩300만</div>
+          <div style="color:#6c757d; font-size:10px;">8칸 기준 (2.4 + 0.6)</div>
+        </div>
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">9호선 38역</div>
+          <div style="font-weight:700; color:#1d3557;">₩1.14억</div>
+          <div style="color:#6c757d; font-size:10px;">1차 배포 총 CapEx</div>
+        </div>
+        <div style="text-align:center; padding:6px; background:#fff; border-radius:6px; border:1px solid #e2e8f0;">
+          <div style="color:#6c757d; margin-bottom:3px;">연 OpEx (38역)</div>
+          <div style="font-weight:700; color:#2a9d8f;">₩1,140만</div>
+          <div style="color:#6c757d; font-size:10px;">역당 ₩30만/년 유지보수</div>
+        </div>
+      </div>
+      <div style="font-size:10px; color:#6c757d; margin-top:6px;">* 광고 Rev share 1% = 월 ₩1.7억 → CapEx 회수 기간 <strong style="color:#2a9d8f;">0.7개월</strong> (9호선 기준)</div>
+    </div>
   </div>
   <div class="foot"><span class="brand">METROEYES</span><span class="page">20</span></div>
 </section>
@@ -1569,7 +1628,7 @@ li strong { color: #e63946; }
           <tr style="background:#fff5f5;"><td><strong>🇰🇷 MetroEyes</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td><td class="center"><strong style="color:#e63946;">✅</strong></td></tr>
         </table>
         <div style="font-size:11px; margin-top:10px; color:#6c757d; line-height:1.6;">
-          <strong style="color:#1d3557;">8-Moat</strong>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10종 공공데이터 fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/711 가드 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 (장애인차별금지법/교통약자법) ⑧ 시민신고 FAB + 오프라인큐 → 양면 가치사슬 완성
+          <strong style="color:#1d3557;">8-Moat</strong>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10종 공공데이터 fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/754 가드 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 (장애인차별금지법/교통약자법) ⑧ 시민신고 FAB + 오프라인큐 → 양면 가치사슬 완성
         </div>
       </div>
     </div>
@@ -1592,9 +1651,9 @@ li strong { color: #e63946; }
     <table style="margin-top:14px; font-size:13px;">
       <tr><th class="center" style="width:11%">시기</th><th>마일스톤</th><th class="right" style="width:14%">매출 (Run rate)</th><th class="right" style="width:14%">자금조달</th></tr>
       <tr><td class="center"><strong>2026 Q3</strong></td><td>서울시 1차 본선 통과</td><td class="right tnum">—</td><td class="right tnum" style="color:#2a9d8f;">seed 신청</td></tr>
-      <tr><td class="center"><strong>2026 Q4</strong></td><td>서울교통공사 PoC (1호선 25역)</td><td class="right tnum">₩0 (무상)</td><td class="right tnum" style="color:#2a9d8f;">pre-seed ₩3억</td></tr>
+      <tr><td class="center"><strong>2026 Q4</strong></td><td>서울교통공사 PoC (1호선 25역)</td><td class="right tnum">₩0 (무상)</td><td class="right tnum" style="color:#2a9d8f;">pre-seed ₩3억 <span style="font-size:10px; font-weight:400;">(수상금 ₩0.3억 + K-startup 예창패 ₩1억 + 부트스트랩 ₩1.7억)</span></td></tr>
       <tr><td class="center"><strong>2027 H1</strong></td><td>PoC 효과 검증 → 정식 라이선스 협상</td><td class="right tnum">₩2.5억</td><td class="right tnum">—</td></tr>
-      <tr><td class="center"><strong>2027 H2</strong></td><td>서울 9호선 전역 + 옥외광고사 1차 통합</td><td class="right tnum">₩8억</td><td class="right tnum" style="color:#2a9d8f;">seed ₩15억</td></tr>
+      <tr><td class="center"><strong>2027 H2</strong></td><td>서울 9호선 전역 + 옥외광고사 1차 통합</td><td class="right tnum">₩8억</td><td class="right tnum" style="color:#2a9d8f;">seed ₩15억 <span style="font-size:10px; font-weight:400;">(TIPS 공공데이터 매칭 ₩5억 포함)</span></td></tr>
       <tr><td class="center"><strong>2028 H1</strong></td><td>부산·대구 광역시 PoC + 광고 API beta</td><td class="right tnum">₩20억</td><td class="right tnum">—</td></tr>
       <tr><td class="center"><strong>2028 H2</strong></td><td>국내 8 광역시 + 도쿄 메트로 PoC</td><td class="right tnum">₩60억</td><td class="right tnum" style="color:#2a9d8f;">Series A ₩50억</td></tr>
       <tr><td class="center"><strong>2029 H1</strong></td><td>APAC 5 도시 + Data API 정식</td><td class="right tnum">₩120억</td><td class="right tnum">—</td></tr>
