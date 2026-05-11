@@ -147,10 +147,9 @@ function Start-Tunnel {
         return
     }
     Write-Host "  cloudflared watchdog 시작 ... " -NoNewline
-    # 워치독 방식으로 시작 — 죽으면 5초 후 자동 재시작
     $watchdog = "$root\scripts\cloudflared_watchdog.ps1"
     $p = Start-Process -FilePath "powershell.exe" `
-        -ArgumentList "-WindowStyle Hidden -ExecutionPolicy Bypass -File `"$watchdog`"" `
+        -ArgumentList @("-NoProfile", "-WindowStyle", "Hidden", "-ExecutionPolicy", "Bypass", "-File", $watchdog) `
         -WorkingDirectory $root -WindowStyle Hidden -PassThru
     Save-Pid 'cloudflared' $p.Id
     Start-Sleep -Seconds 3
