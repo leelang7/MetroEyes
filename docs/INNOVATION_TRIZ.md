@@ -6,7 +6,7 @@
 > 차등 인센티브 4단 backend 자동 + tier 6P 동기화 / K-means(K=4) + 헝가리안 1:1 비상 동선 / OpenAPI 3.0 / 8중 시연 fail-safe /
 > 8단 양면 가치 사슬 / **IDEA-7 임산부석 양보** + **IDEA-8 병목 사전 경고** (M7, cycle 226) /
 > **IDEA-9 도착 알림 5중 모달리티 + 6단 견고화** (M8, cycle 286-299, PWA v4.11 — 청각 42만 + 노캔 1,200만 잠재 사용자) /
-> **CI 15 jobs + pytest 회귀 가드 522건** (cycle 318-486 — 광고 수치 ↔ 코드 ↔ canonical JSON 동시 자동 정합).
+> **CI 15 jobs + pytest 회귀 가드 542건** (cycle 318-486 — 광고 수치 ↔ 코드 ↔ canonical JSON 동시 자동 정합).
 
 ## 1. 본질 문제 (Ideal Final Result)
 
