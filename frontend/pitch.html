@@ -1222,16 +1222,18 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
   </div>
   <div class="card">
-    <h3>🔌 공공데이터포털 / 외부 (2)</h3>
+    <h3>🔌 공공데이터포털 / 외부 (4)</h3>
     <ul style="font-size: 12px;">
       <li>버스 도착 BIS (별도 키)</li>
+      <li><code>IndoorAirQualityMeasureService</code> — 지하역사 실내 공기질 (CO₂/PM10/TEMP)</li>
+      <li><code>SubwayElevatorStatus</code> — 서울 지하철 엘리베이터 운행 현황</li>
       <li>네이버 검색 + Anthropic Claude — 인파 폭증 시 자동 컨텍스트 (네이버 뉴스 → Claude Haiku 4.5 요약)</li>
     </ul>
     <h3 style="margin-top: 12px;">🤖 자체 CV 백엔드</h3>
     <ul style="font-size: 12px;">
       <li>YOLO11n + BoT-SORT + 호모그래피 BEV → ws broadcast</li>
       <li><code>--demo</code> 모드 — CV 없이 fake BEV 트랙 5Hz (시연 fail-safe)</li>
-      <li>9개 외부 API 라이브 호출 라우팅 + 폭증 감지 자동 LLM 컨텍스트</li>
+      <li>10개 외부 API 라이브 호출 라우팅 + 폭증 감지 자동 LLM 컨텍스트</li>
     </ul>
   </div>
 </div>
