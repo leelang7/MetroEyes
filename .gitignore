@@ -110,3 +110,7 @@ frontend/operator_web/node_modules/
 frontend/operator_web/dist/
 frontend/operator_web/.next/
 frontend/operator_web/.turbo/
+
+# 관리자 페이지 — 로컬 전용, GitHub Pages 비공개
+frontend/admin.html
+frontend/operator_web/admin.html
