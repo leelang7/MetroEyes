@@ -289,7 +289,7 @@ setInterval(() => {
 function appendIncident(d) {
   const icon = d.icon || '🚨';
   const title = d.title || d.type || '이벤트';
-  const loc = d.location || d.station || d.car ? `${d.car||''}호차` : '—';
+  const loc = d.location || d.station || (d.car ? `${d.car}호차` : '—');
   const sev = d.severity || 'mid';
   const now = new Date().toLocaleTimeString('ko-KR');
   _incidents.unshift({ icon, title, loc, sev, ts: now, resolved: false });

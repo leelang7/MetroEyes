@@ -117,3 +117,10 @@ def test_social_impact_polled_every_minute() -> None:
     """fetchImpact 1분 주기 폴링."""
     html = _html()
     assert "setInterval(fetchImpact" in html, "fetchImpact setInterval 누락"
+
+
+def test_append_incident_loc_precedence_fixed() -> None:
+    """appendIncident loc 산출: d.location 우선, 마지막에만 d.car 호차 fallback."""
+    html = _html()
+    assert "d.location || d.station || (d.car" in html, \
+        "appendIncident loc 연산자 우선순위 버그 (d.location truthy 시 d.car호차 오표시)"
