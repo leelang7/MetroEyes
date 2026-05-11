@@ -42,10 +42,15 @@ def test_bonus_filter_uses_od_or_transfer() -> None:
 
 
 def test_new_stations_added() -> None:
-    """9호선/신분당선/강남업무지구 핵심 station 추가."""
+    """9호선/신분당선/강남업무지구 핵심 station — shared/seoul_stations.js 로 이동."""
+    from pathlib import Path
+    sta_js = (Path(__file__).resolve().parent.parent
+              / "frontend" / "shared" / "seoul_stations.js").read_text(encoding="utf-8")
+    # shared 파일에 있어야 하고, pwa는 SEOUL_STATIONS 참조해야 함
     html = _pwa()
-    for name in ("'신논현'", "'고속터미널'", "'판교'", "'잠실새내'", "'용산'"):
-        assert name in html, f"missing station: {name}"
+    assert "SEOUL_STATIONS" in html, "SEOUL_STATIONS 참조 누락 in pwa"
+    for name in ("신논현", "고속터미널", "잠실새내", "용산", "신논현"):
+        assert name in sta_js, f"missing station in seoul_stations.js: {name}"
 
 
 def test_sw_cache_version_bumped() -> None:

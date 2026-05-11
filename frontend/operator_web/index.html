@@ -82,7 +82,10 @@ window.addEventListener('DOMContentLoaded', applyOpI18n);
       <span class="arrow">▾</span>
       <div class="station-picker" id="station-picker">
         <div class="picker-head">역 변경 (관제 시점 전환)</div>
-        <div id="picker-rows"></div>
+        <input id="picker-search" type="search" placeholder="역 이름 검색…" autocomplete="off"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;margin-bottom:6px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-size:12px;outline:none;"
+          oninput="renderPicker(this.value)">
+        <div id="picker-rows" style="max-height:260px;overflow-y:auto;"></div>
         <div class="picker-foot">
           <button id="picker-gps-btn">📍 GPS 재매칭</button>
         </div>
@@ -360,6 +363,7 @@ window.addEventListener('message', () => {});
   </div>
 </div>
 
+<script src="../shared/seoul_stations.js"></script>
 <script src="../shared/bev_engine.js"></script>
 <script src="../shared/safety_features.js"></script>
 <script src="../shared/llm_assistant.js"></script>
@@ -701,23 +705,8 @@ function drawCarSparkline(carIdx, currentHour) {
 }
 
 // ============== 역 picker + GPS 매칭 (관제 시점 전환) ==============
-const STATION_LIST = [
-  { name: '잠실',     line: 2, lat: 37.5133, lon: 127.1000, cluster: 'hub',    poi: '잠실역' },
-  { name: '강남',     line: 2, lat: 37.4980, lon: 127.0276, cluster: 'office', poi: '강남역' },
-  { name: '홍대입구', line: 2, lat: 37.5572, lon: 126.9244, cluster: 'hub',    poi: '홍대 관광특구' },
-  { name: '시청',     line: 2, lat: 37.5642, lon: 126.9778, cluster: 'office', poi: '광화문·덕수궁' },
-  { name: '서울역',   line: 1, lat: 37.5547, lon: 126.9707, cluster: 'hub',    poi: '서울역' },
-  { name: '광화문',   line: 5, lat: 37.5717, lon: 126.9766, cluster: 'office', poi: '광화문·덕수궁' },
-  { name: '신촌',     line: 2, lat: 37.5556, lon: 126.9362, cluster: 'office', poi: '신촌·이대역' },
-  { name: '사당',     line: 2, lat: 37.4766, lon: 126.9817, cluster: 'resi',   poi: '사당역' },
-  { name: '건대입구', line: 2, lat: 37.5403, lon: 127.0703, cluster: 'resi',   poi: '건대입구역' },
-  { name: '성수',     line: 2, lat: 37.5444, lon: 127.0557, cluster: 'hub',    poi: '성수카페거리', hot: true },
-  { name: '서울숲',   line: 0, lat: 37.5443, lon: 127.0374, cluster: 'hub',    poi: '서울숲공원',   hot: true },
-  { name: '뚝섬',     line: 2, lat: 37.5295, lon: 127.0708, cluster: 'hub',    poi: '뚝섬한강공원', hot: true },
-  { name: '종로3가',  line: 1, lat: 37.5717, lon: 126.9914, cluster: 'hub',    poi: '종로·청계 관광특구' },
-  { name: '여의도',   line: 5, lat: 37.5215, lon: 126.9243, cluster: 'office', poi: '여의도' },
-  { name: '노원',     line: 4, lat: 37.6543, lon: 127.0617, cluster: 'resi',   poi: '노원역' },
-];
+// SEOUL_STATIONS: shared/seoul_stations.js 에서 로드 (1-9호선 전체)
+const STATION_LIST = window.SEOUL_STATIONS || [];
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371, toRad = d => d * Math.PI / 180;
   const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
@@ -746,26 +735,28 @@ function selectStation(s, kmFromUser) {
   }
 }
 
-function renderPicker() {
+function renderPicker(filter) {
   const rows = document.getElementById('picker-rows');
   if (!rows) return;
   rows.innerHTML = '';
-  const list = _userPos
+  const f = (filter || '').trim().toLowerCase();
+  let list = _userPos
     ? STATION_LIST.map(s => ({ ...s, km: haversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon) }))
                   .sort((a, b) => a.km - b.km)
     : STATION_LIST;
+  if (f) list = list.filter(s => s.name.toLowerCase().includes(f) || String(s.line).includes(f));
   for (const s of list) {
     const row = document.createElement('div');
     const isCurrent = s.name === STATION.name;
     row.className = 'picker-row' + (isCurrent ? ' current' : '');
     const km = s.km != null ? (s.km < 1 ? `${Math.round(s.km * 1000)}m` : `${s.km.toFixed(1)}km`) : '';
     const hotBadge = s.hot ? `<span class="hot-tag" title="인파 폭증 핫스팟">🔥</span>` : '';
-    const lineLabel = s.line > 0 ? `${s.line}호선` : 'POI';
+    const lineLabel = s.line > 0 ? `${s.line}호선` : '광역';
     row.innerHTML = `
       <span><b>${s.name}</b>${hotBadge}<span class="meta"> · ${lineLabel}</span></span>
       ${km ? `<span class="km">${km}</span>` : ''}`;
     row.addEventListener('click', (e) => {
-      e.stopPropagation();   // bubble up 막아 gps-tag re-toggle 방지
+      e.stopPropagation();
       document.getElementById('station-picker').classList.remove('open');
       selectStation(s, s.km);
     });
@@ -779,11 +770,12 @@ document.getElementById('gps-tag').addEventListener('click', e => {
   const picker = document.getElementById('station-picker');
   picker.classList.toggle('open');
   if (picker.classList.contains('open')) {
-    renderPicker();
-    // 첫 행 highlight
+    const si = document.getElementById('picker-search');
+    if (si) si.value = '';
+    renderPicker('');
     setTimeout(() => {
-      const first = picker.querySelector('.picker-row');
-      if (first) first.classList.add('kbd-focus');
+      if (si) si.focus();
+      else { const first = picker.querySelector('.picker-row'); if (first) first.classList.add('kbd-focus'); }
     }, 30);
   }
   e.stopPropagation();

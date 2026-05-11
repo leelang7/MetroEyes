@@ -138,7 +138,10 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
       <span class="arrow">▾</span>
       <div class="station-picker" id="station-picker">
         <div class="picker-head">정류장 변경 (관제 시점 전환)</div>
-        <div id="picker-rows"></div>
+        <input id="picker-search" type="search" placeholder="정류장·노선 검색…" autocomplete="off"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;margin-bottom:6px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-size:12px;outline:none;"
+          oninput="renderPicker(this.value)">
+        <div id="picker-rows" style="max-height:260px;overflow-y:auto;"></div>
         <div class="picker-foot">
           <button id="picker-gps-btn">📍 GPS 재매칭</button>
         </div>
@@ -347,6 +350,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
   </div>
 </div>
 
+<script src="../shared/seoul_bus_stops.js"></script>
 <script src="../shared/bev_engine.js"></script>
 <script src="../shared/safety_features.js"></script>
 <script src="../shared/llm_assistant.js"></script>
@@ -763,20 +767,8 @@ function drawBusSparkline(busIdx, currentHour) {
 }
 
 // ============== 정류장 picker + GPS 매칭 ==============
-const STOP_LIST = [
-  { name: '잠실역.7번출구',    short: '잠실역',     route: '간선 142', lat: 37.5133, lon: 127.1003, cluster: 'hub',    poi: '잠실역' },
-  { name: '강남역.11번출구',   short: '강남역',     route: '광역 9408', lat: 37.4980, lon: 127.0276, cluster: 'office', poi: '강남역' },
-  { name: '홍대입구역.9번출구', short: '홍대입구',   route: '간선 271',  lat: 37.5572, lon: 126.9244, cluster: 'hub',    poi: '홍대 관광특구' },
-  { name: '시청역.6번출구',    short: '시청',       route: '간선 162',  lat: 37.5642, lon: 126.9778, cluster: 'office', poi: '광화문·덕수궁' },
-  { name: '서울역.버스환승',   short: '서울역',     route: '광역 9714', lat: 37.5547, lon: 126.9707, cluster: 'hub',    poi: '서울역' },
-  { name: '광화문.교보문고',   short: '광화문',     route: '간선 401',  lat: 37.5717, lon: 126.9766, cluster: 'office', poi: '광화문·덕수궁' },
-  { name: '신촌오거리',        short: '신촌',       route: '간선 753',  lat: 37.5556, lon: 126.9362, cluster: 'office', poi: '신촌·이대역' },
-  { name: '사당역.4번출구',    short: '사당',       route: '간선 4318', lat: 37.4766, lon: 126.9817, cluster: 'resi',   poi: '사당역' },
-  { name: '건대입구역.6번출구', short: '건대입구',   route: '간선 240',  lat: 37.5403, lon: 127.0703, cluster: 'resi',   poi: '건대입구역' },
-  { name: '성수카페거리',       short: '성수',       route: '간선 121',  lat: 37.5444, lon: 127.0557, cluster: 'hub',    poi: '성수카페거리', hot: true },
-  { name: '서울숲.거꾸로분수',   short: '서울숲',     route: '지선 2014', lat: 37.5443, lon: 127.0374, cluster: 'hub',    poi: '서울숲공원',   hot: true },
-  { name: '뚝섬한강공원',       short: '뚝섬',       route: '간선 410',  lat: 37.5295, lon: 127.0708, cluster: 'hub',    poi: '뚝섬한강공원', hot: true },
-];
+// SEOUL_BUS_STOPS: shared/seoul_bus_stops.js 에서 로드
+const STOP_LIST = window.SEOUL_BUS_STOPS || [];
 function busHaversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371, toRad = d => d * Math.PI / 180;
   const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1);
@@ -803,14 +795,17 @@ function selectStop(s, kmFromUser) {
     window.LIVE.setStop(s.short, s.poi);
   }
 }
-function renderPicker() {
+function renderPicker(filter) {
   const rows = document.getElementById('picker-rows');
   if (!rows) return;
   rows.innerHTML = '';
-  const list = _userPos
+  const f = (filter || '').trim().toLowerCase();
+  let list = _userPos
     ? STOP_LIST.map(s => ({ ...s, km: busHaversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon) }))
                .sort((a, b) => a.km - b.km)
     : STOP_LIST;
+  if (f) list = list.filter(s =>
+    s.name.toLowerCase().includes(f) || s.short.toLowerCase().includes(f) || s.route.toLowerCase().includes(f));
   for (const s of list) {
     const row = document.createElement('div');
     const isCurrent = s.name === ROUTE.stop;
@@ -833,10 +828,12 @@ document.getElementById('gps-tag').addEventListener('click', e => {
   const picker = document.getElementById('station-picker');
   picker.classList.toggle('open');
   if (picker.classList.contains('open')) {
-    renderPicker();
+    const si = document.getElementById('picker-search');
+    if (si) si.value = '';
+    renderPicker('');
     setTimeout(() => {
-      const first = picker.querySelector('.picker-row');
-      if (first) first.classList.add('kbd-focus');
+      if (si) si.focus();
+      else { const first = picker.querySelector('.picker-row'); if (first) first.classList.add('kbd-focus'); }
     }, 30);
   }
   e.stopPropagation();
