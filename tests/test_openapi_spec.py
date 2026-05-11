@@ -1,4 +1,4 @@
-"""OpenAPI 3.0 spec 검증 — 9 REST endpoint + 6 type incident enum."""
+"""OpenAPI 3.0 spec 검증 — 12 REST endpoint (10 공개 + env 3) + 6 type incident enum."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -19,7 +19,7 @@ def test_openapi_loads() -> None:
 
 
 def test_required_endpoints() -> None:
-    """9 REST endpoint + /api/docs UI = 10 path 모두 존재."""
+    """10 공개 REST endpoint + env 3종 (indoor_air/elevator/occupancy_forecast) 모두 존재."""
     with SPEC.open(encoding="utf-8") as f:
         spec = yaml.safe_load(f)
     paths = spec["paths"]
@@ -33,6 +33,10 @@ def test_required_endpoints() -> None:
         "/api/v1/transfer_priority",
         "/api/v1/policy_summary",
         "/api/openapi.yaml",
+        "/api/docs",
+        "/api/v1/indoor_air",
+        "/api/v1/elevator",
+        "/api/v1/occupancy_forecast",
     }
     missing = required - set(paths.keys())
     assert not missing, f"missing endpoints: {missing}"
