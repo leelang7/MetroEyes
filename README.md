@@ -1,4 +1,4 @@
-# MetroEyes
+﻿# MetroEyes
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-7dd3d3.svg)](LICENSE)
 [![ROI](https://img.shields.io/badge/ROI%20v3-347x-10b981.svg)](frontend/pitch.html)
@@ -7,7 +7,7 @@
 [![Cycles](https://img.shields.io/badge/자동_사이클-486회-a78bfa.svg)](CHANGELOG.md)
 [![REST API](https://img.shields.io/badge/REST_API-v1-38bdf8.svg)](http://localhost:8765/api/docs)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/regression_tests-570회귀_가드-10b981.svg)](tests/)
+[![Tests](https://img.shields.io/badge/regression_tests-589회귀_가드-10b981.svg)](tests/)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > *"테슬라가 도로를 BEV로 보듯, MetroEyes는 도시 교통 전체를 본다."*
@@ -21,7 +21,7 @@
 ```bash
 git clone https://github.com/leelang7/MetroEyes.git && cd MetroEyes
 make install      # pip install -r requirements.txt (cycle 421)
-make verify       # ship-gate 10/10 + pytest 570 가드 (10초)
+make verify       # ship-gate 10/10 + pytest 589 가드 (10초)
 make demo         # backend lite-server :8765 --demo (CV 모델 없이)
 ```
 Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dday.sh --quick`
@@ -42,7 +42,7 @@ Windows PowerShell: `./scripts/dday.ps1 -Quick` · Mac/Linux bash: `./scripts/dd
 
 **짧은 요약**: 자체 CV BEV + 10 공공 API + 시민 인센티브 3 축 통합 시스템.
 정책 ROI v3 + Monte Carlo 1,000 회 95% CI 로 사회 가치 **1,393억/년 [CI 1,064~1,808억]** 정량 도출.
-2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 570 회귀 가드 + 4 언어 i18n production-grade.
+2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 589 회귀 가드 + 4 언어 i18n production-grade.
 
 **문서 추가 (장애·운영)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9 시나리오 1줄 복구 · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — 상세 기획서 v3 · [📋 docs/FORM_DATA.md](docs/FORM_DATA.md) — 마이박스 양식 사전 작성 데이터
 

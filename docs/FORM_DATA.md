@@ -1,4 +1,4 @@
-# 마이박스 양식 4종 — 사전 작성 데이터 (cycle 401)
+﻿# 마이박스 양식 4종 — 사전 작성 데이터 (cycle 401)
 
 > D-day (5/13) 직전 한컴 양식에 copy-paste 즉시 활용 가능한 데이터 모음.
 > 양식: 1) 참가신청서 2) 개인정보 동의서 3) 사회조사서 4) 상세기획서
@@ -172,6 +172,6 @@ pandoc docs/SLIDES_DECK.md -o 이석창_MetroEyes_상세기획서.pdf \
 
 > "MetroEyes는 자체 CV BEV + 10 공공 API + 시민 분산 인센티브 3축 통합 시스템으로,
 > Monte Carlo 1,000회 95% CI 통계 검증 사회 가치 1,393억/년 (CI 1,064~1,808억) 정량 도출.
-> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 570 회귀 가드 + 4언어 i18n production-grade."
+> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 589 회귀 가드 + 4언어 i18n production-grade."
 
 (글자수: 한국어 132자 / 영어 약 250자)

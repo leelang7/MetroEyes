@@ -1,4 +1,4 @@
-# 심사 지표 ↔ 산출물 ↔ CI 가드 매핑 (cycle 381)
+﻿# 심사 지표 ↔ 산출물 ↔ CI 가드 매핑 (cycle 381)
 
 > 2026 서울시 빅데이터 활용 경진대회 (창업 부문) 자기 채점표
 > 1차 서류 (개발 60 + 기획서 40 + 가점 5) + 2차 발표 (100점)
@@ -88,7 +88,7 @@
 
 | 점수 | 항목 | 산출물 |
 |---:|---|---|
-| 4 | **570 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
+| 4 | **589 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
 | 4 | **Live demo 가용성** (https://leelang7.github.io/MetroEyes/) | GitHub Pages + Cloudflare 터널 |
 | 3 | **8단 demo fail-safe + RUNBOOK** | docs/RUNBOOK.md |
 | 2 | **A4 1-Pager + 5분 영상 narration 4언어** | onepager.html + RECORDING_NARRATION.md |
