@@ -912,12 +912,35 @@ function applyIncidentNotice(j) {
   el._t = setTimeout(() => { el.hidden = true; }, 5 * 60 * 1000);
 }
 
-// 시민 직접 신고 — WS로 운영자 콘솔에 즉시 브로드캐스트
+// 시민 직접 신고 — WS로 운영자 콘솔에 즉시 브로드캐스트 (오프라인 시 localStorage 큐)
+const _REPORT_Q_KEY = 'metroeyes_report_queue';
 let _reportCooldown = {};
+
+window.flushReportQueue = function() {
+  try {
+    const q = JSON.parse(localStorage.getItem(_REPORT_Q_KEY) || '[]');
+    if (!q.length) return;
+    const remaining = [];
+    for (const payload of q) {
+      if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
+        window.LIVE_WS.send(JSON.stringify(payload));
+      } else {
+        remaining.push(payload);
+      }
+    }
+    if (remaining.length !== q.length) {
+      localStorage.setItem(_REPORT_Q_KEY, JSON.stringify(remaining));
+      if (remaining.length === 0) {
+        const pending = q.length - remaining.length;
+        showReportFeedback(q[0].incident_type, true, `대기 신고 ${pending}건 전송 완료`);
+      }
+    }
+  } catch {}
+};
+
 window.reportIncident = function(type) {
   const now = Date.now();
   if (_reportCooldown[type] && now - _reportCooldown[type] < 30000) {
-    // 30초 쿨다운
     const rem = Math.ceil((30000 - (now - _reportCooldown[type])) / 1000);
     showReportFeedback(type, false, `${rem}초 후 다시 신고 가능`);
     return;
@@ -935,7 +958,13 @@ window.reportIncident = function(type) {
     window.LIVE_WS.send(JSON.stringify(payload));
     showReportFeedback(type, true);
   } else {
-    showReportFeedback(type, false, '오프라인 — 서버 연결 필요');
+    // 오프라인 큐 — 재연결 시 자동 전송
+    try {
+      const q = JSON.parse(localStorage.getItem(_REPORT_Q_KEY) || '[]');
+      q.push(payload);
+      localStorage.setItem(_REPORT_Q_KEY, JSON.stringify(q.slice(-10))); // 최대 10건 보관
+    } catch {}
+    showReportFeedback(type, false, '오프라인 — 재연결 시 자동 전송');
   }
 };
 
@@ -1523,6 +1552,7 @@ const LIVE = (() => {
     window.LIVE_WS = ws;   // CTA에서 impact_log 송신용
     ws.onopen = () => {
       setBadge('connected', 'LIVE');
+      setTimeout(() => window.flushReportQueue && window.flushReportQueue(), 500);
       queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); queryForecast();
       if (arrivalPoll) clearInterval(arrivalPoll);
       arrivalPoll = setInterval(queryArrival, 20000);

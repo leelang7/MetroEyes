@@ -1,10 +1,10 @@
-"""passenger_app 시민 신고 FAB 기능 회귀 가드 (cycle 462).
+"""passenger_app 시민 신고 FAB 기능 회귀 가드 (cycle 462, 475).
 
 cycle 443 시민 신고 FAB 기능:
 - 분실물(lost) / 응급(emergency) / 배려(priority_seat) 3종 신고 버튼
 - 30초 쿨다운 방지 (스팸 차단)
 - citizen_report WS 페이로드 형식 검증
-- 서버 미연결 시 오프라인 피드백
+- 서버 미연결 시 오프라인 큐(localStorage) → 재연결 시 자동 전송
 - 각 신고 타입 backend 수신 후 broadcast
 """
 from __future__ import annotations
@@ -58,3 +58,12 @@ def test_offline_feedback_shown() -> None:
     """서버 미연결 시 오프라인 피드백 표시."""
     html = _html()
     assert "오프라인" in html, "오프라인 상태 피드백 누락"
+
+
+def test_offline_queue_localStorage() -> None:
+    """오프라인 큐 — localStorage 저장 후 재연결 시 자동 전송."""
+    html = _html()
+    assert "_REPORT_Q_KEY" in html or "metroeyes_report_queue" in html, \
+        "오프라인 신고 큐 localStorage 키 누락"
+    assert "flushReportQueue" in html, "flushReportQueue (재연결 시 큐 플러시) 함수 누락"
+    assert "재연결 시 자동 전송" in html, "오프라인 큐 UX 피드백 메시지 누락"
