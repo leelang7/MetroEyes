@@ -194,6 +194,20 @@ canvas.sparkline{display:block;width:100%;height:40px}
     <div id="ds-stats" style="font-size:12px;color:var(--muted)">로딩 중…</div>
   </div>
 
+  <!-- 사회적 가치 임팩트 -->
+  <div class="card span2">
+    <div class="card-title">🌱 사회적 가치 임팩트 <button onclick="fetchImpact()" style="margin-left:auto;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:2px 8px;border-radius:4px;cursor:pointer;font-size:11px">새로고침</button></div>
+    <div class="kpi-row" id="impact-kpi-row">
+      <div class="kpi-box"><div class="kv col-green" id="imp-count">0</div><div class="kl">분산 액션</div></div>
+      <div class="kpi-box"><div class="kv col-cyan" id="imp-krw">₩0</div><div class="kl">누적 보상</div></div>
+      <div class="kpi-box"><div class="kv col-blue" id="imp-roi">—</div><div class="kl">ROI</div></div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)" id="imp-tier">tier 분포 로딩 중…</div>
+    <div style="margin-top:6px;font-size:11px;color:var(--muted)">
+      사회적 가치: 응급 골든타임 · 군중밀집 방지 · 임산부석 배려 · 5중 도착 알림 · 분산 인센티브
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -454,16 +468,42 @@ function applyEnvBroadcast(d) {
   if (d.elevator) applyElev(d.elevator);
 }
 
+// ---- Impact ----
+async function fetchImpact() {
+  try {
+    const r = await fetch(`${BASE}/api/v1/impact`);
+    const d = await r.json();
+    const s = d.summary || {};
+    const raw = d.raw || {};
+    document.getElementById('imp-count').textContent = (s.count || 0).toLocaleString();
+    const krw = s.krw_saved || 0;
+    document.getElementById('imp-krw').textContent = krw > 0
+      ? '₩' + (krw >= 1000000 ? (krw/1000000).toFixed(1) + 'M' : krw.toLocaleString())
+      : '₩0';
+    const roi = raw.roi_x;
+    document.getElementById('imp-roi').textContent = roi ? roi.toFixed(0) + 'x' : '—';
+    const tc = s.tier_counts || {};
+    const total = (tc.basic||0) + (tc.od||0) + (tc.transfer||0);
+    if (total > 0) {
+      const pct = k => Math.round((tc[k]||0)/total*100);
+      document.getElementById('imp-tier').innerHTML =
+        `기본 <b style="color:#7dd3d3">${pct('basic')}%</b> · OD <b style="color:#a78bfa">${pct('od')}%</b> · 환승 <b style="color:#f59e0b">${pct('transfer')}%</b>`;
+    }
+  } catch(e) {}
+}
+
 // ---- Init ----
 connectWs();
 fetchAir();
 fetchElev();
 fetchForecast();
 fetchApiHealth();
+fetchImpact();
 setInterval(fetchApiHealth, 30000);
 setInterval(fetchAir, 300000);
 setInterval(fetchElev, 120000);
 setInterval(fetchForecast, 600000);
+setInterval(fetchImpact, 60000);
 
 // demo incident injection for empty state
 setTimeout(() => {

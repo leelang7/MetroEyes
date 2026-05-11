@@ -88,3 +88,32 @@ def test_incident_log_resolve_button() -> None:
     """인시던트 해결 버튼 존재 (resolveInc)."""
     html = _html()
     assert "resolveInc" in html, "resolveInc 버튼 핸들러 누락"
+
+
+def test_social_impact_panel_exists() -> None:
+    """사회적 가치 임팩트 패널 DOM + fetchImpact 함수."""
+    html = _html()
+    assert "사회적 가치 임팩트" in html, "사회적 가치 임팩트 패널 제목 누락"
+    assert 'id="imp-count"' in html, "imp-count element 누락"
+    assert 'id="imp-krw"' in html, "imp-krw element 누락"
+    assert 'id="imp-roi"' in html, "imp-roi element 누락"
+    assert "function fetchImpact(" in html, "fetchImpact 함수 누락"
+
+
+def test_social_impact_calls_impact_api() -> None:
+    """fetchImpact 가 /api/v1/impact 호출."""
+    html = _html()
+    assert "/api/v1/impact" in html, "/api/v1/impact 호출 누락"
+
+
+def test_social_impact_shows_tier_breakdown() -> None:
+    """fetchImpact 가 기본/OD/환승 tier 분포 표시."""
+    html = _html()
+    assert "tier_counts" in html, "tier_counts 파싱 누락"
+    assert "imp-tier" in html, "imp-tier element 누락"
+
+
+def test_social_impact_polled_every_minute() -> None:
+    """fetchImpact 1분 주기 폴링."""
+    html = _html()
+    assert "setInterval(fetchImpact" in html, "fetchImpact setInterval 누락"
