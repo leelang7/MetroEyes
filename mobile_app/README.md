@@ -7,6 +7,7 @@
 - 가까운 역 GPS 자동 매칭 (12개 핫스팟 · `_stations` 리스트)
 - BEV 트랙 라이브 수신 (`bev_socket.dart` WebSocket 클라이언트)
 - 시민 PWA 와 동일 backend `impact_log` / `arrival_query` / `population_query` 송수신
+- **시민 신고 FAB** (cycle 443): 분실물/응급/배려 신고 → `citizen_report` WS 송신 → 운영자 admin 실시간 broadcast
 - backend `--demo` 모드와 즉시 호환 (warm seed + 5분 자동 incident)
 
 ## 빠른 시작
@@ -40,6 +41,7 @@ flutter build apk       # Android APK (외부 폰 시연)
 - `arrival_query` `{stationName, line}` → `{type:'arrival', items}`
 - `impact_log` `{station, car, saved_pct, krw}` → backend가 자동 차등 보상 가산 (OD +₩100 / 환승 +₩200) → broadcast `impact_summary` (tier_counts 포함)
 - `incident_log` `{ev_type, severity, msg, source}` → broadcast `incident_summary`
+- **`citizen_report`** `{incident_type, station}` → broadcast `incident` → 운영자 admin 인시던트 로그 실시간 갱신
 
 자세한 명세: `http://localhost:8765/api/docs` 또는 OpenAPI 3.0 임포트 (`/api/openapi.yaml`).
 
