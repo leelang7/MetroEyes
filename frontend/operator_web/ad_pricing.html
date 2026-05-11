@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -53,6 +53,7 @@
     .heatmap .cell { aspect-ratio: auto; height: 16px; }
   }
 </style>
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body data-domain="ads">
 <script>
@@ -144,7 +145,7 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
 <script>
 (async function pollAdTier() {
   try {
-    const r = await fetch('http://localhost:8765/health', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       const tc = j.impact && j.impact.tier_counts;
@@ -163,7 +164,7 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
 // 광고주 컨텍스트: 분산 효과로 인한 시간대 노출 안정성 (1 - peak_drop ≈ 노출 변동 감소)
 (async function pollDispersionAd() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
@@ -181,7 +182,7 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
 <script>
 (async function pollAdKPI() {
   const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();
@@ -493,7 +494,7 @@ function pickWsUrl() {
   const p = new URLSearchParams(location.search).get('ws');
   if (p) return p;
   if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
-  return 'ws://localhost:8765';
+  return window.METROEYES_WS;
 }
 
 // 🤖 AI 자동 단가 근거 (cycle 356) — Claude Haiku 폭증 컨텍스트를 광고주 단가 책정 근거로 노출
@@ -760,3 +761,4 @@ setInterval(updDbg, 30000);
 <script src="../shared/health_pill.js" defer></script>
 </body>
 </html>
+

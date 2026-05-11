@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -46,6 +46,7 @@ body.a11y-high .modal-row { color: #fff !important; }
 body.a11y-high .modal-row.current { background: #ffeb3b !important; color: #000 !important; }
 body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !important; }
 </style>
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body>
 <script>
@@ -204,7 +205,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
 (async function pollPwaTransfer() {
   try {
     const url = (location.protocol === 'https:'
-      ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/transfer_priority';
+      ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/transfer_priority';
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
@@ -229,7 +230,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
 (async function pollODPwa() {
   try {
     const url = (location.protocol === 'https:'
-      ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/od_asymmetry';
+      ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/od_asymmetry';
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
@@ -1168,7 +1169,7 @@ if ('serviceWorker' in navigator) {
 //   1) ?ws=... query param (수동 override)
 //   2) localStorage 'subwaybev_ws'
 //   3) 같은 호스트가 ngrok-free.dev면 그대로 wss://host
-//   4) 기본값: ws://localhost:8765 (USB adb reverse 가정)
+//   4) 기본값: ${window.METROEYES_WS} (USB adb reverse 가정)
 const LIVE = (() => {
   const stations = [
     { name: '잠실', line: 2, lat: 37.5133, lon: 127.1000, poi: '잠실역' },
@@ -1239,7 +1240,7 @@ const LIVE = (() => {
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') {
       return 'wss://app.allthatai.kr';
     }
-    return 'ws://localhost:8765';
+    return window.METROEYES_WS;
   }
 
   let ws = null;
@@ -2782,3 +2783,4 @@ LIVE.connect(LIVE.pickWsUrl());
 </script>
 </body>
 </html>
+

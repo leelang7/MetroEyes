@@ -2,9 +2,17 @@ tunnel: 30f3e4a4-e310-4677-8b4d-c0f718e10076
 credentials-file: C:\Users\leesc\.cloudflared\30f3e4a4-e310-4677-8b4d-c0f718e10076.json
 
 ingress:
+  # WebSocket 백엔드 — /ws, /api 경로
   - hostname: app.allthatai.kr
-    service: http://127.0.0.1:8765   # IPv4 명시 (localhost는 [::1] 우선되어 IPv4 only listen 거부됨)
+    path: ^/(ws|api)(/.*)?$
+    service: http://127.0.0.1:8765
     originRequest:
       noTLSVerify: true
       connectTimeout: 10s
+  # 정적 프론트엔드 — 나머지 모든 요청
+  - hostname: app.allthatai.kr
+    service: http://127.0.0.1:5173
+    originRequest:
+      connectTimeout: 10s
+  # catch-all (필수)
   - service: http_status:404

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -8,6 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <title>MetroEyes — 운영자 콘솔 · 지하철</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body data-domain="subway">
 <!-- 상단 안전 알림 띠 — 임계 사건 시 자동 표시 -->
@@ -109,7 +110,7 @@ window.addEventListener('DOMContentLoaded', applyOpI18n);
 window.addEventListener('message', () => {});
 (async function pollTierOp() {
   try {
-    const r = await fetch('http://localhost:8765/health', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       const tc = j.impact && j.impact.tier_counts;
@@ -127,7 +128,7 @@ window.addEventListener('message', () => {});
 <script>
 (async function pollDispersionOp() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
@@ -168,7 +169,7 @@ window.addEventListener('message', () => {});
 <script>
 (async function pollOpTransfer() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/transfer_priority', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/transfer_priority`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
@@ -187,7 +188,7 @@ window.addEventListener('message', () => {});
 <script>
 (async function pollODPriority() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/od_asymmetry', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/od_asymmetry`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
@@ -1054,7 +1055,7 @@ if (SR) {
     if (saved) return saved;
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
-    return 'ws://localhost:8765';
+    return window.METROEYES_WS;
   })();
   let ws = null, lastBev = null, lastPop = null, arrT = null, popT = null;
   const station = { name: '잠실', line: 2, poi: '잠실역' };
@@ -1417,3 +1418,4 @@ if (SR) {
 <script src="../shared/health_pill.js" defer></script>
 </body>
 </html>
+

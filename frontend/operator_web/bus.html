@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -8,6 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <title>MetroEyes — 운영자 콘솔 · 버스</title>
 <link rel="stylesheet" href="../shared/bev_console.css">
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body data-domain="bus">
 <script>
@@ -79,7 +80,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 <script>
 (async function pollBusTier() {
   try {
-    const r = await fetch('http://localhost:8765/health', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       const tc = j.impact && j.impact.tier_counts;
@@ -97,7 +98,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 <script>
 (async function pollDispersionBus() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
@@ -113,7 +114,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 <script>
 (async function pollBusKPI() {
   const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();
@@ -173,7 +174,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 <script>
 (async function pollBusTransfer() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/transfer_priority', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/transfer_priority`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
@@ -192,7 +193,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 <script>
 (async function pollBusODPriority() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/od_asymmetry', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/od_asymmetry`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
@@ -1024,7 +1025,7 @@ if (SR) {
     if (saved) return saved;
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
-    return 'ws://localhost:8765';
+    return window.METROEYES_WS;
   })();
   let ws = null, lastBev = null, lastPop = null, lastCd = null, popT = null, cdT = null;
   // 버스 모드 — POI는 잠실역.7번출구 인근 → 잠실역으로 매핑
@@ -1274,3 +1275,4 @@ if (SR) {
 <script src="../shared/health_pill.js" defer></script>
 </body>
 </html>
+

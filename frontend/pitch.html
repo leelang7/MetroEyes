@@ -202,6 +202,7 @@
   .print-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(125,211,211,.30); }
   @media print { .print-btn { display: none !important; } }
 </style>
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body>
 <header>
@@ -218,7 +219,7 @@
 // /api/docs 링크 자동 도출 (host 기반)
 (function(){
   const apiDocsURL = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/api/docs';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/docs';
   document.getElementById('api-docs-link').href = apiDocsURL;
 })();
 </script>
@@ -239,7 +240,7 @@
 <script>
 (async function pollDispersionPitch() {
   const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/dispersion';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/dispersion';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
@@ -272,7 +273,7 @@
 <script>
 (async function pollTransferPitch() {
   const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/transfer_priority';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/transfer_priority';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
@@ -293,7 +294,7 @@
 <script>
 (async function pollODPitch() {
   const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/od_asymmetry';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/od_asymmetry';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
@@ -325,7 +326,7 @@
 <script>
 (async function pollPitchKPI() {
   const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();
@@ -798,7 +799,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 </div>
 <script>
 (async function pollLineRoi() {
-  const url = (location.protocol === 'https:' ? `https://${location.host}` : 'http://localhost:8765') + '/api/v1/line_roi';
+  const url = (location.protocol === 'https:' ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/line_roi';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (!r.ok) throw new Error('fail');
@@ -1246,7 +1247,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 </div>
 <script>
 (async function pollDataSources() {
-  const url = (location.protocol === 'https:' ? `https://${location.host}` : 'http://localhost:8765') + '/api/v1/data_sources';
+  const url = (location.protocol === 'https:' ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/data_sources';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (!r.ok) throw new Error('fail');
@@ -1733,12 +1734,12 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <div style="color: var(--warn); font-weight: 700;">5.</div>
     <div><a href="admin.html">🛠 Debug Console</a> → Live Impact 카드 7 KPI + 메시지 sparkline 60초 → 백엔드 전체 가시</div>
     <div style="color: var(--warn); font-weight: 700;">6.</div>
-    <div><a id="api-curl-link" href="" target="_blank">🔌 9 REST endpoint</a> — <code>curl http://localhost:8765/api/v1/policy_summary</code> 한 줄로 정책 4단 + EDA + 라이브 통합 JSON</div>
+    <div><a id="api-curl-link" href="" target="_blank">🔌 9 REST endpoint</a> — <code>curl ${window.METROEYES_BACKEND}/api/v1/policy_summary</code> 한 줄로 정책 4단 + EDA + 라이브 통합 JSON</div>
   </div>
 </div>
 <script>
 document.getElementById('api-curl-link').href = (location.protocol === 'https:'
-  ? `https://${location.host}` : `http://localhost:8765`) + '/api/docs';
+  ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/docs';
 </script>
 
 <footer>
@@ -1754,4 +1755,5 @@ document.getElementById('api-curl-link').href = (location.protocol === 'https:'
 </main>
 </body>
 </html>
+
 

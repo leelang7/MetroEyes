@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -51,6 +51,7 @@
   @keyframes pulse { 0%,100%{opacity:0.4;} 50%{opacity:1;} }
   .preset { font-size:11px; }
 </style>
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body>
 
@@ -115,7 +116,7 @@
 <script>
 (async function pollTransferPriority() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/transfer_priority', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/transfer_priority`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
@@ -139,7 +140,7 @@
 <script>
 (async function pollODAdmin() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/od_asymmetry', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/od_asymmetry`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
@@ -174,7 +175,7 @@
 <script>
 (async function pollDispersion() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.live) {
@@ -1055,7 +1056,7 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
 // /api/docs 링크 자동 도출
 (function(){
   const apiDocsURL = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/api/docs';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/docs';
   const el = document.getElementById('api-docs-link');
   if (el) el.href = apiDocsURL;
 })();
@@ -1063,7 +1064,7 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
 // 자동 host 분기
 (function () {
   const auto = location.hostname.endsWith('github.io') || location.protocol === 'https:'
-    ? 'wss://app.allthatai.kr' : 'ws://localhost:8765';
+    ? 'wss://app.allthatai.kr' : window.METROEYES_WS;
   document.getElementById('ws-url').value = auto;
   setTimeout(connectWs, 500);
 })();
@@ -1102,3 +1103,4 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
 </script>
 </body>
 </html>
+

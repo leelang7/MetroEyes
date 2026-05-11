@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -20,6 +20,7 @@
   }
 })();
 </script>
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body>
 <div class="app">
@@ -462,7 +463,7 @@ if ('serviceWorker' in navigator) {
     if (saved) return saved;
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
-    return 'ws://localhost:8765';
+    return window.METROEYES_WS;
   })();
   const badge = document.getElementById('live-badge');
   const label = document.getElementById('live-label');
@@ -546,3 +547,4 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+

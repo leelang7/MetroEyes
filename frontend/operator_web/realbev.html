@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -156,6 +156,7 @@
   }
 }
 </script>
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body data-domain="realcam">
 <div class="domain-bar realcam"></div>
@@ -280,7 +281,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 <script>
 (async function pollCamTier() {
   try {
-    const r = await fetch('http://localhost:8765/health', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       const tc = j.impact && j.impact.tier_counts;
@@ -298,7 +299,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 <script>
 (async function pollDispersionCam() {
   try {
-    const r = await fetch('http://localhost:8765/api/v1/dispersion', { cache: 'no-cache' });
+    const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
@@ -314,7 +315,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 <script>
 (async function pollCamKPI() {
   const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();
@@ -537,7 +538,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       </div>
     </div>
     <div class="ws-controls">
-      <input id="ws-url" type="text" value="" placeholder="ws://localhost:8765" />
+      <input id="ws-url" type="text" value="" placeholder="${window.METROEYES_WS}" />
       <button id="ws-connect">연결</button>
       <button id="ws-disconnect" class="secondary">해제</button>
       <select id="fc-station-sel" style="background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-size: 12px;">
@@ -2403,7 +2404,7 @@ window.MLChart = MLChart;
 (function () {
   const p = new URLSearchParams(location.search).get('ws');
   const saved = localStorage.getItem('subwaybev_ws');
-  let url = 'ws://localhost:8765';
+  let url = window.METROEYES_WS;
   if (p) url = p;
   else if (saved) url = saved;
   else if (location.hostname.endsWith('ngrok-free.dev')) url = `wss://${location.host}`;
@@ -2505,7 +2506,7 @@ let AED_LOCATIONS = [
 ];
 (async () => {
   try {
-    const apiBase = location.hostname.endsWith('github.io') ? 'https://app.allthatai.kr' : 'http://localhost:8765';
+    const apiBase = location.hostname.endsWith('github.io') ? 'https://app.allthatai.kr' : `${window.METROEYES_BACKEND}`;
     const r = await fetch(`${apiBase}/api/v1/aed`, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
@@ -2946,7 +2947,7 @@ document.getElementById('evac-btn').addEventListener('click', () => {
   function ensureWS() {
     if (demoWS && demoWS.readyState === 1) return demoWS;
     const url = location.protocol === 'https:'
-      ? `wss://${location.host}` : `ws://localhost:8765`;
+      ? `wss://${location.host}` : `${window.METROEYES_WS}`;
     demoWS = new WebSocket(url);
     return demoWS;
   }
@@ -2990,3 +2991,4 @@ document.getElementById('evac-btn').addEventListener('click', () => {
 <script src="../shared/health_pill.js" defer></script>
 </body>
 </html>
+

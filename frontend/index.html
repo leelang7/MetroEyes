@@ -96,6 +96,7 @@
   }
   footer code { background: rgba(255,255,255,.04); padding: 1px 6px; border-radius: 3px; }
 </style>
+<script src="/js/metroeyes-config.js"></script>
 </head>
 <body>
   <div class="brand" style="position: relative;">
@@ -156,7 +157,7 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
   (async function pollHubOD() {
     try {
       const url = (location.protocol === 'https:'
-        ? `https://${location.host}` : `http://localhost:8765`) + '/api/v1/od_asymmetry';
+        ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/od_asymmetry';
       const r = await fetch(url, { cache: 'no-cache' });
       if (r.ok) {
         const j = await r.json();
@@ -177,7 +178,7 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
   <script>
     (async function pollLiveKPI() {
       const url = (location.protocol === 'https:'
-        ? `https://${location.host}` : `http://localhost:8765`) + '/health';
+        ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/health';
       try {
         const r = await fetch(url, { cache: 'no-cache' });
         const j = await r.json();
@@ -261,3 +262,4 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
   </footer>
 </body>
 </html>
+
