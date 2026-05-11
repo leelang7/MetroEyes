@@ -1,4 +1,4 @@
-"""Lite WebSocket server — torch/ultralytics 없이 즉시 listen.
+﻿"""Lite WebSocket server — torch/ultralytics 없이 즉시 listen.
 
 CV 검출은 안 함. 시민 PWA / 운영자 콘솔의 외부 API 라이브 호출만 처리:
   - arrival_query     : 서울 TOPIS 실시간 도착정보
@@ -1005,7 +1005,7 @@ async def fake_impact_seed_loop():
         _impact_total["stations"][st] = _impact_total["stations"].get(st, 0) + 1
         _impact_total["hourly"][h_seed] += 1
         _impact_total["tier_counts"][tier] = _impact_total["tier_counts"].get(tier, 0) + 1
-    print(f"[seed] 12 warm impact seeds 즉시 누적 — 첫 진입 KPI 라이브", flush=True)
+    print(f"[seed] 12 warm impact seeds 즉시 누적 - 첫 진입 KPI 라이브", flush=True)
     while True:
         # 양봉 가중치 계산
         h = time.localtime().tm_hour
@@ -1975,7 +1975,10 @@ async def http_health(path, headers):
             },
         }).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
-    if path_only == "/health" or path_only == "/":
+    if path_only == "/":
+        # 브라우저 직접 접속 → GitHub Pages로 리다이렉트 (WebSocket upgrade는 이 코드 안 탐)
+        return (301, [("Location", "https://leelang7.github.io/MetroEyes/")] + CORS_HEADERS, b"")
+    if path_only == "/health":
         api = {}
         for name, s in _api_stats.items():
             api[name] = {
@@ -2050,8 +2053,8 @@ async def main():
     ):
         print(f"[lite_server] LISTEN ws://{args.host}:{args.port}", flush=True)
         if args.demo:
-            print("[lite_server] DEMO mode — fake BEV tracks broadcast @5Hz", flush=True)
-            print("[lite_server] DEMO mode — fake impact seed (양봉 시뮬 분산 액션 자동 누적)", flush=True)
+            print("[lite_server] DEMO mode - fake BEV tracks broadcast @5Hz", flush=True)
+            print("[lite_server] DEMO mode - fake impact seed (양봉 시뮬 분산 액션 자동 누적)", flush=True)
             # incident warm seed — 시작 즉시 4건 (다양한 type)
             _incident_total["emergency"] = 1
             _incident_total["lost"] = 2
@@ -2064,7 +2067,7 @@ async def main():
                 {"ts": now - 720, "type": "lost", "severity": "low", "msg": "분실 — 환승 통로 우산 무인", "source": "demo-seed"},
             ]
             print("[seed] 4 warm incident seeds (admin timeline 즉시 라이브)", flush=True)
-            print("[lite_server] DEMO mode — fake_incident_seed_loop 5분마다 자동 사고", flush=True)
+            print("[lite_server] DEMO mode - fake_incident_seed_loop 5분마다 자동 사고", flush=True)
             asyncio.create_task(fake_bev_loop())
             asyncio.create_task(fake_bus_bev_loop())
             asyncio.create_task(fake_impact_seed_loop())
@@ -2103,3 +2106,4 @@ async def _periodic_env_broadcast():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
