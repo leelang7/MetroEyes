@@ -73,3 +73,16 @@ def test_ten_data_sources_listed() -> None:
     assert "citydata" in t, "citydata 누락"
     # 10개 가점 주장
     assert "10개" in t or "10 개" in t, "10개 분야 결합 주장 누락"
+
+
+def test_citizen_report_moat_mentioned() -> None:
+    """§12.2 Moat에 시민 신고 FAB (분실물/응급/배려) 양면 가치 사슬 완성 명시."""
+    t = _txt()
+    assert "시민 신고" in t or "FAB" in t, "PROPOSAL Moat에 시민 신고 FAB 누락"
+    assert "분실물" in t or "응급" in t, "시민 신고 3종 항목 누락"
+
+
+def test_moat_ten_public_api_in_moat() -> None:
+    """§12.2 Moat에 10 공공 API fusion 명시."""
+    t = _txt()
+    assert "10 공공 API" in t or "10종" in t or "10개 공공" in t, "Moat에 10 공공 API 누락"
