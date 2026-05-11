@@ -1,7 +1,7 @@
 """docs/FORM_DATA.md 마이박스 양식 사전 작성 데이터 회귀 (cycle 401).
 
 D-day 사용자가 한컴 양식 4종 작성 시 copy-paste 즉시 활용 가능한 데이터 보유.
-canonical KPI 모두 cross-reference + 9 공공데이터 양식 형식 정확히.
+canonical KPI 모두 cross-reference + 10 공공데이터 양식 형식 정확히.
 """
 from __future__ import annotations
 
@@ -33,16 +33,18 @@ def test_canonical_kpi_present() -> None:
         assert kpi in t, f"missing canonical KPI: {kpi}"
 
 
-def test_9_public_apis_listed() -> None:
-    """양식 형식 (`서울 열린데이터광장 - X`) 9 데이터셋 모두."""
+def test_10_public_apis_listed() -> None:
+    """양식 형식 (`서울 열린데이터광장 - X`) 10 데이터셋 모두."""
     t = _txt()
     for ds in ("CardSubwayTime", "realtimeStationArrival", "citydata",
                "citydata_ppltn", "ListPublicReservationCulture",
                "TimeAverageAirQuality", "CardSubwayStatsNew"):
         assert ds in t, f"missing API dataset: {ds}"
-    # 공공데이터포털 2개
+    # 공공데이터포털 4개
     assert "버스정류소" in t, "bus stop dataset missing"
     assert "버스 노선" in t or "버스노선" in t, "bus route dataset missing"
+    assert "IndoorAirQualityMeasureService" in t, "indoor air quality dataset missing"
+    assert "SubwayElevatorStatus" in t, "elevator status dataset missing"
 
 
 def test_esg_5axes_documented() -> None:
