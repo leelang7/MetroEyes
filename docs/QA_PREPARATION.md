@@ -32,9 +32,9 @@
 **근거 (15초)**: YOLO11n + BoT-SORT, RTX 4070 SUPER 에서 측정. Jetson Orin (24 TOPS) 기준 INT8 quant 시 4-7 Hz 보장.
 **증거**: `src/cv/tesla_bev.py` `--imgsz 1280` 기본값 · `--demo` 모드 fake BEV broadcast 시연.
 
-### Q6. "REST API 10 endpoint 가 정말 production 수준?"
-**근거 (15초)**: OpenAPI 3.0 spec (`/api/openapi.yaml`) Swagger/Redoc/Postman 자동 import 가능. CORS 활성화 + JSON 표준 응답.
-**증거**: `tests/test_openapi_spec.py` 4 가드 — 10 endpoint enum + IDEA-7/8 incident type + breakdown 자동 검증.
+### Q6. "REST API 13 endpoint 가 정말 production 수준?"
+**근거 (15초)**: OpenAPI 3.0 spec (`/api/openapi.yaml`) Swagger/Redoc/Postman 자동 import 가능. CORS 활성화 + JSON 표준 응답. 13 endpoint = 기존 10 + indoor_air / elevator / occupancy_forecast 공공 API 3종 추가.
+**증거**: `tests/test_openapi_spec.py` 4 가드 — 13 endpoint enum + IDEA-7/8 incident type + breakdown 자동 검증.
 
 ### Q7. "장애 시 시연 끊기지 않나?"
 **근거 (10초)**: 8 단 fail-safe — `--demo` (CV 없이도 OK) + 30초 incident injector + 5분 sticky bar + warm seed 12건 + Docker compose + GitHub Actions CI + KPI drift 자동 차단 + RUNBOOK 9 시나리오.

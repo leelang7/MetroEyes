@@ -77,7 +77,7 @@ backend incident broadcast → citizen route avoidance notice. **5-stage two-sid
 - ✅ **PDF print-friendly** pitch.html + FAQ 6 + Global comparison + dispersion 4-KPI cards
 - ✅ **Tiered incentive policy** — ₩100 / ₩200 / ₩300 (OD priority) / ₩400 (transfer station) **with backend auto-bonus**
 - ✅ **A* + K-means(K=4) + Hungarian** emergency evacuation — single-exit baseline cost reduction quantified
-- ✅ **10 REST endpoints** (health/roi_curve/impact/incidents/dispersion/od/transfer/policy_summary/openapi/docs) + **OpenAPI 3.0 spec**
+- ✅ **13 REST endpoints** (health/roi_curve/impact/incidents/dispersion/od/transfer/policy_summary/openapi/docs + indoor_air/elevator/occupancy_forecast) + **OpenAPI 3.0 spec**
 - ✅ **CI 15 jobs + 341 pytest regression guards** (cycle 318-478): OpenAPI(4) + ROI v3(5) + dispersion(6) + OD/transfer(6) + bonus(6) + figs(3) + pitch(6) + impact(5) + cycle 356-455 new 291 (LLM/env/A*/PWA/demo/i18n/ROI panel/heatmap/narration/onepager/proposal v3/SLIDES v3/Monte Carlo CI/RUNBOOK/QA/SUBMISSION_INDEX/reviewer guide/changelog/ship-gate/dday.ps1·sh/Makefile/3D OpenFreeMap/citydata real fetch + admin WS/env API/citizen_report/social_impact) — advertised KPIs ↔ code ↔ figs ↔ deck ↔ canonical JSON all auto-synced
 - ✅ **Canonical KPI drift auto-blocked** (cycle 375): ad 1,393억 / 347x / Line 2 157M / CI [1,064~1,808] all artifacts simultaneously consistent — D-day issue like cycle 374 auto-detected
 - ✅ **Submission ship-gate** (cycle 380): `python scripts/submission_check.py --ci` 1-sec 12 items PASS/WARN/FAIL — every push auto-verifies submission-ready
@@ -151,7 +151,7 @@ docker compose up -d
 
 ## Open REST API v1 + OpenAPI 3.0
 
-backend `lite_server.py` exposes 10 endpoints (REST API v1 9 + auto docs UI 1) — all CORS-enabled:
+backend `lite_server.py` exposes 13 endpoints (REST API v1 12 + auto docs UI 1) — all CORS-enabled:
 
 | Endpoint | Response | Use |
 |---|---|---|
