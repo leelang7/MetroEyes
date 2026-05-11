@@ -54,9 +54,9 @@ def test_new_stations_added() -> None:
 
 
 def test_sw_cache_version_bumped() -> None:
-    """SW cache 버전 v8 (이전 v7-a11y) — 시민 폰에 picker 즉시 반영."""
+    """SW cache 버전 v9 (이전 v8-stationpicker) — 전체 역 추가 즉시 반영."""
     sw = _sw()
-    assert "subwaybev-citizen-v8-stationpicker" in sw, "SW cache version not bumped to v8"
+    assert "subwaybev-citizen-v9-allstations" in sw, "SW cache version not bumped to v9"
 
 
 def test_chip_click_handler_wired() -> None:

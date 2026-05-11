@@ -1,4 +1,4 @@
-const CACHE = 'subwaybev-citizen-v8-stationpicker';
+const CACHE = 'subwaybev-citizen-v9-allstations';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
   '../shared/bev_engine.js',
   '../shared/safety_features.js',
   '../shared/llm_assistant.js',
+  '../shared/seoul_stations.js',
 ];
 
 self.addEventListener('install', (event) => {

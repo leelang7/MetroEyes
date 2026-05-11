@@ -21,7 +21,7 @@
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
 (function () {
-  const CUR = 'v3.8-car-strip-detail-2026-05-09';
+  const CUR = 'v3.9-stations-2026-05-11';
   if (sessionStorage.getItem('me_ver') !== CUR) {
     sessionStorage.setItem('me_ver', CUR);
     // navigation type 1 = reload — loop 방지
@@ -1395,15 +1395,22 @@ if (SR) {
       lastPop = null;
       document.getElementById('fc-arr-v').textContent = '—분';
       document.getElementById('fc-arr-sub').textContent = `${name} 갱신 중...`;
+      setCard('fc-arr', 'dim');
+      // POI 없는 역은 인구 카드 초기화만 하고 쿼리 안 보냄
+      if (!poi) {
+        document.getElementById('fc-pop-v').textContent = '—명';
+        document.getElementById('fc-pop-sub').textContent = '인구 데이터 없음 (시티데이터 미지원 역)';
+        setCard('fc-pop', 'dim');
+        const ok1 = queryArr();
+        if (!ok1) setTimeout(() => queryArr(), 1500);
+        return;
+      }
       document.getElementById('fc-pop-v').textContent = '—명';
-      document.getElementById('fc-pop-sub').textContent = `${poi || name} 갱신 중...`;
-      setCard('fc-arr', 'dim'); setCard('fc-pop', 'dim');
-      // 둘 다 한 번 호출. ws 끊겨있으면 1.5초 뒤 재시도.
+      document.getElementById('fc-pop-sub').textContent = `${poi} 갱신 중...`;
+      setCard('fc-pop', 'dim');
       const ok1 = queryArr();
       const ok2 = queryPop();
-      if (!ok1 || !ok2) {
-        setTimeout(() => { queryArr(); queryPop(); }, 1500);
-      }
+      if (!ok1 || !ok2) setTimeout(() => { queryArr(); queryPop(); }, 1500);
     },
   };
 })();

@@ -15,7 +15,7 @@
 <script>
 // 자동 캐시 무효화 — sessionStorage 마커로 버전 다르면 1회 reload
 (function () {
-  const CUR = 'v3.7-pitchpage-2026-05-05';
+  const CUR = 'v3.8-stations-2026-05-11';
   if (sessionStorage.getItem('me_ver_bus') !== CUR) {
     sessionStorage.setItem('me_ver_bus', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
@@ -1114,8 +1114,14 @@ if (SR) {
   window.LIVE = {
     setStop(name, poi) {
       stop.poi = poi;
-      _dbg.sta = `${name}/${poi}`; updDbg();
+      _dbg.sta = `${name}/${poi||'—'}`; updDbg();
       lastPop = null; lastCd = null;
+      if (!poi) {
+        document.getElementById('fc-pop-v').textContent = '—명';
+        document.getElementById('fc-pop-sub').textContent = '인구 데이터 없음 (시티데이터 미지원 정류장)';
+        setCard('fc-pop', 'dim');
+        return;
+      }
       document.getElementById('fc-pop-v').textContent = '—명';
       document.getElementById('fc-pop-sub').textContent = `${poi} 갱신 중...`;
       setCard('fc-pop', 'dim');
