@@ -62,7 +62,7 @@ def test_ci_guards_referenced() -> None:
 def test_kpi_numbers_cross_referenced() -> None:
     """핵심 KPI (canonical 일치) 모두 인덱스 안에."""
     t = _txt()
-    for kpi in ("1,393억", "347x", "708x", "164", "1,064~1,808"):
+    for kpi in ("1,393억", "347x", "708x", "320", "1,064~1,808"):
         assert kpi in t, f"인덱스에 KPI 누락: {kpi}"
 
 
