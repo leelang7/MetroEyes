@@ -101,7 +101,7 @@
 **증거**: `scripts/poc_impact_estimate.py` CONSTANTS + `docs/SLIDES.html` 단위경제 박스.
 
 ### Q18-B. "PoC에서 σ −9% 달성이 가능한가?"
-**근거 (20초)**: `scripts/eda_dispersion_sim.py` 순수 Python 시뮬레이션 — 응답률 30% × PEAK_AM/PM × DISPERSE_FRAC=0.3 → 평균 σ −9.x% 재현 가능. 832 회귀 가드 중 `test_disperse_std_reduction` 이 이를 자동 검증. TfL 런던 오프피크 인센티브 실증 σ 감소 8~12%와 정합.
+**근거 (20초)**: `scripts/eda_dispersion_sim.py` 순수 Python 시뮬레이션 — 응답률 30% × PEAK_AM/PM × DISPERSE_FRAC=0.3 → 평균 σ −9.x% 재현 가능. 844 회귀 가드 중 `test_disperse_std_reduction` 이 이를 자동 검증. TfL 런던 오프피크 인센티브 실증 σ 감소 8~12%와 정합.
 **증거**: `tests/test_dispersion_sim.py:test_disperse_std_reduction` · `poc_impact_estimate.py:SIGMA_REDUCTION=0.09`.
 
 ### Q18-C. "예산 ₩400M으로 어떤 역에 먼저 설치하나?"
@@ -141,4 +141,4 @@
 
 > "MetroEyes 는 자체 CV BEV + 10 공공 API + 시민 인센티브 3 축 통합 시스템입니다.
 > 정책 ROI v3 + Monte Carlo 1,000회 검증으로 사회 가치 1,393억/년 [CI 1,064~1,808] 정량 도출.
-> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 832 회귀 가드 + 4 언어 i18n 으로 production-grade 신뢰성 확보했습니다."
+> 2호선 ROI 708x — 정책 결정 즉답. 8단 fail-safe + 844 회귀 가드 + 4 언어 i18n 으로 production-grade 신뢰성 확보했습니다."

@@ -1,5 +1,16 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [v6.16 — D-1 회귀 가드 844건] cycle 542-543 — 우선역 표 레이아웃 + 환승 부담 EDA 2026-05-12
+### Fixed
+- docs/proposal_deck.html: 우선역 TOP5 표 7열→5열, 13px 폰트, 강남역 1순위 (0.737) 수정
+- docs/QA_PREPARATION.md: Q18-C 강남역 1순위 수정, CapEx 회수 21개월 수정
+- docs/RECORDING_NARRATION.md: 102건→832건, CI 14→15 jobs, 368→541 사이클
+- docs/FORM_DATA.md: 21장→34장, proposal_deck 링크 수정
+- frontend/pitch.html: v6.14→v6.15, 540→541 사이클
+### Added
+- scripts/eda_transfer_burden.py: 환승역 승하차 불균형 분석 — CardSubwayTime 피크 부담 지수 + MetroEyes ROI 추정
+- tests/test_eda_transfer_burden.py: 12 회귀 가드 (832→844)
+
 ## [v6.15 — D-1 회귀 가드 832건] cycle 541 — 슬라이드 완성도 + 우선역 EDA 추가 2026-05-12
 ### Fixed
 - docs/proposal_deck.html: 슬라이드 33장 하단 여백 완전 제거 — flex fill CSS (justify-content:space-between + grid-auto-rows:1fr + div:last-child flex:1)
