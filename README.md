@@ -288,7 +288,7 @@ python scripts/policy_roi_v3.py
 
 ## 오픈 REST API v1 + OpenAPI 3.0
 
-backend `lite_server.py` 가 10 endpoint 제공 (REST API v1 9 + 자동 docs UI 1) — 모두 CORS 허용:
+backend `lite_server.py` 가 13 endpoint 제공 (REST API v1 10 + env 3 + 자동 docs UI 1) — 모두 CORS 허용:
 
 | Endpoint | 응답 | 용도 |
 |---|---|---|
@@ -300,6 +300,9 @@ backend `lite_server.py` 가 10 endpoint 제공 (REST API v1 9 + 자동 docs UI 
 | `GET /api/v1/od_asymmetry` | 현 시각(AM/PM) 자동 매칭 + 우선 분산 추천 역 TOP 5 | 운영자 정책 우선순위 |
 | `GET /api/v1/transfer_priority` | 환승역 호선 간 비대칭 차이 TOP 5 (현 시각 AM/PM) | 환승 흐름 분산 정책 |
 | `GET /api/v1/policy_summary` | 정책 정의 + 라이브 impact + dispersion + **incident_breakdown 6 type** + EDA 통합 | Excel/Power BI 단일 폴링 |
+| `GET /api/v1/indoor_air` | 역사 실내 CO₂/PM2.5 (IndoorAirQualityMeasureService) | 환경 모니터링 |
+| `GET /api/v1/elevator` | 승강기 운행 상태 (SubwayElevatorStatus) | 접근성 지원 |
+| `GET /api/v1/occupancy_forecast` | 24시간 혼잡도 예측 (LightGBM K=3 클러스터) | 운영자 선제 대응 |
 | `GET /api/openapi.yaml` | OpenAPI 3.0 spec | Swagger/Redoc/Postman 자동 임포트 |
 | `GET /api/docs` | 자동 HTML 명세 페이지 | curl/Postman 대체 |
 
