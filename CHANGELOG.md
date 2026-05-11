@@ -42,7 +42,13 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 339건 + mobile_app Flutter 회귀 가드 + 시민신고 오프라인큐 + 13 endpoint + demo 시민신고 오버레이 (2026-05-11 cycle 469-485)
+## v6.11 — D-2 회귀 가드 341건 + mobile_app Flutter 회귀 가드 + 시민신고 오프라인큐 + admin 시민신고LIVE + 8-Moat + i18n4언어 (2026-05-11 cycle 469-489)
+
+### v6.11 cycle 486-489
+- cycle 486: admin.html 시민신고 LIVE 패널 (citizen_report WS 카운터+toast) + 339→341 전체 동기화
+- cycle 487: index.html 486사이클·341가드 + RECORDING_GUIDE 13endpoint·시민신고 + SUBMISSION_GUIDE D-2
+- cycle 488: 시민신고 피드백 i18n 4언어 — I18N_REPORT dict (ko/en/zh/ja) + offline/flush 메시지
+- cycle 489: 7-Moat → 8-Moat (시민신고 FAB+오프라인큐 진입장벽) — pitch/SLIDES/SLIDES_DECK 동기화
 
 ### v6.11 cycle 480-485
 - cycle 480: test_openapi_spec 13 endpoint 검증으로 확장 (indoor_air/elevator/occupancy_forecast)
