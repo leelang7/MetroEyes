@@ -41,7 +41,7 @@ python -m src.cv.lite_server --port 8765 --demo
 | 3:00~3:30 | 운영자 콘솔 헤더 | "분산 효과 σ / 피크 / tier 분포 / OD 우선 / 환승 흐름 5 chip 라이브" | 운영자 4 페이지 |
 | 3:30~4:00 | 시민 PWA | "GPS 자동 매칭 + 환영 toast 4언어 + 차등 보상 chip ₩300/₩400" | 외국인 친화 |
 | 4:00~4:30 | `realbev.html` 비상 동선 클릭 | "K-means(K=4) + 헝가리안 1:1 매칭. 단일 출구 대비 cost N% 절감" | A*+K-means |
-| 4:30~5:00 | `admin.html` Debug Console | "9 endpoint REST + tier_counts 분포 + OD/환승 카드 라이브" | 백엔드 가시화 |
+| 4:30~5:00 | `admin.html` Debug Console | "13 endpoint REST + 시민신고 LIVE + tier_counts 분포 + OD/환승 카드 라이브" | 백엔드 가시화 |
 
 ## 후편집
 
