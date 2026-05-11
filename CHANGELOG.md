@@ -1,5 +1,13 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [cycle 520-522] 2026-05-11
+### Added
+- test_policy_roi_v1_sim.py: policy_roi v1 simulate/fmt_b/Assumptions 10개
+- test_carload_v2_model.py: LINE_META/synth_target/build_dataset 9개
+- test_co2_correlation.py: correlate_pollutant/hourly_pattern 8개
+- 회귀 가드 589 → 616 (+27)
+
+
 ## [cycle 518-519] 2026-05-11
 ### Added
 - test_co2_savings_model.py: ESG CO₂ 절감 모델 10개 (co2_per_action/annual/constants)
@@ -94,7 +102,7 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 589건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+## v6.11 — D-2 회귀 가드 616건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
 
 ### v6.11 cycle 570-496
 - cycle 570: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
