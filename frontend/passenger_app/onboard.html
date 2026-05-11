@@ -300,6 +300,7 @@ const sim = BEVEngine.createSim({
   layoutFn: cfg.layoutFn,
   decorate: cfg.decorate,
   overlay: drawUserOverlay,
+  bgColor: mode === 'bus' ? '#101828' : '#0c1018',
   compact: true,
 });
 

@@ -227,6 +227,7 @@
       overlay = null,
       compact = false,
       pad = 14,
+      bgColor = '#0c1018',
       headingLabel = '← 진행',
       enableSafetyDetection = false,   // 멀티태스크 안전 감지 ON/OFF
       onIncident = null,                // (incident) => {} 콜백
@@ -640,7 +641,7 @@
 
       // 외곽 + heat
       rrect(ctx, L.pad, L.pad, L.cw, L.ch, 18);
-      ctx.fillStyle = '#0c1018'; ctx.fill();
+      ctx.fillStyle = bgColor; ctx.fill();
       if (sim.occ > 0.3) {
         const heat = Math.min(1, (sim.occ - 0.3) / 0.7);
         ctx.fillStyle = rgba(occColor(sim.occ), 0.05 + heat * 0.07);
@@ -899,15 +900,24 @@
   function decorateBus(ctx, L, sim) {
     if (!L.driverPos) return;
     const d = L.driverPos;
+    // 복도 바닥 — 위아래 좌석 사이 공간에 연한 색조
+    const aisleY = L.pad + L.ch * 0.30;
+    const aisleH = L.ch * 0.40;
+    const grad = ctx.createLinearGradient(L.pad, aisleY, L.pad, aisleY + aisleH);
+    grad.addColorStop(0, 'rgba(180,200,230,0.04)');
+    grad.addColorStop(0.5, 'rgba(180,200,230,0.08)');
+    grad.addColorStop(1, 'rgba(180,200,230,0.04)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(L.pad + 4, aisleY, L.cw - 8, aisleH);
     // 운전석 박스
     ctx.save();
-    ctx.fillStyle = 'rgba(125, 211, 211, 0.06)';
-    ctx.strokeStyle = 'rgba(125, 211, 211, 0.4)';
+    ctx.fillStyle = 'rgba(125, 211, 211, 0.08)';
+    ctx.strokeStyle = 'rgba(125, 211, 211, 0.45)';
     ctx.lineWidth = 1;
     rrect(ctx, d.x - 12, d.y - 9, 24, 18, 3);
     ctx.fill(); ctx.stroke();
     ctx.font = '500 8px Inter';
-    ctx.fillStyle = 'rgba(125, 211, 211, 0.7)';
+    ctx.fillStyle = 'rgba(125, 211, 211, 0.75)';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('DRV', d.x, d.y);
     ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';

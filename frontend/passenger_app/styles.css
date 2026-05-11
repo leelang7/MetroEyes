@@ -304,7 +304,7 @@ a { color: inherit; text-decoration: none; }
 }
 @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 #bev { width: 100%; aspect-ratio: 5 / 1.05; display: block; }
-#bev.bus { aspect-ratio: 5 / 1.5; }
+#bev.bus { aspect-ratio: 5 / 2; }
 #bev.large { aspect-ratio: 5 / 1.6; }
 
 /* 비교 */

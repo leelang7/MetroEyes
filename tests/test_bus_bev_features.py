@@ -1,13 +1,14 @@
-"""버스 BEV 운영자 콘솔 (operator_web/bus.html) 회귀 가드 (cycle 497).
+"""버스 BEV 운영자 콘솔 (operator_web/bus.html) 회귀 가드 (cycle 541).
 
-버스 차내 BEV 핵심 기능:
-- fake_bus_bev_loop WS 수신 → 3구역(전문/중간/후문) 점유 실시간 렌더
-- 문 병목 감지 (door_zone bottleneck)
-- 차량 루트/행선지 표시
+버스 운영자 콘솔 핵심 기능:
+- bev_engine.js 공용 BEV 렌더링
+- fc-cv 검출 인원 카드 (applyBev)
+- fc-arr 도착 정보 카드
 - demo-trigger 시연 모드
 - TTS 분산 안내 음성 송출
 - LLM 어시스턴트 FAB
 - 4언어 i18n
+Note: cycle 541 — 차내 BEV 전용 섹션(bus-bev-canvas) 제거, 공용 bev_engine으로 통일
 """
 from __future__ import annotations
 
@@ -31,10 +32,11 @@ def test_bus_html_exists() -> None:
     assert BUS.is_file(), "bus.html 파일 누락"
 
 
-def test_bus_has_bev_canvas() -> None:
-    """버스 차내 BEV 캔버스 존재."""
+def test_bus_has_bev_engine() -> None:
+    """공용 bev_engine.js 로드 + applyBev 핸들러 존재."""
     html = _bus()
-    assert "bus-bev-canvas" in html, "버스 BEV 캔버스 id 누락"
+    assert "bev_engine.js" in html, "bev_engine.js 로드 누락"
+    assert "applyBev" in html, "applyBev 핸들러 누락"
 
 
 def test_bus_has_demo_trigger() -> None:
@@ -43,11 +45,11 @@ def test_bus_has_demo_trigger() -> None:
     assert "demo-trigger" in html, "버스 demo-trigger 버튼 누락"
 
 
-def test_bus_has_door_zones() -> None:
-    """전문/후문 구역 표시 — 승하차 병목 감지."""
+def test_bus_has_cv_card() -> None:
+    """fc-cv 검출 인원 카드 존재 — 자체 CV 결과 표시."""
     html = _bus()
-    assert "전문" in html, "전문 구역 표시 누락"
-    assert "후문" in html, "후문 구역 표시 누락"
+    assert "fc-cv" in html, "fc-cv 검출 인원 카드 누락"
+    assert "검출 인원" in html, "검출 인원 텍스트 누락"
 
 
 def test_bus_has_tts_button() -> None:
@@ -71,10 +73,10 @@ def test_bus_handles_bev_ws_type() -> None:
         "버스 BEV WS 핸들러 누락"
 
 
-def test_bus_has_route_display() -> None:
-    """버스 루트/행선지 표시 (bus-bev-route)."""
+def test_bus_has_arrival_card() -> None:
+    """fc-arr 도착 정보 카드 존재."""
     html = _bus()
-    assert "bus-bev-route" in html, "버스 루트 표시 ID 누락"
+    assert "fc-arr" in html, "fc-arr 도착 카드 누락"
 
 
 def test_bus_has_4lang_support() -> None:

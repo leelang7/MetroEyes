@@ -545,6 +545,7 @@ function connectAdLive() {
   try { if (_ws) _ws.close(); } catch {}
   _wsState = 'connecting'; updDbg();
   _ws = new WebSocket(pickWsUrl());
+  window.LIVE_WS = _ws;
   _ws.onopen = () => {
     _wsState = 'open'; updDbg();
     requestAllPois();
