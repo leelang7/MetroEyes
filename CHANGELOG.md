@@ -1,5 +1,13 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [v6.12 — D-2 회귀 가드 801건] cycle 537-538 2026-05-11
+### Added
+- scripts/eda_weekly_pattern.py: 요일별(주중/주말) 양봉/단봉 패턴 분석, 가설 ⑥ 정량화 (cycle 537)
+- scripts/eda_station_density.py: 역별 승차 밀도 TOP-N + MetroEyes PoC 우선순위 (cycle 538)
+- test_eda_weekly_pattern.py: weekday_hourly_profile/peak_ratio/bimodal_score 15개 (cycle 537)
+- test_eda_station_density.py: daily_boarding/top_stations/total_flow 정렬 13개 (cycle 538)
+- 회귀 가드 773 → 801 (+28)
+
 ## [cycle 534] 2026-05-11
 ### Added
 - test_eda_od_asymmetry.py: asym()함수 속성/범위/부호/피크시간/컬럼규칙/TOP10 11개 (cycle 534)
