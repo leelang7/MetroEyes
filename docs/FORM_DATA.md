@@ -106,7 +106,7 @@ pandoc docs/SLIDES_DECK.md -o 이석창_MetroEyes_상세기획서.pdf \
        --pdf-engine=xelatex -V mainfont="Malgun Gothic"
 ```
 
-### 7개 섹션 (양식 준수, 21장)
+### 7개 섹션 (양식 준수, 34장)
 - 1. 제안배경 + 출품작 소개 (Slide 1-3)
 - 2. 출품작 핵심내용 (Slide 4-7) — 3축 통합, ROI v3, IDEA 9
 - 3. 기존 서비스와의 차별성 (Slide 8-9) — 4 도시 비교

@@ -208,16 +208,16 @@ One step deeper: Line 2 at 9 / 17 / 19 hours score 158 — top priority cells.
 
 **🇰🇷**: 정책 ROI v3 — Monte Carlo 1,000 회 95% CI 로 통계 신뢰도 확보.
 30% 응답률 1,393 억 [1,064~1,808 억]. 광고 KPI 가 CI 안에 안전하게 위치.
-102 개 회귀 가드 / CI 14 jobs / 4 언어 / 368 자동 사이클 — MetroEyes 입니다.
+832 개 회귀 가드 / CI 15 jobs / 4 언어 / 541 자동 사이클 — MetroEyes 입니다.
 **🇺🇸**: Policy ROI v3 — Monte Carlo 1,000 simulations, 95% CI for statistical credibility.
 30% response → ₩139.3B [CI 106~181B]. The advertised KPI sits safely inside the CI.
-102 regression guards / CI 14 jobs / 4 languages / 368 auto cycles — this is MetroEyes.
+832 regression guards / CI 15 jobs / 4 languages / 541 auto cycles — this is MetroEyes.
 **🇨🇳**: 政策 ROI v3 — 蒙特卡洛 1,000 次 95% CI 统计可信度。
 30% 响应率 1,393 亿 [1,064~1,808 亿]。广告 KPI 安全位于 CI 内。
-102 个回归保护 / CI 14 jobs / 4 语言 / 368 自动周期 — 这就是 MetroEyes。
+832 个回归保护 / CI 15 jobs / 4 语言 / 541 自动周期 — 这就是 MetroEyes。
 **🇯🇵**: 政策 ROI v3 — Monte Carlo 1,000 回 95% CI で統計信頼性。
 30% 応答率 1,393 億 [1,064~1,808 億]。広告 KPI は CI 内に安全に位置。
-102 回帰ガード / CI 14 jobs / 4 言語 / 368 自動サイクル — これが MetroEyes です。
+832 回帰ガード / CI 15 jobs / 4 言語 / 541 自動サイクル — これが MetroEyes です。
 
 ---
 

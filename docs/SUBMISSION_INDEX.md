@@ -141,7 +141,7 @@
 
 ### 핵심 문서 (모두 v3 정합 검증됨 — `tests/test_proposal_v3_alignment.py` + `test_slides_v3_alignment.py`)
 - [`docs/PROPOSAL.md`](PROPOSAL.md) — 상세 기획서 본문
-- [`docs/SLIDES.html`](SLIDES.html) + [`docs/SLIDES_DECK.md`](SLIDES_DECK.md) — 한쇼 16:9 슬라이드
+- [`docs/proposal_deck.html`](proposal_deck.html) — A4 가로 34장 기획서 (Ctrl+P → PDF 제출용) · [`docs/SLIDES.html`](SLIDES.html) + [`docs/SLIDES_DECK.md`](SLIDES_DECK.md) — 한쇼 16:9 슬라이드
 - [`docs/RECORDING_NARRATION.md`](RECORDING_NARRATION.md) — 발표 영상 4언어 narration
 - [`docs/RUNBOOK.md`](RUNBOOK.md) — 장애 9 시나리오 + 8단 fail-safe
 - [`docs/QA_PREPARATION.md`](QA_PREPARATION.md) — 18 예상 질문 5 카테고리
