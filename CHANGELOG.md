@@ -1,8 +1,8 @@
 # Changelog — MetroEyes (SubwayBEV)
 
-## 🎯 D-2 자동 모드 완성 (2026-05-11 cycle 356-446)
+## 🎯 D-2 자동 모드 완성 (2026-05-11 cycle 356-460)
 
-**2 세션 91 사이클 누적** — 356 → 446, 27 회귀 가드 → 304 (+277), CI 9 → 15 jobs (+6).
+**2 세션 105 사이클 누적** — 356 → 460, 27 회귀 가드 → 321 (+294), CI 9 → 15 jobs (+6).
 
 ### 주요 사고 + 회복 1 건
 - **cycle 374**: 광고 "2호선 단독 157M" ↔ cycle 360 EDA 결과 138M 5일간 미감지 →
@@ -42,7 +42,7 @@
 
 ---
 
-## v6.10 — D-2 회귀 가드 320건 + FORM_DATA 10API + admin 임팩트 패널 + mobile README (2026-05-11 cycle 447-455)
+## v6.10 — D-2 회귀 가드 321건 + FORM_DATA 10API + admin 임팩트 패널 + 버그수정 (2026-05-11 cycle 447-460)
 
 ### v6.10 cycle 447-455 (문서 동기화 + UX 완성)
 - cycle 447: admin.html WS 핸들러 3종 추가 (incident_summary/occupancy_forecast/env_broadcast) + tests/test_admin_ws_handlers.py 11 가드 신규 + 가드수 315건 동기화
@@ -54,6 +54,11 @@
 - cycle 453: admin.html 사회적 가치 임팩트 패널 + 4 가드 신규 (social impact / tier_counts / setInterval)
 - cycle 454: mobile_app README citizen_report WS 명시
 - cycle 455: FORM_DATA 10 공공API 동기화 (IndoorAirQualityMeasureService/SubwayElevatorStatus 추가) + test_9→test_10 갱신
+- cycle 456: README/CHANGELOG 446→455 사이클, 304→320 가드 동기화
+- cycle 457: 가드수 315/316/164→320 전체 동기화 (pitch/onepager/submission_index)
+- cycle 458: README.en + SLIDES 가드수 316→320, 사이클 450→455 동기화
+- cycle 459: proposal_deck 가드수 316→320 동기화
+- cycle 460: admin appendIncident loc 연산자 우선순위 버그 수정 + 가드 추가
 
 ---
 
