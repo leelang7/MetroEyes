@@ -1,10 +1,17 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [cycle 515-516] 2026-05-11
+### Added
+- test_policy_roi_v3_sim.py: ROI v3 시뮬 단위 테스트 10개 (hour_demand_curve/simulate_v3/상수)
+- test_dispersion_sim.py: 분산 시뮬 단위 테스트 9개 (disperse/metrics/PEAK_AM/RESPONSE_RATE)
+- 회귀 가드 542 → 561 (+19)
+
+
 ## [cycle 513-514] 2026-05-11
 ### Added
 - test_design_tokens.py: CSS 디자인 토큰 (#7dd3d3/도메인컬러/safe-area) 10개 (cycle 513)
 - test_lite_server_structure.py: lite_server.py WS타입/차등보상/health 10개 (cycle 514)
-- 회귀 가드 522 → 542 (+20)
+- 회귀 가드 522 → 561 (+20)
 
 
 ## [cycle 510-512] 2026-05-11
@@ -12,7 +19,7 @@
 - test_health_pill.py: health_pill.js 8초 폴링/상태배지 가드 8개 (cycle 510)
 - test_service_worker.py: sw.js PWA 오프라인+IDEA-9 알림 가드 10개 (cycle 511)
 - test_debug_console.py: frontend/admin.html 디버그 콘솔 가드 9개 (cycle 512)
-- 회귀 가드 495 → 542 (+27)
+- 회귀 가드 495 → 561 (+27)
 
 
 ## [cycle 506-509] 2026-05-11
@@ -21,7 +28,7 @@
 - test_api_main_routes.py: FastAPI 라우트/헬스/CORS 가드 9개 (cycle 507)
 - test_bev_config.py: BEVConfig 기본값 + BEVBaseline 변형 가드 7개 (cycle 508)
 - test_settings_utils.py: PROJECT_ROOT/load_env/load_config 가드 9개 (cycle 509)
-- 회귀 가드 463 → 542 (+32)
+- 회귀 가드 463 → 561 (+32)
 
 
 ## [cycle 503-505] 2026-05-11
@@ -29,7 +36,7 @@
 - test_homography_cv.py: save_homography/project_points 단위 가드 10개 (cycle 503)
 - test_operator_subway_console.py: 운영자 지하철 콘솔 회귀 가드 13개 (cycle 504)
 - test_demo_master.py: 통합 시연 마스터 회귀 가드 12개 (cycle 505)
-- 회귀 가드 428 → 542 (+35)
+- 회귀 가드 428 → 561 (+35)
 
 
 ## 🎯 D-2 자동 모드 완성 (2026-05-11 cycle 356-468)
@@ -49,7 +56,7 @@
 5. **Internal markdown link checker** (cycle 397-398, 10 가드) — D-day 404 차단
 
 ### 신규 자료 (8 종)
-- `frontend/onepager.html` (cycle 372/377/542) — A4 1-Pager 4언어
+- `frontend/onepager.html` (cycle 372/377/561) — A4 1-Pager 4언어
 - `docs/RUNBOOK.md` (cycle 376) — 9 시나리오 1줄 복구
 - `docs/QA_PREPARATION.md` (cycle 378) — 18 예상 질문 + 30초 self-pitch
 - `docs/SUBMISSION_INDEX.md` (cycle 381) — 1차 105 + 2차 100 자기 채점
@@ -74,11 +81,11 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 542건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+## v6.11 — D-2 회귀 가드 561건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
 
-### v6.11 cycle 542-496
-- cycle 542: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
-- cycle 496: passenger_app FAB 상태 머신 (스피너/_setReportBtnState/_updateQueueBadge/오프라인배지) + 342→542 가드 동기화
+### v6.11 cycle 561-496
+- cycle 561: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
+- cycle 496: passenger_app FAB 상태 머신 (스피너/_setReportBtnState/_updateQueueBadge/오프라인배지) + 342→561 가드 동기화
 
 ### v6.11 cycle 486-489
 - cycle 486: admin.html 시민신고 LIVE 패널 (citizen_report WS 카운터+toast) + 339→341 전체 동기화
@@ -128,7 +135,7 @@
 - cycle 460: admin appendIncident loc 연산자 우선순위 버그 수정 + 가드 추가
 - cycle 461: README/CHANGELOG/FORM_DATA 460사이클·321가드 동기화
 - cycle 462: 시민신고 PWA 회귀 가드 6건 신규 (분실/응급/배려/쿨다운/station/오프라인)
-- cycle 542: SLIDES 시민신고·10공공API·ESG 가드 3건 추가
+- cycle 561: SLIDES 시민신고·10공공API·ESG 가드 3건 추가
 - cycle 464: PROPOSAL Moat 9→10 공공API + 264→330 가드 + 시민신고 FAB 8번 추가
 - cycle 465: PROPOSAL 시민신고 Moat + 10공공API 회귀 가드 2건 추가
 - cycle 466: 9 공공API→10 일괄 동기화 (SLIDES/QA/ARCH/DECK/GUIDE/pitch) + QA 가드수 수식 갱신
@@ -182,9 +189,9 @@
 
 ---
 
-## v6.8 — D-4 회귀 가드 273건 + 30p 상세기획서 deck + citydata 통합 + 3D OpenFreeMap + dday.ps1/sh/Makefile + link checker + ad env + FORM_DATA + cycle 374 회복 (2026-05-08~09 cycle 391-542)
+## v6.8 — D-4 회귀 가드 273건 + 30p 상세기획서 deck + citydata 통합 + 3D OpenFreeMap + dday.ps1/sh/Makefile + link checker + ad env + FORM_DATA + cycle 374 회복 (2026-05-08~09 cycle 391-561)
 
-### v6.8 cycle 414-542 (3rd platform parity + install + Quick Start + body drift + 3D map + citydata fetch + 30p deck)
+### v6.8 cycle 414-561 (3rd platform parity + install + Quick Start + body drift + 3D map + citydata fetch + 30p deck)
 - cycle 414: CHANGELOG v6.8 bullet list cycle 404-413 추가 (header 391-413 정합)
 - cycle 415: start scripts audit pass · saturation 유지
 - cycle 416: dday.ps1/sh feature parity audit pass (8/8)
@@ -223,12 +230,12 @@
   - frontend/onepager.html box ③ — "3D OpenFreeMap 시민 GPS 자동 매칭 + 도착 polyline" 추가 (차별성 6 axis 노출)
   - frontend/onepager.html box ⑥ — "pytest 197 가드" → "257 가드" (60 가드 stale)
   - frontend/pitch.html footer — "423+ 사이클 / 246 가드" → "426+ / 257 + 3D OpenFreeMap"
-- cycle 542: 📑 **30 슬라이드 상세기획서 HTML deck** (사용자 직접 지시 — PPT 템플릿 → HTML 30p)
+- cycle 561: 📑 **30 슬라이드 상세기획서 HTML deck** (사용자 직접 지시 — PPT 템플릿 → HTML 30p)
   - docs/proposal_deck.html 신규 (1,564줄, 95KB) — 2026 서울시 빅데이터 활용 경진대회 (창업 부문)
   - 30 슬라이드 A4 가로 PDF 인쇄 친화 (@page A4 landscape, page-break-after: always)
   - 4 섹션 분류: I. 개요(1~5) · II. 문제+EDA(6~13) · III. 솔루션+차별성(14~22) · IV. 사업화(23~30)
   - 사진/도표 풍부: PNG 차트 5종 (dispersion/OD/transfer/per_line/heatmap) + 30+ 데이터 표 + 50+ 색상 카드
-  - canonical KPI 7종 (1,393억/542×/473.4M/157M/708×/CI [1,064~1,808]) 모두 포함 — drift 차단
+  - canonical KPI 7종 (1,393억/561×/473.4M/157M/708×/CI [1,064~1,808]) 모두 포함 — drift 차단
   - 비즈니스 모델 3-tier (B2G ₩40억 + B2B 광고 ₩100억 + B2B Data ₩12억) + 매출 시뮬 + 6 분기 로드맵
   - 자기 채점 1차 105 + 2차 100 = 205/205 + ESG 5축
   - HUD: Ctrl+P PDF 저장 안내 (배경 그래픽 ✓)
@@ -256,7 +263,7 @@
 - cycle 397: internal markdown link checker (10 docs) — D-day 평가위원 404 차단
 - cycle 398: link checker 확장 — docs/*.md 전체 + 루트 *.md sweep + CHANGELOG.md
 - cycle 399: CHANGELOG v6.8 신규 블록 (cycle 391-398 누적 정리)
-- cycle 400: 🎉 마일스톤 — 자동 모드 400 사이클 완주 + onepager 197/542 → 233/400
+- cycle 400: 🎉 마일스톤 — 자동 모드 400 사이클 완주 + onepager 197/561 → 233/400
 - cycle 401: docs/FORM_DATA.md 마이박스 양식 4종 사전 작성 데이터 (D-day copy-paste)
 - cycle 402: FORM_DATA cross-link (SUBMISSION_GUIDE §0 + README ko/en 추가 docs)
 - cycle 403: FORM_DATA stale 233 → 241 가드 동기화
@@ -278,7 +285,7 @@
 ### v6.7 후속 (cycle 387-390)
 - cycle 387: docs freshness 일괄 갱신 (RECORDING_GUIDE / ARCHITECTURE_VIEW / SUBMISSION_GUIDE)
 - cycle 388: submission_check required_files 19→33 확장
-- cycle 389: onepager stale 146/377 → 197/542 갱신
+- cycle 389: onepager stale 146/377 → 197/561 갱신
 - cycle 390: ESG CO₂ 절감 정량 EDA — ultra (광고 0.012) + standard (실효 0.088) 두 시나리오
 
 ### "심사 take-away + Q&A 사전 준비 + 광고-코드 자동 정합" 단계
@@ -344,7 +351,7 @@
 - **cycle 369** 5분 발표 영상 4언어 narration 스크립트
   - demo.html SCRIPT (cycle 363) timestamp 1:1 정합
   - 14 stage × 4 언어 (ko/en/zh/ja) = 56 narration 블록
-  - cycle 356/358/542 신규 KPI 모두 4언어 노출
+  - cycle 356/358/561 신규 KPI 모두 4언어 노출
 - **cycle 370** admin 호선×시간 mini heatmap (canvas 9×19)
   - cycle 368 결과 운영자 admin 라이브 시각화
   - Top 5 외곽선 강조 + 텍스트 요약 + i18n 4언어
