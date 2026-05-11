@@ -104,6 +104,10 @@
 **근거 (20초)**: `scripts/eda_dispersion_sim.py` 순수 Python 시뮬레이션 — 응답률 30% × PEAK_AM/PM × DISPERSE_FRAC=0.3 → 평균 σ −9.x% 재현 가능. 832 회귀 가드 중 `test_disperse_std_reduction` 이 이를 자동 검증. TfL 런던 오프피크 인센티브 실증 σ 감소 8~12%와 정합.
 **증거**: `tests/test_dispersion_sim.py:test_disperse_std_reduction` · `poc_impact_estimate.py:SIGMA_REDUCTION=0.09`.
 
+### Q18-C. "예산 ₩400M으로 어떤 역에 먼저 설치하나?"
+**근거 (20초)**: 4 공공데이터 융합 우선순위 모델 구현 완료 — 밀도(40%)×OD비대칭(30%)×환승부담(20%)×호선ROI(10%) 가중합산. 1순위 **삼성역(2호선)** OD 3.2배, 2순위 **강남역** 일 11만 명. TOP5 CapEx ₩1,500만 + 잔여 ₩385M으로 9/7호선 확장. 평균 CapEx 회수 23개월.
+**증거**: `scripts/eda_priority_stations.py` + `docs/proposal_deck.html` 28쪽 + `tests/test_eda_priority_stations.py` 13 가드.
+
 ### Q18. "수상 후 다음 단계?"
 **근거 (15초)**: 2026 Q4 서울교통공사 PoC → 2027 H1 부산·대구·인천 확장 → 2027 H2 Series A ₩50억 → 2028 Y2 ₩100억 매출 → 2029 Y3 ₩200억 + 사회 가치 1,393억/년 정량.
 **증거**: `docs/PROPOSAL.md` §14 3년 로드맵.
@@ -121,6 +125,7 @@
 | 사업화 | "B2G/B2B 3-tier Y3 ₩200억 · 역당 CapEx ₩300만 · 회수 0.7개월" | `onepager.html` 사업화 + 단위경제 |
 | 약자 보호 | "IDEA-9 5중 모달리티 + ESG 5축" | `admin.html` ESG 라이브 |
 | 시민 참여 | "시민 신고 FAB 3종 + 오프라인 큐 + admin LIVE 패널" | `passenger_app/index.html` 신고 → `admin.html` 시민신고LIVE |
+| 예산 배분 | "4 공공데이터 융합 TOP5 역 · 삼성역 1순위 · CapEx 회수 23개월" | `docs/proposal_deck.html` 28쪽 표 |
 
 ---
 
