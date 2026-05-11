@@ -141,7 +141,8 @@ def test_canonical_kpi_present() -> None:
 def test_system_screenshots() -> None:
     """시스템 캡처 (지하철 + 라이브 + 시민 + 버스 4종)."""
     t = _txt()
-    captures = ["citizen_pwa.png", "operator_realbev.png", "operator_index.png", "operator_bus.png"]
+    captures = ["citizen_subway_main.png", "citizen_bus_main.png", "citizen_onboard_subway.png",
+                "operator_realbev.png", "operator_index.png", "operator_bus.png"]
     for c in captures:
         assert c in t, f"캡처 {c} 누락 — 4종 모두 필요"
 
