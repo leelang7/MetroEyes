@@ -1,5 +1,12 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [cycle 523-524] 2026-05-11
+### Added
+- test_line_carload_eda.py: LINE_CARS/CAPACITY/HEADWAY + estimate_carload 10개
+- test_melt_hourly.py: melt_hourly long-format 변환 6개
+- 회귀 가드 616 → 632 (+16)
+
+
 ## [cycle 520-522] 2026-05-11
 ### Added
 - test_policy_roi_v1_sim.py: policy_roi v1 simulate/fmt_b/Assumptions 10개
@@ -102,7 +109,7 @@
 
 ---
 
-## v6.11 — D-2 회귀 가드 616건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
+## v6.11 — D-2 회귀 가드 632건 + mobile_app Flutter + 시민신고 오프라인큐 + admin 시민신고LIVE + op/admin citizen_report + 8-Moat + i18n4언어 (2026-05-11 cycle 469-496)
 
 ### v6.11 cycle 570-496
 - cycle 570: op/admin citizen_report 핸들러(applyCitizenReport) + 341→342 가드 전체 동기화
