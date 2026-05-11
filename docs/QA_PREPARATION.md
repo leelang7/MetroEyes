@@ -32,9 +32,9 @@
 **근거 (15초)**: YOLO11n + BoT-SORT, RTX 4070 SUPER 에서 측정. Jetson Orin (24 TOPS) 기준 INT8 quant 시 4-7 Hz 보장.
 **증거**: `src/cv/tesla_bev.py` `--imgsz 1280` 기본값 · `--demo` 모드 fake BEV broadcast 시연.
 
-### Q6. "REST API 9 endpoint 가 정말 production 수준?"
+### Q6. "REST API 10 endpoint 가 정말 production 수준?"
 **근거 (15초)**: OpenAPI 3.0 spec (`/api/openapi.yaml`) Swagger/Redoc/Postman 자동 import 가능. CORS 활성화 + JSON 표준 응답.
-**증거**: `tests/test_openapi_spec.py` 4 가드 — 9 endpoint enum + IDEA-7/8 incident type + breakdown 자동 검증.
+**증거**: `tests/test_openapi_spec.py` 4 가드 — 10 endpoint enum + IDEA-7/8 incident type + breakdown 자동 검증.
 
 ### Q7. "장애 시 시연 끊기지 않나?"
 **근거 (10초)**: 8 단 fail-safe — `--demo` (CV 없이도 OK) + 30초 incident injector + 5분 sticky bar + warm seed 12건 + Docker compose + GitHub Actions CI + KPI drift 자동 차단 + RUNBOOK 9 시나리오.
@@ -80,9 +80,13 @@
 **근거 (15초)**: 분산 1회 = 자가용 회피 5% × 평균 통근 8.4km × 0.21 kg CO₂/km = **0.012 kg eq**. 700만 × 30% × 0.45 = 945,000 분산 행동/일 × 0.012 = **11.3 톤 CO₂/일**.
 **증거**: `frontend/admin.html` ESG "🌱 CO₂ 절감" 라이브 카운터 (impact_summary broadcast 직결).
 
+### Q15-A. "시민 신고가 지하 터널에서 끊기면?"
+**근거 (15초)**: **오프라인 큐 구현 완료** — `localStorage['metroeyes_report_queue']` 에 최대 10건 보관 → WebSocket 재연결 시 `flushReportQueue()` 자동 전송. 30초 쿨다운으로 스팸 방지.
+**증거**: `tests/test_citizen_report_pwa.py::test_offline_queue_localStorage` 가드.
+
 ### Q16. "데이터 의존성 — 서울 외 도시는?"
 **근거 (15초)**: 서울 열린데이터광장 7 API + 공공데이터포털 + 자체 CV 백엔드. 부산/대구/인천도 동일 구조 (지자체 OpenAPI 표준화). Y3 8 광역시 확장 로드맵.
-**증거**: `README.md` 9 API 표 + `docs/PROPOSAL.md` §14 인력 plan.
+**증거**: `README.md` 10 API 표 + `docs/PROPOSAL.md` §14 인력 plan.
 
 ---
 
@@ -108,6 +112,7 @@
 | AI 혁신성 | "AI 4축 + Claude Haiku 라이브 컨텍스트" | `admin.html` AI 패널 |
 | 사업화 | "B2G/B2B 3-tier Y3 ₩200억" | `onepager.html` 사업화 카드 |
 | 약자 보호 | "IDEA-9 5중 모달리티 + ESG 5축" | `admin.html` ESG 라이브 |
+| 시민 참여 | "시민 신고 FAB 3종 + 오프라인 큐 + 자동 전송" | `passenger_app/index.html` 신고 버튼 |
 
 ---
 
