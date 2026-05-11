@@ -3,7 +3,7 @@
 > SLIDES.html 의 시각 디자인을 한쇼에서 재구성할 때 참조.
 > **개인정보 금지** — 팀명(MetroEyes) / 성명(이석창)만 표지에 기재.
 >
-> **D-2 (2026-05-11) 자동 모드 v6.11 — 490 사이클 누적 산출**:
+> **D-1 (2026-05-12) 자동 모드 v6.15 — 541 사이클 누적 산출**:
 > - **13 REST endpoint** + OpenAPI 3.0 spec (외부 BI 단일 폴링)
 > - 11 페이지 4언어(ko/en/zh/ja) i18n + 5 진입점 환영 toast
 > - 3 EDA 실 데이터 검증 (분산 σ −9% / OD 비대칭 12x / 환승역 +1.56)
@@ -393,7 +393,7 @@ FastAPI + WebSocket — wss://app.allthatai.kr
 
 ※ scripts/policy_roi_v3.py 시뮬레이터 (Monte Carlo + seed=42)
 ※ scripts/eda_line_priority_roi.py + eda_line_hour_priority.py
-※ CI 15 jobs · 692 회귀 가드 · 광고 ↔ 코드 자동 정합
+※ CI 15 jobs · 832 회귀 가드 · 광고 ↔ 코드 자동 정합
 ```
 
 ### Slide 20 — 수익모델 3-tier (정량)
@@ -435,7 +435,7 @@ SOM:  Y3 20 도시            ₩200억/년   (국내 8 + APAC 12)
 2. 칸 컬럼 부재 정량 입증 (1주차 EDA 골든)
 3. 10 공공 API fusion 1년치 누적
 4. ko/en/zh/ja 4언어 11페이지
-5. CI 15 jobs + 692 회귀 가드 + canonical KPI drift 자동 차단 production-grade
+5. CI 15 jobs + 832 회귀 가드 + canonical KPI drift 자동 차단 production-grade
 6. TRIZ 8 모순 9 IDEA 발명 분석 (논문화)
 7. IDEA-9 접근성 제도 직결 (장애인차별금지법/교통약자법)
 8. 시민신고 FAB + 오프라인큐 → 운영자 admin 즉시 broadcast → 양면 가치사슬 완성
