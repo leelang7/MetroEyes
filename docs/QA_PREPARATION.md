@@ -112,7 +112,7 @@
 | AI 혁신성 | "AI 4축 + Claude Haiku 라이브 컨텍스트" | `admin.html` AI 패널 |
 | 사업화 | "B2G/B2B 3-tier Y3 ₩200억" | `onepager.html` 사업화 카드 |
 | 약자 보호 | "IDEA-9 5중 모달리티 + ESG 5축" | `admin.html` ESG 라이브 |
-| 시민 참여 | "시민 신고 FAB 3종 + 오프라인 큐 + 자동 전송" | `passenger_app/index.html` 신고 버튼 |
+| 시민 참여 | "시민 신고 FAB 3종 + 오프라인 큐 + admin LIVE 패널" | `passenger_app/index.html` 신고 → `admin.html` 시민신고LIVE |
 
 ---
 
