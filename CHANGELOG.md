@@ -1,5 +1,16 @@
 # Changelog — MetroEyes (SubwayBEV)
 
+## [v6.15 — D-1 회귀 가드 832건] cycle 541 — 슬라이드 완성도 + 우선역 EDA 추가 2026-05-12
+### Fixed
+- docs/proposal_deck.html: 슬라이드 33장 하단 여백 완전 제거 — flex fill CSS (justify-content:space-between + grid-auto-rows:1fr + div:last-child flex:1)
+- docs/proposal_deck.html: 3쪽 운영자 콘솔 1→3 스크린샷 (지하철/실카메라/버스 3종 col3 그리드)
+### Added
+- tests/test_proposal_deck.py: 4 회귀 가드 — CSS fill 규칙·운영자 스크린샷 3종·시민 스크린샷 6종·33장 확인 (815→819)
+### Changed
+- 전체 문서 수치 동기화: 회귀 가드 801/815→819, 사이클 478/486/537→540, v6.12/v6.13→v6.14, D-2→D-1
+  - frontend/onepager.html (4언어 i18n 포함), frontend/pitch.html, docs/SLIDES.html
+  - docs/QA_PREPARATION.md, docs/SUBMISSION_INDEX.md, README.md, README.en.md
+
 ## [v6.13 — D-2 회귀 가드 815건] cycle 539 + GitHub Pages 루트 업데이트 2026-05-11
 ### Added
 - scripts/eda_boarding_efficiency.py: 역별 탑승 dwell time 추정 + 혼잡 지수 (cycle 539)

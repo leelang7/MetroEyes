@@ -56,8 +56,9 @@
 |---:|---|---|
 | 8 | **9 데이터셋 통합** (citydata + CardSubway + TOPIS + 공공데이터포털) | README §"Data Sources" |
 | 8 | **EDA 정량 검증** (σ −9% / OD 12x / 환승 +1.56 / 칸 점유) | `frontend/figs/dispersion_sim_report.json` 외 7건 |
-| 5 | **호선 × 시간 매트릭스 매트릭스 EDA** (cycle 368) | `frontend/figs/line_hour_priority_matrix.json` |
+| 5 | **호선 × 시간 매트릭스 EDA** (cycle 368) | `frontend/figs/line_hour_priority_matrix.json` |
 | 4 | **분 단위 라이브 broadcast** | tesla_bev.py citydata_ppltn polling |
+| ★ | **4 공공데이터 융합 우선 역 선정** (cycle 541) — CardSubway+OD+환승+ROI | `scripts/eda_priority_stations.py` · 28쪽 슬라이드 |
 
 **합계 25/25** ✓
 
@@ -88,7 +89,7 @@
 
 | 점수 | 항목 | 산출물 |
 |---:|---|---|
-| 4 | **692 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
+| 4 | **832 회귀 가드 + CI 15 jobs** | tests/ + .github/workflows/ci.yml |
 | 4 | **Live demo 가용성** (https://leelang7.github.io/MetroEyes/) | GitHub Pages + Cloudflare 터널 |
 | 3 | **8단 demo fail-safe + RUNBOOK** | docs/RUNBOOK.md |
 | 2 | **A4 1-Pager + 5분 영상 narration 4언어** | onepager.html + RECORDING_NARRATION.md |
@@ -157,7 +158,7 @@
 - `scripts/eda_line_hour_priority.py` (호선×시간 2D 매트릭스)
 - `scripts/submission_check.py --ci` (10 fast 검사 < 1초)
 
-### CI / 회귀 가드 (339건 / 15 jobs)
+### CI / 회귀 가드 (832건 / 15 jobs)
 - `.github/workflows/ci.yml` — submission-ship-gate + frontend-features (14 테스트 파일) + ROI v3 + EDA dispersion/OD/transfer + bonus tier + figs + pitch 구조 + impact + RUNBOOK + line ROI EDA + submission
 
 ---
