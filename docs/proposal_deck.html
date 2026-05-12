@@ -60,10 +60,10 @@ body {
 .head .section-num { display: flex; align-items: center; gap: 2.5mm; }
 .head .section-num .pill {
   background: var(--ink); color: var(--g1);
-  padding: 1.5mm 3.5mm; border-radius: 1mm;
-  font-size: 13px; font-weight: 800; letter-spacing: -.2px;
+  padding: 1.5mm 4mm; border-radius: 1mm;
+  font-size: 16px; font-weight: 800; letter-spacing: -.2px;
 }
-.head .section-num .ttl { font-size: 14px; color: var(--mid); font-weight: 600; }
+.head .section-num .ttl { font-size: 18px; color: var(--mid); font-weight: 700; }
 .head .compete { font-size: 13px; color: var(--muted); text-align: right; line-height: 1.5; }
 .head .compete b { color: var(--ink2); }
 
@@ -387,7 +387,7 @@ table td.win { color: var(--g0); font-weight: 700; }
   </div>
   <div class="body">
     <h1>지하철·버스 차내 — 실시간 칸별 데이터가 없다</h1>
-    <p class="lead">· 공식 공개 데이터는 역·노선 단위 통계 — 칸 안에서 무슨 일이 일어나는지 아무도 모른다<br>· MetroEyes: 기존 카메라 인프라 + CV 파이프라인 → 분 단위 칸별 점유 실시간 시각화</p>
+    <p class="lead">· 공식 공개 데이터는 역·노선 단위 통계 — 칸 내부에서 어떤 일이 일어나는지 아무도 모른다<br>· MetroEyes: 기존 카메라 인프라 + CV 파이프라인 → 분 단위 칸별 점유 실시간 시각화</p>
     <div class="col2 uneven">
       <div>
         <h2>충격적 통계 (1주차 EDA)</h2>
@@ -401,8 +401,8 @@ table td.win { color: var(--g0); font-weight: 700; }
         <h2 style="margin-top: 4mm;">기존 솔루션 한계</h2>
         <table>
           <tr><th>출처</th><th>주기</th><th>칸별</th></tr>
-          <tr><td>공공 통계</td><td>월 평균</td><td class="num accent" style="color:#b91c1c;">불가</td></tr>
-          <tr><td>실시간 도착</td><td>분 단위</td><td class="num accent" style="color:#b91c1c;">차편 위치만</td></tr>
+          <tr><td>공공 통계</td><td>월 평균</td><td class="ctr" style="color:#b91c1c; font-weight:700;">불가</td></tr>
+          <tr><td>실시간 도착</td><td>분 단위</td><td class="ctr" style="color:#b91c1c; font-weight:700;">차편 위치만</td></tr>
           <tr><td>SK PUZZLE</td><td>10분 평균</td><td>일부 (유료)</td></tr>
           <tr style="background:#ecfdf5;"><td><b>MetroEyes</b></td><td><b>분 단위</b></td><td class="win">○ 카메라 1대</td></tr>
         </table>
@@ -487,7 +487,7 @@ table td.win { color: var(--g0); font-weight: 700; }
             <div class="cap" style="font-size:14px;"><b>지하철 탭</b><br>GPS 매칭·3D지도<br>도착알림·보상₩200</div>
           </div>
           <div class="shot">
-            <img src="../outputs/demo/citizen_subway_detail.png" alt="칸 상세 + BEV" style="width:100%; height:40mm; object-fit:cover; object-position:top; border-radius:2mm;">
+            <img src="../outputs/demo/citizen_subway_detail.png" alt="칸 상세 + BEV" style="width:100%; height:40mm; object-fit:cover; object-position:center 35%; border-radius:2mm;">
             <div class="cap" style="font-size:14px;"><b>칸 상세+BEV</b><br>0명/20명·밀도<br>9회차 비교·LLM</div>
           </div>
           <div class="shot">
@@ -499,7 +499,7 @@ table td.win { color: var(--g0); font-weight: 700; }
             <div class="cap" style="font-size:14px;"><b>버스 탭</b><br>정류장·간선142<br>분산임팩트₩0</div>
           </div>
           <div class="shot">
-            <img src="../outputs/demo/citizen_bus_detail.png" alt="버스 칸 상세" style="width:100%; height:40mm; object-fit:cover; object-position:top; border-radius:2mm;">
+            <img src="../outputs/demo/citizen_bus_detail.png" alt="버스 칸 상세" style="width:100%; height:40mm; object-fit:cover; object-position:center 35%; border-radius:2mm;">
             <div class="cap" style="font-size:14px;"><b>버스 칸 상세</b><br>3순위 86%·30명<br>BEV LIVE·비추</div>
           </div>
           <div class="shot">
@@ -604,7 +604,7 @@ table td.win { color: var(--g0); font-weight: 700; }
       <!-- 왼쪽: 스크린샷 + 3개 특징 -->
       <div style="display:flex; flex-direction:column; gap:3mm;">
         <div class="shot" style="flex:1;">
-          <img src="../outputs/demo/operator_realbev.png" alt="실시간 카메라 분석" style="width:100%; height:auto; object-fit:contain; border-radius:3mm;">
+          <img src="../outputs/demo/operator_realbev.png" alt="실시간 카메라 분석" style="width:100%; height:75mm; object-fit:cover; object-position:center top; border-radius:3mm;">
           <div class="cap"><b>실시간 카메라 → CV 탐지 → 호모그래피 → Three.js 3D BEV</b><br>사람 검출 · 익명 점좌표만 전송 · 운영자 콘솔 즉시 표시</div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm;">
@@ -638,7 +638,7 @@ table td.win { color: var(--g0); font-weight: 700; }
   <div class="body">
     <h1>10 공공데이터 동시 통합 — 8개 분야 결합</h1>
     <p class="lead">· 서울 열린데이터광장 8종 + 외부 2종 = 총 10개 데이터셋 실시간 통합<br>· 결합 분야: <b>교통·환경·공기질·엘리베이터·문화·인구·기상·도로</b></p>
-    <table>
+    <table style="font-size:12px;">
       <tr><th style="width: 4%;">#</th><th style="width: 22%;">데이터</th><th style="width: 11%;">갱신 주기</th><th style="width: 32%;">우리가 추출</th><th>활용</th></tr>
       <tr><td>1</td><td>citydata 통합</td><td>분 단위</td><td>인구·날씨·미세먼지·자외선·문화행사·도로·주차·따릉이</td><td>광고 단가 자동 + 시민 카드</td></tr>
       <tr><td>2</td><td>citydata_ppltn (110 POI)</td><td>분 단위</td><td>POI별 인구</td><td>인파 폭증 즉시 감지</td></tr>
@@ -651,12 +651,12 @@ table td.win { color: var(--g0); font-weight: 700; }
       <tr><td>9</td><td>SubwayElevatorStatus</td><td>2분 단위</td><td>엘리베이터 운행·고장 현황</td><td>교통약자 접근성 경로 + 즉시 알림</td></tr>
       <tr><td>10</td><td>네이버 검색 API + Claude</td><td>이벤트</td><td>인파 폭증 컨텍스트 + AI 80자 요약</td><td>광고주 자연어 근거</td></tr>
     </table>
-    <div class="col2" style="margin-top: 4mm;">
-      <div class="diff-box green">
+    <div class="col2" style="margin-top: 2mm;">
+      <div class="diff-box green" style="padding:3mm 3.5mm;">
         <h3>✅ 라이브 검증 (2026-05-09 14:00)</h3>
         <p>강남역 응답 → 기온 20.1°C / PM2.5 = 10 / PM10 = 32 / 자외선 7 / 인구 50,000명 (보통)<br>· 직접 호출: <code>http://openapi.seoul.go.kr:8088/{KEY}/json/citydata/1/5/강남역</code></p>
       </div>
-      <div class="diff-box amber">
+      <div class="diff-box amber" style="padding:3mm 3.5mm;">
         <h3>⚠️ 품질 검증 프로세스</h3>
         <p>· 공공 API 실호출 + 응답 형식 자동 검증<br>· citydata 통합 응답 라이브 확인 완료<br>· 회귀 가드 844개 — push마다 자동 통과</p>
       </div>
@@ -673,7 +673,7 @@ table td.win { color: var(--g0); font-weight: 700; }
   </div>
   <div class="body">
     <h1>점유 네트워크 분석 — 호선 × 시간 매트릭스</h1>
-    <p class="lead">9 호선 × 19 시간 = <b>171 cell 의 점유 네트워크</b>를 분 단위로 본다. 같은 호선도 시간마다, 같은 시간도 호선마다 천차만별 — 정책 결정의 정량 근거.</p>
+    <p class="lead">· 9 호선 × 19 시간 = <b>171 cell 의 점유 네트워크</b>를 분 단위로 본다<br>· 같은 호선도 시간마다, 같은 시간도 호선마다 천차만별 — 정책 결정의 정량 근거</p>
     <div class="col2 uneven">
       <div class="shot">
         <img src="../frontend/figs/line_carload_heatmap.png" alt="호선 시간 점유 heatmap">
@@ -780,8 +780,7 @@ table td.win { color: var(--g0); font-weight: 700; }
 <section class="slide section-cover">
   <div class="num">03</div>
   <h1>사업·서비스<br>계획</h1>
-  <div class="desc">· Claude AI + CV + 통계 도구 4종 활용 (844 회귀 가드 · CI 15 jobs)<br>· 1인 production-grade 품질 지표<br>· 양면 가치사슬 — 시민 ↔ 운영자 ↔ 광고주<br>· 24시간 라이브 데모 · app.allthatai.kr</div>
-  <div class="judge"><b>평가 기준:</b> 사업·서비스 계획 (창업) — 개발 방법론, 기술 신뢰성, 가치사슬 및 지속 성장 구조</div>
+  <div class="desc">· AI 도구 4종 기반 개발 · 844 회귀 가드 · CI 15 jobs<br>· 1인 production-grade 품질 지표<br>· 양면 가치사슬 — 시민 ↔ 운영자 ↔ 광고주<br>· 24시간 라이브 데모 · app.allthatai.kr</div>
 </section>
 
 <!-- 4-1 9일 사이클 + AI 협업 -->
@@ -899,7 +898,7 @@ table td.win { color: var(--g0); font-weight: 700; }
       </div>
       <div class="diff-box amber">
         <h3>실제 메시지 흐름 (1초 미만)</h3>
-        <p>· 시민 ws impact_log → backend _bonus_krw()<br>· broadcast impact_summary → 운영자 dashboard tile<br>· ad_pricing.html (광고 +12%) · 전 과정 1초 이내</p>
+        <p>· 시민 ws impact_log → backend _bonus_krw()<br>· broadcast impact_summary → 운영자 dashboard tile<br>· ad_pricing.html 광고 단가 +12% 자동 반영<br>· incident_summary (사고 4종) 동시 송출<br>· 전 과정 1초 이내 — WebSocket 단일 채널</p>
       </div>
     </div>
   </div>
@@ -911,7 +910,6 @@ table td.win { color: var(--g0); font-weight: 700; }
   <div class="num">04</div>
   <h1>경쟁기술 및<br>현황</h1>
   <div class="desc">· 6대 사회적 가치 IDEA<br>· 4단 차등 보상 자동 시스템<br>· 군중밀집 사고 사전 경고<br>· 버스 시스템 통합<br>· 글로벌 4개 도시 서비스가 충족하지 못한 5개 기준 동시 달성</div>
-  <div class="judge"><b>평가 기준:</b> 경쟁기술 및 현황 (제품·서비스 차별화) — 기존 솔루션 대비 독창성 + 기술 우위</div>
 </section>
 
 
@@ -923,7 +921,7 @@ table td.win { color: var(--g0); font-weight: 700; }
   </div>
   <div class="body">
     <h1>6대 사회적 가치 IDEA — 카메라 1대로 동시 보호</h1>
-    <p class="lead">· 분 단위 칸 안 시각화는 <b>수단</b> — 진짜 목적: <b>사회적 약자와 안전 사각지대</b> 시스템적 해소<br>· 추가 하드웨어 0원 · 기존 공공 CCTV 인프라 위에 SW만 얹는다</p>
+    <p class="lead">· 분 단위 칸 안 시각화는 <b>수단</b> — 진짜 목적: <b>사회적 약자와 안전 사각지대</b> 시스템적 해소<br>· 기존 공공 CCTV 인프라 위에 SW만 추가 — 하드웨어 0원</p>
     <div class="cards c3">
       <div class="idea-box preg">
         <span class="badge">IDEA-7</span>
@@ -1012,12 +1010,12 @@ table td.win { color: var(--g0); font-weight: 700; }
         <h2>무임승차 감지 + 분실물 흐름</h2>
         <div class="diff-box" style="margin-bottom:3mm;">
           <h3>💰 무임승차 자동 감지</h3>
-          <p>승강장 카운트(CV) vs 게이트 태그 수 <b>실시간 비교</b> → 차이 ≥2 → 운영자 알림. 미스캔 자동 누적 통계.</p>
-          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:2mm; padding:2mm 3mm; font-size:15px; margin-top:2mm; font-family:monospace;">게이트 태그 82 / CV 검출 85 → <span style="color:#ef4444; font-weight:700;">차이 3명 감지</span></div>
+          <p>· 승강장 카운트(CV) vs 게이트 태그 수 <b>실시간 비교</b> → 차이 ≥2 → 운영자 알림<br>· 미스캔 자동 누적 통계</p>
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:2mm; padding:2mm 3mm; font-size:14px; margin-top:2mm;">게이트 태그 82 / CV 검출 85 → <span style="color:#ef4444; font-weight:700;">차이 3명 감지</span></div>
         </div>
         <div class="diff-box amber">
           <h3>🎒 분실물 → 종착역 연계</h3>
-          <p>BoT-SORT 가방 트랙 · 사람 없이 <b>12초 무인</b> → broadcast → 종착역 유실물센터 자동 전달. <b>타 시스템 0개도 없는 기능.</b></p>
+          <p>BoT-SORT 가방 트랙 · 사람 없이 <b>12초 무인</b> → broadcast → 종착역 유실물센터 자동 전달 — <b>글로벌 최초 구현 기능</b></p>
         </div>
         <div style="margin-top:3mm; padding:3mm 4mm; background:#fef3c7; border-left:4px solid #f59e0b; border-radius:0 2mm 2mm 0; font-size:14px;">
           <b>모든 알람은 개인정보 Zero.</b> 트랙 ID·좌표만 사용. 얼굴·이름 저장 없음. 개인정보보호법 완전 준수.
@@ -1036,7 +1034,7 @@ table td.win { color: var(--g0); font-weight: 700; }
   </div>
   <div class="body">
     <h1>4단 차등 보상 — 시간 × 역 × 비대칭 자동 매칭</h1>
-    <p class="lead green"><b>글로벌 최초 3차원 차등 보상</b>. 같은 분산이라도 어디서·언제·어느 호선이냐에 따라 백엔드가 자동으로 차등 보상 가산. 시민이 직접 입력할 필요 없음.</p>
+    <p class="lead green">· <b>글로벌 최초 3차원 차등 보상</b> — 어디서·언제·어느 호선이냐에 따라 백엔드가 자동 가산<br>· 시민이 직접 입력할 필요 없음</p>
     <div class="tier-grid">
       <div class="tier-card t1">
         <div class="price">₩100</div>
@@ -1111,7 +1109,7 @@ table td.win { color: var(--g0); font-weight: 700; }
           <tr><td>평균 이동 속도</td><td class="hl">0.3 m/s↓</td><td>정체 (사람이 거의 멈춤)</td></tr>
           <tr><td>지속 시간</td><td class="hl">45초+</td><td>일시 정체 아닌 진짜 병목</td></tr>
         </table>
-        <p class="note" style="margin-top: 2mm;"><b>3 축 동시 만족</b> 시에만 알림. 일시 군집은 false alarm 방지.</p>
+        <p class="note" style="margin-top: 2mm;"><b>3 축 동시 만족</b> 시에만 알림 — 일시 군집은 false alarm 방지</p>
         <h2 style="margin-top: 4mm;">감시 대상 영역 (역사당 자동 정의)</h2>
         <ul style="padding-left: 5mm;">
           <li>에스컬레이터 진입부·하차부</li>
@@ -1123,20 +1121,20 @@ table td.win { color: var(--g0); font-weight: 700; }
         </ul>
         <div class="diff-box red" style="margin-top: 3mm;">
           <h3>다중 영역 동시 감지 = 진짜 위험</h3>
-          <p>1 영역만 검출 = 일반 혼잡. <b>2 영역 이상 동시</b> = 군중 밀집 임박 → red 배지 + 옆 출구 권장 안내 자동.</p>
+          <p>· 1 영역만 검출 = 일반 혼잡<br>· <b>2 영역 이상 동시</b> = 군중 밀집 임박 → red 배지 + 옆 출구 권장 안내 자동</p>
         </div>
       </div>
       <div>
         <h2>대응 자동화 흐름</h2>
-        <div class="flow" style="flex-direction: column; gap: 1.5mm;">
-          <div class="step" style="padding:2.5mm 3.5mm;"><div class="n">1</div><div class="h">📷 다중 카메라 ROI 모니터</div><div class="d">에스컬레이터·계단·통로</div></div>
-          <div class="step" style="padding:2.5mm 3.5mm;"><div class="n">2</div><div class="h">🎯 3축 임계값 동시 충족</div><div class="d">밀도+속도+지속시간</div></div>
-          <div class="step" style="padding:2.5mm 3.5mm;"><div class="n">3</div><div class="h">⚠️ red 배지 즉시 broadcast</div><div class="d">운영자 콘솔 알림</div></div>
-          <div class="step" style="padding:2.5mm 3.5mm;"><div class="n">4</div><div class="h">📢 안내 송출</div><div class="d">"옆 출구 권장" + 시민 폰 알림</div></div>
-          <div class="step" style="padding:2.5mm 3.5mm;"><div class="n">5</div><div class="h">📊 통계 누적</div><div class="d">정체 hot-spot 시간대 패턴</div></div>
+        <div class="flow" style="flex-direction: column; gap: 1mm;">
+          <div class="step" style="padding:1.5mm 2.5mm;"><div class="n">1</div><div class="h">📷 다중 카메라 ROI 모니터</div><div class="d">에스컬레이터·계단·통로</div></div>
+          <div class="step" style="padding:1.5mm 2.5mm;"><div class="n">2</div><div class="h">🎯 3축 임계값 동시 충족</div><div class="d">밀도+속도+지속시간</div></div>
+          <div class="step" style="padding:1.5mm 2.5mm;"><div class="n">3</div><div class="h">⚠️ red 배지 즉시 broadcast</div><div class="d">운영자 콘솔 알림</div></div>
+          <div class="step" style="padding:1.5mm 2.5mm;"><div class="n">4</div><div class="h">📢 안내 송출</div><div class="d">"옆 출구 권장" + 시민 폰 알림</div></div>
+          <div class="step" style="padding:1.5mm 2.5mm;"><div class="n">5</div><div class="h">📊 통계 누적</div><div class="d">정체 hot-spot 시간대 패턴</div></div>
         </div>
-        <div style="margin-top:2mm; padding:3mm 4mm; background:#fef2f2; border-radius:2.5mm; border-left:4px solid #dc2626; font-size:13px;">
-          <b style="color:#b91c1c; font-size:26px;">158명</b> — 2022년 군중밀집 사고 사망자 · MetroEyes 사전 경고 대상
+        <div style="margin-top:1.5mm; padding:2.5mm 3.5mm; background:#fef2f2; border-radius:2.5mm; border-left:4px solid #dc2626; font-size:13px;">
+          <b style="color:#b91c1c; font-size:22px;">158명</b> — 2022년 군중밀집 사고 사망자 · MetroEyes 사전 경고 대상
         </div>
       </div>
     </div>
@@ -1191,16 +1189,16 @@ table td.win { color: var(--g0); font-weight: 700; }
   <div class="body">
     <h1>글로벌 4개 도시 서비스 비교 — 5개 기준 동시 충족</h1>
     <table>
-      <tr><th style="width: 14%;">서비스</th><th>분 단위</th><th>칸별</th><th>4언어</th><th>광고 단가 자동</th><th>비상 동선 자동</th></tr>
+      <tr><th style="width: 14%;">서비스</th><th style="text-align:center;">분 단위</th><th style="text-align:center;">칸별</th><th style="text-align:center;">4언어</th><th style="text-align:center;">광고 단가 자동</th><th style="text-align:center;">비상 동선 자동</th></tr>
       <tr style="background:#ecfdf5;">
         <td><b>Seoul · MetroEyes</b><br><span class="pill-s">우리</span></td>
-        <td class="win">○ 분 단위</td><td class="win">○ 자체 카메라</td><td class="win">한·영·중·일</td>
-        <td class="win">날씨+행사 결합</td><td class="win">출구 자동 매칭</td>
+        <td class="win ctr">○ 분 단위</td><td class="win ctr">○ 자체 카메라</td><td class="win ctr">한·영·중·일</td>
+        <td class="win ctr">날씨+행사 결합</td><td class="win ctr">출구 자동 매칭</td>
       </tr>
-      <tr><td>Tokyo · Train Vision</td><td>△ 5분</td><td class="ctr">✕</td><td>일본어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
-      <tr><td>NYC · L Tracker</td><td>△ 차편 위치</td><td class="ctr">✕</td><td>영어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
-      <tr><td>London · TfL Crowding</td><td>△ 시간대 통계</td><td class="ctr">✕</td><td>영어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
-      <tr><td>SK PUZZLE</td><td>△ 10분</td><td>△ 일부</td><td>한국어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
+      <tr><td>Tokyo · Train Vision</td><td class="ctr">△ 5분</td><td class="ctr">✕</td><td class="ctr">일본어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
+      <tr><td>NYC · L Tracker</td><td class="ctr">△ 차편 위치</td><td class="ctr">✕</td><td class="ctr">영어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
+      <tr><td>London · TfL Crowding</td><td class="ctr">△ 시간대 통계</td><td class="ctr">✕</td><td class="ctr">영어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
+      <tr><td>SK PUZZLE</td><td class="ctr">△ 10분</td><td class="ctr">△ 일부</td><td class="ctr">한국어만</td><td class="ctr">✕</td><td class="ctr">✕</td></tr>
     </table>
     <div class="col2" style="margin-top: 4mm;">
       <div>
@@ -1241,7 +1239,7 @@ table td.win { color: var(--g0); font-weight: 700; }
     <div style="display: flex; flex-direction: column; gap: 3mm; justify-content: space-between; flex:1; min-height:0;">
       <div style="display: flex; gap: 3mm;">
         <div style="width: 30mm; background: #1a1a1f; color: #fff; padding: 4mm; border-radius: 2mm; font-size: 13px; font-weight: 800; display: flex; flex-direction: column; justify-content: center;">L1<br>입력</div>
-        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 3mm;">
+        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 3mm; text-align:center;">
           <div class="diff-box"><h3>📸 카메라</h3><p>1280p IP/브라우저</p></div>
           <div class="diff-box amber"><h3>🌆 10 공공 API</h3><p>citydata · arrival 등</p></div>
           <div class="diff-box violet"><h3>📱 시민 폰</h3><p>GPS + 모션</p></div>
@@ -1251,7 +1249,7 @@ table td.win { color: var(--g0); font-weight: 700; }
       <div style="text-align: center; color: #475569;">▼</div>
       <div style="display: flex; gap: 3mm;">
         <div style="width: 30mm; background: #1a1a1f; color: #fff; padding: 4mm; border-radius: 2mm; font-size: 13px; font-weight: 800; display: flex; flex-direction: column; justify-content: center;">L2<br>인공지능</div>
-        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm;">
+        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; text-align:center;">
           <div class="diff-box"><h3>🎯 객체 인식+추적</h3><p>분당 8.5 프레임</p></div>
           <div class="diff-box amber"><h3>📐 평면 보정</h3><p>위에서 본 + 점 카운트</p></div>
           <div class="diff-box violet"><h3>🔄 다중 신호 통합</h3><p>5축 결합 (오차 −10.6%)</p></div>
@@ -1301,7 +1299,7 @@ table td.win { color: var(--g0); font-weight: 700; }
         <div class="cap" style="font-size:14px;"><b>① 지하철 메인</b><br>GPS 매칭 · 도착알림 · ₩200 적립</div>
       </div>
       <div class="shot">
-        <img src="../outputs/demo/citizen_subway_detail.png" alt="칸 선택 + BEV" style="width:100%; height:38mm; object-fit:cover; object-position:center; border-radius:2mm;">
+        <img src="../outputs/demo/citizen_subway_detail.png" alt="칸 선택 + BEV" style="width:100%; height:38mm; object-fit:cover; object-position:center 15%; border-radius:2mm;">
         <div class="cap" style="font-size:14px;"><b>② 칸 선택+BEV</b><br>실시간 밀도 · LLM 자연어 질의</div>
       </div>
       <div class="shot">
@@ -1313,7 +1311,7 @@ table td.win { color: var(--g0); font-weight: 700; }
         <div class="cap" style="font-size:14px;"><b>④ 버스 메인</b><br>간선142 도착알림 · 분산 임팩트</div>
       </div>
       <div class="shot">
-        <img src="../outputs/demo/citizen_bus_detail.png" alt="버스 칸 상세" style="width:100%; height:38mm; object-fit:cover; object-position:center; border-radius:2mm;">
+        <img src="../outputs/demo/citizen_bus_detail.png" alt="버스 칸 상세" style="width:100%; height:38mm; object-fit:cover; object-position:center 15%; border-radius:2mm;">
         <div class="cap" style="font-size:14px;"><b>⑤ 버스 칸 상세</b><br>3순위 86% · BEV LIVE</div>
       </div>
       <div class="shot">
@@ -1433,11 +1431,11 @@ table td.win { color: var(--g0); font-weight: 700; }
     <div class="col2" style="margin-top: 4mm;">
       <div class="diff-box green">
         <h3>직접 체험 경로 (5분)</h3>
-        <p>1. <code>leelang7.github.io/MetroEyes/</code> 접속<br>2. 시민 웹앱 → 도착지 설정 → 5중 알림 즉시 테스트<br>3. 운영자 콘솔 → 사고 4종 자동 broadcast 확인</p>
+        <p>· <code>leelang7.github.io/MetroEyes/</code> 접속<br>· 시민 웹앱 → 도착지 설정 → 5중 알림 즉시 테스트<br>· 운영자 콘솔 → 사고 4종 자동 broadcast 확인</p>
       </div>
       <div class="diff-box amber">
         <h3>오프라인 비상 자료</h3>
-        <p>· A4 1-Pager · 30p 발표 deck (이 문서) · 시연 영상 백업 (outputs/demo/)<br>인터넷 없이 PDF 로 확인 가능</p>
+        <p>· A4 1-Pager · 30p 발표 deck (이 문서) · 시연 영상 백업 (outputs/demo/)<br>· 인터넷 없이 PDF로 확인 가능</p>
       </div>
     </div>
   </div>
@@ -1570,7 +1568,7 @@ table td.win { color: var(--g0); font-weight: 700; }
         </table>
         <div class="diff-box" style="margin-top:3mm; padding:3mm 4mm;">
           <h3>📡 BLE 비콘 측위 — 추가 인프라 0원</h3>
-          <p>역사 기존 BLE 비콘(안전·화재 인프라) 재활용 → 승강장 30cm 정확도 측위. GPS 불가 지하에서 <b>엘리베이터·에스컬레이터·환승 통로 자동 안내.</b> 장차법 직결.</p>
+          <p>· 역사 기존 BLE 비콘(안전·화재 인프라) 재활용 → 승강장 30cm 정확도 측위<br>· GPS 불가 지하에서 <b>엘리베이터·에스컬레이터·환승 통로 자동 안내</b> — 장차법 직결</p>
         </div>
       </div>
       <div>
