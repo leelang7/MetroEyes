@@ -213,6 +213,7 @@ table th {
 table td {
   padding: 2mm 3mm; border-bottom: 1px solid #f1f5f9;
   color: var(--ink2); vertical-align: top; font-size: 13px;
+  text-align: center;
 }
 table tr:nth-child(even) td { background: #fafafa; }
 table td.num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -603,35 +604,15 @@ table td.win { color: var(--g0); font-weight: 700; }
     <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:4mm; flex:1;">
       <!-- 왼쪽: 스크린샷 + 3개 특징 -->
       <div style="display:flex; flex-direction:column; gap:3mm;">
-        <div class="shot" style="flex:1;">
-          <img src="../outputs/demo/operator_realbev.png" alt="실시간 카메라 분석" style="width:100%; height:58mm; object-fit:cover; object-position:center top; border-radius:3mm;">
-          <!-- BEV 변환 도형 시각화 -->
-          <div style="display:flex; align-items:center; gap:2mm; padding:2mm; background:#0d1117; border-radius:2mm; margin-top:2mm;">
-            <svg viewBox="0 0 80 52" style="flex:1; min-width:0; display:block;">
-              <rect width="80" height="52" fill="#0d1117"/>
-              <polygon points="22,3 58,3 74,49 6,49" fill="rgba(52,211,153,0.06)" stroke="#c33764" stroke-width="1.5"/>
-              <text x="40" y="28" text-anchor="middle" font-size="8" fill="#94a3b8">📷</text>
-              <circle cx="28" cy="16" r="3" fill="#7dd3d3" opacity="0.85"/>
-              <circle cx="52" cy="22" r="3" fill="#7dd3d3" opacity="0.85"/>
-              <circle cx="38" cy="38" r="3" fill="#7dd3d3" opacity="0.85"/>
-            </svg>
-            <div style="color:#34d399; font-size:16px; font-weight:900; flex-shrink:0;">→</div>
-            <svg viewBox="0 0 80 52" style="flex:1; min-width:0; display:block;">
-              <rect width="80" height="52" fill="#0d1117"/>
-              <rect x="4" y="3" width="72" height="46" fill="rgba(52,211,153,0.06)" stroke="#7dd3d3" stroke-width="1.5"/>
-              <line x1="18" y1="3" x2="18" y2="49" stroke="#7dd3d3" stroke-width="0.5" opacity="0.3"/>
-              <line x1="32" y1="3" x2="32" y2="49" stroke="#7dd3d3" stroke-width="0.5" opacity="0.3"/>
-              <line x1="46" y1="3" x2="46" y2="49" stroke="#7dd3d3" stroke-width="0.5" opacity="0.3"/>
-              <line x1="60" y1="3" x2="60" y2="49" stroke="#7dd3d3" stroke-width="0.5" opacity="0.3"/>
-              <line x1="4" y1="26" x2="76" y2="26" stroke="#7dd3d3" stroke-width="0.5" opacity="0.3"/>
-              <circle cx="11" cy="13" r="3.5" fill="#7dd3d3" opacity="0.9"/>
-              <circle cx="25" cy="38" r="3.5" fill="#7dd3d3" opacity="0.9"/>
-              <circle cx="39" cy="13" r="3.5" fill="#7dd3d3" opacity="0.9"/>
-              <circle cx="53" cy="38" r="3.5" fill="#7dd3d3" opacity="0.9"/>
-              <circle cx="67" cy="13" r="3.5" fill="#7dd3d3" opacity="0.9"/>
-            </svg>
+        <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:2mm;">
+          <div class="shot" style="display:flex; flex-direction:column;">
+            <img src="../outputs/crowd_demo/snap_0380.png" alt="실카메라 + BEV 감지" style="width:100%; flex:1; min-height:0; object-fit:cover; object-position:center; border-radius:2mm;">
+            <div class="cap" style="font-size:13px;"><b>📷 실카메라 → BEV 감지</b><br>사람 탐지 · 호모그래피 투영</div>
           </div>
-          <div class="cap"><b>실시간 카메라 → CV 탐지 → 호모그래피 → Three.js 3D BEV</b><br>사람 검출 · 익명 점좌표만 전송 · 운영자 콘솔 즉시 표시</div>
+          <div class="shot" style="display:flex; flex-direction:column;">
+            <img src="../outputs/crowd_3d_demo.png" alt="3D BEV 사람 형체" style="width:100%; flex:1; min-height:0; object-fit:cover; object-position:100% center; border-radius:2mm;">
+            <div class="cap" style="font-size:13px;"><b>3D BEV 사람 형체 (6명)</b><br>익명 아바타 · 점유 카운트</div>
+          </div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm;">
           <div class="diff-box"><h3>🛡️ 프라이버시</h3><p>점 좌표만 전송<br>얼굴·번호 미생성</p></div>
@@ -709,11 +690,11 @@ table td.win { color: var(--g0); font-weight: 700; }
         <h2>Top 5 우선순위 cell</h2>
         <table>
           <tr><th>호선</th><th>시간</th><th>점유</th><th>우선도</th></tr>
-          <tr><td>2호선</td><td>9시</td><td class="hl">240%</td><td class="num">158</td></tr>
-          <tr><td>2호선</td><td>17시</td><td class="hl">235%</td><td class="num">158</td></tr>
-          <tr><td>2호선</td><td>19시</td><td class="hl">228%</td><td class="num">158</td></tr>
-          <tr><td>9호선</td><td>8시</td><td class="num">218%</td><td class="num">142</td></tr>
-          <tr><td>7호선</td><td>18시</td><td class="num">212%</td><td class="num">138</td></tr>
+          <tr><td>2호선</td><td>9시</td><td class="hl">240%</td><td class="ctr">158</td></tr>
+          <tr><td>2호선</td><td>17시</td><td class="hl">235%</td><td class="ctr">158</td></tr>
+          <tr><td>2호선</td><td>19시</td><td class="hl">228%</td><td class="ctr">158</td></tr>
+          <tr><td>9호선</td><td>8시</td><td class="ctr hl">218%</td><td class="ctr">142</td></tr>
+          <tr><td>7호선</td><td>18시</td><td class="ctr hl">212%</td><td class="ctr">138</td></tr>
         </table>
         <h2 style="margin-top: 4mm;">호선별 ROI 순위 (정책 답)</h2>
         <div class="bars">
