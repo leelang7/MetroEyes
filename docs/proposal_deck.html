@@ -304,6 +304,7 @@ table td.win { color: var(--g0); font-weight: 700; }
 /* ─── Flow ──────────────────────────────────── */
 .flow { display:flex; align-items:stretch; }
 .flow .step, .step {
+  flex:1;
   padding:4mm 4.5mm;
   background:var(--card); border:1px solid var(--line); border-radius:3mm;
   position:relative; display:flex; flex-direction:column; justify-content:center;
@@ -606,8 +607,8 @@ table td.win { color: var(--g0); font-weight: 700; }
       <div style="display:flex; flex-direction:column; gap:3mm;">
         <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:2mm;">
           <div class="shot" style="display:flex; flex-direction:column;">
-            <img src="../outputs/crowd_demo/snap_0380.png" alt="실카메라 + BEV 감지" style="width:100%; flex:1; min-height:0; object-fit:cover; object-position:center; border-radius:2mm;">
-            <div class="cap" style="font-size:13px;"><b>📷 실카메라 → BEV 감지</b><br>사람 탐지 · 호모그래피 투영</div>
+            <img src="../outputs/demo/operator_index.png" alt="지하철 운영자 BEV 콘솔" style="width:100%; flex:1; min-height:0; object-fit:cover; object-position:center 30%; border-radius:2mm;">
+            <div class="cap" style="font-size:13px;"><b>🚇 지하철 도메인 — 운영자 BEV</b><br>2호선 10칸 점유 · 실시간 KPI</div>
           </div>
           <div class="shot" style="display:flex; flex-direction:column;">
             <img src="../outputs/crowd_3d_demo.png" alt="3D BEV 사람 형체" style="width:100%; flex:1; min-height:0; object-fit:cover; object-position:100% center; border-radius:2mm;">
@@ -1299,38 +1300,40 @@ table td.win { color: var(--g0); font-weight: 700; }
     <div class="compete">시민 측 — 웹앱 + 네이티브 폰앱</div>
   </div>
   <div class="body">
-    <h1>시민 앱 — 지하철·버스·차내 전 기능 실화면</h1>
+    <h1>시민 앱 — 4언어 · STT 음성 · LLM 자연어 · 그래프 예측</h1>
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:3mm; margin-bottom:3mm;">
+      <!-- 4언어 행 -->
       <div class="shot">
-        <img src="../outputs/demo/citizen_subway_main.png" alt="지하철 메인" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
-        <div class="cap" style="font-size:14px;"><b>① 지하철 메인</b><br>GPS 매칭 · 도착알림 · ₩200 적립</div>
+        <img src="../outputs/demo/citizen_lang_en.png" alt="영어 모드" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
+        <div class="cap" style="font-size:14px;"><b>🇺🇸 영어 모드</b><br>Subway/Bus 탭 · 전 화면 영어 전환</div>
       </div>
       <div class="shot">
-        <img src="../outputs/demo/citizen_subway_detail.png" alt="칸 선택 + BEV" style="width:100%; height:38mm; object-fit:cover; object-position:center 35%; border-radius:2mm;">
-        <div class="cap" style="font-size:14px;"><b>② 칸 선택+BEV</b><br>실시간 밀도 · LLM 자연어 질의</div>
+        <img src="../outputs/demo/citizen_lang_zh.png" alt="중국어 모드" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
+        <div class="cap" style="font-size:14px;"><b>🇨🇳 중국어 모드</b><br>铁路/巴士 탭 · 즉시 전환</div>
       </div>
       <div class="shot">
-        <img src="../outputs/demo/citizen_onboard_subway.png" alt="지하철 차내" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
-        <div class="cap" style="font-size:14px;"><b>③ 차내 뷰</b><br>10량 BEV · 환승 유도</div>
+        <img src="../outputs/demo/citizen_lang_ja.png" alt="일본어 모드" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
+        <div class="cap" style="font-size:14px;"><b>🇯🇵 일본어 모드</b><br>地下鉄/バス · 🇰🇷→🇺🇸→🇨🇳→🇯🇵 순환</div>
+      </div>
+      <!-- STT·LLM·그래프 행 -->
+      <div class="shot">
+        <img src="../outputs/demo/citizen_stt_section.png" alt="STT 음성 입력" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
+        <div class="cap" style="font-size:14px;"><b>🎤 STT 음성 입력</b><br>Web Speech API · 4언어 음성 도착지 입력</div>
       </div>
       <div class="shot">
-        <img src="../outputs/demo/citizen_bus_main.png" alt="버스 메인" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
-        <div class="cap" style="font-size:14px;"><b>④ 버스 메인</b><br>간선142 도착알림 · 분산 임팩트</div>
+        <img src="../outputs/demo/citizen_llm_assist.png" alt="LLM + STT 자연어" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
+        <div class="cap" style="font-size:14px;"><b>🤖 LLM + STT 자연어</b><br>자연어로 묻기 · 혼잡도 예측 그래프</div>
       </div>
       <div class="shot">
-        <img src="../outputs/demo/citizen_bus_detail.png" alt="버스 칸 상세" style="width:100%; height:38mm; object-fit:cover; object-position:center 35%; border-radius:2mm;">
-        <div class="cap" style="font-size:14px;"><b>⑤ 버스 칸 상세</b><br>3순위 86% · BEV LIVE</div>
-      </div>
-      <div class="shot">
-        <img src="../outputs/demo/citizen_bus_onboard.png" alt="버스 차내" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
-        <div class="cap" style="font-size:14px;"><b>⑥ 버스 차내</b><br>3량 편성 · 하차안내 · 보상₩200</div>
+        <img src="../outputs/demo/citizen_predict_bars.png" alt="점유 예측 그래프" style="width:100%; height:38mm; object-fit:cover; object-position:top; border-radius:2mm;">
+        <div class="cap" style="font-size:14px;"><b>📊 탑승 예측 그래프</b><br>9회 열차 점유 비교 · 실시간 BEV LIVE</div>
       </div>
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:2mm;">
-      <div class="diff-box green" style="font-size:15px;"><h3 style="font-size:15px;">📍 GPS 역 자동 매칭</h3><p>325역 · 30m 정확도 · 지하철+버스 공용</p></div>
-      <div class="diff-box amber" style="font-size:15px;"><h3 style="font-size:15px;">💰 4단 차등 보상</h3><p>₩100·200·300·400 자동 가산 · OD/환승/핫스팟</p></div>
-      <div class="diff-box" style="font-size:15px;"><h3 style="font-size:15px;">🔔 5중 도착 알림</h3><p>시각·진동·비프·4언어음성·OS 알림</p></div>
-      <div class="diff-box violet" style="font-size:15px;"><h3 style="font-size:15px;">♿ 약자 모드</h3><p>큰 글씨·음성 안내·휠체어/유아차 동선 자동 우선</p></div>
+      <div class="diff-box green" style="font-size:15px;"><h3 style="font-size:15px;">🌐 4언어 i18n</h3><p>ko·en·zh·ja 전 화면 · 플래그 버튼 1탭 전환</p></div>
+      <div class="diff-box amber" style="font-size:15px;"><h3 style="font-size:15px;">🎤 STT 음성</h3><p>Web Speech API · 역명 음성 입력 · 4언어 인식</p></div>
+      <div class="diff-box" style="font-size:15px;"><h3 style="font-size:15px;">🤖 LLM 자연어</h3><p>Claude Haiku 4.5 · "휠체어로 갈 수 있어?" 즉답</p></div>
+      <div class="diff-box violet" style="font-size:15px;"><h3 style="font-size:15px;">📊 점유 예측</h3><p>GBR R²=0.931 · 9회 열차 비교 · 실시간 BEV</p></div>
     </div>
   </div>
   <div class="foot"><span>frontend/passenger_app/ + mobile_app/ (Flutter, Android/Windows/Web 동일)</span><span class="pgnum"><b>20쪽</b></span></div>
@@ -1395,54 +1398,53 @@ table td.win { color: var(--g0); font-weight: 700; }
   </div>
   <div class="body">
     <h1>6 IDEA — 어디서 어떻게 보이는가</h1>
-    <p class="lead">· 라이브 데모에서 직접 확인 가능 — 6 IDEA 화면 위치 명시</p>
-    <table>
+    <table style="font-size:12px;">
       <tr><th style="width: 14%;">IDEA</th><th style="width: 22%;">발생 신호</th><th style="width: 24%;">시민 측 표시</th><th>운영자 측 표시</th></tr>
       <tr style="background: #fdf2f8;">
-        <td><b>👶 임산부석</b><br><span class="pill-s">IDEA-7</span></td>
-        <td>분홍 좌석 30초+ 점유 + 동반 미감지</td>
-        <td>차내 디스플레이 "분홍 좌석 비워주세요"</td>
-        <td><code>incident_log priority_seat</code> 누적</td>
+        <td style="padding:1.5mm 2mm;"><b>👶 임산부석</b><br><span class="pill-s">IDEA-7</span></td>
+        <td style="padding:1.5mm 2mm;">분홍 좌석 30초+ 점유 + 동반 미감지</td>
+        <td style="padding:1.5mm 2mm;">차내 디스플레이 "분홍 좌석 비워주세요"</td>
+        <td style="padding:1.5mm 2mm;"><code>incident_log priority_seat</code> 누적</td>
       </tr>
       <tr style="background: #fef2f2;">
-        <td><b>🚨 응급</b><br><span class="pill-s amber">안전</span></td>
-        <td>30초+ 정지 + AED 거리 자동</td>
-        <td>도움 요청 알림</td>
-        <td>red 배지 + "응급 — N호차 AED 28m"</td>
+        <td style="padding:1.5mm 2mm;"><b>🚨 응급</b><br><span class="pill-s amber">안전</span></td>
+        <td style="padding:1.5mm 2mm;">30초+ 정지 + AED 거리 자동</td>
+        <td style="padding:1.5mm 2mm;">도움 요청 알림</td>
+        <td style="padding:1.5mm 2mm;">red 배지 + "응급 — N호차 AED 28m"</td>
       </tr>
       <tr style="background: #f5f3ff;">
-        <td><b>⚠️ 병목</b><br><span class="pill-s violet">IDEA-8</span></td>
-        <td>밀도 + 0.3m/s↓ + 45초 지속</td>
-        <td>"옆 출구 권장" 안내</td>
-        <td>red 배지 + 다중 영역 동시</td>
+        <td style="padding:1.5mm 2mm;"><b>⚠️ 병목</b><br><span class="pill-s violet">IDEA-8</span></td>
+        <td style="padding:1.5mm 2mm;">밀도 + 0.3m/s↓ + 45초 지속</td>
+        <td style="padding:1.5mm 2mm;">"옆 출구 권장" 안내</td>
+        <td style="padding:1.5mm 2mm;">red 배지 + 다중 영역 동시</td>
       </tr>
       <tr style="background: #fffbeb;">
-        <td><b>🎒 분실</b><br><span class="pill-s amber">분실</span></td>
-        <td>가방 12초+ 무인</td>
-        <td>—</td>
-        <td>분실물 broadcast + 종착역</td>
+        <td style="padding:1.5mm 2mm;"><b>🎒 분실</b><br><span class="pill-s amber">분실</span></td>
+        <td style="padding:1.5mm 2mm;">가방 12초+ 무인</td>
+        <td style="padding:1.5mm 2mm;">—</td>
+        <td style="padding:1.5mm 2mm;">분실물 broadcast + 종착역</td>
       </tr>
       <tr style="background: #eef2ff;">
-        <td><b>💰 무임</b><br><span class="pill-s violet">무임</span></td>
-        <td>승강장 vs 게이트 차이</td>
-        <td>—</td>
-        <td>무임 의심 + 미스캔 통계</td>
+        <td style="padding:1.5mm 2mm;"><b>💰 무임</b><br><span class="pill-s violet">무임</span></td>
+        <td style="padding:1.5mm 2mm;">승강장 vs 게이트 차이</td>
+        <td style="padding:1.5mm 2mm;">—</td>
+        <td style="padding:1.5mm 2mm;">무임 의심 + 미스캔 통계</td>
       </tr>
       <tr style="background: #ecfdf5;">
-        <td><b>🔔 도착 알림</b><br><span class="pill-s">IDEA-9</span></td>
-        <td>GPS 거리 1.5km / 600m / 도착</td>
-        <td>5중 동시 (시각·진동·비프·4언어·OS)</td>
-        <td>—</td>
+        <td style="padding:1.5mm 2mm;"><b>🔔 도착 알림</b><br><span class="pill-s">IDEA-9</span></td>
+        <td style="padding:1.5mm 2mm;">GPS 거리 1.5km / 600m / 도착</td>
+        <td style="padding:1.5mm 2mm;">5중 동시 (시각·진동·비프·4언어 음성·OS)</td>
+        <td style="padding:1.5mm 2mm;">—</td>
       </tr>
     </table>
-    <div class="col2" style="margin-top: 4mm;">
-      <div class="diff-box green">
-        <h3>직접 체험 경로 (5분)</h3>
-        <p>· <code>leelang7.github.io/MetroEyes/</code> 접속<br>· 시민 웹앱 → 도착지 설정 → 5중 알림 즉시 테스트<br>· 운영자 콘솔 → 사고 4종 자동 broadcast 확인</p>
+    <div style="display:flex; gap:3mm; margin-top:3mm;">
+      <div class="diff-box green" style="flex:1; padding:2.5mm 3mm;">
+        <h3 style="font-size:13px; margin-bottom:1mm;">직접 체험 (5분)</h3>
+        <p style="font-size:12px;">· <code>leelang7.github.io/MetroEyes/</code> → 시민앱 → 5중 알림 즉시 테스트<br>· 운영자 콘솔 → 사고 4종 자동 broadcast 확인</p>
       </div>
-      <div class="diff-box amber">
-        <h3>오프라인 비상 자료</h3>
-        <p>· A4 1-Pager · 30p 발표 deck (이 문서) · 시연 영상 백업 (outputs/demo/)<br>· 인터넷 없이 PDF로 확인 가능</p>
+      <div class="diff-box amber" style="flex:1; padding:2.5mm 3mm;">
+        <h3 style="font-size:13px; margin-bottom:1mm;">오프라인 비상 자료</h3>
+        <p style="font-size:12px;">· A4 1-Pager · 이 발표 deck · outputs/demo/ 시연 영상<br>· 인터넷 없이 PDF로 확인 가능</p>
       </div>
     </div>
   </div>
