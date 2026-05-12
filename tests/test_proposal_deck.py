@@ -170,11 +170,10 @@ def test_official_seven_sections_structure() -> None:
 
 
 def test_slide_fill_css_present() -> None:
-    """하단 여백 제거 CSS — flex fill 핵심 규칙."""
+    """레이아웃 CSS — 수직 센터 정렬 + 동일 행 등고 핵심 규칙."""
     t = _txt()
-    assert "justify-content: space-between" in t, "body justify-content:space-between 누락"
-    assert "grid-auto-rows: 1fr" in t, "grid-auto-rows:1fr 누락 — 카드 그리드 등고 채움 필요"
-    assert "div:last-child" in t, ".body > div:last-child flex 채움 누락"
+    assert "justify-content: center" in t, "body justify-content:center 누락 — 슬라이드 수직 센터 필요"
+    assert "align-items: stretch" in t, "align-items:stretch 누락 — 같은 행 박스 등고 필요"
 
 
 def test_operator_three_screenshots_slide3() -> None:
