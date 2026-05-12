@@ -3,7 +3,10 @@ import 'package:subwaybev_mobile/main.dart';
 
 void main() {
   testWidgets('MetroEyes app smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const MetroEyesApp());
-    expect(find.byType(MetroEyesApp), findsOneWidget);
+    // runAsync bypasses FakeAsync so pending WS/GPS timers don't fail the test
+    await tester.runAsync(() async {
+      await tester.pumpWidget(const MetroEyesApp());
+      expect(find.byType(MetroEyesApp), findsOneWidget);
+    });
   });
 }

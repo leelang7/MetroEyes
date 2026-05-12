@@ -38,6 +38,18 @@ dependencies:
   # 위치 → 가장 가까운 역 자동 선택
   geolocator: ^11.1.0
 
+  # 음성 인식 (STT)
+  speech_to_text: ^7.0.0
+
+  # 로컬 푸시 알림 (도착지 알림)
+  flutter_local_notifications: ^18.0.0
+
+  # 진동
+  vibration: ^3.0.0
+
+  # 지도 (MapLibre GL — 3D 빌딩 + GPS dot, 웹앱 동일 스타일)
+  maplibre_gl: ^0.21.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

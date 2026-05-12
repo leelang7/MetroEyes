@@ -3,6 +3,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-7dd3d3.svg)](LICENSE)
 [![CI](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml/badge.svg)](https://github.com/leelang7/MetroEyes/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-844_passed-10b981.svg)](tests/)
+[![Cycles](https://img.shields.io/badge/Auto_Cycles-543-a78bfa.svg)](CHANGELOG.md)
 [![Lang](https://img.shields.io/badge/lang-ko%20·%20en%20·%20zh%20·%20ja-ef4444.svg)](frontend/passenger_app/index.html)
 
 > 도시 교통 실시간 BEV 점유 인사이트 시스템 — 지하철·버스 칸별 점유를 분 단위로 보고 시민 분산을 유도한다.
@@ -10,6 +11,22 @@
 🇺🇸 [English README](README.en.md)
 
 **라이브 데모**: https://leelang7.github.io/MetroEyes/
+
+---
+
+## 💡 평가위원 안내 — 5분 핵심 자료
+
+> 처음 보시는 분: 아래 5개 자료를 순서대로 확인하시면 1·2차 심사 배점 항목을 모두 커버할 수 있습니다.
+
+| 순서 | 자료 | 내용 | 소요 |
+|------|------|------|------|
+| **1** | [📊 frontend/onepager.html](frontend/onepager.html) | A4 1-Pager — 핵심 KPI · 차별점 6가지 · 4개 도시 비교 **(4언어)** | 1분 |
+| **2** | [🎬 frontend/demo.html](frontend/demo.html) | 라이브 BEV 데모 — 운영자 콘솔 + 시민 앱 | 2분 |
+| **3** | [📈 frontend/pitch.html](frontend/pitch.html) | 투자 피치덱 — ROI 347x · 사회적 가치 1,393억/년 · BM | 3분 |
+| **4** | [🎯 docs/SUBMISSION_INDEX.md](docs/SUBMISSION_INDEX.md) | 평가 기준 ↔ 산출물 ↔ CI 가드 자가 점수표 (1차 105점 + 2차 100점) | 3분 |
+| **5** | [💬 docs/QA_PREPARATION.md](docs/QA_PREPARATION.md) | 예상 Q&A 18개 + 30초 자기 소개 (5개 카테고리) | 5분 |
+
+**추가 문서 (운영·장애 대응)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9가지 시나리오 1줄 복구 · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — 상세 제안서 v3
 
 ---
 
@@ -155,6 +172,18 @@ python scripts/train_occupancy.py --month 202602
 ```
 
 → `outputs/models/occupancy_lgbm.joblib` 생성. 백엔드가 lazy load해 `predict_occupancy` WS 응답.
+
+---
+
+## 자동 543 사이클 누적 (D-1, 마감 2026-05-13)
+
+- ✅ **양면 가치 사슬 8단계** (CV → 도시 → 의사결정 → OD매칭 → 환승매칭 → 시민 차등 → 백엔드 자동보너스 → ROI 라이브)
+- ✅ **데모 fail-safe 8중 구조**: `--demo` + 30초 인젝터 + 5분 sticky bar + 백엔드 join 요약 + 관리자 클릭 + warm seed + Docker compose + GitHub Actions CI
+- ✅ **4언어** (ko/en/zh/ja) **11페이지 패리티** + Web Speech + ARIA + **5페이지 외국인 환영 토스트**
+- ✅ **3개 EDA 실데이터 검증**: GBR R²=0.931 / 분산 효과 (σ −9% / 피크 −13.5%) / OD 비대칭 (삼성역 12x) / 환승 (충무로 +1.56)
+- ✅ **CI 15 jobs + 844 pytest 회귀 가드** (cycle 318-543): OpenAPI(4) + ROI v3(5) + 분산(6) + OD/환승(6) + 보너스(6) + 그림(3) + 피치(6) + 임팩트(5) + cycle 356-543 신규 491 — 광고 KPI ↔ 코드 ↔ 그림 ↔ 덱 ↔ canonical JSON 자동 동기화
+- ✅ **canonical KPI drift 자동 차단** (cycle 375): 1,393억 / 347x / 2호선 157M / CI [1,064~1,808] 전 산출물 동시 일치
+- ✅ **제출 ship-gate** (cycle 380): `python scripts/submission_check.py --ci` 1초 12항목 PASS/WARN/FAIL — 매 푸시 자동 검증
 
 ---
 
