@@ -14,16 +14,14 @@
 
 ---
 
-## 💡 평가위원 안내 — 5분 핵심 자료
-
-> 처음 보시는 분: 아래 5개 자료를 순서대로 확인하시면 1·2차 심사 배점 항목을 모두 커버할 수 있습니다.
+## 💡 5분 핵심 자료
 
 | 순서 | 자료 | 내용 | 소요 |
 |------|------|------|------|
 | **1** | [📊 frontend/onepager.html](frontend/onepager.html) | A4 1-Pager — 핵심 KPI · 차별점 6가지 · 4개 도시 비교 **(4언어)** | 1분 |
 | **2** | [🎬 frontend/demo.html](frontend/demo.html) | 라이브 BEV 데모 — 운영자 콘솔 + 시민 앱 | 2분 |
 | **3** | [📈 frontend/pitch.html](frontend/pitch.html) | 투자 피치덱 — ROI 347x · 사회적 가치 1,393억/년 · BM | 3분 |
-| **4** | [🎯 docs/SUBMISSION_INDEX.md](docs/SUBMISSION_INDEX.md) | 평가 기준 ↔ 산출물 ↔ CI 가드 자가 점수표 (1차 105점 + 2차 100점) | 3분 |
+| **4** | [🎯 docs/SUBMISSION_INDEX.md](docs/SUBMISSION_INDEX.md) | 자가 점수표 (1차 105점 + 2차 100점) | 3분 |
 | **5** | [💬 docs/QA_PREPARATION.md](docs/QA_PREPARATION.md) | 예상 Q&A 18개 + 30초 자기 소개 (5개 카테고리) | 5분 |
 
 **추가 문서 (운영·장애 대응)**: [📕 docs/RUNBOOK.md](docs/RUNBOOK.md) — 9가지 시나리오 1줄 복구 · [📖 docs/PROPOSAL.md](docs/PROPOSAL.md) — 상세 제안서 v3
