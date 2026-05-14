@@ -9,6 +9,7 @@
 <title>MetroEyes — 3D Tesla-style HUD</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="stylesheet" href="../shared/bev_console.css">
+<script src="../shared/demo_overlay.js" defer></script>
 <style>
 .realbev-status { display: flex; gap: 14px; align-items: center; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .realbev-status .led { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 6px; vertical-align: middle; }
@@ -3041,42 +3042,27 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     }
   }
   btn.addEventListener('click', () => {
+    if (!window.DemoOverlay) { alert('demo_overlay.js 로드 안 됨'); return; }
     btn.disabled = true; btn.style.opacity = '.65';
-    btn.style.position = 'relative'; btn.style.overflow = 'hidden';
-    btn.innerHTML = '시연 진행 중... <span id="demo-prog-cam" style="position:absolute;left:0;bottom:0;height:2px;width:0;background:#fff;transition:width .25s linear;"></span>';
-    const T = 30000, t0 = Date.now();
-    const progT = setInterval(() => {
-      const dt = Date.now() - t0;
-      const p = document.getElementById('demo-prog-cam');
-      if (p) p.style.width = Math.min(100, dt / T * 100) + '%';
-      if (dt >= T) clearInterval(progT);
-    }, 250);
-    // 양봉 시각화 — 30초간 0→23시 fast-forward (1초≈1시간), 두 피크에서 사고 이벤트 발생
-    if (window.MLChart && window.MLChart.setDemoHour) {
-      const hourT = setInterval(() => {
-        const dt = Date.now() - t0;
-        const h = Math.min(23, Math.floor((dt / T) * 24));
-        window.MLChart.setDemoHour(h);
-        if (dt >= T) { clearInterval(hourT); window.MLChart.clearDemoHour(); }
-      }, 250);
-    }
-    // 사고 시퀀스 — 출근(08~09)/퇴근(17~19) 피크에 집중
-    const seq = [
-      { delay: 8000,  type: 'free_ride',   sev: 'med',  msg: '실 카메라: 출근 08시 — 무임 의심 (카드 미스캔)' },
-      { delay: 11000, type: 'bottleneck',  sev: 'med',  msg: '실 카메라: 출근 09시 — 출입문 병목 (5호차 입구)' },
-      { delay: 18000, type: 'lost',        sev: 'low',  msg: '실 카메라: 가방 12초+ 무인 — BoT-SORT 분실 검출' },
-      { delay: 22000, type: 'emergency',  sev: 'high', msg: '실 카메라: 퇴근 18시 피크 — 30초+ 정지 + AED 28m' },
-      { delay: 25000, type: 'suspicious', sev: 'high', msg: '실 카메라: 퇴근 18시 — 환승 통로 군집 이상' },
-      { delay: 28000, type: 'free_ride',  sev: 'med',  msg: '실 카메라: 분산 안내 자동 송출 (양봉 피크 분산)' },
+    btn.innerHTML = '시연 진행 중...';
+    const events = [
+      { at: 7000,  type: 'free_ride',  sev: 'med',  icon: '💳', label: '무임 의심',    color: '#f0b46a', glow: 'rgba(240,180,106,.4)', msg: '출근 08시 — 카드 미스캔, CV ID#412 검출', meta: 'TAG vs CV 차이 +1 · 자동 추적 라벨링' },
+      { at: 11000, type: 'bottleneck', sev: 'med',  icon: '🚪', label: '출입문 병목',  color: '#fb7185', glow: 'rgba(251,113,133,.4)', msg: '출근 09시 — 5호차 입구 45초+ 정체', meta: '자동 우회 안내 송출 권고' },
+      { at: 15000, type: 'lost',       sev: 'low',  icon: '🎒', label: '분실 추정',    color: '#7dd3d3', glow: 'rgba(125,211,211,.4)', msg: 'BoT-SORT 가방 트랙 #501 — 12초+ 무인', meta: '주변 사람 0명 · 분실물 분류 가능성 78%' },
+      { at: 20000, type: 'emergency',  sev: 'high', icon: '🚨', label: '응급 골든타임', color: '#ff5e57', glow: 'rgba(255,94,87,.55)', msg: '퇴근 18시 — 7호차 승객 30초+ 정지', meta: '가장 가까운 AED 28m · 119 자동 알림 권고' },
+      { at: 24000, type: 'suspicious', sev: 'high', icon: '⚠️', label: '이상 군집',    color: '#f59e0b', glow: 'rgba(245,158,11,.4)', msg: '퇴근 18시 — 환승 통로 12명 정체 군집', meta: '평소 패턴 대비 +280% · 감시 모드 자동 활성' },
+      { at: 27500, type: 'free_ride',  sev: 'med',  icon: '📢', label: '분산 안내 송출', color: '#10b981', glow: 'rgba(16,185,129,.4)', msg: '양봉 피크 → 다음 차량 권장 안내 자동 송출', meta: '예상 분산 효과 12% · 차등 보상 +200원' },
     ];
-    seq.forEach(({ delay, type, sev, msg }) => setTimeout(() => {
-      send({ type: 'incident_log', ev_type: type, severity: sev, msg, source: 'operator-realbev-demo' });
-    }, delay));
+    window.DemoOverlay.runScenario({
+      duration: 30000,
+      events,
+      onSetHour: (h) => { if (window.MLChart?.setDemoHour) window.MLChart.setDemoHour(h); },
+      onSendIncident: (e) => send({ type: 'incident_log', ev_type: e.type, severity: e.sev, msg: e.msg, source: 'operator-realbev-demo' }),
+    });
     setTimeout(() => {
       btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1';
-      clearInterval(progT);
-      if (window.MLChart && window.MLChart.clearDemoHour) window.MLChart.clearDemoHour();
-    }, T);
+      if (window.MLChart?.clearDemoHour) window.MLChart.clearDemoHour();
+    }, 30000);
   });
 })();
 </script>

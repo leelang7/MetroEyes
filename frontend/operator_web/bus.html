@@ -9,6 +9,7 @@
 <title>MetroEyes — 운영자 콘솔 · 버스</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
 <link rel="stylesheet" href="../shared/bev_console.css">
+<script src="../shared/demo_overlay.js" defer></script>
 <script>
 (function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
@@ -656,28 +657,27 @@ function injectIncidentBus(ev) {
 }
 document.getElementById('demo-trigger')?.addEventListener('click', () => {
   const btn = document.getElementById('demo-trigger');
+  if (!window.DemoOverlay) { alert('demo_overlay.js 로드 안 됨'); return; }
   btn.disabled = true; btn.style.opacity = '.65';
-  btn.style.position = 'relative'; btn.style.overflow = 'hidden';
-  btn.innerHTML = '시연 진행 중... <span id="demo-prog-bus" style="position:absolute;left:0;bottom:0;height:2px;width:0;background:#fff;transition:width .25s linear;"></span>';
-  const T = 30000, t0 = Date.now();
-  const progT = setInterval(() => {
-    const dt = Date.now() - t0;
-    const p = document.getElementById('demo-prog-bus');
-    if (p) p.style.width = Math.min(100, dt / T * 100) + '%';
-    if (dt >= T) clearInterval(progT);
-  }, 250);
-  const seq = [
-    { delay: 0,    ev: { id: Date.now()+1, type: 'free_ride',  severity: 'med',  msg: '5번 좌석 무임 의심 — 카드 미스캔', ts: Date.now() } },
-    { delay: 5000, ev: { id: Date.now()+2, type: 'lost',       severity: 'low',  msg: '뒷좌석 가방 12초+ 무인 — 분실 의심', ts: Date.now() } },
-    { delay: 11000, ev: { id: Date.now()+3, type: 'emergency', severity: 'high', msg: '서서 30초+ 미동작 승객 — 응급 의심', ts: Date.now() } },
-    { delay: 18000, ev: { id: Date.now()+4, type: 'suspicious',severity: 'high', msg: '하차문 군집 이상 — 안전 모니터링', ts: Date.now() } },
-    { delay: 24000, ev: { id: Date.now()+5, type: 'free_ride', severity: 'med',  msg: '자동 분산 안내 — 다음 차량 권고', ts: Date.now() } },
+  btn.innerHTML = '시연 진행 중...';
+  const events = [
+    { at: 7000,  type: 'free_ride',   sev: 'med',  icon: '💳', label: '버스 무임 의심',  color: '#f0b46a', glow: 'rgba(240,180,106,.4)', msg: '간선 240번 — 5번 좌석 카드 미스캔', meta: 'TAG vs CV 차이 +1 · 자동 라벨링' },
+    { at: 11000, type: 'bottleneck',  sev: 'med',  icon: '🚪', label: '뒷문 병목',       color: '#fb7185', glow: 'rgba(251,113,133,.4)', msg: '출근 09시 — 뒷문 출입구 정체 (12명)', meta: '하차 신호 자동 분산 권고' },
+    { at: 15000, type: 'lost',        sev: 'low',  icon: '🎒', label: '버스 분실 추정',  color: '#7dd3d3', glow: 'rgba(125,211,211,.4)', msg: '뒷좌석 가방 트랙 #88 — 12초+ 무인', meta: '하차 안내 자동 송출' },
+    { at: 20000, type: 'emergency',   sev: 'high', icon: '🚨', label: '버스 응급',       color: '#ff5e57', glow: 'rgba(255,94,87,.55)', msg: '퇴근 18시 — 입석 승객 30초+ 정지', meta: '운행 중 자동 정차 권고 + 119 알림' },
+    { at: 24000, type: 'suspicious',  sev: 'high', icon: '⚠️', label: '하차문 군집',     color: '#f59e0b', glow: 'rgba(245,158,11,.4)', msg: '퇴근 18시 — 하차문 군집 이상 패턴', meta: '안전 모니터링 자동 활성' },
+    { at: 27500, type: 'free_ride',   sev: 'med',  icon: '📢', label: '다음 차 안내',    color: '#10b981', glow: 'rgba(16,185,129,.4)', msg: '양봉 피크 → 다음 버스 권장 안내 송출', meta: '예상 분산 효과 14% · 차등 보상 +200원' },
   ];
-  seq.forEach(({ delay, ev }) => setTimeout(() => injectIncidentBus(ev), delay));
-  setTimeout(() => {
-    btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1';
-    clearInterval(progT);
-  }, T);
+  window.DemoOverlay.runScenario({
+    duration: 30000,
+    events,
+    onSendIncident: (e) => {
+      try { ws && ws.readyState === 1 && ws.send(JSON.stringify({ type: 'incident_log', ev_type: e.type, severity: e.sev, msg: e.msg, source: 'operator-bus-demo' })); } catch {}
+      // 페이지 내 incident timeline에도 즉시 표시
+      injectIncidentBus({ id: Date.now() + Math.random(), type: e.type, severity: e.sev, msg: e.msg, ts: Date.now() / 1000 });
+    },
+  });
+  setTimeout(() => { btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1'; }, 30000);
 });
 
 let ttsLang = 'ko';
