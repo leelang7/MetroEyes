@@ -110,6 +110,14 @@
     font-weight: 700; cursor: pointer; font-size: 3mm;
   }
 </style>
+
+<style>
+/* 브랜드 → 허브 링크 (UI polish) */
+.brand-link { color: inherit; text-decoration: none; cursor: pointer; transition: opacity .15s ease, transform .15s ease; }
+.brand-link:hover { opacity: .82; transform: translateY(-0.5px); }
+.brand-link:active { opacity: .65; }
+.brand-suffix { color: var(--muted, #8a8a96); font-weight: 600; margin-left: 4px; }
+</style>
 </head>
 <body>
 <button class="print-btn no-print" onclick="window.print()" data-i18n="print_btn">🖨 PDF 인쇄</button>
@@ -120,7 +128,7 @@
     <div class="brand">
       <div class="logo">M</div>
       <div>
-        <h1>MetroEyes</h1>
+        <h1><a href="index.html" class="brand-link no-print" title="홈으로">MetroEyes</a></h1>
         <div class="tag" data-i18n="tagline">테슬라가 도로를 보듯, 우리는 도시 교통 전체를 본다</div>
       </div>
     </div>

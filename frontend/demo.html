@@ -96,10 +96,18 @@
 </style>
 <script>
 (function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
-</script></head>
+</script>
+<style>
+/* 브랜드 → 허브 링크 (UI polish) */
+.brand-link { color: inherit; text-decoration: none; cursor: pointer; transition: opacity .15s ease, transform .15s ease; }
+.brand-link:hover { opacity: .82; transform: translateY(-0.5px); }
+.brand-link:active { opacity: .65; }
+.brand-suffix { color: var(--muted, #8a8a96); font-weight: 600; margin-left: 4px; }
+</style>
+</head>
 <body>
 <header>
-  <div class="brand" id="brand-text">MetroEyes 통합 시연<small id="brand-sub">SubwayBEV — 5도메인 · 실시간 CV + 빅데이터 + AI</small></div>
+  <div class="brand"><a href="index.html" class="brand-link" title="홈으로">MetroEyes</a> <span id="brand-text">통합 시연</span><small id="brand-sub">5도메인 · 실시간 CV + 빅데이터 + AI</small></div>
   <!-- 라이브 사회적 가치 누적 카운터 -->
   <div id="demo-impact" hidden style="display:flex;gap:10px;align-items:center;padding:4px 10px;background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.35);border-radius:8px;font-size:11px;font-variant-numeric:tabular-nums;">
     <span style="color:#10b981;font-weight:700;font-size:10px;letter-spacing:.8px;">🎯 LIVE</span>
@@ -181,10 +189,10 @@
 <script>
 // ==== 4언어 토글 (외국인 시연 대비) ====
 const I18N_DEMO = {
-  ko: { brand: 'MetroEyes 통합 시연', sub: 'SubwayBEV — 운영자 + 시민 + 디스플레이 양면 가치 사슬', start: '▶︎ 시연 시작', startBody: '<b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span>', flag: '🇰🇷' },
-  en: { brand: 'MetroEyes Integrated Demo', sub: 'SubwayBEV — Operator + Citizen + Display Two-sided Value Chain', start: '▶︎ Start Demo', startBody: 'Click <b>Start Demo</b> to auto-replay 5-min full flow. <span style="opacity:.65;">(Jamsil 18:00 → surge → redistribute → reward → live ads)</span>', flag: '🇺🇸' },
-  zh: { brand: 'MetroEyes 综合演示', sub: 'SubwayBEV — 运营者 + 市民 + 显示器 双向价值链', start: '▶︎ 开始演示', startBody: '点击 <b>开始演示</b> 自动播放 5 分钟全流程。', flag: '🇨🇳' },
-  ja: { brand: 'MetroEyes 統合デモ', sub: 'SubwayBEV — オペレーター + 市民 + ディスプレイ 双方向価値連鎖', start: '▶︎ デモ開始', startBody: '<b>デモ開始</b>ボタンで 5 分全体フロー自動再生。', flag: '🇯🇵' },
+  ko: { brand: '통합 시연', sub: '운영자 + 시민 + 디스플레이 양면 가치 사슬', start: '▶︎ 시연 시작', startBody: '<b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span>', flag: '🇰🇷' },
+  en: { brand: 'Integrated Demo', sub: 'Operator + Citizen + Display Two-sided Value Chain', start: '▶︎ Start Demo', startBody: 'Click <b>Start Demo</b> to auto-replay 5-min full flow. <span style="opacity:.65;">(Jamsil 18:00 → surge → redistribute → reward → live ads)</span>', flag: '🇺🇸' },
+  zh: { brand: '综合演示', sub: '运营者 + 市民 + 显示器 双向价值链', start: '▶︎ 开始演示', startBody: '点击 <b>开始演示</b> 自动播放 5 分钟全流程。', flag: '🇨🇳' },
+  ja: { brand: '統合デモ', sub: 'オペレーター + 市民 + ディスプレイ 双方向価値連鎖', start: '▶︎ デモ開始', startBody: '<b>デモ開始</b>ボタンで 5 分全体フロー自動再生。', flag: '🇯🇵' },
 };
 let _curDemoLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_DEMO[_curDemoLang]) _curDemoLang = 'ko';

@@ -23,13 +23,21 @@
 </script>
 <script>
 (function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
-</script></head>
+</script>
+<style>
+/* 브랜드 → 허브 링크 (UI polish) */
+.brand-link { color: inherit; text-decoration: none; cursor: pointer; transition: opacity .15s ease, transform .15s ease; }
+.brand-link:hover { opacity: .82; transform: translateY(-0.5px); }
+.brand-link:active { opacity: .65; }
+.brand-suffix { color: var(--muted, #8a8a96); font-weight: 600; margin-left: 4px; }
+</style>
+</head>
 <body>
 <div class="app">
   <header class="app-header">
     <button class="back-btn" onclick="history.back()" data-i18n="back">← 뒤로</button>
     <div class="brand">
-      <span class="dot"></span>MetroEyes<small>Onboard</small>
+      <a href="../index.html" class="brand-link" title="홈으로 (8페이지 진입 허브)"><span class="dot"></span>MetroEyes</a><small>Onboard</small>
       <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label" data-i18n="live_off">오프라인</span></span>
     </div>
     <button class="back-btn" id="lang-toggle" title="Language toggle" style="cursor: pointer; padding: 4px 8px; border: 1px solid var(--line);">🇰🇷</button>

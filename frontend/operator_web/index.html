@@ -11,7 +11,15 @@
 <link rel="stylesheet" href="../shared/bev_console.css">
 <script>
 (function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
-</script></head>
+</script>
+<style>
+/* 브랜드 → 허브 링크 (UI polish) */
+.brand-link { color: inherit; text-decoration: none; cursor: pointer; transition: opacity .15s ease, transform .15s ease; }
+.brand-link:hover { opacity: .82; transform: translateY(-0.5px); }
+.brand-link:active { opacity: .65; }
+.brand-suffix { color: var(--muted, #8a8a96); font-weight: 600; margin-left: 4px; }
+</style>
+</head>
 <body data-domain="subway">
 <!-- 상단 안전 알림 띠 — 임계 사건 시 자동 표시 -->
 <div id="alert-banner" style="display:none;position:sticky;top:0;z-index:9990;background:linear-gradient(90deg,#ff5e57,#ff8a4c);color:#fff;padding:10px 20px;font-weight:600;font-size:13px;text-align:center;box-shadow:0 2px 12px rgba(255,94,87,0.4);animation:alertPulse 1.5s ease-in-out infinite;">
@@ -36,7 +44,7 @@
 <div class="domain-bar subway"></div>
 <header>
   <div class="brand">
-    <span class="dot"></span>MetroEyes<small>지하철 운영자</small>
+    <a href="../index.html" class="brand-link" title="홈으로 (8페이지 진입 허브)"><span class="dot"></span>MetroEyes</a><small>지하철 운영자</small>
     <span class="nav-sep">·</span>
     <a href="index.html" class="active" data-i18n="nav_subway">🚇 지하철</a>
     <a href="bus.html" data-i18n="nav_bus">🚌 버스</a>

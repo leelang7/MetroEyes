@@ -205,10 +205,18 @@
 </style>
 <script>
 (function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
-</script></head>
+</script>
+<style>
+/* 브랜드 → 허브 링크 (UI polish) */
+.brand-link { color: inherit; text-decoration: none; cursor: pointer; transition: opacity .15s ease, transform .15s ease; }
+.brand-link:hover { opacity: .82; transform: translateY(-0.5px); }
+.brand-link:active { opacity: .65; }
+.brand-suffix { color: var(--muted, #8a8a96); font-weight: 600; margin-left: 4px; }
+</style>
+</head>
 <body>
 <header>
-  <div class="brand">MetroEyes 정책 보고<small>분산 운임 인센티브 — ROI v3 정량 분석</small></div>
+  <div class="brand"><a href="index.html" class="brand-link" title="홈으로">MetroEyes</a> <span class="brand-suffix">정책 보고</span><small>분산 운임 인센티브 — ROI v3 정량 분석</small></div>
   <button id="lang-toggle" style="padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;" title="언어 토글 (Korean / English)">🇰🇷 KO</button>
   <div class="nav">
     <a href="operator_web/index.html">🚇 운영자</a>
@@ -386,7 +394,7 @@
 
 <h1 id="hero-h1">시민 분산 한 번에 <span class="accent">+200원</span>, 사회적 가치 <span class="accent">1,393억/년</span></h1>
 <p class="lede" id="hero-lede">
-  MetroEyes (코드명 SubwayBEV) 는 <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의
+  MetroEyes는 <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의
   3-축 통합 시스템입니다. 본 보고서는 <b>정책 ROI v3</b> 모델 (호선 9개 × 시간 24시간 매트릭스) 을 통한
   분산 운임 정책의 정량 효과 분석을 제공합니다.
   <span class="badge">실데이터 10개 API</span>
@@ -397,22 +405,22 @@
 const I18N_PITCH = {
   ko: {
     h1: '시민 분산 한 번에 <span class="accent">+200원</span>, 사회적 가치 <span class="accent">1,393억/년</span>',
-    lede: 'MetroEyes (코드명 SubwayBEV) 는 <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의 3-축 통합 시스템입니다. 본 보고서는 <b>정책 ROI v3</b> 모델 (호선 9개 × 시간 24시간 매트릭스) 을 통한 분산 운임 정책의 정량 효과 분석을 제공합니다.<br><span class="badge">실데이터 10개 API</span><span class="badge">자체 CV BEV</span><span class="badge">양면 클로즈드 루프</span>',
+    lede: 'MetroEyes는 <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의 3-축 통합 시스템입니다. 본 보고서는 <b>정책 ROI v3</b> 모델 (호선 9개 × 시간 24시간 매트릭스) 을 통한 분산 운임 정책의 정량 효과 분석을 제공합니다.<br><span class="badge">실데이터 10개 API</span><span class="badge">자체 CV BEV</span><span class="badge">양면 클로즈드 루프</span>',
     btn: '🇰🇷 KO',
   },
   en: {
     h1: 'One citizen action <span class="accent">+₩200</span>, Social value <span class="accent">₩139.3B/yr</span>',
-    lede: 'MetroEyes (codename SubwayBEV) is a 3-axis integrated system: <b>subway/bus BEV CV</b> + <b>real-time city data</b> + <b>citizen redistribution incentives</b>. This report presents quantitative analysis of distributed-fare policy via the <b>ROI v3</b> model (9 lines × 24 hours matrix).<br><span class="badge">9 public APIs</span><span class="badge">In-house CV BEV</span><span class="badge">Two-sided closed loop</span>',
+    lede: 'MetroEyes is a 3-axis integrated system: <b>subway/bus BEV CV</b> + <b>real-time city data</b> + <b>citizen redistribution incentives</b>. This report presents quantitative analysis of distributed-fare policy via the <b>ROI v3</b> model (9 lines × 24 hours matrix).<br><span class="badge">9 public APIs</span><span class="badge">In-house CV BEV</span><span class="badge">Two-sided closed loop</span>',
     btn: '🇺🇸 EN',
   },
   zh: {
     h1: '市民分散一次 <span class="accent">+₩200</span>, 社会价值 <span class="accent">₩1393亿/年</span>',
-    lede: 'MetroEyes (代号 SubwayBEV) 是 3 轴综合系统: <b>地铁/巴士 BEV CV</b> + <b>实时城市数据</b> + <b>市民分散激励</b>。本报告通过 <b>政策 ROI v3</b> 模型 (9 条线路 × 24 小时矩阵) 提供分散票价政策的定量效果分析。<br><span class="badge">9 个公共 API</span><span class="badge">自有 CV BEV</span><span class="badge">双向闭环</span>',
+    lede: 'MetroEyes 是 3 轴综合系统: <b>地铁/巴士 BEV CV</b> + <b>实时城市数据</b> + <b>市民分散激励</b>。本报告通过 <b>政策 ROI v3</b> 模型 (9 条线路 × 24 小时矩阵) 提供分散票价政策的定量效果分析。<br><span class="badge">9 个公共 API</span><span class="badge">自有 CV BEV</span><span class="badge">双向闭环</span>',
     btn: '🇨🇳 ZH',
   },
   ja: {
     h1: '市民分散1件 <span class="accent">+₩200</span>, 社会的価値 <span class="accent">₩1,393億/年</span>',
-    lede: 'MetroEyes (コードネーム SubwayBEV) は <b>地下鉄/バス BEV CV</b> + <b>リアルタイム都市データ</b> + <b>市民分散インセンティブ</b> の 3 軸統合システムです。本報告書は <b>政策 ROI v3</b> モデル (9 路線 × 24 時間マトリックス) による分散運賃政策の定量効果分析を提供します。<br><span class="badge">9 公共 API</span><span class="badge">自社 CV BEV</span><span class="badge">双方向クローズドループ</span>',
+    lede: 'MetroEyes は <b>地下鉄/バス BEV CV</b> + <b>リアルタイム都市データ</b> + <b>市民分散インセンティブ</b> の 3 軸統合システムです。本報告書は <b>政策 ROI v3</b> モデル (9 路線 × 24 時間マトリックス) による分散運賃政策の定量効果分析を提供します。<br><span class="badge">9 公共 API</span><span class="badge">自社 CV BEV</span><span class="badge">双方向クローズドループ</span>',
     btn: '🇯🇵 JA',
   },
 };
@@ -1739,7 +1747,7 @@ document.getElementById('api-curl-link').href = window.METROEYES_BACKEND + '/api
 </script>
 
 <footer>
-  ⓒ 2026 MetroEyes (SubwayBEV). 데이터: 서울 열린데이터광장 / TOPIS / data.go.kr · 모델: YOLO11n + BoT-SORT · LLM: Claude Haiku 4.5
+  ⓒ 2026 MetroEyes · 데이터: 서울 열린데이터광장 / TOPIS / data.go.kr · 모델: YOLO11n + BoT-SORT · LLM: Claude Haiku 4.5
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 1차 서류 D-1
   <br>

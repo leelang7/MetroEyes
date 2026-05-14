@@ -80,14 +80,28 @@ header {
   padding-left: 12px; border-left: 1px solid var(--line-2);
 }
 .brand .nav-sep { display: none; }   /* 시각 분리는 padding/border 로 처리 */
-.brand a {
+.brand a:not(.brand-link) {
   color: var(--muted-2); text-decoration: none;
   font-weight: 500; font-size: 13.5px; letter-spacing: -0.1px;
   padding: 8px 14px; margin: 0 2px;
   border-radius: 8px; transition: all 0.15s;
   display: inline-flex; align-items: center; gap: 4px;
 }
-.brand a:hover { color: var(--fg); background: rgba(255,255,255,0.04); }
+.brand a:not(.brand-link):hover { color: var(--fg); background: rgba(255,255,255,0.04); }
+
+/* 브랜드 타이틀 링크 (왼쪽 상단 MetroEyes → 허브) */
+.brand a.brand-link {
+  display: inline-flex; align-items: center; gap: 0;
+  color: var(--fg); text-decoration: none;
+  font-weight: 700; font-size: 16px; letter-spacing: -0.3px;
+  padding: 4px 6px; margin: 0 2px 0 0;
+  border-radius: 8px; transition: all 0.15s ease;
+}
+.brand a.brand-link:hover {
+  color: var(--accent); background: rgba(125,211,211,0.08);
+  transform: translateY(-1px);
+}
+.brand a.brand-link:active { transform: translateY(0); opacity: 0.85; }
 
 /* 활성 페이지 — 도메인 컬러 배경 박스 + 글자 굵게 */
 .brand a.active {
