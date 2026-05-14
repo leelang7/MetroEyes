@@ -120,6 +120,19 @@ _api_stats: dict[str, dict] = {}  # name → {calls, errors, last_ms, avg_ms, la
 # CV 메트릭 — fake_bev_loop / 실 CV 둘 다 갱신
 _cv_metrics: dict = {"fps": 0.0, "tracks": 0, "frames": 0, "last_ts": 0.0, "demo": False}
 
+# realbev 영상 선택에 따른 fake_bev_loop 시나리오 분기 (실 CV 없을 때 영상별 차별 시뮬)
+# 각 시나리오: target_n(인원 범위), classes(클래스 가중치), spread('train'=호차구조 / 'open'=전체확산 / 'edge'=한쪽몰림 / 'flow'=통로흐름)
+_scene_profiles: dict = {
+    "subway":          {"n": (18, 25),  "classes": [("person", 0.96), ("backpack", 0.04)],            "spread": "train"},
+    "vtest":           {"n": (28, 42),  "classes": [("person", 1.0)],                                  "spread": "open"},
+    "dog_park":        {"n": (8, 14),   "classes": [("person", 0.65), ("dog", 0.30), ("bicycle", 0.05)], "spread": "open"},
+    "subway_platform": {"n": (35, 55),  "classes": [("person", 0.97), ("backpack", 0.03)],            "spread": "edge"},
+    "bus_stop":        {"n": (10, 18),  "classes": [("person", 0.95), ("backpack", 0.05)],            "spread": "edge"},
+    "transfer":        {"n": (22, 32),  "classes": [("person", 0.95), ("backpack", 0.05)],            "spread": "flow"},
+    "station_exit":    {"n": (14, 24),  "classes": [("person", 0.96), ("backpack", 0.04)],            "spread": "flow"},
+}
+_current_scene: dict = {"scene": "subway"}   # WS scene_select 메시지로 동적 변경
+
 # 사고/이벤트 누적 — realbev/operator 가 incident_log 보내면 누적 + broadcast
 _incident_total = {"emergency": 0, "suspicious": 0, "lost": 0, "free_ride": 0,
                    "priority_seat": 0, "bottleneck": 0, "events": []}
@@ -788,7 +801,8 @@ def _to_int(v):
 async def broadcast(text: str):
     if not clients: return
     stale = []
-    for ws in clients:
+    # 순회 중 다른 coroutine이 clients를 수정할 수 있으니 스냅샷 사용 (Set changed size during iteration 방지)
+    for ws in list(clients):
         try:
             await asyncio.wait_for(ws.send(text), timeout=2)
         except Exception:
@@ -934,6 +948,13 @@ async def handler(websocket):
                 payload = _predict_occupancy_24h(station, hours)
                 payload["type"] = "occupancy_forecast"
                 await websocket.send(json.dumps(payload, ensure_ascii=False))
+            elif t == "scene_select":
+                # realbev 영상 선택 → fake_bev_loop 시나리오 변경 (인원/클래스/배치 패턴)
+                scene = req.get("scene", "subway")
+                if scene in _scene_profiles:
+                    _current_scene["scene"] = scene
+                    print(f"[scene] -> {scene} (target_n={_scene_profiles[scene]['n']})", flush=True)
+                    await websocket.send(json.dumps({"type": "scene_changed", "scene": scene}, ensure_ascii=False))
             elif t == "citizen_report":
                 inc_type = req.get("incident_type", "lost")
                 station = req.get("station", "알 수 없음")
@@ -1123,8 +1144,35 @@ async def fake_bev_loop():
         return 0.35   # 새벽
 
     def _target_n(h: int) -> int:
-        base = 18  # 10량 기준 평균 탑승 (데모 적절 밀도)
-        return max(4, int(rng.gauss(base * _peak_factor(h), 2.5)))
+        # 시나리오별 인원 범위 + 시간대 양봉 가중치
+        scene = _current_scene.get("scene", "subway")
+        lo, hi = _scene_profiles.get(scene, _scene_profiles["subway"])["n"]
+        base = (lo + hi) / 2
+        spread = (hi - lo) / 4
+        return max(4, int(rng.gauss(base * _peak_factor(h), spread)))
+
+    def _scene_class() -> str:
+        """시나리오에 맞는 클래스 샘플 (dog_park면 dog/bicycle 섞임)."""
+        scene = _current_scene.get("scene", "subway")
+        classes = _scene_profiles.get(scene, _scene_profiles["subway"])["classes"]
+        names = [c[0] for c in classes]
+        weights = [c[1] for c in classes]
+        return rng.choices(names, weights=weights)[0]
+
+    def _scene_spread_xy() -> tuple:
+        """시나리오에 맞는 (x, y) 위치 — train은 호차 구조, 나머지는 패턴별."""
+        scene = _current_scene.get("scene", "subway")
+        mode = _scene_profiles.get(scene, _scene_profiles["subway"])["spread"]
+        if mode == "train":
+            car = _rand_car()
+            return (car * CAR_W + rng.uniform(4, CAR_W - 4), rng.choice([2.0, BEV_H - 2.0]))
+        if mode == "open":         # 광장/공원 — 전체 확산
+            return (rng.uniform(8, N_CARS * CAR_W - 8), rng.uniform(3, BEV_H - 3))
+        if mode == "edge":         # 승강장/정류장 — 한쪽 가장자리 몰림
+            return (rng.uniform(8, N_CARS * CAR_W - 8), rng.gauss(BEV_H - 5, 3))
+        if mode == "flow":         # 통로/출구 — 가운데 흐름
+            return (rng.gauss(N_CARS * CAR_W / 2, N_CARS * CAR_W / 4), rng.uniform(4, BEV_H - 4))
+        return (rng.uniform(8, N_CARS * CAR_W - 8), rng.uniform(3, BEV_H - 3))
 
     def _rand_car() -> int:
         """호차 선택 — 중간 칸(5~6) 쏠림 모방 + 끝 칸 약함."""
@@ -1154,29 +1202,30 @@ async def fake_bev_loop():
         h = time.localtime(now).tm_hour
         target_n = _target_n(h)
 
-        # ── 승·하차 시뮬: 인원 조정 ──
+        # ── 승·하차 시뮬: 인원 조정 (scene별 모든 클래스 포함) ──
         cur_ids = list(track_states.keys())
-        cur_n = len([k for k in cur_ids if track_states[k]["cls"] == "person"])
+        cur_n = len(cur_ids)
 
-        # 초과 → 일부 하차 (퇴장)
+        # 초과 → 일부 하차 (퇴장) — backpack 제외 (분실물 트래킹용)
         while cur_n > target_n + 2:
-            k = rng.choice([k for k in cur_ids if track_states[k]["cls"] == "person"])
+            removable = [k for k in cur_ids if track_states[k]["cls"] != "backpack"]
+            if not removable: break
+            k = rng.choice(removable)
             del track_states[k]
             cur_ids.remove(k)
             cur_n -= 1
 
-        # 부족 → 신규 승차
+        # 부족 → 신규 승차/등장
         while cur_n < target_n - 2:
-            car = _rand_car()
-            x0 = car * CAR_W + rng.uniform(4, CAR_W - 4)
-            # 문 근처에서 탑승 후 자리로 이동
-            y0 = rng.choice([2.0, BEV_H - 2.0])
-            is_pr = car in PRIORITY_CARS and rng.random() < 0.20
+            x0, y0 = _scene_spread_xy()
+            car = max(0, min(N_CARS - 1, int(x0 / CAR_W)))
+            cls = _scene_class()
+            is_pr = (cls == "person" and car in PRIORITY_CARS and rng.random() < 0.20)
             track_states[next_id] = {
                 "x": x0, "y": y0,
                 "vx": rng.gauss(0, 0.3), "vy": rng.uniform(0.5, 1.5) * (1 if y0 < 4 else -1),
                 "age": 0, "static_sec": 0.0,
-                "cls": "person", "car": car, "seat": False, "priority": is_pr
+                "cls": cls, "car": car, "seat": False, "priority": is_pr
             }
             next_id += 1
             cur_n += 1
@@ -1229,12 +1278,14 @@ async def fake_bev_loop():
             del track_states[_backpack_id]
 
         # ── tracks 리스트 생성 ──
+        # bev_x/bev_y는 0..1 정규화 좌표로 송신 (프론트 bevToWorld 기대 형식 = tesla_bev 호환)
+        BEV_W = CAR_W * N_CARS   # 320 = 10량 × 32px
         tracks = []
         for tid, st in track_states.items():
             tracks.append({
                 "id": tid,
-                "bev_x": round(st["x"], 1),
-                "bev_y": round(st["y"], 1),
+                "bev_x": round(st["x"] / BEV_W, 4),   # 0..1
+                "bev_y": round(st["y"] / BEV_H, 4),   # 0..1
                 "cls": st["cls"],
                 "class": st["cls"],   # 양쪽 필드 호환
                 "conf": round(0.72 + rng.random() * 0.25, 2),
@@ -1368,7 +1419,10 @@ async def fake_bus_bev_loop():
         for tid, st in track_states.items():
             door_z = abs(st["x"] - FRONT_DOOR_X) < 8 or abs(st["x"] - REAR_DOOR_X) < 8
             tracks.append({
-                "id": tid, "bev_x": round(st["x"], 1), "bev_y": round(st["y"], 1),
+                # bev_x/bev_y는 0..1 정규화 좌표로 송신 (프론트 bevToWorld 기대 형식)
+                "id": tid,
+                "bev_x": round(st["x"] / BUS_W, 4),
+                "bev_y": round(st["y"] / BUS_H, 4),
                 "cls": st["cls"], "class": st["cls"],
                 "conf": round(0.72 + rng.random() * 0.24, 2),
                 "seat": st["seat"], "priority": st.get("priority", False),
@@ -1380,10 +1434,10 @@ async def fake_bus_bev_loop():
         seated_n = sum(1 for t in persons if t["seat"])
         occ_pct = min(1.0, total_pax / (SEAT_CAP + STAND_CAP * 0.8))
 
-        # 3구역 요약
+        # 3구역 요약 (bev_x는 정규화 0..1)
         def _zone(x):
-            if x < 40: return "front"
-            if x < 80: return "mid"
+            if x < 40 / BUS_W: return "front"   # 40px / 120px = 0.333
+            if x < 80 / BUS_W: return "mid"     # 80px / 120px = 0.667
             return "rear"
         zone_data = {"front": {"count":0,"standing":0}, "mid": {"count":0,"standing":0}, "rear": {"count":0,"standing":0}}
         for t in persons:
@@ -1549,6 +1603,11 @@ def _simulate_roi_curve(samples: int = 81) -> list:
 
 async def http_health(path, headers):
     """GET / 같은 일반 HTTP 요청 처리 (curl 헬스체크) + API 호출 통계 + CORS + ROI 곡선."""
+    # WebSocket upgrade 요청은 절대 가로채지 말 것 — return None → websockets 라이브러리가 정상 WS handshake 수행
+    if hasattr(headers, "get"):
+        upgrade = (headers.get("Upgrade") or headers.get("upgrade") or "").lower()
+        if upgrade == "websocket":
+            return None
     # OPTIONS preflight (브라우저 fetch CORS)
     if hasattr(headers, "get") and headers.get("access-control-request-method"):
         return (204, CORS_HEADERS, b"")
@@ -2073,9 +2132,9 @@ async def main():
             asyncio.create_task(fake_impact_seed_loop())
             asyncio.create_task(fake_incident_seed_loop())
 
-    # 주기적 indoor_air + elevator broadcast
-    asyncio.create_task(_periodic_env_broadcast())
-    await asyncio.Future()  # run forever
+        # 주기적 indoor_air + elevator broadcast (반드시 serve 컨텍스트 안에서 실행 — 안 그러면 서버가 즉시 종료됨)
+        asyncio.create_task(_periodic_env_broadcast())
+        await asyncio.Future()  # run forever
 
 
 async def _periodic_env_broadcast():
