@@ -120,6 +120,10 @@ _api_stats: dict[str, dict] = {}  # name → {calls, errors, last_ms, avg_ms, la
 # CV 메트릭 — fake_bev_loop / 실 CV 둘 다 갱신
 _cv_metrics: dict = {"fps": 0.0, "tracks": 0, "frames": 0, "last_ts": 0.0, "demo": False}
 
+# 최신 BEV 페이로드 캐시 — HTTP /api/v1/bev_state, /api/v1/bus_state 로 노출 (WS 별도 연결 없이 폴링)
+_last_bev: dict = {}
+_last_bus_bev: dict = {}
+
 # realbev 영상 선택에 따른 fake_bev_loop 시나리오 분기 (실 CV 없을 때 영상별 차별 시뮬)
 # 각 시나리오: target_n(인원 범위), classes(클래스 가중치), spread('train'=호차구조 / 'open'=전체확산 / 'edge'=한쪽몰림 / 'flow'=통로흐름)
 _scene_profiles: dict = {
@@ -1196,8 +1200,7 @@ async def fake_bev_loop():
             fps_val = fps_cnt / (now - fps_t)
             fps_cnt = 0; fps_t = now
 
-        if not clients:
-            continue
+        # WS 클라이언트가 없어도 항상 시뮬 + 캐시 (_last_bev) — HTTP /api/v1/bev_state 폴링 지원
 
         h = time.localtime(now).tm_hour
         target_n = _target_n(h)
@@ -1331,6 +1334,7 @@ async def fake_bev_loop():
         _cv_metrics["frames"] += 1
         _cv_metrics["last_ts"] = now
         _cv_metrics["demo"] = True
+        _last_bev.clear(); _last_bev.update(payload)
         await broadcast(json.dumps(payload, ensure_ascii=False))
 
 
@@ -1378,8 +1382,7 @@ async def fake_bus_bev_loop():
             fps_val = fps_cnt / (now - fps_t)
             fps_cnt = 0; fps_t = now
 
-        if not clients:
-            continue
+        # WS 클라이언트가 없어도 항상 시뮬 + 캐시 (_last_bus_bev) — HTTP /api/v1/bus_state 폴링 지원
 
         h = time.localtime(now).tm_hour
         target_n = max(2, int(rng.gauss((SEAT_CAP + STAND_CAP * 0.5) * _peak(h), 3)))
@@ -1460,6 +1463,7 @@ async def fake_bus_bev_loop():
             "congestion": "붐빔" if occ_pct > 0.85 else "약간 붐빔" if occ_pct > 0.60 else "보통" if occ_pct > 0.35 else "여유",
             "demo": True,
         }
+        _last_bus_bev.clear(); _last_bus_bev.update(payload)
         await broadcast(json.dumps(payload, ensure_ascii=False))
 
 
@@ -2033,6 +2037,14 @@ async def http_health(path, headers):
                 },
             },
         }).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path_only == "/api/v1/bus_state":
+        # 버스 페이지 폴링용 — fake_bus_bev_loop 최신 페이로드 (WS 연결 없이 HTTP로 직접 접근)
+        body = json.dumps(_last_bus_bev or {"ok": False, "msg": "no data yet"}, ensure_ascii=False).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path_only == "/api/v1/bev_state":
+        # BEV 페이지 폴링용 — fake_bev_loop 최신 페이로드 (지하철 차내)
+        body = json.dumps(_last_bev or {"ok": False, "msg": "no data yet"}, ensure_ascii=False).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path_only == "/":
         # 브라우저 직접 접속 → GitHub Pages로 리다이렉트 (WebSocket upgrade는 이 코드 안 탐)

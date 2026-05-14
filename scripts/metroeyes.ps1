@@ -93,9 +93,9 @@ function Start-Backend {
         Write-Color "  backend 이미 :8765 LISTEN — skip" Yellow
         return
     }
-    # 모드 선택: 기본 full (tesla_bev YOLO11) — METROEYES_MODE=lite 명시 시만 lite_server
-    # 이전 기본값은 lite였으나 실 카메라 안 뜨는 함정 → 기본 full로 변경 (cycle 339)
-    $mode = if ($env:METROEYES_MODE) { $env:METROEYES_MODE } else { 'full' }
+    # 기본 lite+demo 한 가지로 통일 — 일반 데모/개발/경진대회 전부 이 모드
+    # full 모드(tesla_bev YOLO11)는 실 CCTV 연결할 때만 METROEYES_MODE=full 환경변수로 명시
+    $mode = if ($env:METROEYES_MODE) { $env:METROEYES_MODE } else { 'lite' }
     if ($mode -eq 'full') {
         # torch/ultralytics 사전 점검 — 없으면 lite로 자동 fallback
         & $pywExe -c "import torch, ultralytics" 2>$null | Out-Null
@@ -110,8 +110,8 @@ function Start-Backend {
         Write-Host "  backend (full / tesla_bev YOLO11 / $device) 시작 ... " -NoNewline
         $args = @('-u','-m','src.cv.tesla_bev','--port','8765','--model','yolo11n.pt','--imgsz','640','--conf','0.18','--device',$device)
     } else {
-        Write-Host "  backend (lite / 외부 API only — METROEYES_MODE=full 또는 환경 점검 필요) 시작 ... " -NoNewline
-        $args = @('-u','-m','src.cv.lite_server','--port','8765')
+        Write-Host "  backend (lite + demo / HTTP API + 시뮬 BEV) 시작 ... " -NoNewline
+        $args = @('-u','-m','src.cv.lite_server','--port','8765','--demo')
     }
     $p = Start-Process -FilePath $pywExe -ArgumentList $args -WorkingDirectory $root -PassThru
     Save-Pid 'backend' $p.Id
@@ -217,8 +217,21 @@ switch ($Action) {
         Write-Host ""
         Write-Host "  backend 모델 로딩 ~30초 대기 중..." -ForegroundColor Gray
         Start-Sleep -Seconds 12
-        Start-Publisher
+        # publisher (실 카메라 영상 송신) — 기본 OFF, METROEYES_PUBLISHER=1 또는 'start-pub' 액션으로만 시작
+        # realbev 페이지가 브라우저에서 직접 frame 송신하므로 평소엔 불필요
+        if ($env:METROEYES_PUBLISHER -eq '1') { Start-Publisher }
+        else { Write-Color "  publisher skip (수동: scripts\start_publisher.bat 또는 METROEYES_PUBLISHER=1)" DarkGray }
         Show-Status
+    }
+    'start-pub'  { Start-Publisher; Show-Status }
+    'stop-pub'   {
+        $pubProcs = Get-CimInstance Win32_Process -Filter "Name='python.exe' OR Name='pythonw.exe'" -ErrorAction SilentlyContinue |
+                    Where-Object { $_.CommandLine -match 'feed_video' }
+        foreach ($p in $pubProcs) {
+            try { Stop-Process -Id $p.ProcessId -Force -ErrorAction Stop; Write-Host "  killed publisher pid $($p.ProcessId)" }
+            catch {}
+        }
+        if (-not $pubProcs) { Write-Color "  publisher not running" Yellow }
     }
     'stop'    { Stop-All; Show-Status }
     'restart' { Stop-All; Start-Sleep -Seconds 2; & $PSCommandPath start }

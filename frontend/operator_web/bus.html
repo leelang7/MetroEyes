@@ -1015,6 +1015,41 @@ if (SR) {
     setCard('fc-cv', 'ok'); evalCong();
   }
 
+  // ───── 버스 차내 BEV 폴링 (lite_server /api/v1/bus_state) ─────
+  // fake_bus_bev_loop가 갱신하는 풍부한 페이로드: route/plate/dest/zone_summary/occ_pct/congestion
+  async function pollBusState() {
+    try {
+      const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/bus_state`, { cache: 'no-cache' });
+      if (!r.ok) return;
+      const p = await r.json();
+      if (!p || !p.tracks) return;
+      lastBev = p;
+      // ① fc-cv 카드 (검출 인원) — total_pax
+      document.getElementById('fc-cv-v').textContent = `${p.total_pax || 0}명`;
+      document.getElementById('fc-cv-sub').textContent = `좌석 ${p.seated || 0} · 입석 ${p.standing || 0} · YOLO ${(p.fps || 0).toFixed(1)} fps`;
+      setCard('fc-cv', 'ok');
+      // ② train-strip 타이틀 — route/plate/dest
+      const stripHead = document.querySelector('.train-strip-head h2 b');
+      if (stripHead && p.route && p.dest) stripHead.textContent = `${p.route} · ${p.plate || ''} → ${p.dest}`;
+      // ③ fc-cong 카드 — congestion 레벨
+      const cong = p.congestion || '—';
+      document.getElementById('fc-cong-v').textContent = cong;
+      const lvl = cong === '붐빔' ? 'crit' : cong === '약간 붐빔' ? 'warn' : cong === '보통' ? 'ok' : 'dim';
+      setCard('fc-cong', lvl);
+      const zs = p.zone_summary || {};
+      const zText = `앞 ${zs.front?.count || 0}/입${zs.front?.standing || 0} · 중 ${zs.mid?.count || 0}/입${zs.mid?.standing || 0} · 뒤 ${zs.rear?.count || 0}/입${zs.rear?.standing || 0}`;
+      document.getElementById('fc-cong-sub').textContent = zText;
+      // ④ KPI 메인 패널 (점유율/인원)
+      const kpiP = document.getElementById('kpi-pct'); if (kpiP) kpiP.textContent = Math.round((p.occ_pct || 0) * 100);
+      const kpiC = document.getElementById('kpi-cnt'); if (kpiC) kpiC.textContent = p.total_pax || 0;
+      // ⑤ 안전 감지 카드 — backpack(분실) 카운트
+      const bagN = (p.tracks || []).filter(t => (t.cls || t.class) === 'backpack').length;
+      const bLost = document.getElementById('b-lost'); if (bLost) bLost.textContent = `분실 ${bagN}`;
+    } catch (e) { /* 실패는 조용히 무시 — 5초 후 재시도 */ }
+  }
+  pollBusState();
+  setInterval(pollBusState, 5000);
+
   function applyPpltn(j) {
     lastPop = j;
     if (j.error || j.ppltn_max == null) { document.getElementById('fc-pop-v').textContent = '—명'; document.getElementById('fc-pop-sub').textContent = j.error || '데이터 없음'; setCard('fc-pop', 'dim'); return; }
