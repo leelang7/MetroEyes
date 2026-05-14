@@ -57,8 +57,20 @@
   }
 
   main { max-width: 1080px; margin: 0 auto; padding: 28px; }
-  h1 { font-size: 28px; font-weight: 800; margin: 8px 0 4px; letter-spacing: -.4px; }
-  h1 .accent { color: var(--accent); }
+  h1 { font-size: 30px; font-weight: 800; margin: 8px 0 4px; letter-spacing: -.5px; line-height: 1.15;
+       animation: pitchFadeUp .8s cubic-bezier(.22,.61,.36,1) both; }
+  h1 .accent {
+    background: linear-gradient(110deg, var(--accent) 0%, #38bdf8 40%, #a78bfa 80%, var(--accent) 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+    animation: pitchFlow 8s ease-in-out infinite;
+  }
+  @keyframes pitchFlow { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  @keyframes pitchFadeUp { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+  @keyframes pitchReveal { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+  /* viewport 진입 시 페이드업 (JS IntersectionObserver) */
+  .reveal-pending { opacity: 0; transform: translateY(22px); }
+  .reveal-visible { animation: pitchReveal .7s cubic-bezier(.22,.61,.36,1) both; }
   .lede { font-size: 14px; color: var(--muted); max-width: 760px; margin-bottom: 32px; }
   .lede b { color: var(--text); font-weight: 600; }
 
@@ -67,13 +79,26 @@
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0;
   }
   .kpi {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
-    padding: 16px 18px; position: relative;
+    background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 60%), var(--panel);
+    border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 20px; position: relative; overflow: hidden;
+    transition: transform .25s cubic-bezier(.22,.61,.36,1), border-color .25s, box-shadow .3s;
+  }
+  .kpi:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 14px 30px rgba(0,0,0,.35), 0 0 28px rgba(125,211,211,.18);
   }
   .kpi.hi {
-    background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(16,185,129,.06));
+    background: linear-gradient(135deg, rgba(125,211,211,.12), rgba(16,185,129,.05));
     border-color: rgba(125,211,211,.40);
   }
+  .kpi.hi::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: kpiBeam 3s ease-in-out infinite;
+  }
+  @keyframes kpiBeam { 0%, 100% { opacity: .35; transform: translateX(-50%); } 50% { opacity: 1; transform: translateX(50%); } }
   .kpi .lbl {
     font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
     color: var(--muted); font-weight: 600; margin-bottom: 8px;
@@ -1757,6 +1782,57 @@ document.getElementById('api-curl-link').href = window.METROEYES_BACKEND + '/api
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
 
 </main>
+<script>
+// ─ 섹션 viewport 진입 시 페이드업 (인쇄 시엔 무시) ─
+if (!window.matchMedia('print').matches && 'IntersectionObserver' in window) {
+  document.querySelectorAll('h2, .kpi, .card, .row').forEach(el => el.classList.add('reveal-pending'));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.remove('reveal-pending');
+        e.target.classList.add('reveal-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal-pending').forEach(el => io.observe(el));
+}
+// ─ 카운트업 (.kpi .val에 data-target 있으면 viewport 진입 시 0→target) ─
+function pitchCountUp(el, target, dur = 1400) {
+  const t0 = performance.now();
+  const isPct = /%/.test(el.textContent);
+  const hasX = /x$/.test(target);
+  const numTarget = parseFloat(String(target).replace(/[^\d.\-]/g, ''));
+  if (!Number.isFinite(numTarget)) return;
+  function tick(t) {
+    const p = Math.min(1, (t - t0) / dur);
+    const e = 1 - Math.pow(1 - p, 3);
+    const v = numTarget * e;
+    let txt;
+    if (hasX) txt = Math.round(v) + 'x';
+    else if (/억/.test(target)) txt = (v).toFixed(target.includes('.') ? 1 : 0) + (target.match(/억\/년?|\/년/)?.[0] || '억');
+    else if (/만/.test(target)) txt = (v).toFixed(1) + '만';
+    else txt = Math.round(v).toLocaleString() + (isPct ? '%' : '');
+    el.textContent = txt;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = target;  // 마지막은 원본 그대로 (소수점/단위 보존)
+  }
+  requestAnimationFrame(tick);
+}
+if ('IntersectionObserver' in window) {
+  const kpiIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !e.target.dataset.counted) {
+        e.target.dataset.counted = '1';
+        const orig = e.target.textContent.trim();
+        if (orig && /[\d]/.test(orig)) pitchCountUp(e.target, orig);
+        kpiIo.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.kpi .val').forEach(el => kpiIo.observe(el));
+}
+</script>
 </body>
 </html>
 
