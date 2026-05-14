@@ -316,8 +316,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 </script>
 <script>
 (async function pollCamKPI() {
-  const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/health';
+  const url = window.METROEYES_BACKEND + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();

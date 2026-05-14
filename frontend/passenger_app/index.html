@@ -95,8 +95,11 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
   <!-- 🗺️ 3D OpenFreeMap mini-map (cycle 425) — GPS 자동 매칭 + nearest 역 highlight + 33개 역 marker + destStation polyline -->
   <div id="mini-map-card">
     <div class="mm-head">
-      <span data-i18n="mm_title">🗺️ 3D 지도 — GPS 자동 매칭</span>
-      <button id="mm-recenter" title="사용자 위치로 재중심" data-i18n="mm_recenter">📍 재중심</button>
+      <span id="mm-title-label" data-i18n="mm_title">🗺️ 3D 지도 — GPS 자동 매칭</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button id="mm-3d-toggle" title="2D/3D 전환" style="font-weight:700;min-width:40px;" onclick="toggleMm3D()">2D</button>
+        <button id="mm-recenter" title="사용자 위치로 재중심" data-i18n="mm_recenter">📍 재중심</button>
+      </div>
     </div>
     <div id="mini-map" role="region" aria-label="3D 지도"></div>
     <div id="mini-map-fallback" data-i18n="mm_fallback">지도 로드 실패 — 거리 표시는 위 컨텍스트 텍스트로 유지됩니다.</div>
@@ -206,8 +209,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
 <script>
 (async function pollPwaTransfer() {
   try {
-    const url = (location.protocol === 'https:'
-      ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/transfer_priority';
+    const url = window.METROEYES_BACKEND + '/api/v1/transfer_priority';
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
@@ -231,8 +233,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
 <script>
 (async function pollODPwa() {
   try {
-    const url = (location.protocol === 'https:'
-      ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/api/v1/od_asymmetry';
+    const url = window.METROEYES_BACKEND + '/api/v1/od_asymmetry';
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
       const j = await r.json();
@@ -1739,6 +1740,27 @@ const LIVE = (() => {
   let _mmStationMarkers = [];
   let _mmDestMarker = null;
   let _mmFailed = false;
+  let _mm3D = true; // 초기 상태: 3D
+
+  window.toggleMm3D = function() {
+    _mm3D = !_mm3D;
+    const btn = document.getElementById('mm-3d-toggle');
+    const lbl = document.getElementById('mm-title-label');
+    if (btn) btn.textContent = _mm3D ? '2D' : '3D';
+    if (lbl) lbl.textContent = _mm3D ? '🗺️ 3D 지도 — GPS 자동 매칭' : '🗺️ 2D 지도 — GPS 자동 매칭';
+    if (!_mmMap) return;
+    try {
+      if (_mm3D) {
+        _mmMap.easeTo({ pitch: 50, bearing: -10, duration: 600 });
+        // 3D 빌딩 레이어 표시
+        if (_mmMap.getLayer('mm-3d-buildings')) _mmMap.setLayoutProperty('mm-3d-buildings', 'visibility', 'visible');
+      } else {
+        _mmMap.easeTo({ pitch: 0, bearing: 0, duration: 600 });
+        // 3D 빌딩 레이어 숨김
+        if (_mmMap.getLayer('mm-3d-buildings')) _mmMap.setLayoutProperty('mm-3d-buildings', 'visibility', 'none');
+      }
+    } catch(e) { console.warn('[mm3D toggle]', e); }
+  };
 
   function _markMmFailed(reason) {
     _mmFailed = true;

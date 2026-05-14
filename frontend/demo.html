@@ -212,8 +212,7 @@ window.addEventListener('DOMContentLoaded', applyDemoI18n);
 
 // 헤더 라이브 KPI 8s 폴링 (index.html 패턴 동일)
 (async function pollDemoKPI() {
-  const url = (location.protocol === 'https:'
-    ? `https://${location.host}` : `${window.METROEYES_BACKEND}`) + '/health';
+  const url = window.METROEYES_BACKEND + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     const j = await r.json();
