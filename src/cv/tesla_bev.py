@@ -373,6 +373,13 @@ async def run_serve(args) -> None:
         "saved_pct_sum": 0.0,
     }
     IMPACT_MAX = 200
+    # 사고/이벤트 누적 — realbev/operator 시연 모드 incident_log 송신 시
+    incident_state = {
+        "emergency": 0, "suspicious": 0, "lost": 0, "free_ride": 0,
+        "priority_seat": 0, "bottleneck": 0,
+        "events": [],   # 최근 50개
+    }
+    INCIDENT_KEEP = 50
 
     def _simulate_arrival_items(station: str, line: int | None) -> list[dict]:
         """API 응답이 비거나 ERROR-338(키 미등록) 시 시뮬 도착정보.
@@ -1041,6 +1048,32 @@ async def run_serve(args) -> None:
                             station_name = ctrl.get("stationName")
                             asyncio.create_task(_reply_predict(websocket, hour, line,
                                                                 cluster_id, station_name, peer))
+                        elif ctype == "incident_log":
+                            # 시연 모드 / 운영자 콘솔이 사고 검출 시 송신
+                            ev_type = ctrl.get("ev_type") or "unknown"
+                            if ev_type in incident_state:
+                                incident_state[ev_type] += 1
+                            event = {
+                                "ts": time.time(),
+                                "type": ev_type,
+                                "severity": ctrl.get("severity") or "med",
+                                "msg": ctrl.get("msg") or "",
+                                "source": ctrl.get("source") or "?",
+                            }
+                            incident_state["events"].insert(0, event)
+                            if len(incident_state["events"]) > INCIDENT_KEEP:
+                                incident_state["events"] = incident_state["events"][:INCIDENT_KEEP]
+                            summary = {
+                                "type": "incident_summary",
+                                "emergency": incident_state["emergency"],
+                                "suspicious": incident_state["suspicious"],
+                                "lost": incident_state["lost"],
+                                "free_ride": incident_state["free_ride"],
+                                "priority_seat": incident_state["priority_seat"],
+                                "bottleneck": incident_state["bottleneck"],
+                                "events": incident_state["events"][:8],
+                            }
+                            asyncio.create_task(broadcast(json.dumps(summary, ensure_ascii=False)))
                     except Exception as e:
                         print(f"[ctrl] {peer} parse fail: {e}", flush=True)
                     continue
@@ -1095,8 +1128,30 @@ async def run_serve(args) -> None:
                 active_source["claimed"] = False
             print(f"[ws] 끊김 {peer} (남은 {len(clients)})", flush=True)
 
+    # HTTP / 요청 (브라우저 직접 접속) → GitHub Pages 리다이렉트
+    # WebSocket upgrade 요청은 Upgrade 헤더 있으니 통과시켜야 함 (publisher 등 WS client 영향 금지)
+    try:
+        from websockets.http11 import Response as _WSResponse
+        from websockets.datastructures import Headers as _WSHeaders
+        async def _process_request(connection, request):
+            upgrade = (request.headers.get("Upgrade") or "").lower()
+            if upgrade == "websocket":
+                return None  # WS handshake 진행
+            path = request.path.split("?")[0]
+            if path == "/" or path == "":
+                return _WSResponse(
+                    301, "Moved Permanently",
+                    _WSHeaders([("Location", "https://leelang7.github.io/MetroEyes/")]),
+                    b"",
+                )
+            return None
+    except Exception:
+        _process_request = None
+
     print(f"[i] BEV multi-class (YOLO {args.model}) ws://0.0.0.0:{args.port}", flush=True)
-    async with serve(handler, "0.0.0.0", args.port, max_size=10 * 1024 * 1024):
+    async with serve(handler, "0.0.0.0", args.port,
+                     max_size=10 * 1024 * 1024,
+                     process_request=_process_request):
         await asyncio.Future()
 
 
