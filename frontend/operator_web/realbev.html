@@ -54,14 +54,18 @@
 .fusion-card.warn .fc-value { color: var(--warn); }
 .fusion-card.crit .fc-value { color: var(--crit); }
 .fusion-card.dim .fc-value { color: var(--muted); }
-.ml-sparkline { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px 0; display: flex; align-items: stretch; gap: 14px; }
-.ml-sparkline .ml-meta { display: flex; flex-direction: column; gap: 4px; min-width: 180px; }
+.ml-sparkline { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 0 0 14px 0; display: flex; align-items: stretch; gap: 16px; }
+.ml-sparkline .ml-meta { display: flex; flex-direction: column; gap: 4px; min-width: 200px; }
 .ml-sparkline .ml-label { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); }
 .ml-sparkline .ml-label .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-left: 4px; }
-.ml-sparkline .ml-now { font-size: 22px; font-weight: 300; color: var(--fg); font-variant-numeric: tabular-nums; }
-.ml-sparkline .ml-now b { color: var(--accent); }
+.ml-sparkline .ml-label .peak-pill { color: #f59e0b; font-size: 9px; padding: 1px 5px; background: rgba(245,158,11,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-left: 4px; }
+.ml-sparkline .ml-now { font-size: 24px; font-weight: 300; color: var(--fg); font-variant-numeric: tabular-nums; }
+.ml-sparkline .ml-now b { color: var(--accent); font-weight: 500; }
+.ml-sparkline .ml-peak-info { font-size: 11px; color: var(--muted-2); font-variant-numeric: tabular-nums; display: flex; gap: 8px; flex-wrap: wrap; }
+.ml-sparkline .ml-peak-info span.am { color: #7dd3d3; }
+.ml-sparkline .ml-peak-info span.pm { color: #f59e0b; }
 .ml-sparkline .ml-sub { font-size: 11px; color: var(--muted-2); }
-.ml-sparkline canvas { flex: 1; height: 60px; min-width: 0; }
+.ml-sparkline canvas { flex: 1; height: 110px; min-width: 0; }
 .ml-sparkline .accuracy {
   display: flex; flex-direction: column; gap: 2px; padding: 0 12px; min-width: 110px;
   border-left: 1px solid var(--line);
@@ -535,8 +539,12 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 
     <div class="ml-sparkline" id="ml-sparkline">
       <div class="ml-meta">
-        <div class="ml-label">24h 점유율 예측<span class="src">ML · GBR</span></div>
-        <div class="ml-now"><b id="ml-now-pct">—</b><span style="color: var(--muted); font-size: 14px;">% @ 현재</span></div>
+        <div class="ml-label">24h 점유율 — 양봉 패턴<span class="src">ML · GBR</span><span class="peak-pill" id="peak-pill" hidden>🔴 피크</span></div>
+        <div class="ml-now"><b id="ml-now-pct">—</b><span style="color: var(--muted); font-size: 14px;">% @ <span id="ml-now-hour">—</span>시</span></div>
+        <div class="ml-peak-info">
+          <span class="am">🌅 출근 08시 <b id="peak-am-val">—</b>%</span>
+          <span class="pm">🌆 퇴근 18시 <b id="peak-pm-val">—</b>%</span>
+        </div>
         <div class="ml-sub" id="ml-sub">학습 모델 미발견 — 시뮬 곡선</div>
       </div>
       <canvas id="ml-canvas"></canvas>
@@ -2294,64 +2302,126 @@ const MLChart = (() => {
     return Math.min(1.05, 0.85 * g(hour, 8, 1.0) + 0.92 * g(hour, 18, 1.2) + 0.4 * g(hour, 13, 4) * 0.4);
   }
 
+  // 시연 모드용 시간 오버라이드 (null이면 실 시각, 숫자면 그 시각으로 표시)
+  let _demoHour = null;
+  function setDemoHour(h) { _demoHour = h; draw(); }
+  function clearDemoHour() { _demoHour = null; draw(); }
+
   function draw() {
-    const W = canvas.clientWidth || 600, H = canvas.clientHeight || 60;
+    const W = canvas.clientWidth || 600, H = canvas.clientHeight || 110;
     canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
     ctx2d.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
     ctx2d.clearRect(0, 0, W, H);
-    const padX = 6, padY = 6;
-    const innerW = W - padX * 2, innerH = H - padY * 2;
+    const padX = 10, padY = 10, padBottom = 16;
+    const innerW = W - padX * 2, innerH = H - padY - padBottom;
     // 데이터 결정: ML 응답 우선, 없으면 시뮬
     const data = series.map((v, h) => v != null ? v : simOccAt(h, 'hub'));
     const usingMl = mlAvailable && series.some(v => v != null);
-    // 채움 영역
+    const hourToX = (h) => padX + (h / 23) * innerW;
+    const valToY = (v) => padY + (1 - Math.min(1, v)) * innerH;
+
+    // ── 양봉 피크 zone 배경 (출근 07-09 / 퇴근 17-19) ──
+    [{from:7,to:9,color:'rgba(125,211,211,0.10)',edge:'rgba(125,211,211,0.30)',label:'출근'},
+     {from:17,to:19,color:'rgba(245,158,11,0.10)',edge:'rgba(245,158,11,0.30)',label:'퇴근'}].forEach(z => {
+      const x0 = hourToX(z.from), x1 = hourToX(z.to);
+      ctx2d.fillStyle = z.color;
+      ctx2d.fillRect(x0, padY, x1 - x0, innerH);
+      ctx2d.strokeStyle = z.edge;
+      ctx2d.lineWidth = 1;
+      ctx2d.setLineDash([3, 3]);
+      ctx2d.strokeRect(x0, padY, x1 - x0, innerH);
+      ctx2d.setLineDash([]);
+    });
+
+    // ── y축 그리드 0/50/100% ──
+    ctx2d.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx2d.lineWidth = 1;
+    [0.25, 0.50, 0.75, 1.0].forEach(v => {
+      const y = valToY(v);
+      ctx2d.beginPath(); ctx2d.moveTo(padX, y); ctx2d.lineTo(padX + innerW, y); ctx2d.stroke();
+    });
+
+    // ── 채움 영역 + 곡선 ──
     ctx2d.beginPath();
     data.forEach((v, i) => {
-      const x = padX + (i / 23) * innerW;
-      const y = padY + (1 - Math.min(1, v)) * innerH;
+      const x = hourToX(i), y = valToY(v);
       if (i === 0) ctx2d.moveTo(x, y); else ctx2d.lineTo(x, y);
     });
     ctx2d.lineTo(padX + innerW, padY + innerH);
     ctx2d.lineTo(padX, padY + innerH);
     ctx2d.closePath();
     const grad = ctx2d.createLinearGradient(0, padY, 0, padY + innerH);
-    grad.addColorStop(0, 'rgba(125,211,211,0.30)');
+    grad.addColorStop(0, 'rgba(125,211,211,0.45)');
     grad.addColorStop(1, 'rgba(125,211,211,0.02)');
     ctx2d.fillStyle = grad;
     ctx2d.fill();
-    // 라인
     ctx2d.beginPath();
     data.forEach((v, i) => {
-      const x = padX + (i / 23) * innerW;
-      const y = padY + (1 - Math.min(1, v)) * innerH;
+      const x = hourToX(i), y = valToY(v);
       if (i === 0) ctx2d.moveTo(x, y); else ctx2d.lineTo(x, y);
     });
-    ctx2d.strokeStyle = usingMl ? '#7DD3D3' : '#6B768A';
-    ctx2d.lineWidth = 2;
+    ctx2d.strokeStyle = usingMl ? '#7DD3D3' : '#9CC';
+    ctx2d.lineWidth = 2.2;
     ctx2d.stroke();
-    // 현재 시각 dot
-    const nowH = new Date().getHours();
-    const x = padX + (nowH / 23) * innerW;
-    const y = padY + (1 - Math.min(1, data[nowH])) * innerH;
+
+    // ── 두 봉우리 마커 (출근 08시 / 퇴근 18시) ──
+    [{h:8, color:'#7dd3d3', label:'출근 08시'}, {h:18, color:'#f59e0b', label:'퇴근 18시'}].forEach(p => {
+      const px = hourToX(p.h), py = valToY(data[p.h]);
+      ctx2d.beginPath();
+      ctx2d.arc(px, py, 5, 0, Math.PI * 2);
+      ctx2d.fillStyle = p.color;
+      ctx2d.fill();
+      ctx2d.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx2d.lineWidth = 1.5;
+      ctx2d.stroke();
+      ctx2d.fillStyle = p.color;
+      ctx2d.font = 'bold 10px ui-monospace, monospace';
+      ctx2d.fillText(`${Math.round(data[p.h]*100)}%`, px - 12, py - 9);
+    });
+
+    // ── 현재 시각 표시 (또는 시연 hour) ──
+    const nowH = (_demoHour != null) ? _demoHour : new Date().getHours();
+    const x = hourToX(nowH), y = valToY(data[nowH]);
+    // 수직 줄
+    ctx2d.strokeStyle = 'rgba(255,94,87,0.55)';
+    ctx2d.lineWidth = 1.5;
+    ctx2d.setLineDash([4, 4]);
+    ctx2d.beginPath(); ctx2d.moveTo(x, padY); ctx2d.lineTo(x, padY + innerH); ctx2d.stroke();
+    ctx2d.setLineDash([]);
+    // 펄스 dot
     ctx2d.beginPath();
-    ctx2d.arc(x, y, 4, 0, Math.PI * 2);
+    ctx2d.arc(x, y, 6, 0, Math.PI * 2);
     ctx2d.fillStyle = '#FF5E57';
+    ctx2d.shadowColor = 'rgba(255,94,87,0.7)';
+    ctx2d.shadowBlur = 8;
     ctx2d.fill();
-    ctx2d.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx2d.shadowBlur = 0;
+    ctx2d.strokeStyle = 'rgba(255,255,255,0.85)';
     ctx2d.lineWidth = 1.5;
     ctx2d.stroke();
-    // 시간 눈금 (6/12/18)
-    ctx2d.fillStyle = 'rgba(139,152,172,0.5)';
+
+    // ── 시간 눈금 (0/6/12/18/23) ──
+    ctx2d.fillStyle = 'rgba(139,152,172,0.65)';
     ctx2d.font = '9px ui-monospace, monospace';
     [0, 6, 12, 18, 23].forEach(h => {
-      const px = padX + (h / 23) * innerW;
-      ctx2d.fillText(h + '시', px - 8, H - 1);
+      const px = hourToX(h);
+      ctx2d.fillText(h + '시', px - 8, H - 3);
     });
-    // 현재 점유율 표시
-    document.getElementById('ml-now-pct').textContent = Math.round(data[nowH] * 100);
+
+    // ── 메타 텍스트 갱신 ──
+    const curPct = Math.round(data[nowH] * 100);
+    document.getElementById('ml-now-pct').textContent = curPct;
+    document.getElementById('ml-now-hour').textContent = nowH;
+    const am = Math.round(data[8] * 100), pm = Math.round(data[18] * 100);
+    const amEl = document.getElementById('peak-am-val'); if (amEl) amEl.textContent = am;
+    const pmEl = document.getElementById('peak-pm-val'); if (pmEl) pmEl.textContent = pm;
+    // 현재 피크 안에 있나? (7-9 또는 17-19)
+    const inPeak = (nowH >= 7 && nowH <= 9) || (nowH >= 17 && nowH <= 19);
+    const peakPill = document.getElementById('peak-pill');
+    if (peakPill) peakPill.hidden = !inPeak;
     document.getElementById('ml-sub').textContent = usingMl
-      ? `ML 모델 적용 · 적색=현재(${nowH}시) · ${24 - series.filter(v => v == null).length}/24h 수신`
-      : `학습 모델 미발견 — 시뮬 곡선 (현재 ${nowH}시)`;
+      ? `ML 모델 적용 · ${24 - series.filter(v => v == null).length}/24h 수신${_demoHour != null ? ' · 🎬 시연' : ''}`
+      : `시뮬 곡선 (학습 모델 대기)${_demoHour != null ? ' · 🎬 시연' : ''}`;
   }
 
   /** ws 연결되면 24시간 예측 요청. backend가 모델 없으면 available:false 답. */
@@ -2387,7 +2457,7 @@ const MLChart = (() => {
     return simOccAt(hour, 'hub');     // 없으면 시뮬 곡선
   }
   function isMlAvailable() { return mlAvailable; }
-  return { fetch24h, applyPredict, predictAt, isMlAvailable };
+  return { fetch24h, applyPredict, predictAt, isMlAvailable, setDemoHour, clearDemoHour };
 })();
 window.MLChart = MLChart;
 
@@ -2981,13 +3051,23 @@ document.getElementById('evac-btn').addEventListener('click', () => {
       if (p) p.style.width = Math.min(100, dt / T * 100) + '%';
       if (dt >= T) clearInterval(progT);
     }, 250);
-    // 운영자/index 와 같은 5종 시퀀스 (실 카메라 도메인 라벨)
+    // 양봉 시각화 — 30초간 0→23시 fast-forward (1초≈1시간), 두 피크에서 사고 이벤트 발생
+    if (window.MLChart && window.MLChart.setDemoHour) {
+      const hourT = setInterval(() => {
+        const dt = Date.now() - t0;
+        const h = Math.min(23, Math.floor((dt / T) * 24));
+        window.MLChart.setDemoHour(h);
+        if (dt >= T) { clearInterval(hourT); window.MLChart.clearDemoHour(); }
+      }, 250);
+    }
+    // 사고 시퀀스 — 출근(08~09)/퇴근(17~19) 피크에 집중
     const seq = [
-      { delay: 0,    type: 'free_ride',   sev: 'med',  msg: '실 카메라: 무임 의심 — 카드 미스캔' },
-      { delay: 6000, type: 'lost',        sev: 'low',  msg: '실 카메라: 가방 12초+ 무인 — BoT-SORT 분실 검출' },
-      { delay: 13000, type: 'emergency',  sev: 'high', msg: '실 카메라: 30초+ 정지 + AED 28m — 응급 골든타임' },
-      { delay: 20000, type: 'suspicious', sev: 'high', msg: '실 카메라: 환승 통로 군집 이상' },
-      { delay: 26000, type: 'free_ride',  sev: 'med',  msg: '실 카메라: 자동 분산 안내 송출' },
+      { delay: 8000,  type: 'free_ride',   sev: 'med',  msg: '실 카메라: 출근 08시 — 무임 의심 (카드 미스캔)' },
+      { delay: 11000, type: 'bottleneck',  sev: 'med',  msg: '실 카메라: 출근 09시 — 출입문 병목 (5호차 입구)' },
+      { delay: 18000, type: 'lost',        sev: 'low',  msg: '실 카메라: 가방 12초+ 무인 — BoT-SORT 분실 검출' },
+      { delay: 22000, type: 'emergency',  sev: 'high', msg: '실 카메라: 퇴근 18시 피크 — 30초+ 정지 + AED 28m' },
+      { delay: 25000, type: 'suspicious', sev: 'high', msg: '실 카메라: 퇴근 18시 — 환승 통로 군집 이상' },
+      { delay: 28000, type: 'free_ride',  sev: 'med',  msg: '실 카메라: 분산 안내 자동 송출 (양봉 피크 분산)' },
     ];
     seq.forEach(({ delay, type, sev, msg }) => setTimeout(() => {
       send({ type: 'incident_log', ev_type: type, severity: sev, msg, source: 'operator-realbev-demo' });
@@ -2995,6 +3075,7 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     setTimeout(() => {
       btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1';
       clearInterval(progT);
+      if (window.MLChart && window.MLChart.clearDemoHour) window.MLChart.clearDemoHour();
     }, T);
   });
 })();
