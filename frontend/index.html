@@ -158,7 +158,7 @@
   footer code { background: rgba(255,255,255,.04); padding: 1px 6px; border-radius: 3px; }
 </style>
 <script>
-(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script></head>
 <body>
   <div class="brand" style="position: relative;">
@@ -190,7 +190,7 @@ const I18N_HUB = {
   },
 };
 let _curHubLang = 'ko';
-document.getElementById('lang-toggle').addEventListener('click',  => {
+document.getElementById('lang-toggle').addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curHubLang = order[(order.indexOf(_curHubLang) + 1) % 4];
   const t = I18N_HUB[_curHubLang];
@@ -227,12 +227,12 @@ document.getElementById('lang-toggle').addEventListener('click',  => {
     <span id="hub-od-list" style="display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto;"></span>
   </div>
   <script>
-  (async function pollHubOD {
+  (async function pollHubOD() {
     try {
       const url = window.METROEYES_BACKEND + '/api/v1/od_asymmetry';
       const r = await fetch(url, { cache: 'no-cache' });
       if (r.ok) {
-        const j = await r.json;
+        const j = await r.json();
         if (j.priority_stations && j.priority_stations.length > 0) {
           document.getElementById('hub-od-rationale').textContent = j.rationale;
           const isDep = j.priority_type === 'departure';
@@ -245,23 +245,23 @@ document.getElementById('lang-toggle').addEventListener('click',  => {
       }
     } catch {}
     setTimeout(pollHubOD, 60000);
-  });
+  })();
   </script>
   <script>
     // ─ 카운트업 유틸 (이전 값 → 새 값 부드럽게) ─
-    const _prevVal = new WeakMap;
+    const _prevVal = new WeakMap();
     function countUp(el, target, fmtFn, dur = 1200) {
       if (!el) return;
       const from = _prevVal.get(el) ?? 0;
       const to = +target || 0;
       _prevVal.set(el, to);
-      if (from === to) { el.textContent = fmtFn ? fmtFn(to) : to.toLocaleString; return; }
-      const t0 = performance.now;
+      if (from === to) { el.textContent = fmtFn ? fmtFn(to) : to.toLocaleString(); return; }
+      const t0 = performance.now();
       function tick(t) {
         const p = Math.min(1, (t - t0) / dur);
         const e = 1 - Math.pow(1 - p, 3);  // ease-out cubic
         const v = from + (to - from) * e;
-        el.textContent = fmtFn ? fmtFn(v) : Math.round(v).toLocaleString;
+        el.textContent = fmtFn ? fmtFn(v) : Math.round(v).toLocaleString();
         if (p < 1) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
@@ -278,7 +278,7 @@ document.getElementById('lang-toggle').addEventListener('click',  => {
       const max = Math.max(1, ...hourly);
       const pad = 4;
       const innerW = W - pad * 2, innerH = H - pad * 2;
-      ctx.beginPath;
+      ctx.beginPath();
       hourly.forEach((v, i) => {
         const x = pad + (i / 23) * innerW;
         const y = pad + (1 - v / max) * innerH;
@@ -286,28 +286,28 @@ document.getElementById('lang-toggle').addEventListener('click',  => {
       });
       ctx.lineTo(pad + innerW, pad + innerH);
       ctx.lineTo(pad, pad + innerH);
-      ctx.closePath;
+      ctx.closePath();
       const grad = ctx.createLinearGradient(0, pad, 0, pad + innerH);
       grad.addColorStop(0, 'rgba(125,211,211,.35)');
       grad.addColorStop(1, 'rgba(125,211,211,0)');
-      ctx.fillStyle = grad; ctx.fill;
-      ctx.beginPath;
+      ctx.fillStyle = grad; ctx.fill();
+      ctx.beginPath();
       hourly.forEach((v, i) => {
         const x = pad + (i / 23) * innerW;
         const y = pad + (1 - v / max) * innerH;
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       });
       ctx.strokeStyle = 'rgba(125,211,211,.65)';
-      ctx.lineWidth = 1.5; ctx.stroke;
+      ctx.lineWidth = 1.5; ctx.stroke();
     }
-    (async function pollLiveKPI {
+    (async function pollLiveKPI() {
       const url = window.METROEYES_BACKEND + '/health';
       try {
         const r = await fetch(url, { cache: 'no-cache' });
-        const j = await r.json;
+        const j = await r.json();
         const im = j.impact;
         if (im && im.total_count > 0) {
-          const fmt = w => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${Math.round(w||0).toLocaleString}`;
+          const fmt = w => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${Math.round(w||0).toLocaleString()}`;
           countUp(document.getElementById('lk-cnt'), im.total_count);
           countUp(document.getElementById('lk-min'), im.saved_min_total);
           countUp(document.getElementById('lk-val'), im.value_won, fmt);
@@ -323,12 +323,12 @@ document.getElementById('lang-toggle').addEventListener('click',  => {
         }
       } catch {}
       setTimeout(pollLiveKPI, 8000);
-    });
+    })();
 
     // ─ 카드 hover: 마우스 위치에 따라 광원 따라오기 ─
     document.querySelectorAll('.card').forEach(card => {
       card.addEventListener('mousemove', e => {
-        const r = card.getBoundingClientRect;
+        const r = card.getBoundingClientRect();
         card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
         card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
       });
@@ -391,7 +391,7 @@ document.getElementById('lang-toggle').addEventListener('click',  => {
     </a>
   </div>
   <footer>
-    backend: <code>python -m src.cv.lite_server --demo</code> — CV 모델 없이 BEV 라이브
+    backend: <code>python -m src.cv.lite_server --demo</code> (CV 모델 없이 BEV 라이브) · D-1 1차 마감 (5/13 18:00) · v6.15 / 543 사이클 · 844 가드
   </footer>
 </body>
 </html>

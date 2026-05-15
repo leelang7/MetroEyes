@@ -48,7 +48,7 @@ body.a11y-high .modal-row.current { background: #ffeb3b !important; color: #000 
 body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !important; }
 </style>
 <script>
-(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -60,14 +60,14 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
 </head>
 <body>
 <script>
-(function() {
+(function () {
   const CUR = 'v4.15-stations-2026-05-11';
   if (sessionStorage.getItem('me_ver_pwa') !== CUR) {
     sessionStorage.setItem('me_ver_pwa', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
-    if (navType !== 'reload') location.reload;
+    if (navType !== 'reload') location.reload();
   }
-});
+})();
 </script>
 <div class="app">
   <header class="app-header">
@@ -105,7 +105,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     <div class="mm-head">
       <span id="mm-title-label" data-i18n="mm_title">🗺️ 3D 지도 — GPS 자동 매칭</span>
       <div style="display:flex;gap:6px;align-items:center;">
-        <button id="mm-3d-toggle" title="2D/3D 전환" style="font-weight:700;min-width:40px;" onclick="toggleMm3D">2D</button>
+        <button id="mm-3d-toggle" title="2D/3D 전환" style="font-weight:700;min-width:40px;" onclick="toggleMm3D()">2D</button>
         <button id="mm-recenter" title="사용자 위치로 재중심" data-i18n="mm_recenter">📍 재중심</button>
       </div>
     </div>
@@ -162,7 +162,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
       <div style="font-size: 13px; letter-spacing: 1.0px; color: #a855f7; font-weight: 700; margin-bottom: 2px;">엘리베이터 현황</div>
       <div id="elev-summary" style="font-size: 14px;">로딩 중…</div>
     </div>
-    <button id="elev-route-btn" style="padding:3px 8px;background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.45);color:#a855f7;border-radius:6px;font-size: 14px;font-weight:600;cursor:pointer;" onclick="showElevDetail">경로</button>
+    <button id="elev-route-btn" style="padding:3px 8px;background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.45);color:#a855f7;border-radius:6px;font-size: 14px;font-weight:600;cursor:pointer;" onclick="showElevDetail()">경로</button>
   </div>
 
   <!-- 역 picker 모달 (시민 수동 선택, mode: 'cur' 또는 'dest') -->
@@ -215,15 +215,15 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     <span style="float: right; padding: 1px 6px; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.45); border-radius: 999px; color: #f59e0b; font-size: 14px; font-weight: 600;">+₩400</span>
   </div>
 <script>
-(async function pollPwaTransfer {
+(async function pollPwaTransfer() {
   try {
     const url = window.METROEYES_BACKEND + '/api/v1/transfer_priority';
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
         const stations = j.priority_stations.slice(0, 2).map(s => s.station).join(' · ');
-        const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+        const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
         const TXT = {
           ko: `환승역 분산 — ${stations} (양 호선 동시 절감)`,
           en: `Transfer redistribution — ${stations} (both lines benefit)`,
@@ -236,18 +236,18 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     }
   } catch {}
   setTimeout(pollPwaTransfer, 60000);
-});
+})();
 </script>
 <script>
-(async function pollODPwa {
+(async function pollODPwa() {
   try {
     const url = window.METROEYES_BACKEND + '/api/v1/od_asymmetry';
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
         const stations = j.priority_stations.slice(0, 3).map(s => s.station).join(' · ');
-        const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+        const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
         const PFX = {
           ko: { arrival: '출근 도착 핫스팟 — 미리 한 정거장 내리면', departure: '퇴근 출발 핫스팟 — 시간을 늦추면' },
           en: { arrival: 'Morning arrival hotspots — get off one station early for', departure: 'Evening departure hotspots — delay departure for' },
@@ -264,7 +264,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     }
   } catch {}
   setTimeout(pollODPwa, 60000);
-});
+})();
 </script>
 
   <!-- 24h 폭증 예측 카드 — predict_surge 응답 -->
@@ -456,7 +456,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
   </div>
 </div>
 <script>
-(function() {
+(function () {
   if (localStorage.getItem('me_pwa_onboard_seen')) return;
   const OB = {
     ko: '👋 환영합니다! 한산한 칸 권장 + 분산 보상 +₩200/회. 우상단 🇰🇷 버튼으로 언어 변경.',
@@ -464,25 +464,25 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     zh: '👋 欢迎！推荐人少的车厢 + 每次分散奖励 ₩200。右上角 🇨🇳 按钮切换语言。',
     ja: '👋 ようこそ！空いている車両を推奨 + 分散1回ごとに ₩200報酬。右上 🇯🇵 ボタンで言語変更。',
   };
-  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
   const txt = OB[lang] || OB.ko;
   const t = document.getElementById('ob-toast');
   const x = document.getElementById('ob-text');
   if (!t || !x) return;
   x.textContent = txt;
   t.hidden = false;
-  document.getElementById('ob-dismiss')?.addEventListener('click',  => {
+  document.getElementById('ob-dismiss')?.addEventListener('click', () => {
     t.hidden = true;
     localStorage.setItem('me_pwa_onboard_seen', '1');
   });
   // 12초 후 자동 dismiss (보상 알림)
-  setTimeout( => {
+  setTimeout(() => {
     if (!t.hidden) {
       t.hidden = true;
       localStorage.setItem('me_pwa_onboard_seen', '1');
     }
   }, 12000);
-});
+})();
 </script>
 
 <script src="../shared/seoul_stations.js"></script>
@@ -527,7 +527,7 @@ let sim = null;
 
 const canvas = document.getElementById('bev');
 
-function makeSim {
+function makeSim() {
   if (sim) {
     // canvas는 동일하니 invalidate 후 새로 만든다
     sim = null;
@@ -553,18 +553,18 @@ function buildOptions(hour) {
       idx: i, label: `${i + 1}호차`, occ, eta: 70 + i * 1, // initial ETA in seconds (just 1번째 차)
     }));
   } else {
-    const r = ((seed) => { let s = seed; return  => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3);
+    const r = ((seed) => { let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3);
     return Array.from({ length: cfg.count }, (_, i) => {
-      const noise = (r - 0.5) * 0.20;
+      const noise = (r() - 0.5) * 0.20;
       const occ = Math.max(0.05, Math.min(1.05, avg * 0.92 + noise));
-      const eta = i === 0 ? Math.max(1, Math.round(r * 3)) : Math.round((i + 1) * 4 + r * 2);
+      const eta = i === 0 ? Math.max(1, Math.round(r() * 3)) : Math.round((i + 1) * 4 + r() * 2);
       return { idx: i, label: `${i + 1}순위`, occ, eta: eta * 60 };
     });
   }
 }
 
 let options = [];
-function pickRecommended {
+function pickRecommended() {
   // 점유율 가장 낮은 옵션
   let bi = 0; let bv = options[0].occ;
   for (let i = 1; i < options.length; i++) {
@@ -580,7 +580,7 @@ function fmtETA(seconds) {
   return `${m}<span class="unit">분</span>${s > 0 ? ' ' + s + '<span class="unit">초</span>' : ''}`;
 }
 
-function renderCompare {
+function renderCompare() {
   const cfg = VEHICLES[mode];
   const root = document.getElementById('compare-rows');
   root.innerHTML = '';
@@ -606,7 +606,7 @@ function renderCompare {
   });
 }
 
-function applyAll {
+function applyAll() {
   const cfg = VEHICLES[mode];
   const hour = +document.getElementById('hour').value;
   document.getElementById('hourlabel').textContent = hour + '시';
@@ -616,7 +616,7 @@ function applyAll {
   document.getElementById('ctx-meta').textContent = cfg.label.line;
 
   options = buildOptions(hour);
-  selected = pickRecommended;
+  selected = pickRecommended();
   const opt = options[selected];
 
   // Decision card
@@ -655,13 +655,13 @@ function applyAll {
   }
 
   // Compare
-  renderCompare;
+  renderCompare();
 
   // Alert (over capacity)
   document.getElementById('alert').classList.toggle('show', opt.occ >= 0.92);
 
   // CTA destination
-  document.getElementById('cta').onclick =  => {
+  document.getElementById('cta').onclick = () => {
     // (I2) 사회적 임팩트 — 권장 칸 평균과의 차이를 "절감"으로 누적 + 인센티브 보상
     let earnedKrw = 0;
     try {
@@ -690,8 +690,8 @@ function applyAll {
     } catch {}
     // 보상 toast 가 있으면 1.4s 지연 후 이동 (사용자가 보상 확인)
     const params = new URLSearchParams({ mode, idx: opt.idx, hour });
-    const url = `onboard.html?${params.toString}`;
-    if (earnedKrw > 0) setTimeout( => location.href = url, 1400);
+    const url = `onboard.html?${params.toString()}`;
+    if (earnedKrw > 0) setTimeout(() => location.href = url, 1400);
     else location.href = url;
   };
 }
@@ -703,14 +703,14 @@ const I18N_REWARD = {
   zh: { title: '分散奖励', sub: (p) => `比推荐车厢平均空 ${p}%p` },
   ja: { title: '分散ボーナス', sub: (p) => `推奨車両の平均より ${p}%p 空いている` },
 };
-function getI18nLang {
-  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+function getI18nLang() {
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
   return I18N_REWARD[lang] ? lang : 'ko';
 }
 
 // 인센티브 보상 toast — Toss 스타일 코인 폭발 + 카운트업 + 다국어
 function showRewardToast(krw, savedPct) {
-  const lang = getI18nLang;
+  const lang = getI18nLang();
   const t18 = I18N_REWARD[lang];
 
   // ── CSS 한 번만 주입
@@ -735,11 +735,11 @@ function showRewardToast(krw, savedPct) {
     const p = document.createElement('div');
     p.className = '_coin-particle';
     p.textContent = '🪙';
-    p.style.left = (cx + (Math.random - .5) * 120) + 'px';
+    p.style.left = (cx + (Math.random() - .5) * 120) + 'px';
     p.style.top = cy + 'px';
     p.style.animationDelay = (i * 80) + 'ms';
     document.body.appendChild(p);
-    setTimeout( => p.remove, 1200);
+    setTimeout(() => p.remove(), 1200);
   }
 
   // ── 리플 효과
@@ -747,7 +747,7 @@ function showRewardToast(krw, savedPct) {
   rpl.id = '_reward-ripple';
   rpl.style.left = cx + 'px'; rpl.style.top = cy + 'px';
   document.body.appendChild(rpl);
-  setTimeout( => rpl.remove, 700);
+  setTimeout(() => rpl.remove(), 700);
 
   // ── 배지 카드
   let badge = document.getElementById('_reward-badge');
@@ -762,21 +762,21 @@ function showRewardToast(krw, savedPct) {
   badge.style.animation = '_badgePop .45s cubic-bezier(.2,1.4,.4,1) forwards';
 
   // ── 카운트업
-  const start = Date.now, dur = 700;
-  const tick =  => {
+  const start = Date.now(), dur = 700;
+  const tick = () => {
     const el = document.getElementById('_reward-count');
     if (!el) return;
-    const progress = Math.min(1, (Date.now - start) / dur);
+    const progress = Math.min(1, (Date.now() - start) / dur);
     const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = '+₩' + Math.round(eased * krw).toLocaleString;
+    el.textContent = '+₩' + Math.round(eased * krw).toLocaleString();
     if (progress < 1) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
 
   // ── 페이드아웃
-  setTimeout( => {
+  setTimeout(() => {
     badge.style.animation = '_badgeFade .4s ease-in forwards';
-    setTimeout( => { badge.innerHTML = ''; }, 500);
+    setTimeout(() => { badge.innerHTML = ''; }, 500);
   }, 1800);
 
   // ── 헤더 배지 펄스
@@ -784,7 +784,7 @@ function showRewardToast(krw, savedPct) {
   if (hdr) {
     hdr.style.transform = 'scale(1.25)';
     hdr.style.transition = 'transform .2s cubic-bezier(.2,1.4,.4,1)';
-    setTimeout( => { hdr.style.transform = ''; }, 400);
+    setTimeout(() => { hdr.style.transform = ''; }, 400);
   }
 
   // Web Speech API
@@ -815,19 +815,19 @@ function renderRewardSummary(my) {
     return;
   }
   const krw = my.krw || 0;
-  const krwLabel = krw >= 10000 ? `₩${(krw/10000).toFixed(1)}만` : `₩${krw.toLocaleString}`;
+  const krwLabel = krw >= 10000 ? `₩${(krw/10000).toFixed(1)}만` : `₩${krw.toLocaleString()}`;
   if (el) {
     el.innerHTML = `<span style="color:#10b981;font-weight:800;">🪙 내 적립 ${krwLabel}</span> · <span style="color:var(--muted);">${my.n}회 분산 액션</span>`;
     el.hidden = false;
   }
   if (hdr && hdrKrw) {
-    hdrKrw.textContent = krw >= 10000 ? `${(krw/10000).toFixed(1)}만` : krw.toLocaleString;
+    hdrKrw.textContent = krw >= 10000 ? `${(krw/10000).toFixed(1)}만` : krw.toLocaleString();
     hdr.hidden = false;
     hdr.title = `누적 ${my.n}회 분산 액션 · 평균 -${Math.round((my.saved||0)/my.n)}%p 한산 · ${krwLabel} 적립`;
   }
 }
 // 페이지 진입 시 1회 누적 표시
-window.addEventListener('DOMContentLoaded',  => renderRewardSummary);
+window.addEventListener('DOMContentLoaded', () => renderRewardSummary());
 
 // ==== 4개 언어 페이지 텍스트 i18n (toggle: ko → en → zh → ja → ko) ====
 const I18N_PAGE = {
@@ -844,9 +844,9 @@ const I18N_PAGE = {
         dest_set: '🔔 目的地設定 — ノイキャン・イヤホン使用時の到着アラート',
         dest_test: '🔔 テスト' },
 };
-let _curPageLang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+let _curPageLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_PAGE[_curPageLang]) _curPageLang = 'ko';
-function applyPageI18n {
+function applyPageI18n() {
   const t = I18N_PAGE[_curPageLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
@@ -861,15 +861,15 @@ function applyPageI18n {
     ll.textContent = t.live_off;
   }
 }
-document.getElementById('lang-toggle')?.addEventListener('click',  => {
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curPageLang = order[(order.indexOf(_curPageLang) + 1) % 4];
-  applyPageI18n;
+  applyPageI18n();
   // dest-trigger 누적 카운트 chip 재적용 (data-i18n 적용으로 origText 갱신 필요)
   try {
     const trigger = document.getElementById('dest-trigger');
     if (trigger) delete trigger.dataset.origText;
-    if (typeof _updateDestTriggerBadge === 'function') _updateDestTriggerBadge;
+    if (typeof _updateDestTriggerBadge === 'function') _updateDestTriggerBadge();
   } catch {}
 });
 window.addEventListener('DOMContentLoaded', applyPageI18n);
@@ -885,7 +885,7 @@ function applyIncidentNotice(j) {
     el.hidden = true; return;
   }
   // 최근 1건 (5분 이내) 우선 표시
-  const now = Date.now / 1000;
+  const now = Date.now() / 1000;
   const fresh = j.events.filter(e => now - e.ts < 300);
   if (!fresh.length) { el.hidden = true; return; }
   const top = fresh[0];
@@ -897,7 +897,7 @@ function applyIncidentNotice(j) {
     priority_seat: { ko: '👶 임산부석 양보 권유', en: '👶 Priority seat — please yield', zh: '👶 孕妇座位让座', ja: '👶 優先席 譲りましょう' },
     bottleneck: { ko: '🚪 병목 — 옆 출구 권장', en: '🚪 Bottleneck — use side exit', zh: '🚪 拥堵 — 请走侧门', ja: '🚪 渋滞 — 側出口を' },
   };
-  const lang = (typeof getI18nLang === 'function') ? getI18nLang : 'ko';
+  const lang = (typeof getI18nLang === 'function') ? getI18nLang() : 'ko';
   const lblObj = labels[top.type] || {};
   const lbl = lblObj[lang] || lblObj.ko || top.type;
   txt.innerHTML = `<b>${lbl}</b> — ${top.msg || '대응 중'}<br><span style="font-size: 14px; color: var(--muted);">우회 경로 또는 다음 차 권고 · ${top.source}</span>`;
@@ -923,7 +923,7 @@ function applyIncidentNotice(j) {
   }
   // 5분 후 자동 hide
   clearTimeout(el._t);
-  el._t = setTimeout( => { el.hidden = true; }, 5 * 60 * 1000);
+  el._t = setTimeout(() => { el.hidden = true; }, 5 * 60 * 1000);
 }
 
 // 시민 직접 신고 — WS로 운영자 콘솔에 즉시 브로드캐스트 (오프라인 시 localStorage 큐)
@@ -933,7 +933,7 @@ let _reportCooldown = {};
 const _BTN_IDS = { lost: 'btn-report-lost', emergency: 'btn-report-emg', priority_seat: 'btn-report-priority' };
 const _BTN_LABELS = { lost: '🎒 분실물 신고', emergency: '🚨 응급 신고', priority_seat: '♿ 배려 요청' };
 
-function _updateQueueBadge {
+function _updateQueueBadge() {
   try {
     const q = JSON.parse(localStorage.getItem(_REPORT_Q_KEY) || '[]');
     const cnt = q.length;
@@ -944,7 +944,7 @@ function _updateQueueBadge {
       if (cnt > 0) {
         if (!badge) { badge = document.createElement('span'); badge.className = '_q-badge'; badge.style.cssText = 'position:absolute;top:-5px;right:-5px;background:#ef4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size: 13px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1'; btn.style.position = 'relative'; btn.appendChild(badge); }
         badge.textContent = cnt;
-      } else if (badge) { badge.remove; }
+      } else if (badge) { badge.remove(); }
     });
   } catch {}
 }
@@ -958,11 +958,11 @@ function _setReportBtnState(type, state) {
   } else if (state === 'ok') {
     btn.innerHTML = '✓ 전송 완료';
     btn.style.borderColor = '#10b981';
-    setTimeout( => { _setReportBtnState(type, 'idle'); }, 2000);
+    setTimeout(() => { _setReportBtnState(type, 'idle'); }, 2000);
   } else {
     btn.innerHTML = _BTN_LABELS[type] || type;
     btn.style.borderColor = '';
-    _updateQueueBadge;
+    _updateQueueBadge();
   }
 }
 
@@ -989,15 +989,15 @@ window.flushReportQueue = function() {
       localStorage.setItem(_REPORT_Q_KEY, JSON.stringify(remaining));
       if (remaining.length === 0) {
         const pending = q.length - remaining.length;
-        { const _l=(typeof getI18nLang==='function')?getI18nLang:'ko'; const _qmsgs={ko:`대기 신고 ${pending}건 전송 완료`,en:`${pending} queued report(s) sent`,zh:`${pending}条待发报告已发送`,ja:`${pending}件のキュー送信完了`}; showReportFeedback(q[0].incident_type, true, (_qmsgs[_l]||_qmsgs.ko)); }
-        _updateQueueBadge;
+        { const _l=(typeof getI18nLang==='function')?getI18nLang():'ko'; const _qmsgs={ko:`대기 신고 ${pending}건 전송 완료`,en:`${pending} queued report(s) sent`,zh:`${pending}条待发报告已发送`,ja:`${pending}件のキュー送信完了`}; showReportFeedback(q[0].incident_type, true, (_qmsgs[_l]||_qmsgs.ko)); }
+        _updateQueueBadge();
       }
     }
   } catch {}
 };
 
 window.reportIncident = function(type) {
-  const now = Date.now;
+  const now = Date.now();
   if (_reportCooldown[type] && now - _reportCooldown[type] < 30000) {
     const rem = Math.ceil((30000 - (now - _reportCooldown[type])) / 1000);
     showReportFeedback(type, false, `${rem}초 후 다시 신고 가능`);
@@ -1025,7 +1025,7 @@ window.reportIncident = function(type) {
       localStorage.setItem(_REPORT_Q_KEY, JSON.stringify(q.slice(-10))); // 최대 10건 보관
     } catch {}
     _setReportBtnState(type, 'idle');
-    { const _l = (typeof getI18nLang==='function')?getI18nLang:'ko'; const _t=I18N_REPORT[_l]||I18N_REPORT.ko; showReportFeedback(type, false, _t.offline); }
+    { const _l = (typeof getI18nLang==='function')?getI18nLang():'ko'; const _t=I18N_REPORT[_l]||I18N_REPORT.ko; showReportFeedback(type, false, _t.offline); }
   }
 };
 
@@ -1042,7 +1042,7 @@ const I18N_REPORT = {
 function showReportFeedback(type, success, msg) {
   const icons = { lost: '🎒', emergency: '🚨', priority_seat: '♿',
                   lost_item: '🎒', care: '♿' };
-  const lang = (typeof getI18nLang === 'function') ? getI18nLang : 'ko';
+  const lang = (typeof getI18nLang === 'function') ? getI18nLang() : 'ko';
   const t = I18N_REPORT[lang] || I18N_REPORT.ko;
   const label = t[type] || t[type === 'lost_item' ? 'lost' : type === 'care' ? 'priority_seat' : type] || type;
   let fb = document.getElementById('_report-fb');
@@ -1056,7 +1056,7 @@ function showReportFeedback(type, success, msg) {
   fb.style.opacity = '1';
   fb.textContent = success ? `${icons[type]||''} ${label} ${t.sent}` : `${msg || t.fail}`;
   clearTimeout(fb._t);
-  fb._t = setTimeout( => { fb.style.opacity = '0'; }, 2500);
+  fb._t = setTimeout(() => { fb.style.opacity = '0'; }, 2500);
 }
 
 function setMode(m) {
@@ -1068,22 +1068,22 @@ function setMode(m) {
   const freshnessEl = document.getElementById('bev-freshness');
   if (busStatusEl) busStatusEl.style.display = m === 'bus' ? 'flex' : 'none';
   if (freshnessEl) freshnessEl.style.display = m === 'bus' ? 'inline' : 'none';
-  makeSim;
-  applyAll;
+  makeSim();
+  applyAll();
 }
 
 document.querySelectorAll('.tab').forEach(t => {
-  t.addEventListener('click',  => setMode(t.dataset.mode));
+  t.addEventListener('click', () => setMode(t.dataset.mode));
 });
 document.getElementById('hour').addEventListener('input', applyAll);
-window.addEventListener('resize',  => {
-  if (sim) sim.invalidateLayout;
+window.addEventListener('resize', () => {
+  if (sim) sim.invalidateLayout();
 });
 
-makeSim;
-applyAll;
+makeSim();
+applyAll();
 
-let lastT = performance.now;
+let lastT = performance.now();
 function tickLoop(now) {
   const dt = Math.min(0.05, (now - lastT) / 1000);
   lastT = now;
@@ -1109,13 +1109,13 @@ function setA11y(on) {
     SF.announce('arrival', 'ko', [carLabel, Math.round(opt.occ * 100)]);
   }
 }
-a11ySwitch.addEventListener('click',  => setA11y(!a11yOn));
+a11ySwitch.addEventListener('click', () => setA11y(!a11yOn));
 setA11y(a11yOn);
 
 // 결정이 바뀔 때 (시간/모드 변경 시) 약자 모드면 자동 음성
 const _origApplyAll = applyAll;
-applyAll = function() {
-  _origApplyAll;
+applyAll = function () {
+  _origApplyAll();
   if (a11yOn && options.length > 0) {
     const opt = options[selected];
     SF.announce('arrival', 'ko', [opt.label, Math.round(opt.occ * 100)]);
@@ -1129,14 +1129,14 @@ const aMic = document.getElementById('aMic');
 const aAnswer = document.getElementById('aAnswer');
 
 document.querySelectorAll('.assist .chips .c').forEach(c => {
-  c.addEventListener('click',  => {
+  c.addEventListener('click', () => {
     aInput.value = c.textContent;
-    askCitizen;
+    askCitizen();
   });
 });
 
-async function askCitizen {
-  const q = aInput.value.trim;
+async function askCitizen() {
+  const q = aInput.value.trim();
   if (!q) return;
   aSend.disabled = true;
   aAnswer.textContent = '생각 중...';
@@ -1148,32 +1148,32 @@ async function askCitizen {
   }
 }
 aSend.addEventListener('click', askCitizen);
-aInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askCitizen; });
+aInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askCitizen(); });
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SR) {
-  const rec = new SR;
+  const rec = new SR();
   rec.lang = 'ko-KR';
   rec.continuous = false;
   rec.interimResults = false;
   let listening = false;
-  aMic.addEventListener('click',  => {
-    if (listening) { rec.stop; return; }
-    try { rec.start; listening = true; aMic.classList.add('listening'); } catch {}
+  aMic.addEventListener('click', () => {
+    if (listening) { rec.stop(); return; }
+    try { rec.start(); listening = true; aMic.classList.add('listening'); } catch {}
   });
   rec.addEventListener('result', (ev) => {
     aInput.value = ev.results[0][0].transcript;
-    askCitizen;
+    askCitizen();
   });
-  rec.addEventListener('end',  => { listening = false; aMic.classList.remove('listening'); });
-  rec.addEventListener('error',  => { listening = false; aMic.classList.remove('listening'); });
+  rec.addEventListener('end', () => { listening = false; aMic.classList.remove('listening'); });
+  rec.addEventListener('error', () => { listening = false; aMic.classList.remove('listening'); });
 } else {
   aMic.style.display = 'none';
 }
 
 // PWA
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch( => {});
+  navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
 // ============== 라이브 백엔드 (BEV + 도착 + 인구) ==============
@@ -1183,7 +1183,7 @@ if ('serviceWorker' in navigator) {
 //   2) localStorage 'subwaybev_ws'
 //   3) 같은 호스트가 ngrok-free.dev면 그대로 wss://host
 //   4) 기본값: ${window.METROEYES_WS} (USB adb reverse 가정)
-const LIVE = ( => {
+const LIVE = (() => {
   // shared/seoul_stations.js 에서 로드 (1-9호선 전체 ~200역)
   const stations = window.SEOUL_STATIONS || [];
   function haversineKm(a, b) {
@@ -1201,7 +1201,7 @@ const LIVE = ( => {
     }
     return { station: best, km: bk };
   }
-  function pickWsUrl {
+  function pickWsUrl() {
     const p = new URLSearchParams(location.search).get('ws');
     if (p) return p;
     const saved = localStorage.getItem('subwaybev_ws');
@@ -1232,7 +1232,7 @@ const LIVE = ( => {
     label.textContent = text;
   }
 
-  function applyOcc {
+  function applyOcc() {
     if (!liveBev || !options || options.length === 0) return;
     if (mode !== 'subway') return; // bus는 시뮬 유지
     // bev_x quantile 10 분할 → 칸별 person 카운트, 정원 20명 가정
@@ -1260,7 +1260,7 @@ const LIVE = ( => {
           options = options.map(o => ({ ...o, eta: bestEta }));
         }
       }
-      selected = pickRecommended;
+      selected = pickRecommended();
       // 화면 갱신 (applyAll 일부 재사용 — DOM만 업데이트)
       const opt = options[selected];
       document.getElementById('d-car').textContent = opt.label;
@@ -1279,7 +1279,7 @@ const LIVE = ( => {
       document.getElementById('mini-title').textContent = opt.label;
       document.getElementById('bev-cnt').textContent = liveCnt;
       if (sim) { sim.setTargetOccupancy(opt.occ); sim.forceRebuild(opt.occ); }
-      renderCompare;
+      renderCompare();
     }
   }
 
@@ -1287,7 +1287,7 @@ const LIVE = ( => {
   let _lastBusBevTs = 0;
   function applyBusBevPax(p) {
     if (mode !== 'bus') return;
-    _lastBusBevTs = Date.now;
+    _lastBusBevTs = Date.now();
     const n = p.total_pax || 0;
     const occ = Math.round((p.occ_pct || 0) * 100);
     const seated = p.seated || 0;
@@ -1414,7 +1414,7 @@ const LIVE = ( => {
     );
     // 추세 — 직전 N분 평균과 비교해 +N% 표시
     _ppltnHistory.push(mid);
-    if (_ppltnHistory.length > 6) _ppltnHistory.shift;
+    if (_ppltnHistory.length > 6) _ppltnHistory.shift();
     let trendEl = document.getElementById('ppltn-trend');
     if (!trendEl) {
       trendEl = document.createElement('span');
@@ -1442,11 +1442,11 @@ const LIVE = ( => {
   }
 
   function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); }
-  function queryArrival { send({ type: 'arrival_query', stationName: curStation.name, line: curStation.line }); }
-  function queryPpltn { if (curStation.poi) send({ type: 'population_query', poi: curStation.poi }); }
-  function queryCitydata { if (curStation.poi) send({ type: 'citydata_query', poi: curStation.poi }); }
-  function queryEvents { if (curStation.poi) send({ type: 'events_query', poi: curStation.poi }); }
-  function queryForecast { if (curStation.poi) send({ type: 'predict_surge', poi: curStation.poi, hours_ahead: 12 }); }
+  function queryArrival() { send({ type: 'arrival_query', stationName: curStation.name, line: curStation.line }); }
+  function queryPpltn() { if (curStation.poi) send({ type: 'population_query', poi: curStation.poi }); }
+  function queryCitydata() { if (curStation.poi) send({ type: 'citydata_query', poi: curStation.poi }); }
+  function queryEvents() { if (curStation.poi) send({ type: 'events_query', poi: curStation.poi }); }
+  function queryForecast() { if (curStation.poi) send({ type: 'predict_surge', poi: curStation.poi, hours_ahead: 12 }); }
   function applyEvents(j) {
     const card = document.getElementById('events-strip');
     const items = j.events || [];
@@ -1455,12 +1455,12 @@ const LIVE = ( => {
     document.getElementById('events-rows').innerHTML = items.slice(0, 4).map(e => `
       <div class="ev-row">
         <span class="name">${(e.name || '-').substring(0, 32)}</span>
-        <span class="cap">${e.v_max ? e.v_max.toLocaleString + '명' : '—'}</span>
+        <span class="cap">${e.v_max ? e.v_max.toLocaleString() + '명' : '—'}</span>
         <span class="dist">${e.dist_km != null ? e.dist_km.toFixed(1) + 'km' : '—'}</span>
       </div>`).join('');
     const cap = j.total_capacity || 0;
     document.getElementById('events-summary').innerHTML =
-      `반경 1.5km <b>${j.total_count}건</b> · 누적 ${cap.toLocaleString}명 — 환승 / 대안 노선 고려`;
+      `반경 1.5km <b>${j.total_count}건</b> · 누적 ${cap.toLocaleString()}명 — 환승 / 대안 노선 고려`;
   }
 
   function applyCitydata(j) {
@@ -1534,7 +1534,7 @@ const LIVE = ( => {
     const safetyEl = document.getElementById('safety-banner');
     if (safety.length > 0) {
       const first = safety[0];
-      const msg = (first.EVENT_NM || first.MESSAGE || first.ACDNT_TYPE || '안전 알림').toString;
+      const msg = (first.EVENT_NM || first.MESSAGE || first.ACDNT_TYPE || '안전 알림').toString();
       document.getElementById('safety-banner-text').textContent = msg.substring(0, 80);
       safetyEl.hidden = false;
     } else {
@@ -1549,8 +1549,8 @@ const LIVE = ( => {
   /// 발동 조건: 출퇴근 시간(8:00~9:30, 17:30~19:00) 중 혼잡 레벨 이상.
   function applyIncentive(j) {
     const banner = document.getElementById('incentive-banner');
-    const now = new Date;
-    const hh = now.getHours, mm = now.getMinutes;
+    const now = new Date();
+    const hh = now.getHours(), mm = now.getMinutes();
     const minutesNow = hh * 60 + mm;
     // 두 개 인센티브 윈도우
     const windows = [
@@ -1580,14 +1580,14 @@ const LIVE = ( => {
   }
 
   function connect(url) {
-    try { if (ws) ws.close; } catch {}
+    try { if (ws) ws.close(); } catch {}
     setBadge('connecting', '연결 중');
     ws = new WebSocket(url);
     window.LIVE_WS = ws;   // CTA에서 impact_log 송신용
-    ws.onopen =  => {
+    ws.onopen = () => {
       setBadge('connected', 'LIVE');
-      setTimeout( => window.flushReportQueue && window.flushReportQueue, 500);
-      queryArrival; queryPpltn; queryCitydata; queryEvents; queryForecast;
+      setTimeout(() => window.flushReportQueue && window.flushReportQueue(), 500);
+      queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); queryForecast();
       if (arrivalPoll) clearInterval(arrivalPoll);
       arrivalPoll = setInterval(queryArrival, 20000);
       if (ppltnPoll) clearInterval(ppltnPoll);
@@ -1600,7 +1600,7 @@ const LIVE = ( => {
     ws.onmessage = (ev) => {
       try {
         const j = JSON.parse(ev.data);
-        if (j.type === 'arrival') { liveArrival = j; applyOcc; }
+        if (j.type === 'arrival') { liveArrival = j; applyOcc(); }
         else if (j.type === 'population') { livePpltn = j; applyPopulation(j); }
         else if (j.type === 'citydata') { applyCitydata(j); }
         else if (j.type === 'events') { applyEvents(j); }
@@ -1617,11 +1617,11 @@ const LIVE = ( => {
             const mn = document.getElementById('impact-min');
             const vv = document.getElementById('impact-value');
             const dt = document.getElementById('impact-detail');
-            if (cnt) cnt.textContent = (j.total_count || 0).toLocaleString;
-            if (mn) mn.textContent = (j.saved_min_total || 0).toLocaleString;
+            if (cnt) cnt.textContent = (j.total_count || 0).toLocaleString();
+            if (mn) mn.textContent = (j.saved_min_total || 0).toLocaleString();
             if (vv) {
               const won = j.value_won || 0;
-              vv.textContent = won >= 10000 ? `₩${(won/10000).toFixed(1)}만` : `₩${won.toLocaleString}`;
+              vv.textContent = won >= 10000 ? `₩${(won/10000).toFixed(1)}만` : `₩${won.toLocaleString()}`;
             }
             if (dt) {
               const parts = [];
@@ -1636,30 +1636,30 @@ const LIVE = ( => {
           if (typeof j.fps === 'number') {
             label.textContent = `LIVE · ${j.fps.toFixed(1)} fps · ${(j.tracks || []).length} 트랙`;
           }
-          applyOcc;
+          applyOcc();
         }
       } catch {}
     };
     // 5초 grace period — 즉시 '오프라인' 표시하지 않고 재연결 성공 시 깜빡임 회피
     let _offlineTimer = null;
-    ws.onclose =  => {
+    ws.onclose = () => {
       if (_offlineTimer) clearTimeout(_offlineTimer);
-      _offlineTimer = setTimeout( => setBadge('', '오프라인'), 5000);
+      _offlineTimer = setTimeout(() => setBadge('', '오프라인'), 5000);
       clearTimeout(retryT);
       // 재연결 jitter (1.5~4.5초) — 모든 클라이언트 동시 재연결 spike 회피
-      const delay = 1500 + Math.floor(Math.random * 3000);
-      retryT = setTimeout( => connect(url), delay);
+      const delay = 1500 + Math.floor(Math.random() * 3000);
+      retryT = setTimeout(() => connect(url), delay);
     };
     ws.onopen = (function (orig) { return function (e) {
       if (_offlineTimer) { clearTimeout(_offlineTimer); _offlineTimer = null; }
       // 30초 ping 루프 — cloudflared idle timeout / 모바일 throttle 회피
       if (ws._pingT) clearInterval(ws._pingT);
-      ws._pingT = setInterval( => {
-        try { if (ws.readyState === 1) ws.send(JSON.stringify({ type: 'ping', ts: Date.now })); } catch {}
+      ws._pingT = setInterval(() => {
+        try { if (ws.readyState === 1) ws.send(JSON.stringify({ type: 'ping', ts: Date.now() })); } catch {}
       }, 30000);
       if (orig) return orig.call(ws, e);
     }; })(ws.onopen);
-    ws.onerror =  => { setBadge('error', '연결 실패'); };
+    ws.onerror = () => { setBadge('error', '연결 실패'); };
   }
 
   // GPS 매칭 시도 (HTTPS context 또는 localhost에서만)
@@ -1679,7 +1679,7 @@ const LIVE = ( => {
           gpsPulse.classList.add('locked');
           gpsPulse.title = `GPS 매칭 — 거리 ${distLabel}`;
         }
-        if (ws && ws.readyState === 1) { queryArrival; queryPpltn; queryCitydata; queryEvents; queryForecast; }
+        if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); queryForecast(); }
         if (typeof _refreshEnvCards === 'function') { _airLastStation = null; _elevLastStation = null; _refreshEnvCards(r.station.name); }
         // 🗺️ mini-map sync (cycle 425)
         try { updateMiniMap(pos.coords.latitude, pos.coords.longitude, r.station); } catch {}
@@ -1704,9 +1704,9 @@ const LIVE = ( => {
   }
 
   // ── 버스 BEV 신선도 ticker (1초 간격) ──────────────────────────────
-  setInterval( => {
+  setInterval(() => {
     if (mode !== 'bus' || !_lastBusBevTs) return;
-    const sec = Math.floor((Date.now - _lastBusBevTs) / 1000);
+    const sec = Math.floor((Date.now() - _lastBusBevTs) / 1000);
     const freshEl  = document.getElementById('bev-freshness');
     const sigIcon  = document.getElementById('bev-sig-icon');
     if (!freshEl) return;
@@ -1777,13 +1777,13 @@ const LIVE = ( => {
     console.warn('[mini-map] 로드 실패 —', reason);
   }
 
-  function initMiniMap {
+  function initMiniMap() {
     if (_mmMap || _mmFailed) return;
     if (typeof maplibregl === 'undefined') {
       // CDN 로드 실패 — 5초 후 한 번 더 재시도, 그래도 실패 시 fallback
-      setTimeout( => {
+      setTimeout(() => {
         if (typeof maplibregl === 'undefined') { _markMmFailed('maplibre-gl undefined'); }
-        else initMiniMap;
+        else initMiniMap();
       }, 5000);
       return;
     }
@@ -1818,10 +1818,10 @@ const LIVE = ( => {
           }
         }
       });
-      _mmMap.on('load',  => {
+      _mmMap.on('load', () => {
         // 3D building extrusion layer (liberty style 에 building polygon source 있음)
         try {
-          const layers = _mmMap.getStyle.layers || [];
+          const layers = _mmMap.getStyle().layers || [];
           const labelLayer = layers.find(l => l.type === 'symbol' && l.layout && l.layout['text-field']);
           const labelId = labelLayer ? labelLayer.id : undefined;
           if (_mmMap.getSource('openmaptiles') && !_mmMap.getLayer('mm-3d-buildings')) {
@@ -1848,7 +1848,7 @@ const LIVE = ( => {
           else if (s.transfer) el.title = `${s.name}역 · 환승 비대칭`;
           else if (s.hot) el.title = `${s.name}역 · 인파 핫스팟`;
           else el.title = `${s.name}역 (${s.line}호선)`;
-          el.addEventListener('click',  => {
+          el.addEventListener('click', () => {
             try { setStation(s, null); _mmMap.flyTo({ center: [s.lon, s.lat], zoom: 15, pitch: 55, duration: 800 }); } catch {}
           });
           const m = new maplibregl.Marker({ element: el }).setLngLat([s.lon, s.lat]).addTo(_mmMap);
@@ -1863,9 +1863,9 @@ const LIVE = ( => {
   function updateMiniMap(lat, lon, station) {
     if (!_mmMap) {
       // 첫 호출 — 초기화
-      initMiniMap;
+      initMiniMap();
       // 초기화는 비동기 (style load)이므로 호출자 GPS 정보를 큐로 저장
-      setTimeout( => updateMiniMap(lat, lon, station), 600);
+      setTimeout(() => updateMiniMap(lat, lon, station), 600);
       return;
     }
     if (_mmFailed) return;
@@ -1888,7 +1888,7 @@ const LIVE = ( => {
       // 사용자 위치 + 매칭된 역 둘 다 보이게 fit
       try {
         if (station) {
-          const b = new maplibregl.LngLatBounds;
+          const b = new maplibregl.LngLatBounds();
           b.extend([lon, lat]); b.extend([station.lon, station.lat]);
           _mmMap.fitBounds(b, { padding: 60, pitch: 50, duration: 900, maxZoom: 16 });
         } else {
@@ -1902,7 +1902,7 @@ const LIVE = ( => {
 
   function setMiniMapDest(dest) {
     if (!_mmMap || _mmFailed) return;
-    if (_mmDestMarker) { try { _mmDestMarker.remove; } catch {} _mmDestMarker = null; }
+    if (_mmDestMarker) { try { _mmDestMarker.remove(); } catch {} _mmDestMarker = null; }
     if (_mmMap.getLayer('mm-route')) { try { _mmMap.removeLayer('mm-route'); } catch {} }
     if (_mmMap.getSource('mm-route')) { try { _mmMap.removeSource('mm-route'); } catch {} }
     if (!dest) return;
@@ -1922,7 +1922,7 @@ const LIVE = ( => {
           id: 'mm-route', type: 'line', source: 'mm-route',
           paint: { 'line-color': '#a78bfa', 'line-width': 3, 'line-opacity': 0.7, 'line-dasharray': [2, 2] }
         });
-        const b = new maplibregl.LngLatBounds;
+        const b = new maplibregl.LngLatBounds();
         b.extend([_lastGps.lon, _lastGps.lat]); b.extend([dest.lon, dest.lat]);
         _mmMap.fitBounds(b, { padding: 60, pitch: 50, duration: 900, maxZoom: 15 });
       } catch (e) { console.warn('[mini-map] route fail', e); }
@@ -1932,7 +1932,7 @@ const LIVE = ( => {
   // 재중심 버튼
   const _mmRecenter = document.getElementById('mm-recenter');
   if (_mmRecenter) {
-    _mmRecenter.addEventListener('click',  => {
+    _mmRecenter.addEventListener('click', () => {
       if (_lastGps && _mmMap) {
         _mmMap.flyTo({ center: [_lastGps.lon, _lastGps.lat], zoom: 15, pitch: 55, duration: 800 });
       } else if (curStation && _mmMap) {
@@ -1956,7 +1956,7 @@ const LIVE = ( => {
       gpsPulse.classList.remove('searching', 'error');
       gpsPulse.classList.add('locked');
     }
-    if (ws && ws.readyState === 1) { queryArrival; queryPpltn; queryCitydata; queryEvents; }
+    if (ws && ws.readyState === 1) { queryArrival(); queryPpltn(); queryCitydata(); queryEvents(); }
     // 환경 카드 갱신 (공기질 + 엘리베이터)
     if (typeof _refreshEnvCards === 'function') { _airLastStation = null; _elevLastStation = null; _refreshEnvCards(s.name); }
     // 보너스 역 즉시 피드백 (수동 선택 시만 — GPS 자동 매칭 시 distKm null 아님)
@@ -1981,7 +1981,7 @@ const LIVE = ( => {
       t.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;backdrop-filter:blur(10px);box-shadow:0 4px 14px rgba(0,0,0,.45);transition:opacity .3s;opacity:0';
       document.body.appendChild(t);
     }
-    const lang = (typeof _curPageLang === 'string' ? _curPageLang : (navigator.language || 'ko').slice(0,2).toLowerCase);
+    const lang = (typeof _curPageLang === 'string' ? _curPageLang : (navigator.language || 'ko').slice(0,2).toLowerCase());
     const L = ['ko','en','zh','ja'].includes(lang) ? lang : 'ko';
     const TR = {
       transfer: {
@@ -2006,8 +2006,8 @@ const LIVE = ( => {
       t.style.border = '1px solid rgba(167,139,250,.7)';
       t.innerHTML = TR.od[L](s.name);
     }
-    requestAnimationFrame( => { t.style.opacity = '1'; });
-    setTimeout( => { t.style.opacity = '0'; }, 3000);
+    requestAnimationFrame(() => { t.style.opacity = '1'; });
+    setTimeout(() => { t.style.opacity = '0'; }, 3000);
   }
 
   // GPS 마지막 위치 (있으면 거리 정렬용)
@@ -2016,13 +2016,13 @@ const LIVE = ( => {
     const list = document.getElementById('modal-list');
     if (!list) return;
     list.innerHTML = '';
-    const f = (filter || '').trim.toLowerCase;
+    const f = (filter || '').trim().toLowerCase();
     let entries = stations.map(s => {
       const ent = { ...s };
       if (_lastGps) ent.km = haversineKm({lat:_lastGps.lat,lon:_lastGps.lon}, {lat:s.lat,lon:s.lon});
       return ent;
     });
-    if (f) entries = entries.filter(s => s.name.toLowerCase.includes(f) || (s.poi||'').toLowerCase.includes(f));
+    if (f) entries = entries.filter(s => s.name.toLowerCase().includes(f) || (s.poi||'').toLowerCase().includes(f));
     // cycle 359 — 호선 chip 필터
     if (_lineFilter && _lineFilter !== 'all') {
       if (_lineFilter === 'bonus') {
@@ -2051,13 +2051,13 @@ const LIVE = ( => {
         <span class="name"><b>${s.name}</b>${hot}${odTag}${trTag}<span class="meta">· ${lineLabel}</span></span>
         ${km}
       `;
-      row.addEventListener('click',  => {
+      row.addEventListener('click', () => {
         if (_modalMode === 'dest') {
           setDestination(s);
         } else {
           setStation(s, s.km);
         }
-        closeModal;
+        closeModal();
       });
       list.appendChild(row);
     }
@@ -2073,13 +2073,13 @@ const LIVE = ( => {
     m.hidden = false;
     renderModalList('');
     // 도착지 모드 + 최근 도착지 있으면 상단에 quick chip 노출
-    if (mode === 'dest') _renderRecentDestChips;
-    setTimeout( => { const i = document.getElementById('modal-search'); if (i) i.focus; }, 100);
+    if (mode === 'dest') _renderRecentDestChips();
+    setTimeout(() => { const i = document.getElementById('modal-search'); if (i) i.focus(); }, 100);
   }
-  function _renderRecentDestChips {
+  function _renderRecentDestChips() {
     const list = document.getElementById('modal-list');
     if (!list) return;
-    const recent = _loadRecentDest;
+    const recent = _loadRecentDest();
     if (!recent.length) return;
     const wrap = document.createElement('div');
     wrap.style.cssText = 'padding: 6px 4px 10px; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;';
@@ -2092,12 +2092,12 @@ const LIVE = ( => {
       chip.type = 'button';
       chip.textContent = `${r.name}${r.line > 0 ? ` ${r.line}호` : ''}`;
       chip.style.cssText = 'padding: 4px 10px; background: rgba(167,139,250,.14); border: 1px solid rgba(167,139,250,.40); border-radius: 999px; color: #fff; font-size: 13px; cursor: pointer;';
-      chip.addEventListener('click',  => { setDestination(r); closeModal; });
+      chip.addEventListener('click', () => { setDestination(r); closeModal(); });
       wrap.appendChild(chip);
     }
     list.insertBefore(wrap, list.firstChild);
   }
-  function closeModal {
+  function closeModal() {
     const m = document.getElementById('station-modal');
     if (m) m.hidden = true;
   }
@@ -2105,7 +2105,7 @@ const LIVE = ( => {
   const trigger = document.getElementById('station-trigger');
   if (trigger) {
     trigger.addEventListener('click', openModal);
-    trigger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault; openModal; } });
+    trigger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); } });
   }
   const closeBtn = document.getElementById('modal-close');
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
@@ -2115,7 +2115,7 @@ const LIVE = ( => {
   if (search) search.addEventListener('input', e => renderModalList(e.target.value));
   // cycle 359 — 호선 chip 필터 핸들러
   document.querySelectorAll('.line-chip').forEach(chip => {
-    chip.addEventListener('click',  => {
+    chip.addEventListener('click', () => {
       _lineFilter = chip.dataset.line;
       // 활성 시각화
       document.querySelectorAll('.line-chip').forEach(c => {
@@ -2171,31 +2171,31 @@ const LIVE = ( => {
     return Math.max(1, Math.round(km / SUBWAY_AVG_KMH * 60));
   }
 
-  function _getLang {
-    const lang = (typeof _curPageLang === 'string' ? _curPageLang : (navigator.language || 'ko').slice(0,2).toLowerCase);
+  function _getLang() {
+    const lang = (typeof _curPageLang === 'string' ? _curPageLang : (navigator.language || 'ko').slice(0,2).toLowerCase());
     return ['ko','en','zh','ja'].includes(lang) ? lang : 'ko';
   }
 
   // Wake Lock — 도착지 설정 시 스크린 슬립 방지 (Chrome / Safari 16.4+)
   let _wakeLockSentinel = null;
-  async function _requestWakeLock {
+  async function _requestWakeLock() {
     try {
       if ('wakeLock' in navigator) {
         _wakeLockSentinel = await navigator.wakeLock.request('screen');
-        _wakeLockSentinel.addEventListener('release',  => { _wakeLockSentinel = null; });
+        _wakeLockSentinel.addEventListener('release', () => { _wakeLockSentinel = null; });
       }
     } catch {}
   }
-  function _releaseWakeLock {
+  function _releaseWakeLock() {
     if (_wakeLockSentinel) {
-      try { _wakeLockSentinel.release; } catch {}
+      try { _wakeLockSentinel.release(); } catch {}
       _wakeLockSentinel = null;
     }
   }
   // 백그라운드 → 포그라운드 복귀 시 Wake Lock 재획득
-  document.addEventListener('visibilitychange',  => {
+  document.addEventListener('visibilitychange', () => {
     if (destStation && document.visibilityState === 'visible' && !_wakeLockSentinel) {
-      _requestWakeLock;
+      _requestWakeLock();
     }
   });
 
@@ -2203,7 +2203,7 @@ const LIVE = ( => {
   function _notifyArrival(level, station) {
     if (!('Notification' in window)) return;
     if (Notification.permission !== 'granted') return;
-    const L = _getLang;
+    const L = _getLang();
     const title = level === 'arriving'
       ? { ko: '🚉 도착! 하차하세요', en: '🚉 Arrived — please exit',
           zh: '🚉 到达！请下车', ja: '🚉 到着！降車してください' }[L]
@@ -2220,7 +2220,7 @@ const LIVE = ( => {
         renotify: true, requireInteraction: level === 'arriving',
         silent: false,
       });
-      n.onclick =  => { try { window.focus; n.close; } catch {} };
+      n.onclick = () => { try { window.focus(); n.close(); } catch {} };
     } catch {}
     // 2차: Service Worker postMessage (페이지 throttle 시 SW가 showNotification 발사 + notificationclick으로 포커스 복귀)
     try {
@@ -2236,7 +2236,7 @@ const LIVE = ( => {
   // 최근 도착지 (출퇴근 반복 시 즉시 재선택) — localStorage MRU 5개
   const RECENT_DEST_KEY = 'metroeyes_recent_dest';
   const RECENT_DEST_MAX = 5;
-  function _loadRecentDest {
+  function _loadRecentDest() {
     try {
       const raw = localStorage.getItem(RECENT_DEST_KEY);
       return raw ? JSON.parse(raw) : [];
@@ -2244,8 +2244,8 @@ const LIVE = ( => {
   }
   function _pushRecentDest(s) {
     try {
-      const arr = _loadRecentDest.filter(r => r.name !== s.name);
-      arr.unshift({ name: s.name, line: s.line, lat: s.lat, lon: s.lon, poi: s.poi, od: !!s.od, transfer: !!s.transfer, hot: !!s.hot, ts: Date.now });
+      const arr = _loadRecentDest().filter(r => r.name !== s.name);
+      arr.unshift({ name: s.name, line: s.line, lat: s.lat, lon: s.lon, poi: s.poi, od: !!s.od, transfer: !!s.transfer, hot: !!s.hot, ts: Date.now() });
       localStorage.setItem(RECENT_DEST_KEY, JSON.stringify(arr.slice(0, RECENT_DEST_MAX)));
     } catch {}
   }
@@ -2258,7 +2258,7 @@ const LIVE = ( => {
     const trigger = document.getElementById('dest-trigger');
     if (banner) banner.hidden = false;
     if (trigger) trigger.style.display = 'none';
-    const L = _getLang;
+    const L = _getLang();
     document.getElementById('dest-label').textContent = DEST_TR.label_on[L];
     document.getElementById('dest-name').textContent = `${s.name}${s.line > 0 ? ` (${s.line}호선)` : ''}`;
     document.getElementById('dest-status').textContent = DEST_TR.tracking[L];
@@ -2266,18 +2266,18 @@ const LIVE = ( => {
     // 백그라운드 알림 권한 사전 요청 (사용자 명시적 동작 직후라 prompt 정상 표시)
     try {
       if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission.catch( => {});
+        Notification.requestPermission().catch(() => {});
       }
     } catch {}
-    _requestWakeLock;
-    startDestPoll;
+    _requestWakeLock();
+    startDestPoll();
     setTimeout(_updateSafeguardStatus, 800);   // 권한 응답 후 갱신
     // 🗺️ mini-map sync (cycle 425) — 도착지 marker + polyline
     try { if (window._setMiniMapDest) window._setMiniMapDest(s); } catch {}
   }
 
   // 안전망 권한 상태 가시화 (Wake Lock / Notification)
-  function _updateSafeguardStatus {
+  function _updateSafeguardStatus() {
     const el = document.getElementById('dest-safeguards');
     if (!el) return;
     const wl = _wakeLockSentinel ? '🔆' : '·';
@@ -2298,26 +2298,26 @@ const LIVE = ( => {
   }
 
   // 페이지 로드 시 활성 도착지 자동 복원 (탭 새로고침/PWA 재오픈 사용자 안전망)
-  setTimeout( => {
-    const saved = _restoreActiveDest;
+  setTimeout(() => {
+    const saved = _restoreActiveDest();
     if (saved && saved.name && saved.lat && saved.lon) {
       setDestination(saved);
     } else {
       // 복원할 활성 도착지 없을 때만 trigger 누적 배지 갱신
-      _updateDestTriggerBadge;
+      _updateDestTriggerBadge();
     }
   }, 600);
 
-  function clearDestination {
+  function clearDestination() {
     destStation = null;
     const banner = document.getElementById('dest-banner');
     const trigger = document.getElementById('dest-trigger');
     if (banner) banner.hidden = true;
     if (trigger) trigger.style.display = 'block';
-    _releaseWakeLock;
-    stopDestPoll;
+    _releaseWakeLock();
+    stopDestPoll();
     try { localStorage.removeItem(ACTIVE_DEST_KEY); } catch {}
-    _updateDestTriggerBadge;   // 누적 카운트 다시 표시
+    _updateDestTriggerBadge();   // 누적 카운트 다시 표시
     // 🗺️ mini-map sync (cycle 425) — 도착지 marker + polyline 제거
     try { if (window._setMiniMapDest) window._setMiniMapDest(null); } catch {}
   }
@@ -2328,31 +2328,31 @@ const LIVE = ( => {
     try {
       const raw = localStorage.getItem(ARRIVAL_HISTORY_KEY);
       const arr = raw ? JSON.parse(raw) : [];
-      arr.push({ name: stationName, ts: Date.now });
+      arr.push({ name: stationName, ts: Date.now() });
       // 30일 이상 오래된 항목 정리
-      const cutoff = Date.now - 30 * 24 * 3600 * 1000;
+      const cutoff = Date.now() - 30 * 24 * 3600 * 1000;
       const fresh = arr.filter(e => e.ts > cutoff);
       localStorage.setItem(ARRIVAL_HISTORY_KEY, JSON.stringify(fresh.slice(-200)));
     } catch {}
   }
-  function _getArrivalCounts {
+  function _getArrivalCounts() {
     try {
       const raw = localStorage.getItem(ARRIVAL_HISTORY_KEY);
       if (!raw) return { today: 0, total: 0 };
       const arr = JSON.parse(raw);
-      const startOfDay = new Date; startOfDay.setHours(0, 0, 0, 0);
-      const today = arr.filter(e => e.ts >= startOfDay.getTime).length;
+      const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+      const today = arr.filter(e => e.ts >= startOfDay.getTime()).length;
       return { today, total: arr.length };
     } catch { return { today: 0, total: 0 }; }
   }
-  function _updateDestTriggerBadge {
+  function _updateDestTriggerBadge() {
     const trigger = document.getElementById('dest-trigger');
     if (!trigger) return;
-    const { today, total } = _getArrivalCounts;
+    const { today, total } = _getArrivalCounts();
     if (total === 0) return;   // 사용 전이면 그대로
     // 기존 트리거 텍스트 + 카운트 chip
     if (!trigger.dataset.origText) trigger.dataset.origText = trigger.textContent;
-    const L = _getLang;
+    const L = _getLang();
     const usage = {
       ko: ` · 오늘 ${today}번 / 누적 ${total}번`,
       en: ` · Today ${today} / Total ${total}`,
@@ -2367,17 +2367,17 @@ const LIVE = ( => {
   function _saveActiveDest(s) {
     try {
       localStorage.setItem(ACTIVE_DEST_KEY, JSON.stringify({
-        ...s, savedAt: Date.now,
+        ...s, savedAt: Date.now(),
       }));
     } catch {}
   }
-  function _restoreActiveDest {
+  function _restoreActiveDest() {
     try {
       const raw = localStorage.getItem(ACTIVE_DEST_KEY);
       if (!raw) return null;
       const obj = JSON.parse(raw);
       // 2시간 이상 경과 시 만료 — 의도하지 않은 자동 복원 방지
-      if (Date.now - (obj.savedAt || 0) > 2 * 60 * 60 * 1000) {
+      if (Date.now() - (obj.savedAt || 0) > 2 * 60 * 60 * 1000) {
         localStorage.removeItem(ACTIVE_DEST_KEY);
         return null;
       }
@@ -2385,20 +2385,20 @@ const LIVE = ( => {
     } catch { return null; }
   }
 
-  function startDestPoll {
-    stopDestPoll;
-    pollDestOnce;
+  function startDestPoll() {
+    stopDestPoll();
+    pollDestOnce();
     _destPollId = setInterval(pollDestOnce, DEST_POLL_MS);
   }
-  function stopDestPoll {
+  function stopDestPoll() {
     if (_destPollId) { clearInterval(_destPollId); _destPollId = null; }
   }
 
-  function pollDestOnce {
+  function pollDestOnce() {
     if (!destStation) return;
     if (!navigator.geolocation) {
       const el = document.getElementById('dest-status');
-      if (el) el.textContent = DEST_TR.no_gps[_getLang];
+      if (el) el.textContent = DEST_TR.no_gps[_getLang()];
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -2410,7 +2410,7 @@ const LIVE = ( => {
         );
         const m = Math.round(km * 1000);
         const eta = _etaMin(km);
-        const L = _getLang;
+        const L = _getLang();
         const status = document.getElementById('dest-status');
         if (m <= DEST_ARRIVAL_M) {
           if (status) status.textContent = DEST_TR.arriving[L];
@@ -2422,16 +2422,16 @@ const LIVE = ( => {
           if (status) status.textContent = DEST_TR.far[L](km.toFixed(1), eta);
         }
       },
-       => {
+      () => {
         const el = document.getElementById('dest-status');
-        if (el) el.textContent = DEST_TR.no_gps[_getLang];
+        if (el) el.textContent = DEST_TR.no_gps[_getLang()];
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 5000 }
     );
   }
 
   function fireArrivalAlert(level) {
-    const now = Date.now;
+    const now = Date.now();
     // 'arriving' 은 30초 1회만, 'near' 는 60초 1회만
     const cooldown = level === 'arriving' ? 30000 : 60000;
     if (now - _destAlertedAt < cooldown) return;
@@ -2448,27 +2448,27 @@ const LIVE = ( => {
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (Ctx) {
-        const ac = new Ctx;
-        const osc = ac.createOscillator;
-        const g = ac.createGain;
+        const ac = new Ctx();
+        const osc = ac.createOscillator();
+        const g = ac.createGain();
         osc.frequency.value = level === 'arriving' ? 1200 : 800;
         osc.type = 'sine';
         osc.connect(g); g.connect(ac.destination);
         g.gain.setValueAtTime(0.18, ac.currentTime);
         g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.6);
-        osc.start;
+        osc.start();
         osc.stop(ac.currentTime + 0.6);
         // arriving 은 두 번 반복
         if (level === 'arriving') {
-          setTimeout( => {
-            const osc2 = ac.createOscillator;
-            const g2 = ac.createGain;
+          setTimeout(() => {
+            const osc2 = ac.createOscillator();
+            const g2 = ac.createGain();
             osc2.frequency.value = 1200;
             osc2.type = 'sine';
             osc2.connect(g2); g2.connect(ac.destination);
             g2.gain.setValueAtTime(0.18, ac.currentTime);
             g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.6);
-            osc2.start; osc2.stop(ac.currentTime + 0.6);
+            osc2.start(); osc2.stop(ac.currentTime + 0.6);
           }, 700);
         }
       }
@@ -2477,7 +2477,7 @@ const LIVE = ( => {
     // 3) Speech Synthesis — 4언어 음성 안내 (이어폰 통과)
     try {
       if (window.speechSynthesis && destStation) {
-        const L = _getLang;
+        const L = _getLang();
         const phrase = level === 'arriving'
           ? { ko: `${destStation.name}역 도착. 하차하세요`,
               en: `Arrived at ${destStation.name} station. Please exit`,
@@ -2490,7 +2490,7 @@ const LIVE = ( => {
         const u = new SpeechSynthesisUtterance(phrase);
         u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[L] || 'ko-KR';
         u.rate = 0.95; u.volume = 0.95;
-        speechSynthesis.cancel;
+        speechSynthesis.cancel();
         speechSynthesis.speak(u);
       }
     } catch {}
@@ -2504,7 +2504,7 @@ const LIVE = ( => {
         ? '0 0 0 4px rgba(16,185,129,.55), 0 0 24px rgba(16,185,129,.45)'
         : '0 0 0 3px rgba(245,158,11,.50)';
       banner.style.transform = 'scale(1.02)';
-      setTimeout( => {
+      setTimeout(() => {
         banner.style.boxShadow = oldShadow;
         banner.style.transform = 'scale(1)';
       }, 1500);
@@ -2518,7 +2518,7 @@ const LIVE = ( => {
   }
 
   const destTrigger = document.getElementById('dest-trigger');
-  if (destTrigger) destTrigger.addEventListener('click',  => openModal('dest'));
+  if (destTrigger) destTrigger.addEventListener('click', () => openModal('dest'));
   const destClear = document.getElementById('dest-clear');
   if (destClear) destClear.addEventListener('click', clearDestination);
 
@@ -2532,7 +2532,7 @@ const LIVE = ( => {
     sttFb.style.color = ok ? '#10b981' : '#ff8a8a';
     sttFb.style.borderColor = ok ? 'rgba(16,185,129,.30)' : 'rgba(255,138,138,.30)';
     sttFb.style.background = ok ? 'rgba(16,185,129,.08)' : 'rgba(255,138,138,.06)';
-    setTimeout( => { if (sttFb) sttFb.hidden = true; }, 5000);
+    setTimeout(() => { if (sttFb) sttFb.hidden = true; }, 5000);
   }
   // ♿ 접근성 모드 toggle (cycle 354) — IDEA-9 chain 확장 (장애인차별금지법 + 교통약자법)
   // 3 mode 순환: off → 큰 글씨 → 큰 글씨+고대비 → off
@@ -2548,7 +2548,7 @@ const LIVE = ( => {
   let _a11yMode = parseInt(localStorage.getItem(A11Y_KEY) || '0', 10);
   if (isNaN(_a11yMode) || _a11yMode < 0 || _a11yMode > 2) _a11yMode = 0;
   _applyA11y(_a11yMode);
-  if (a11yBtn) a11yBtn.addEventListener('click',  => {
+  if (a11yBtn) a11yBtn.addEventListener('click', () => {
     _a11yMode = (_a11yMode + 1) % 3;
     _applyA11y(_a11yMode);
     // 음성 안내 (스크린리더 호환 + 시각약자 추가 신호)
@@ -2562,15 +2562,15 @@ const LIVE = ( => {
         const u = new SpeechSynthesisUtterance(msg);
         u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR';
         u.rate = 0.95; u.volume = 0.85;
-        speechSynthesis.cancel; speechSynthesis.speak(u);
+        speechSynthesis.cancel(); speechSynthesis.speak(u);
       }
     } catch {}
   });
 
-  if (sttBtn) sttBtn.addEventListener('click',  => {
+  if (sttBtn) sttBtn.addEventListener('click', () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { _showSttFb('이 브라우저는 STT 미지원 (Chrome 권장)', false); return; }
-    const recog = new SR;
+    const recog = new SR();
     const lang = (typeof _curPageLang === 'string' ? _curPageLang : 'ko');
     recog.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR';
     recog.interimResults = false;
@@ -2579,8 +2579,8 @@ const LIVE = ( => {
     _showSttFb({ ko: '🎤 듣는 중... 도착지 역 이름을 말하세요', en: '🎤 Listening... say destination station',
                  zh: '🎤 正在听... 请说目的地车站', ja: '🎤 聞いています... 目的駅を言ってください' }[lang]);
     recog.onresult = (ev) => {
-      const alts = Array.from(ev.results[0]).map(r => r.transcript.trim.toLowerCase);
-      const matched = stations.find(s => alts.some(a => a.includes(s.name.toLowerCase) || a.includes((s.poi||'').toLowerCase)));
+      const alts = Array.from(ev.results[0]).map(r => r.transcript.trim().toLowerCase());
+      const matched = stations.find(s => alts.some(a => a.includes(s.name.toLowerCase()) || a.includes((s.poi||'').toLowerCase())));
       if (matched) {
         _showSttFb(`✅ "${alts[0]}" → ${matched.name}역 도착지 설정`);
         setDestination(matched);
@@ -2589,8 +2589,8 @@ const LIVE = ( => {
       }
     };
     recog.onerror = (e) => { _showSttFb(`STT 에러: ${e.error}`, false); sttBtn.textContent = '🎤'; };
-    recog.onend =  => { sttBtn.textContent = '🎤'; };
-    try { recog.start; } catch { sttBtn.textContent = '🎤'; }
+    recog.onend = () => { sttBtn.textContent = '🎤'; };
+    try { recog.start(); } catch { sttBtn.textContent = '🎤'; }
   });
 
   // 🌱 CO₂ 절감 카운터 — backend impact_summary 라이브 + 시민 본인 누적
@@ -2626,7 +2626,7 @@ const LIVE = ( => {
   function _updateClusterBadge(stationName) {
     const badge = document.getElementById('cluster-badge');
     if (!badge) return;
-    const clean = stationName.replace('역', '').trim;
+    const clean = stationName.replace('역', '').trim();
     const cluster = _STATION_CLUSTER[clean];
     if (!cluster) { badge.style.display = 'none'; return; }
     const c = _CLUSTER_LABELS[cluster];
@@ -2642,7 +2642,7 @@ const LIVE = ( => {
     try {
       const r = await fetch(`${_API_BASE}/api/v1/indoor_air?station=${encodeURIComponent(station)}`);
       if (!r.ok) return;
-      const d = await r.json;
+      const d = await r.json();
       const card = document.getElementById('air-quality-card');
       if (!card) return;
       const co2 = d.co2 != null ? Math.round(d.co2) : null;
@@ -2669,7 +2669,7 @@ const LIVE = ( => {
     try {
       const r = await fetch(`${_API_BASE}/api/v1/elevator?station=${encodeURIComponent(station)}`);
       if (!r.ok) return;
-      const d = await r.json;
+      const d = await r.json();
       const card = document.getElementById('elev-card');
       const summary = document.getElementById('elev-summary');
       if (!card || !summary) return;
@@ -2704,19 +2704,19 @@ const LIVE = ( => {
   }
 
   // 초기 로드 + 2분마다 갱신
-  setTimeout( => {
-    const stn = document.getElementById('ctx-name')?.textContent?.replace('역','').trim || '성수';
+  setTimeout(() => {
+    const stn = document.getElementById('ctx-name')?.textContent?.replace('역','').trim() || '성수';
     _refreshEnvCards(stn);
   }, 1500);
-  setInterval( => {
-    const stn = document.getElementById('ctx-name')?.textContent?.replace('역','').trim || '성수';
+  setInterval(() => {
+    const stn = document.getElementById('ctx-name')?.textContent?.replace('역','').trim() || '성수';
     _airLastStation = null; _elevLastStation = null;
     _refreshEnvCards(stn);
   }, 120000);
 
   // 사전 테스트: 청각 약자/이어폰 사용자가 알림 동작 확인 — 도착 직전 강한 알림과 동일
   const destTest = document.getElementById('dest-test');
-  if (destTest) destTest.addEventListener('click',  => {
+  if (destTest) destTest.addEventListener('click', () => {
     if (!destStation) return;
     _destAlertedAt = 0;   // cooldown 무시
     fireArrivalAlert('arriving');
@@ -2726,7 +2726,7 @@ const LIVE = ( => {
   document.addEventListener('keydown', e => {
     const m = document.getElementById('station-modal');
     if (!m || m.hidden) return;
-    if (e.key === 'Escape') { closeModal; e.preventDefault; return; }
+    if (e.key === 'Escape') { closeModal(); e.preventDefault(); return; }
     const list = document.querySelector('#station-modal .station-list');
     if (!list) return;
     const rows = Array.from(list.querySelectorAll('.station-row'));
@@ -2736,44 +2736,44 @@ const LIVE = ( => {
       rows.forEach(r => r.classList.remove('kbd-focus'));
       const next = (cur + 1) % rows.length;
       rows[next].classList.add('kbd-focus'); rows[next].scrollIntoView({ block: 'nearest' });
-      e.preventDefault;
+      e.preventDefault();
     } else if (e.key === 'ArrowUp') {
       rows.forEach(r => r.classList.remove('kbd-focus'));
       const prev = (cur - 1 + rows.length) % rows.length;
       rows[prev].classList.add('kbd-focus'); rows[prev].scrollIntoView({ block: 'nearest' });
-      e.preventDefault;
+      e.preventDefault();
     } else if (e.key === 'Enter' && document.activeElement !== search) {
       const focused = list.querySelector('.station-row.kbd-focus');
-      if (focused) focused.click;
-      e.preventDefault;
+      if (focused) focused.click();
+      e.preventDefault();
     }
   });
   // 스타일 동적 주입
-  (function() {
+  (function () {
     if (document.getElementById('pwa-kbd-style')) return;
     const s = document.createElement('style'); s.id = 'pwa-kbd-style';
     s.textContent = '.station-row.kbd-focus { background: rgba(125,211,211,.18) !important; outline: 1px solid var(--accent); outline-offset: -1px; }';
     document.head.appendChild(s);
-  });
+  })();
   const gpsBtn = document.getElementById('modal-gps');
-  if (gpsBtn) gpsBtn.addEventListener('click',  => {
-    closeModal;
+  if (gpsBtn) gpsBtn.addEventListener('click', () => {
+    closeModal();
     if (navigator.geolocation) {
       gpsPulse && gpsPulse.classList.add('searching');
       navigator.geolocation.getCurrentPosition(pos => {
         const r = nearest(pos.coords.latitude, pos.coords.longitude);
         setStation(r.station, r.km);
-      },  => { gpsPulse && gpsPulse.classList.add('error'); }, { enableHighAccuracy: false, timeout: 8000 });
+      }, () => { gpsPulse && gpsPulse.classList.add('error'); }, { enableHighAccuracy: false, timeout: 8000 });
     }
   });
   // ESC 닫기
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
   return { connect, pickWsUrl, setStation };
-});
+})();
 
 // 자동 연결
-LIVE.connect(LIVE.pickWsUrl);
+LIVE.connect(LIVE.pickWsUrl());
 </script>
 </body>
 </html>

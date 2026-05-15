@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../shared/bev_console.css">
 <script src="../shared/demo_overlay.js" defer></script>
 <script>
-(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -30,17 +30,17 @@
 <style>@keyframes alertPulse { 0%,100%{box-shadow:0 2px 12px rgba(255,94,87,0.4)} 50%{box-shadow:0 2px 24px rgba(255,94,87,0.7)} }</style>
 <script>
 // 자동 캐시 무효화 — 첫 방문 시 강제 새로고침 한 번 (loop 방지 sessionStorage)
-(function() {
+(function () {
   const CUR = 'v3.9-stations-2026-05-11';
   if (sessionStorage.getItem('me_ver') !== CUR) {
     sessionStorage.setItem('me_ver', CUR);
     // navigation type 1 = reload — loop 방지
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
     if (navType !== 'reload') {
-      location.reload;
+      location.reload();
     }
   }
-});
+})();
 </script>
 <div class="domain-bar subway"></div>
 <header>
@@ -65,9 +65,9 @@ const I18N_OP = {
   zh: { nav_subway: '🚇 地铁', nav_bus: '🚌 巴士', nav_realcam: '📷 实摄像', nav_ads: '📺 显示', nav_citizen: '📱 市民 →', flag: '🇨🇳' },
   ja: { nav_subway: '🚇 地下鉄', nav_bus: '🚌 バス', nav_realcam: '📷 実カメラ', nav_ads: '📺 表示', nav_citizen: '📱 市民 →', flag: '🇯🇵' },
 };
-let _curOpLang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+let _curOpLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_OP[_curOpLang]) _curOpLang = 'ko';
-function applyOpI18n {
+function applyOpI18n() {
   const t = I18N_OP[_curOpLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
@@ -77,10 +77,10 @@ function applyOpI18n {
   if (btn) btn.textContent = t.flag;
   document.documentElement.lang = _curOpLang;
 }
-document.getElementById('lang-toggle')?.addEventListener('click',  => {
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curOpLang = order[(order.indexOf(_curOpLang) + 1) % 4];
-  applyOpI18n;
+  applyOpI18n();
 });
 window.addEventListener('DOMContentLoaded', applyOpI18n);
 </script>
@@ -121,30 +121,30 @@ window.addEventListener('DOMContentLoaded', applyOpI18n);
       <b id="op-tier-basic" style="color: #7dd3d3;">0</b><em style="opacity:.5;">/</em><b id="op-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="op-tier-tp" style="color: #f59e0b;">0</b>
     </span>
 <script>
-window.addEventListener('message',  => {});
-(async function pollTierOp {
+window.addEventListener('message', () => {});
+(async function pollTierOp() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       const tc = j.impact && j.impact.tier_counts;
       if (tc && (tc.basic + tc.od + tc.transfer) > 0) {
-        document.getElementById('op-tier-basic').textContent = (tc.basic || 0).toLocaleString;
-        document.getElementById('op-tier-od').textContent = (tc.od || 0).toLocaleString;
-        document.getElementById('op-tier-tp').textContent = (tc.transfer || 0).toLocaleString;
+        document.getElementById('op-tier-basic').textContent = (tc.basic || 0).toLocaleString();
+        document.getElementById('op-tier-od').textContent = (tc.od || 0).toLocaleString();
+        document.getElementById('op-tier-tp').textContent = (tc.transfer || 0).toLocaleString();
         document.getElementById('tier-pill').hidden = false;
       }
     }
   } catch {}
   setTimeout(pollTierOp, 8000);
-});
+})();
 </script>
 <script>
-(async function pollDispersionOp {
+(async function pollDispersionOp() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
         document.getElementById('op-dp-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
         document.getElementById('op-dp-peak').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
@@ -153,7 +153,7 @@ window.addEventListener('message',  => {});
     }
   } catch {}
   setTimeout(pollDispersionOp, 12000);
-});
+})();
 </script>
     <div class="slider-wrap">
       <label>시각</label>
@@ -181,11 +181,11 @@ window.addEventListener('message',  => {});
   </div>
 </section>
 <script>
-(async function pollOpTransfer {
+(async function pollOpTransfer() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/transfer_priority`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
         document.getElementById('op-tp-rationale').textContent = j.rationale;
         const sl = document.getElementById('op-tp-list');
@@ -197,14 +197,14 @@ window.addEventListener('message',  => {});
     }
   } catch {}
   setTimeout(pollOpTransfer, 60000);
-});
+})();
 </script>
 <script>
-(async function pollODPriority {
+(async function pollODPriority() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/od_asymmetry`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
         document.getElementById('od-rationale').textContent = j.rationale;
         const sl = document.getElementById('od-stations');
@@ -222,7 +222,7 @@ window.addEventListener('message',  => {});
     }
   } catch {}
   setTimeout(pollODPriority, 60000);  // 1분 주기 (시각 변경 추적)
-});
+})();
 </script>
 
   <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(5, 1fr); margin-bottom: 14px;">
@@ -399,7 +399,7 @@ const sim = BEVEngine.createSim({
     incidentsLog.unshift(ev);
     if (incidentsLog.length > 30) incidentsLog.length = 30;
     SF.pushToast(toastStack, ev);
-    renderIncidents;
+    renderIncidents();
     // 상단 alert 띠 — emergency / suspicious 만
     if (ev.severity === 'high' || ev.type === 'emergency' || ev.type === 'suspicious') {
       const label = ({ emergency: '응급', suspicious: '이상행동', lost: '분실물', free_ride: '무임 의심' })[ev.type] || ev.type;
@@ -440,37 +440,37 @@ function drawStrip(occs, selectedIdx) {
 
     // 배경
     BEVEngine.rrect(ctx, x, yTop, carW, carH, 5);
-    ctx.fillStyle = 'rgba(255,255,255,0.025)'; ctx.fill;
+    ctx.fillStyle = 'rgba(255,255,255,0.025)'; ctx.fill();
 
     // 점유 채우기 바
     const fillH = carH * Math.min(1, o);
     BEVEngine.rrect(ctx, x, yTop + (carH - fillH), carW, fillH, 5);
-    ctx.fillStyle = rgba(col, cs && cs.bottleneck ? 0.92 : 0.72); ctx.fill;
+    ctx.fillStyle = rgba(col, cs && cs.bottleneck ? 0.92 : 0.72); ctx.fill();
 
     // 병목(bottleneck) — 문 구역 기립 집중 → 빨간 상단 줄
     if (cs && cs.bottleneck) {
       BEVEngine.rrect(ctx, x, yTop, carW, 4, 3);
-      ctx.fillStyle = 'rgba(239,68,68,0.90)'; ctx.fill;
+      ctx.fillStyle = 'rgba(239,68,68,0.90)'; ctx.fill();
     }
 
     // 우선석 점유 — 보라 스트라이프 (하단)
     if (cs && cs.priority_occ > 0) {
       BEVEngine.rrect(ctx, x, yTop + carH - 5, carW, 5, 3);
-      ctx.fillStyle = 'rgba(167,139,250,0.85)'; ctx.fill;
+      ctx.fillStyle = 'rgba(167,139,250,0.85)'; ctx.fill();
     }
 
     // 테두리 (선택 강조)
     ctx.strokeStyle = (i === selectedIdx) ? rgba([125, 211, 211], 0.88) : 'rgba(255,255,255,0.08)';
     ctx.lineWidth = (i === selectedIdx) ? 1.5 : 1;
     BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 5);
-    ctx.stroke;
+    ctx.stroke();
     if (i === selectedIdx) {
-      ctx.save;
+      ctx.save();
       ctx.shadowColor = rgba([125, 211, 211], 0.5);
       ctx.shadowBlur = 12;
       BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 5);
-      ctx.stroke;
-      ctx.restore;
+      ctx.stroke();
+      ctx.restore();
     }
 
     // 절전 아이콘 (점유 < 30%)
@@ -538,10 +538,10 @@ let prevSelected = selected;
 const CAR_COUNT_FALLBACK = 10;
 
 // ============== 10량 strip 클릭 → 칸 선택 ==============
-(function bindStripClick {
+(function bindStripClick() {
   const cv = document.getElementById('strip');
   function pickCarFromX(clientX, n) {
-    const r = cv.getBoundingClientRect;
+    const r = cv.getBoundingClientRect();
     const x = clientX - r.left;
     const pad = 16, gap = 4;
     const carW = (r.width - pad * 2 - gap * (n - 1)) / n;
@@ -555,7 +555,7 @@ const CAR_COUNT_FALLBACK = 10;
     if (!lastOccs.length) return;
     const idx = pickCarFromX(e.clientX, lastOccs.length);
     selected = idx;
-    applyHour;
+    applyHour();
   });
   // 호버 — 어떤 칸인지 hint
   cv.addEventListener('mousemove', e => {
@@ -564,9 +564,9 @@ const CAR_COUNT_FALLBACK = 10;
     const o = lastOccs[idx];
     cv.title = `${idx + 1}호차 — ${Math.round(o * 100)}% 점유`;
   });
-});
+})();
 
-function applyHour {
+function applyHour() {
   const hour = +hourEl.value;
   hourLabel.textContent = hour + '시';
   const trainAvg = model.trainOccupancyAt(hour, STATION.cluster);
@@ -597,7 +597,7 @@ function applyHour {
       <span class="num">${i + 1}</span>
       <div class="car-bar ${cls}"><div style="width: ${Math.min(100, o * 100)}%"></div></div>
       <span style="text-align: right;">${Math.round(o * 100)}%</span>`;
-    row.addEventListener('click',  => { selected = i; applyHour; });
+    row.addEventListener('click', () => { selected = i; applyHour(); });
     carList.appendChild(row);
   });
 
@@ -736,8 +736,8 @@ function selectStation(s, kmFromUser) {
     kmFromUser < 1.0 ? `${Math.round(kmFromUser * 1000)}m` : `${kmFromUser.toFixed(1)}km`;
   document.getElementById('t-line').textContent = STATION.line;
   document.getElementById('t-cluster').textContent = model.CLUSTERS[s.cluster].label;
-  applyHour;
-  renderPicker;
+  applyHour();
+  renderPicker();
   // 라이브 ws 쿼리 재호출 — 도착정보/인구를 새 역으로 갱신
   // TOPIS 는 "역" 없는 짧은 이름. citydata 는 POI 명 그대로.
   if (window.LIVE && window.LIVE.setStation) {
@@ -749,12 +749,12 @@ function renderPicker(filter) {
   const rows = document.getElementById('picker-rows');
   if (!rows) return;
   rows.innerHTML = '';
-  const f = (filter || '').trim.toLowerCase;
+  const f = (filter || '').trim().toLowerCase();
   let list = _userPos
     ? STATION_LIST.map(s => ({ ...s, km: haversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon) }))
                   .sort((a, b) => a.km - b.km)
     : STATION_LIST;
-  if (f) list = list.filter(s => s.name.toLowerCase.includes(f) || String(s.line).includes(f));
+  if (f) list = list.filter(s => s.name.toLowerCase().includes(f) || String(s.line).includes(f));
   for (const s of list) {
     const row = document.createElement('div');
     const isCurrent = s.name === STATION.name;
@@ -766,7 +766,7 @@ function renderPicker(filter) {
       <span><b>${s.name}</b>${hotBadge}<span class="meta"> · ${lineLabel}</span></span>
       ${km ? `<span class="km">${km}</span>` : ''}`;
     row.addEventListener('click', (e) => {
-      e.stopPropagation;
+      e.stopPropagation();
       document.getElementById('station-picker').classList.remove('open');
       selectStation(s, s.km);
     });
@@ -783,12 +783,12 @@ document.getElementById('gps-tag').addEventListener('click', e => {
     const si = document.getElementById('picker-search');
     if (si) si.value = '';
     renderPicker('');
-    setTimeout( => {
-      if (si) si.focus;
+    setTimeout(() => {
+      if (si) si.focus();
       else { const first = picker.querySelector('.picker-row'); if (first) first.classList.add('kbd-focus'); }
     }, 30);
   }
-  e.stopPropagation;
+  e.stopPropagation();
 });
 
 // 키보드 단축키 — picker 열렸을 때 ESC/↑↓/Enter
@@ -796,7 +796,7 @@ document.addEventListener('keydown', (e) => {
   const picker = document.getElementById('station-picker');
   if (!picker || !picker.classList.contains('open')) return;
   if (e.key === 'Escape') {
-    picker.classList.remove('open'); e.preventDefault; return;
+    picker.classList.remove('open'); e.preventDefault(); return;
   }
   const rows = Array.from(picker.querySelectorAll('.picker-row'));
   if (!rows.length) return;
@@ -806,35 +806,35 @@ document.addEventListener('keydown', (e) => {
     const next = (cur + 1) % rows.length;
     rows[next].classList.add('kbd-focus');
     rows[next].scrollIntoView({ block: 'nearest' });
-    e.preventDefault;
+    e.preventDefault();
   } else if (e.key === 'ArrowUp') {
     rows.forEach(r => r.classList.remove('kbd-focus'));
     const prev = (cur - 1 + rows.length) % rows.length;
     rows[prev].classList.add('kbd-focus');
     rows[prev].scrollIntoView({ block: 'nearest' });
-    e.preventDefault;
+    e.preventDefault();
   } else if (e.key === 'Enter') {
     const focused = picker.querySelector('.picker-row.kbd-focus');
-    if (focused) focused.click;
-    e.preventDefault;
+    if (focused) focused.click();
+    e.preventDefault();
   }
 });
 
 // kbd-focus 스타일 동적 주입
-(function injectKbdStyle {
+(function injectKbdStyle() {
   if (document.getElementById('kbd-focus-style')) return;
   const s = document.createElement('style');
   s.id = 'kbd-focus-style';
   s.textContent = '.picker-row.kbd-focus { background: rgba(125,211,211,.18) !important; outline: 1px solid var(--accent); outline-offset: -1px; }';
   document.head.appendChild(s);
-});
+})();
 document.addEventListener('click', e => {
   if (!e.target.closest('#gps-tag')) {
     document.getElementById('station-picker').classList.remove('open');
   }
 });
 
-function tryGps {
+function tryGps() {
   const tag = document.getElementById('gps-tag');
   const stEl = document.getElementById('gps-station');
   const dEl = document.getElementById('gps-dist');
@@ -842,7 +842,7 @@ function tryGps {
     tag.classList.add('error');
     stEl.textContent = '미지원';
     dEl.textContent = '—';
-    renderPicker;
+    renderPicker();
     return;
   }
   tag.classList.add('searching');
@@ -862,35 +862,35 @@ function tryGps {
       tag.classList.remove('searching');
       tag.classList.add('error');
       dEl.textContent = '권한 거부';
-      renderPicker;
+      renderPicker();
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
   );
 }
 document.getElementById('picker-gps-btn').addEventListener('click', e => {
-  e.stopPropagation;
+  e.stopPropagation();
   document.getElementById('gps-tag').classList.remove('error');
-  tryGps;
+  tryGps();
 });
-tryGps;
-renderPicker;
+tryGps();
+renderPicker();
 
-function updatePhaseTag {
+function updatePhaseTag() {
   const m = { arriving: ['도착 중', ''], stopped: ['정차', 'stopped'], departing: ['출발', ''], running: ['운행 중', ''] };
-  const [text, cls] = m[sim.getPhase];
+  const [text, cls] = m[sim.getPhase()];
   phaseTag.textContent = text;
   phaseTag.className = 'phase-tag ' + cls;
 }
 
-function updateLiveKpi {
-  const cnt = sim.liveCount;
+function updateLiveKpi() {
+  const cnt = sim.liveCount();
   const den = (cnt / 35).toFixed(1);
   kpiCnt.textContent = cnt;
   kpiDen.textContent = den;
   alertEl.classList.toggle('show', +den >= 4);
 
   // 약자석 점유 모니터
-  const pr = sim.priorityStats;
+  const pr = sim.priorityStats();
   const valEl = document.getElementById('pri-val');
   const kpiBox = document.getElementById('priority-kpi');
   valEl.textContent = `${pr.occupied} / ${pr.total}` + (pr.blocked > 0 ? ` · 차단 ${pr.blocked}` : '');
@@ -898,7 +898,7 @@ function updateLiveKpi {
 }
 
 // ============== 안전 감지 UI ==============
-function renderIncidents {
+function renderIncidents() {
   const root = document.getElementById('incidents');
   root.innerHTML = '';
   let nE = 0, nS = 0, nL = 0, nF = 0;
@@ -935,13 +935,13 @@ setInterval(renderIncidents, 1000);  // ts 갱신용
 // ============== TTS ==============
 let ttsLang = 'ko';
 document.querySelectorAll('.tts-lang button').forEach(b => {
-  b.addEventListener('click',  => {
+  b.addEventListener('click', () => {
     document.querySelectorAll('.tts-lang button').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
     ttsLang = b.dataset.lang;
   });
 });
-document.getElementById('ttsBtn').addEventListener('click',  => {
+document.getElementById('ttsBtn').addEventListener('click', () => {
   const occs = lastOccs;
   const myOcc = occs[selected];
   let mi = 0, mv = occs[0];
@@ -950,7 +950,7 @@ document.getElementById('ttsBtn').addEventListener('click',  => {
   const recCar = `${mi + 1}호차`;
   const btn = document.getElementById('ttsBtn');
   btn.classList.add('speaking');
-  setTimeout( => btn.classList.remove('speaking'), 3000);
+  setTimeout(() => btn.classList.remove('speaking'), 3000);
   if (myOcc >= 0.85) {
     SF.announce('crowded', ttsLang, [carLabel, recCar]);
   } else {
@@ -958,23 +958,23 @@ document.getElementById('ttsBtn').addEventListener('click',  => {
   }
 });
 
-let lastT = performance.now;
+let lastT = performance.now();
 function tick(now) {
   const dt = Math.min(0.05, (now - lastT) / 1000);
   lastT = now;
   sim.tick(dt);
   drawStrip(lastOccs, selected);
-  updatePhaseTag;
-  updateLiveKpi;
+  updatePhaseTag();
+  updateLiveKpi();
   requestAnimationFrame(tick);
 }
 
 hourEl.addEventListener('input', applyHour);
-window.addEventListener('resize',  => {
-  sim.invalidateLayout;
-  applyHour;
+window.addEventListener('resize', () => {
+  sim.invalidateLayout();
+  applyHour();
 });
-applyHour;
+applyHour();
 requestAnimationFrame(tick);
 
 // ============== LLM 어시스턴트 ==============
@@ -986,18 +986,18 @@ const llmSend = document.getElementById('llmSend');
 const llmMsgs = document.getElementById('llmMsgs');
 const llmMic = document.getElementById('llmMic');
 
-llmFab.addEventListener('click',  => llmPanel.classList.add('open'));
-llmClose.addEventListener('click',  => llmPanel.classList.remove('open'));
+llmFab.addEventListener('click', () => llmPanel.classList.add('open'));
+llmClose.addEventListener('click', () => llmPanel.classList.remove('open'));
 
 document.querySelectorAll('#llmSuggest .chip').forEach(c => {
-  c.addEventListener('click',  => {
+  c.addEventListener('click', () => {
     llmInput.value = c.textContent;
-    askLLM;
+    askLLM();
   });
 });
 
-async function askLLM {
-  const q = llmInput.value.trim;
+async function askLLM() {
+  const q = llmInput.value.trim();
   if (!q) return;
   // 사용자 메시지
   const um = document.createElement('div');
@@ -1017,32 +1017,32 @@ async function askLLM {
   await LLMAssistant.streamTo(bm, resp);
   llmMsgs.scrollTop = llmMsgs.scrollHeight;
   llmSend.disabled = false;
-  llmInput.focus;
+  llmInput.focus();
 }
 llmSend.addEventListener('click', askLLM);
-llmInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askLLM; });
+llmInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askLLM(); });
 
 // ============== STT (음성 입력) ==============
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SR) {
-  const rec = new SR;
+  const rec = new SR();
   rec.lang = 'ko-KR';
   rec.continuous = false;
   rec.interimResults = false;
   let listening = false;
-  llmMic.addEventListener('click',  => {
-    if (listening) { rec.stop; return; }
-    try { rec.start; listening = true; llmMic.classList.add('listening'); } catch {}
+  llmMic.addEventListener('click', () => {
+    if (listening) { rec.stop(); return; }
+    try { rec.start(); listening = true; llmMic.classList.add('listening'); } catch {}
   });
   rec.addEventListener('result', (ev) => {
     const text = ev.results[0][0].transcript;
     llmInput.value = text;
-    askLLM;
+    askLLM();
   });
-  rec.addEventListener('end',  => {
+  rec.addEventListener('end', () => {
     listening = false; llmMic.classList.remove('listening');
   });
-  rec.addEventListener('error',  => {
+  rec.addEventListener('error', () => {
     listening = false; llmMic.classList.remove('listening');
   });
 } else {
@@ -1050,8 +1050,8 @@ if (SR) {
 }
 
 // ============== 4중 데이터 융합 (BEV + 도착 + 인구 + 혼잡 평가) ==============
-( => {
-  const wsUrl = ( => {
+(() => {
+  const wsUrl = (() => {
     const p = new URLSearchParams(location.search).get('ws');
     if (p) return p;
     const saved = localStorage.getItem('subwaybev_ws');
@@ -1059,7 +1059,7 @@ if (SR) {
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
     return window.METROEYES_WS;
-  });
+  })();
   let ws = null, lastBev = null, lastPop = null, arrT = null, popT = null;
   const station = { name: '잠실', line: 2, poi: '잠실역' };
   function fmtN(n) { if (n == null) return '—'; if (n >= 10000) return (n/10000).toFixed(1) + '만'; if (n >= 1000) return (n/1000).toFixed(1) + 'K'; return String(n); }
@@ -1107,7 +1107,7 @@ if (SR) {
         maybeAlertBanner(`우선석 점유 — ${priorOcc.map(c => c.car + '호차').join(', ')} (배려 안내 권고)`, 'warn');
       }
     }
-    evalCong;
+    evalCong();
   }
   function applyArrival(j) {
     let best = null;
@@ -1130,9 +1130,9 @@ if (SR) {
     document.getElementById('fc-pop-v').textContent = `${fmtN(mid)}명`;
     document.getElementById('fc-pop-sub').textContent = `${j.area_nm} · ${j.congest_lvl} · ${j.ppltn_time||''}`;
     const lvl = j.congest_lvl === '붐빔' ? 'crit' : j.congest_lvl === '약간 붐빔' ? 'warn' : 'ok';
-    setCard('fc-pop', lvl); evalCong;
+    setCard('fc-pop', lvl); evalCong();
   }
-  function evalCong {
+  function evalCong() {
     const personN = lastBev ? (lastBev.tracks || []).filter(t => t.class === 'person').length : null;
     const popLvl = lastPop && !lastPop.error ? lastPop.congest_lvl : null;
     if (personN == null && popLvl == null) { document.getElementById('fc-cong-v').textContent = '—'; setCard('fc-cong', 'dim'); return; }
@@ -1166,7 +1166,7 @@ if (SR) {
   let _lastAutoTts = 0;
   function autoDispatchAnnounce(lvl) {
     if (lvl !== '붐빔') return;
-    const now = Date.now;
+    const now = Date.now();
     if (now - _lastAutoTts < 5 * 60 * 1000) return;  // 5분 cooldown
     _lastAutoTts = now;
     bumpAutoLog('dp');
@@ -1187,7 +1187,7 @@ if (SR) {
     const ttsBtn = document.getElementById('ttsBtn');
     if (ttsBtn) {
       ttsBtn.classList.add('speaking');
-      setTimeout( => ttsBtn.classList.remove('speaking'), 3000);
+      setTimeout(() => ttsBtn.classList.remove('speaking'), 3000);
     }
   }
 
@@ -1208,15 +1208,15 @@ if (SR) {
       cls = 'crit'; msg = `🚨 무임/미태그 의심 ${diff}명 (+${(ratio*100).toFixed(0)}%)`;
       maybeAlertBanner(`무임/미태그 의심 — CV ${cvN}명 vs 태그 ${tagEst}명 차이 +${diff}명`, 'crit');
       // incidentsLog 에 자동 push (60초 throttle)
-      if (Date.now - _lastTagAlert > 60000) {
-        _lastTagAlert = Date.now;
+      if (Date.now() - _lastTagAlert > 60000) {
+        _lastTagAlert = Date.now();
         incidentsLog.unshift({
-          id: `tag-${Date.now}`, type: 'free_ride', severity: 'high',
+          id: `tag-${Date.now()}`, type: 'free_ride', severity: 'high',
           msg: `CV ${cvN}명 vs 태그 추정 ${tagEst}명 (+${diff}, +${(ratio*100).toFixed(0)}%)`,
-          ts: Date.now,
+          ts: Date.now(),
         });
         if (incidentsLog.length > 30) incidentsLog.length = 30;
-        renderIncidents;
+        renderIncidents();
       }
     } else if (diff > 2 || ratio > 0.15) {
       cls = 'warn'; msg = `⚠ 미태그 가능 ${diff}명 (+${(ratio*100).toFixed(0)}%)`;
@@ -1238,9 +1238,9 @@ if (SR) {
     t.textContent = (level === 'crit' ? '🚨 ' : '⚠ ') + text;
     b.style.display = 'block';
     if (_alertHide) clearTimeout(_alertHide);
-    _alertHide = setTimeout( => b.style.display = 'none', 12000);
+    _alertHide = setTimeout(() => b.style.display = 'none', 12000);
   }
-  document.getElementById('alert-close')?.addEventListener('click',  => {
+  document.getElementById('alert-close')?.addEventListener('click', () => {
     document.getElementById('alert-banner').style.display = 'none';
     if (_alertHide) clearTimeout(_alertHide);
   });
@@ -1250,7 +1250,7 @@ if (SR) {
     incidentsLog.unshift(ev);
     if (incidentsLog.length > 30) incidentsLog.length = 30;
     if (window.SafetyFeatures && SF.pushToast) SF.pushToast(toastStack, ev);
-    if (typeof renderIncidents === 'function') renderIncidents;
+    if (typeof renderIncidents === 'function') renderIncidents();
     const labels = { emergency: '응급', suspicious: '이상행동', lost: '분실물', free_ride: '무임 의심' };
     const lbl = labels[ev.type] || ev.type;
     if (ev.severity === 'high') maybeAlertBanner(`${lbl} — ${ev.msg}`, 'crit');
@@ -1265,7 +1265,7 @@ if (SR) {
       }
     } catch {}
   }
-  document.getElementById('demo-trigger')?.addEventListener('click',  => {
+  document.getElementById('demo-trigger')?.addEventListener('click', () => {
     const btn = document.getElementById('demo-trigger');
     if (!window.DemoOverlay) { alert('demo_overlay.js 로드 안 됨'); return; }
     btn.disabled = true; btn.style.opacity = '.65';
@@ -1283,14 +1283,14 @@ if (SR) {
       events,
       onSendIncident: (e) => {
         try { send({ type: 'incident_log', ev_type: e.type, severity: e.sev, msg: e.msg, source: 'operator-subway-demo' }); } catch {}
-        injectIncident({ id: Date.now + Math.random, type: e.type, severity: e.sev, msg: e.msg, ts: Date.now / 1000 });
+        injectIncident({ id: Date.now() + Math.random(), type: e.type, severity: e.sev, msg: e.msg, ts: Date.now() / 1000 });
       },
     });
-    setTimeout( => { btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1'; }, 30000);
+    setTimeout(() => { btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1'; }, 30000);
   });
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
-  function queryArr { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
-  function queryPop { send({ type: 'population_query', poi: station.poi }); }
+  function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
+  function queryPop() { send({ type: 'population_query', poi: station.poi }); }
   // 시민 분산 누적 임팩트 — 운영자 콘솔 헤더 pill
   function applyImpactPill(j) {
     const pill = document.getElementById('impact-pill');
@@ -1300,9 +1300,9 @@ if (SR) {
     const vv = document.getElementById('impact-pill-val');
     const kw = document.getElementById('impact-pill-krw');
     const roi = document.getElementById('impact-pill-roi');
-    const fmt = (w) => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString}`;
-    if (cnt) cnt.textContent = (j.total_count || 0).toLocaleString;
-    if (mn) mn.textContent = Math.round(j.saved_min_total || 0).toLocaleString;
+    const fmt = (w) => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString()}`;
+    if (cnt) cnt.textContent = (j.total_count || 0).toLocaleString();
+    if (mn) mn.textContent = Math.round(j.saved_min_total || 0).toLocaleString();
     if (vv) vv.textContent = fmt(j.value_won || 0);
     if (kw) kw.textContent = fmt(j.krw_paid || 0);
     if (roi) roi.textContent = j.roi_x != null ? Math.round(j.roi_x) : '—';
@@ -1337,12 +1337,12 @@ if (SR) {
       </div>
       <div class="summary">${(j.summary || '').replace(/</g,'&lt;')}</div>
       ${newsHtml ? `<div class="news">${newsHtml}</div>` : ''}
-      <div class="source">${src.naver ? 'naver 뉴스' : 'sim'} · ${src.llm ? 'claude 요약' : 'rule'} · ${trigger.lvl || ''} · 약 ${(trigger.ppltn||0).toLocaleString}명</div>
+      <div class="source">${src.naver ? 'naver 뉴스' : 'sim'} · ${src.llm ? 'claude 요약' : 'rule'} · ${trigger.lvl || ''} · 약 ${(trigger.ppltn||0).toLocaleString()}명</div>
     `;
-    toast.querySelector('.close').addEventListener('click',  => toast.classList.remove('show'));
-    requestAnimationFrame( => toast.classList.add('show'));
+    toast.querySelector('.close').addEventListener('click', () => toast.classList.remove('show'));
+    requestAnimationFrame(() => toast.classList.add('show'));
     if (_toastTimer) clearTimeout(_toastTimer);
-    _toastTimer = setTimeout( => toast.classList.remove('show'), 30000);
+    _toastTimer = setTimeout(() => toast.classList.remove('show'), 30000);
   }
 
   // ───── 좌하단 디버그 바 (눈에 잘 보이도록) ─────
@@ -1351,21 +1351,21 @@ if (SR) {
   dbgEl.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:99999;background:rgba(255,94,87,0.12);border:2px solid #ff5e57;border-radius:8px;padding:8px 14px;font:12px ui-monospace,Consolas,monospace;color:#fff;line-height:1.5;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.5);min-width:340px';
   document.body.appendChild(dbgEl);
   const _dbg = { ws:'init', sta:'잠실', sent:0, recv:0, last:'-' };
-  function updDbg {
+  function updDbg() {
     const c = _dbg.ws==='open' ? '#7dd3d3' : _dbg.ws==='connecting' ? '#f0b46a' : '#ff5e57';
     dbgEl.innerHTML = `<span style="color:#ff5e57;font-weight:700">[DEBUG ${VER}]</span><br>` +
       `WS:<b style="color:${c}">${_dbg.ws}</b>  STA:<b style="color:#7dd3d3">${_dbg.sta}</b>  TX:${_dbg.sent}  RX:${_dbg.recv}  last:${_dbg.last}`;
   }
-  updDbg;
+  updDbg();
 
-  function connect {
-    try { if (ws) ws.close; } catch {}
-    _dbg.ws='connecting'; updDbg;
+  function connect() {
+    try { if (ws) ws.close(); } catch {}
+    _dbg.ws='connecting'; updDbg();
     ws = new WebSocket(wsUrl);
     window.LIVE_WS = ws;  // incident_log 송신용
-    ws.onopen =  => {
-      _dbg.ws='open'; updDbg;
-      queryArr; queryPop;
+    ws.onopen = () => {
+      _dbg.ws='open'; updDbg();
+      queryArr(); queryPop();
       arrT = setInterval(queryArr, 20000);
       popT = setInterval(queryPop, 60000);
     };
@@ -1373,30 +1373,30 @@ if (SR) {
       _dbg.recv++;
       try {
         const j = JSON.parse(ev.data);
-        _dbg.last = j.type || 'bev'; updDbg;
+        _dbg.last = j.type || 'bev'; updDbg();
         if (j.type === 'arrival') applyArrival(j);
         else if (j.type === 'population') applyPpltn(j);
         else if (j.type === 'context') showContextToast(j);
         else if (j.type === 'impact_summary') applyImpactPill(j);
         else applyBev(j);
-      } catch { _dbg.last='parse_err'; updDbg; }
+      } catch { _dbg.last='parse_err'; updDbg(); }
     };
-    ws.onclose =  => { _dbg.ws='closed'; updDbg; if (arrT) clearInterval(arrT); if (popT) clearInterval(popT); setTimeout(connect, 3000); };
-    ws.onerror =  => { _dbg.ws='error'; updDbg; };
+    ws.onclose = () => { _dbg.ws='closed'; updDbg(); if (arrT) clearInterval(arrT); if (popT) clearInterval(popT); setTimeout(connect, 3000); };
+    ws.onerror = () => { _dbg.ws='error'; updDbg(); };
   }
   function send(o) {
-    if (!ws || ws.readyState !== 1) { _dbg.last='WS_NOT_READY'; updDbg; return false; }
-    try { ws.send(JSON.stringify(o)); _dbg.sent++; updDbg; return true; } catch { return false; }
+    if (!ws || ws.readyState !== 1) { _dbg.last='WS_NOT_READY'; updDbg(); return false; }
+    try { ws.send(JSON.stringify(o)); _dbg.sent++; updDbg(); return true; } catch { return false; }
   }
-  function queryArr { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
-  function queryPop { send({ type: 'population_query', poi: station.poi }); }
+  function queryArr() { send({ type: 'arrival_query', stationName: station.name, line: station.line }); }
+  function queryPop() { send({ type: 'population_query', poi: station.poi }); }
 
-  connect;
+  connect();
 
   window.LIVE = {
     setStation(name, line, poi) {
       station.name = name; station.line = line; station.poi = poi;
-      _dbg.sta = `${name}/${poi||'—'}`; updDbg;
+      _dbg.sta = `${name}/${poi||'—'}`; updDbg();
       lastPop = null;
       document.getElementById('fc-arr-v').textContent = '—분';
       document.getElementById('fc-arr-sub').textContent = `${name} 갱신 중...`;
@@ -1406,19 +1406,19 @@ if (SR) {
         document.getElementById('fc-pop-v').textContent = '—명';
         document.getElementById('fc-pop-sub').textContent = '인구 데이터 없음 (시티데이터 미지원 역)';
         setCard('fc-pop', 'dim');
-        const ok1 = queryArr;
-        if (!ok1) setTimeout( => queryArr, 1500);
+        const ok1 = queryArr();
+        if (!ok1) setTimeout(() => queryArr(), 1500);
         return;
       }
       document.getElementById('fc-pop-v').textContent = '—명';
       document.getElementById('fc-pop-sub').textContent = `${poi} 갱신 중...`;
       setCard('fc-pop', 'dim');
-      const ok1 = queryArr;
-      const ok2 = queryPop;
-      if (!ok1 || !ok2) setTimeout( => { queryArr; queryPop; }, 1500);
+      const ok1 = queryArr();
+      const ok2 = queryPop();
+      if (!ok1 || !ok2) setTimeout(() => { queryArr(); queryPop(); }, 1500);
     },
   };
-});
+})();
 </script>
 <script src="../shared/health_pill.js" defer></script>
 </body>

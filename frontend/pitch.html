@@ -229,7 +229,7 @@
   @media print { .print-btn { display: none !important; } }
 </style>
 <script>
-(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -252,7 +252,7 @@
   </div>
 <script>
 // /api/docs 링크 자동 도출 (host 기반)
-(function() {
+(function(){
   const apiDocsURL = window.METROEYES_BACKEND + '/api/docs';
   document.getElementById('api-docs-link').href = apiDocsURL;
 })();
@@ -272,12 +272,12 @@
   <span style="color: var(--muted-2); font-size: 14px; margin-left: auto;">/health 8s + /api/v1/dispersion 12s</span>
 </div>
 <script>
-(async function pollDispersionPitch {
+(async function pollDispersionPitch() {
   const url = window.METROEYES_BACKEND + '/api/v1/dispersion';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
         document.getElementById('plk-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
         document.getElementById('plk-peak').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
@@ -285,7 +285,7 @@
     }
   } catch {}
   setTimeout(pollDispersionPitch, 12000);
-});
+})();
 </script>
 <div id="plk-stations" hidden style="margin-bottom: 10px; padding: 6px 14px; background: rgba(125,211,211,.04); border: 1px solid var(--line); border-radius: 8px; font-size: 13px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
   <span style="color: var(--muted); font-size: 14px;">📍 핫스팟:</span>
@@ -304,12 +304,12 @@
   <span id="pitch-tp-list" style="display: contents;"></span>
 </div>
 <script>
-(async function pollTransferPitch {
+(async function pollTransferPitch() {
   const url = window.METROEYES_BACKEND + '/api/v1/transfer_priority';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
         document.getElementById('pitch-tp-rationale').textContent = j.rationale;
         const sl = document.getElementById('pitch-tp-list');
@@ -321,15 +321,15 @@
     }
   } catch {}
   setTimeout(pollTransferPitch, 60000);
-});
+})();
 </script>
 <script>
-(async function pollODPitch {
+(async function pollODPitch() {
   const url = window.METROEYES_BACKEND + '/api/v1/od_asymmetry';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.priority_stations && j.priority_stations.length > 0) {
         document.getElementById('pitch-od-rationale').textContent = j.rationale;
         const isDep = j.priority_type === 'departure';
@@ -342,7 +342,7 @@
     }
   } catch {}
   setTimeout(pollODPitch, 60000);
-});
+})();
 </script>
 <div id="pitch-hourly" hidden style="margin-bottom: 14px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;">
   <div style="font-size: 14px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;">⏰ 시간대 분산 응답 분포 (라이브) — ROI v3 시간 비대칭 가설 실증</div>
@@ -355,23 +355,23 @@
   </div>
 </div>
 <script>
-(async function pollPitchKPI {
+(async function pollPitchKPI() {
   const url = window.METROEYES_BACKEND + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
-    const j = await r.json;
+    const j = await r.json();
     const im = j.impact;
     if (im && im.total_count > 0) {
-      const fmt = w => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString}`;
-      document.getElementById('plk-cnt').textContent = im.total_count.toLocaleString;
-      document.getElementById('plk-min').textContent = Math.round(im.saved_min_total).toLocaleString;
+      const fmt = w => w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
+      document.getElementById('plk-cnt').textContent = im.total_count.toLocaleString();
+      document.getElementById('plk-min').textContent = Math.round(im.saved_min_total).toLocaleString();
       document.getElementById('plk-val').textContent = fmt(im.value_won);
       document.getElementById('plk-roi').textContent = im.roi_x ? Math.round(im.roi_x) + 'x' : '—x';
       // tier 분포 chip
       if (im.tier_counts) {
-        document.getElementById('plk-tier-basic').textContent = (im.tier_counts.basic || 0).toLocaleString;
-        document.getElementById('plk-tier-od').textContent = (im.tier_counts.od || 0).toLocaleString;
-        document.getElementById('plk-tier-tp').textContent = (im.tier_counts.transfer || 0).toLocaleString;
+        document.getElementById('plk-tier-basic').textContent = (im.tier_counts.basic || 0).toLocaleString();
+        document.getElementById('plk-tier-od').textContent = (im.tier_counts.od || 0).toLocaleString();
+        document.getElementById('plk-tier-tp').textContent = (im.tier_counts.transfer || 0).toLocaleString();
       }
       document.getElementById('pitch-live-kpi').hidden = false;
       // 라이브 응답률 추정 표시 (slider 옆)
@@ -414,7 +414,7 @@
     }
   } catch {}
   setTimeout(pollPitchKPI, 8000);
-});
+})();
 </script>
 
 <h1 id="hero-h1">시민 분산 한 번에 <span class="accent">+200원</span>, 사회적 가치 <span class="accent">1,393억/년</span></h1>
@@ -450,7 +450,7 @@ const I18N_PITCH = {
   },
 };
 let _curLang = 'ko';
-document.getElementById('lang-toggle').addEventListener('click',  => {
+document.getElementById('lang-toggle').addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curLang = order[(order.indexOf(_curLang) + 1) % 4];
   const t = I18N_PITCH[_curLang];
@@ -547,29 +547,29 @@ function applyROI(rate) {
   const r = simulateROI(rate, 1.0);
   const rLow = simulateROI(rate, 0.85);
   const rHigh = simulateROI(rate, 1.15);
-  document.getElementById('kpi-net').textContent = r.net.toLocaleString;
-  document.getElementById('kpi-roi').textContent = r.roi.toLocaleString;
+  document.getElementById('kpi-net').textContent = r.net.toLocaleString();
+  document.getElementById('kpi-roi').textContent = r.roi.toLocaleString();
   document.getElementById('kpi-min').textContent = r.minSaved;
-  document.getElementById('kpi-cost').textContent = r.cost.toLocaleString;
+  document.getElementById('kpi-cost').textContent = r.cost.toLocaleString();
   document.getElementById('kpi-infra').textContent = r.infra;
   document.getElementById('kpi-stations').textContent = r.stations;
   // CI 시나리오 갱신
   const ciRate = document.getElementById('ci-rate');
   if (ciRate) {
     ciRate.textContent = (rate * 100).toFixed(0) + '%';
-    document.getElementById('ci-low').textContent = rLow.net.toLocaleString;
-    document.getElementById('ci-low-roi').textContent = rLow.roi.toLocaleString;
-    document.getElementById('ci-mid').textContent = r.net.toLocaleString;
-    document.getElementById('ci-mid-roi').textContent = r.roi.toLocaleString;
-    document.getElementById('ci-high').textContent = rHigh.net.toLocaleString;
-    document.getElementById('ci-high-roi').textContent = rHigh.roi.toLocaleString;
+    document.getElementById('ci-low').textContent = rLow.net.toLocaleString();
+    document.getElementById('ci-low-roi').textContent = rLow.roi.toLocaleString();
+    document.getElementById('ci-mid').textContent = r.net.toLocaleString();
+    document.getElementById('ci-mid-roi').textContent = r.roi.toLocaleString();
+    document.getElementById('ci-high').textContent = rHigh.net.toLocaleString();
+    document.getElementById('ci-high-roi').textContent = rHigh.roi.toLocaleString();
     const bandWidth = (rHigh.net - rLow.net) / 2;
-    document.getElementById('ci-band').textContent = `밴드 폭 ±${bandWidth.toLocaleString}억`;
+    document.getElementById('ci-band').textContent = `밴드 폭 ±${bandWidth.toLocaleString()}억`;
   }
 }
 const slider = document.getElementById('resp-slider');
 const respPct = document.getElementById('resp-pct');
-slider.addEventListener('input',  => {
+slider.addEventListener('input', () => {
   const r = parseInt(slider.value, 10) / 100;
   respPct.textContent = slider.value;
   applyROI(r);
@@ -612,11 +612,11 @@ function drawROICurve(currentRate) {
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = padT + plotH * i / 4;
-    ctx.beginPath; ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + plotW, y); ctx.stroke();
   }
   for (let i = 0; i <= 8; i++) {
     const x = padL + plotW * i / 8;
-    ctx.beginPath; ctx.moveTo(x, padT); ctx.lineTo(x, padT + plotH); ctx.stroke;
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + plotH); ctx.stroke();
   }
 
   // x축 응답률 라벨
@@ -632,17 +632,17 @@ function drawROICurve(currentRate) {
   function plot(values, color, scale) {
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
-    ctx.beginPath;
+    ctx.beginPath();
     samples.forEach((s, i) => {
       const x = padL + (i / (xN-1)) * plotW;
       const y = padT + plotH - (s[values] / scale) * plotH;
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     });
-    ctx.stroke;
+    ctx.stroke();
   }
   // ★ 민감도 ±15% CI band — net 곡선 위/아래 영역 fill (보수/낙관)
   ctx.fillStyle = 'rgba(125,211,211,.10)';
-  ctx.beginPath;
+  ctx.beginPath();
   samplesHigh.forEach((s, i) => {
     const x = padL + (i / (xN-1)) * plotW;
     const y = padT + plotH - (s.net / maxNet) * plotH;
@@ -654,20 +654,20 @@ function drawROICurve(currentRate) {
     const y = padT + plotH - (s.net / maxNet) * plotH;
     ctx.lineTo(x, y);
   }
-  ctx.closePath;
-  ctx.fill;
+  ctx.closePath();
+  ctx.fill();
   // 보수/낙관 점선 가이드
   ctx.strokeStyle = 'rgba(125,211,211,.35)';
   ctx.setLineDash([3, 3]);
   ctx.lineWidth = 1;
   for (const arr of [samplesLow, samplesHigh]) {
-    ctx.beginPath;
+    ctx.beginPath();
     arr.forEach((s, i) => {
       const x = padL + (i / (xN-1)) * plotW;
       const y = padT + plotH - (s.net / maxNet) * plotH;
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     });
-    ctx.stroke;
+    ctx.stroke();
   }
   ctx.setLineDash([]);
 
@@ -682,23 +682,23 @@ function drawROICurve(currentRate) {
     const x = padL + (idx / (xN-1)) * plotW;
     const y = padT + plotH - (s.net / maxNet) * plotH;
     ctx.fillStyle = getCSS('--text') || '#fff';
-    ctx.beginPath; ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill;
-    ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.lineWidth = 2; ctx.stroke;
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.lineWidth = 2; ctx.stroke();
     ctx.fillStyle = 'rgba(0,0,0,.6)';
     ctx.fillRect(x - 60, y - 32, 120, 22);
     ctx.fillStyle = getCSS('--accent') || '#7dd3d3';
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${idx}% → ${s.net.toLocaleString}억 / ${s.roi}x`, x, y - 18);
+    ctx.fillText(`${idx}% → ${s.net.toLocaleString()}억 / ${s.roi}x`, x, y - 18);
   }
 }
 function getCSS(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim;
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
 applyROI(0.3);
-window.addEventListener('load',  => drawROICurve(0.3));
-window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100));
+window.addEventListener('load', () => drawROICurve(0.3));
+window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/100));
 </script>
 
 <h2>시나리오 민감도 — 응답률 5단계</h2>
@@ -811,13 +811,13 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
   </div>
   <p style="margin: 6px 0; color: var(--muted-2); font-size: 14px;">
     <b style="color: var(--text);">반대로 8호선은 16.6M분 / ROI 75x (가장 낮음) — 우선도 870 같지만 통행량 절대치 작음</b>.
-    "예산 1순위는 2호선" 이라는 정책 답을 정량적으로 도출 — <b style="color: #10b981;">CI 자동 회귀 검증로 자동 검증</b>.
+    "예산 1순위는 2호선" 이라는 정책 답을 정량적으로 도출 — <b style="color: #10b981;">CI 6 회귀 가드로 자동 검증</b>.
   </p>
   <p style="margin: 8px 0 0; padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 14px; color: var(--muted-2);">
     <b style="color: #10b981;">🎯 한 단계 더 (cycle 368) — 호선 × 시간대 우선순위 매트릭스</b>:
     Top 5 cell 모두 priority 158 — <b style="color: var(--text);">2호선 9시 / 17시 / 19시 + 3호선 17시 / 19시</b>.
     Bottom 5 = 1호선 5~6시 (priority 9~15). 운영자 일정표에 직접 배정 가능.
-    <code>scripts/eda_line_hour_priority.py</code> · CI 자동 회귀 검증 자동 검증.
+    <code>scripts/eda_line_hour_priority.py</code> · CI 7 회귀 가드 자동 검증.
   </p>
 </div>
 
@@ -828,12 +828,12 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
   <div id="lrl-rec" style="margin-top:8px;font-size: 13px;color:var(--muted);line-height:1.5;"></div>
 </div>
 <script>
-(async function pollLineRoi {
+(async function pollLineRoi() {
   const url = window.METROEYES_BACKEND + '/api/v1/line_roi';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (!r.ok) throw new Error('fail');
-    const j = await r.json;
+    const j = await r.json();
     if (!j.ok || !j.lines) throw new Error('no data');
     document.getElementById('line-roi-live').hidden = false;
     const peakEl = document.getElementById('lrl-peak');
@@ -862,9 +862,9 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
       // bar
       ctx.fillStyle = COLORS[i % COLORS.length];
       ctx.globalAlpha = 0.82;
-      ctx.beginPath;
+      ctx.beginPath();
       ctx.roundRect(x, H - 22 - bh, barW, bh, [3, 3, 0, 0]);
-      ctx.fill;
+      ctx.fill();
       ctx.globalAlpha = 1.0;
       // roi label
       ctx.fillStyle = COLORS[i % COLORS.length];
@@ -882,7 +882,7 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
     ctx.textAlign = 'left';
   } catch {}
   setTimeout(pollLineRoi, 60000);
-});
+})();
 </script>
 
 <h2>실 데이터 분산 효과 — 평탄화 정량 검증</h2>
@@ -1119,7 +1119,7 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
     <h3>💰 차등 보상 자동 매칭 (글로벌 최초)</h3>
     <ul>
       <li><b>4단 차등 정책</b>: ₩100 (기본) / ₩200 (30%p) / ₩300 (OD 우선) / ₩400 (환승역)</li>
-      <li><b>backend 자동 가산</b>: <code>_bonus_krw</code> 가 station 매칭 → 보상 즉시 가산 (시민 직접 입력 불필요)</li>
+      <li><b>backend 자동 가산</b>: <code>_bonus_krw()</code> 가 station 매칭 → 보상 즉시 가산 (시민 직접 입력 불필요)</li>
       <li><b>tier_counts 라이브 분포</b>: basic/od/transfer 비례 막대 6 페이지 동기화</li>
       <li><b>EDA 직접 매핑</b>: 그림 4(OD 12x) → ₩300 / 그림 5(환승 +1.56) → ₩400 정량 근거</li>
       <li>런던/도쿄/싱가포르 모두 단일 정액 — MetroEyes 만 시간×역×비대칭 3차원 자동 차등</li>
@@ -1276,12 +1276,12 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
   <div id="ds-summary" style="margin-top: 8px; font-size: 13px; color: var(--muted-2);"></div>
 </div>
 <script>
-(async function pollDataSources {
+(async function pollDataSources() {
   const url = window.METROEYES_BACKEND + '/api/v1/data_sources';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
     if (!r.ok) throw new Error('fail');
-    const j = await r.json;
+    const j = await r.json();
     if (!j.ok || !j.data_sources) throw new Error('no data');
     document.getElementById('ds-live').hidden = false;
     const chips = document.getElementById('ds-chips');
@@ -1302,7 +1302,7 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
     }
   } catch {}
   setTimeout(pollDataSources, 30000);
-});
+})();
 </script>
 
 <h2>EDA v3 — 실 CardSubwayTime 직접 회귀 <span class="badge">R²=0.931</span></h2>
@@ -1351,11 +1351,11 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
 </div>
 
 <div style="margin-top: 14px; padding: 14px 18px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(245,158,11,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 12px;">
-  <div style="font-size: 14px; color: #a78bfa; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px;">🎯 v6.15 MetroEyes 제출 완료 (자동 사이클 운영 중)</div>
+  <div style="font-size: 14px; color: #a78bfa; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px;">🎯 v6.15 MetroEyes 제출 완료 (D-1, 541+ 사이클)</div>
   <div style="font-size: 13px; line-height: 1.7; color: var(--muted);">
     <b style="color: var(--text);">설계</b> (4단 차등 정책 정의) →
     <b style="color: var(--text);">EDA</b> (3 실 데이터 검증: 분산 σ −9% / OD 12x / 환승 +1.56) →
-    <b style="color: var(--text);">backend</b> (<code>_bonus_krw</code> 자동 가산 + tier_counts 라이브) →
+    <b style="color: var(--text);">backend</b> (<code>_bonus_krw()</code> 자동 가산 + tier_counts 라이브) →
     <b style="color: var(--text);">UI</b> (6 페이지 분포 chip + 시민 PWA 4언어) →
     <b style="color: var(--text);">BI</b> (13 endpoint REST + OpenAPI 3.0).
     <br>
@@ -1522,7 +1522,7 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
     <b style="color: var(--text);">탄소 절감 정량 EDA (cycle 390)</b>: 30% 시나리오 분산 행동 236M회/년 × CO₂/회 →
     <b style="color: #10b981;">ultra 0.012 kg = 2,834 톤/년 (광고, 한국인 236년 배출 등가)</b> · <b style="color: #f59e0b;">standard 0.088 kg = 20,837 톤 (실효 7배)</b>.
     derivation: 자가용 회피율 (ultra 0.7% / standard 5%) × 8.4km × 0.21 kg/km. 출처: 환경부 2023 / 서울교통공사 2023 / 한국교통연구원 modal split.
-    <code>scripts/eda_co2_savings.py</code> · CI 자동 회귀 검증 자동 검증.
+    <code>scripts/eda_co2_savings.py</code> · CI 6 회귀 가드 자동 검증.
   </p>
 </div>
 
@@ -1640,7 +1640,7 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
 </table>
 
 <p style="font-size: 14px; color: var(--muted); margin-top: 8px;">
-  <b style="color: var(--text);">8-Moat</b>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10 공공 API fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/자동 회귀 검증 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 ⑧ 시민신고 FAB + 오프라인큐 — 양면 가치사슬 완성
+  <b style="color: var(--text);">8-Moat</b>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10 공공 API fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/844 회귀 가드 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 ⑧ 시민신고 FAB + 오프라인큐 — 양면 가치사슬 완성
 </p>
 
 <h3 style="margin-top: 28px;">🗓 3년 로드맵 — Y3 ₩200억 + Series A ₩50억</h3>
@@ -1726,7 +1726,7 @@ window.addEventListener('resize',  => drawROICurve(parseInt(slider.value,10)/100
       ① <b style="color: var(--text);">기본 ₩200</b>: 분산률 30%p에 비례 (20분 통근 × 167원/분 × 6%p 효과).
       ② <b style="color: var(--text);">OD 우선 +₩100 (₩300)</b>: 그림 4 — 출근 도착지 OFF/ON 12배 비대칭 (삼성/역삼/광화문) → 분산 효과 1.5배 가속.
       ③ <b style="color: var(--text);">환승역 +₩200 (₩400)</b>: 그림 5 — 호선 간 비대칭 차이 +1.56 (충무로/연신내) → 양 호선 동시 절감 → 분산 가치 2배.
-      ④ backend <code>_bonus_krw</code> 가 station 매칭 → 자동 가산 (시민 추가 행동 불필요).
+      ④ backend <code>_bonus_krw()</code> 가 station 매칭 → 자동 가산 (시민 추가 행동 불필요).
     </p>
   </div>
   <div class="card" style="background: linear-gradient(135deg, rgba(16,185,129,.06), rgba(125,211,211,.04)); border-color: rgba(16,185,129,.45);">
@@ -1776,7 +1776,7 @@ document.getElementById('api-curl-link').href = window.METROEYES_BACKEND + '/api
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 1차 서류 D-1
   <br>
-  <span style="color: var(--accent);">자동 모드 v6.15 —  🎉 (Monte Carlo 95% CI + 호선 ROI 708x + canonical KPI drift 자동 차단 + 자동 회귀 검증 + 10 공공API + 1-Pager 4언어 + RUNBOOK + dday.ps1/sh + Makefile + 3D OpenFreeMap + citydata 통합)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
+  <span style="color: var(--accent);">자동 모드 v6.15 — 541+ 사이클 🎉 (Monte Carlo 95% CI + 호선 ROI 708x + canonical KPI drift 자동 차단 + 844 회귀 가드 + 10 공공API + 1-Pager 4언어 + RUNBOOK + dday.ps1/sh + Makefile + 3D OpenFreeMap + citydata 통합)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
 </footer>
 
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
@@ -1799,7 +1799,7 @@ if (!window.matchMedia('print').matches && 'IntersectionObserver' in window) {
 }
 // ─ 카운트업 (.kpi .val에 data-target 있으면 viewport 진입 시 0→target) ─
 function pitchCountUp(el, target, dur = 1400) {
-  const t0 = performance.now;
+  const t0 = performance.now();
   const isPct = /%/.test(el.textContent);
   const hasX = /x$/.test(target);
   const numTarget = parseFloat(String(target).replace(/[^\d.\-]/g, ''));
@@ -1812,7 +1812,7 @@ function pitchCountUp(el, target, dur = 1400) {
     if (hasX) txt = Math.round(v) + 'x';
     else if (/억/.test(target)) txt = (v).toFixed(target.includes('.') ? 1 : 0) + (target.match(/억\/년?|\/년/)?.[0] || '억');
     else if (/만/.test(target)) txt = (v).toFixed(1) + '만';
-    else txt = Math.round(v).toLocaleString + (isPct ? '%' : '');
+    else txt = Math.round(v).toLocaleString() + (isPct ? '%' : '');
     el.textContent = txt;
     if (p < 1) requestAnimationFrame(tick);
     else el.textContent = target;  // 마지막은 원본 그대로 (소수점/단위 보존)
@@ -1824,7 +1824,7 @@ if ('IntersectionObserver' in window) {
     entries.forEach(e => {
       if (e.isIntersecting && !e.target.dataset.counted) {
         e.target.dataset.counted = '1';
-        const orig = e.target.textContent.trim;
+        const orig = e.target.textContent.trim();
         if (orig && /[\d]/.test(orig)) pitchCountUp(e.target, orig);
         kpiIo.unobserve(e.target);
       }

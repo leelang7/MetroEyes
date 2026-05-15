@@ -55,7 +55,7 @@
   }
 </style>
 <script>
-(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -67,14 +67,14 @@
 </head>
 <body data-domain="ads">
 <script>
-(function() {
+(function () {
   const CUR = 'v3.7-pitchpage-2026-05-05';
   if (sessionStorage.getItem('me_ver_ad') !== CUR) {
     sessionStorage.setItem('me_ver_ad', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
-    if (navType !== 'reload') location.reload;
+    if (navType !== 'reload') location.reload();
   }
-});
+})();
 </script>
 <div class="domain-bar ads"></div>
 <header>
@@ -106,9 +106,9 @@ const I18N_OP_AD = {
         ad_llm_h: '🤖 AI 自動価格根拠 (Claude Haiku · ライブ)',
         ad_llm_intro: '<b>その時刻・POIの単価が高騰する理由</b>をAIが自然言語で自動説明。citydata 急増検出 → Naver 検索 → Claude Haiku 80字要約 → broadcast。' },
 };
-let _curAdLang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+let _curAdLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_OP_AD[_curAdLang]) _curAdLang = 'ko';
-function applyAdI18n {
+function applyAdI18n() {
   const t = I18N_OP_AD[_curAdLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
@@ -121,10 +121,10 @@ function applyAdI18n {
   if (btn) btn.textContent = t.flag;
   document.documentElement.lang = _curAdLang;
 }
-document.getElementById('lang-toggle')?.addEventListener('click',  => {
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curAdLang = order[(order.indexOf(_curAdLang) + 1) % 4];
-  applyAdI18n;
+  applyAdI18n();
 });
 window.addEventListener('DOMContentLoaded', applyAdI18n);
 </script>
@@ -153,30 +153,30 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
       <span style="margin-left: 4px; color: var(--muted);">UV<b id="ad-env-uv" style="color: var(--text); margin-left:3px;">—</b></span>
     </span>
 <script>
-(async function pollAdTier {
+(async function pollAdTier() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       const tc = j.impact && j.impact.tier_counts;
       if (tc && (tc.basic + tc.od + tc.transfer) > 0) {
-        document.getElementById('ad-tier-basic').textContent = (tc.basic || 0).toLocaleString;
-        document.getElementById('ad-tier-od').textContent = (tc.od || 0).toLocaleString;
-        document.getElementById('ad-tier-tp').textContent = (tc.transfer || 0).toLocaleString;
+        document.getElementById('ad-tier-basic').textContent = (tc.basic || 0).toLocaleString();
+        document.getElementById('ad-tier-od').textContent = (tc.od || 0).toLocaleString();
+        document.getElementById('ad-tier-tp').textContent = (tc.transfer || 0).toLocaleString();
         document.getElementById('ad-tier-pill').hidden = false;
       }
     }
   } catch {}
   setTimeout(pollAdTier, 8000);
-});
+})();
 </script>
 <script>
 // 광고주 컨텍스트: 분산 효과로 인한 시간대 노출 안정성 (1 - peak_drop ≈ 노출 변동 감소)
-(async function pollDispersionAd {
+(async function pollDispersionAd() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
         document.getElementById('ad-dp-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
         // 노출 안정성: σ 감소 → 시간대별 노출 변동성 감소
@@ -186,24 +186,24 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
     }
   } catch {}
   setTimeout(pollDispersionAd, 12000);
-});
+})();
 </script>
   </div>
 <script>
-(async function pollAdKPI {
+(async function pollAdKPI() {
   const url = window.METROEYES_BACKEND + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
-    const j = await r.json;
+    const j = await r.json();
     const im = j.impact;
     if (im && im.total_count > 0) {
-      document.getElementById('ad-kpi-cnt').textContent = im.total_count.toLocaleString;
+      document.getElementById('ad-kpi-cnt').textContent = im.total_count.toLocaleString();
       document.getElementById('ad-kpi-roi').textContent = im.roi_x ? Math.round(im.roi_x) : '—';
       document.getElementById('ad-live-kpi').hidden = false;
     }
   } catch {}
   setTimeout(pollAdKPI, 8000);
-});
+})();
 </script>
 </header>
 
@@ -412,11 +412,11 @@ for (const st of STATIONS) {
     const cell = document.createElement('div');
     cell.className = 'cell';
     cell.style.background = colorFor(d);
-    cell.title = `${st} ${h}시: 인구 ${(d*100).toFixed(0)}% / 단가 ${price(st, h).toLocaleString}원`;
+    cell.title = `${st} ${h}시: 인구 ${(d*100).toFixed(0)}% / 단가 ${price(st, h).toLocaleString()}원`;
     cell.dataset.station = st;
     cell.dataset.hour = h;
     if (d > 0.7) cell.textContent = (d * 100).toFixed(0);
-    cell.addEventListener('click',  => activateStation(st));
+    cell.addEventListener('click', () => activateStation(st));
     heat.append(cell);
   }
 }
@@ -432,8 +432,8 @@ const peakHour = peakIdx % 24;
 const fixedPrice = BASE_PRICE; // 기존 고정가
 const uplift = ((avgPrice - fixedPrice) / fixedPrice) * 100;
 
-document.getElementById('kpi-avg').textContent = `${Math.round(avgPrice).toLocaleString}원`;
-document.getElementById('kpi-peak').textContent = `${peakPrice.toLocaleString}원`;
+document.getElementById('kpi-avg').textContent = `${Math.round(avgPrice).toLocaleString()}원`;
+document.getElementById('kpi-peak').textContent = `${peakPrice.toLocaleString()}원`;
 document.getElementById('kpi-peak-when').textContent = `${peakStation} ${peakHour}시`;
 document.getElementById('kpi-uplift').textContent = `${uplift > 0 ? '+' : ''}${uplift.toFixed(1)}%`;
 const marketAddRev = 2000 * (uplift / 100); // 2,000억 시장 × uplift
@@ -451,7 +451,7 @@ function activateStation(st) {
   for (let h = 5; h < 24; h++) hourPrices.push({ h, p: price(st, h), d: densityAt(st, h) });
   hourPrices.sort((a, b) => b.p - a.p);
   const top3 = hourPrices.slice(0, 3);
-  const bot3 = hourPrices.slice(-3).reverse;
+  const bot3 = hourPrices.slice(-3).reverse();
   const banner = (label, color) => {
     const div = document.createElement('div');
     div.style.cssText = `font-size: 14px; letter-spacing: 1.4px; color: ${color}; padding: 6px 0 2px; font-weight: 500;`;
@@ -462,20 +462,20 @@ function activateStation(st) {
   for (const r of top3) {
     const row = document.createElement('div'); row.className = 'price-row';
     row.innerHTML = `<div><span class="name">${r.h}시</span><span class="meta">인구 ${(r.d*100).toFixed(0)}%</span></div>
-                     <div><span class="value">${r.p.toLocaleString}원</span><span class="delta">+${(((r.p/fixedPrice)-1)*100).toFixed(0)}%</span></div>`;
+                     <div><span class="value">${r.p.toLocaleString()}원</span><span class="delta">+${(((r.p/fixedPrice)-1)*100).toFixed(0)}%</span></div>`;
     rows.append(row);
   }
   rows.append(banner('▼ 한산 (인하)', '#7dd3d3'));
   for (const r of bot3) {
     const row = document.createElement('div'); row.className = 'price-row';
     row.innerHTML = `<div><span class="name">${r.h}시</span><span class="meta">인구 ${(r.d*100).toFixed(0)}%</span></div>
-                     <div><span class="value">${r.p.toLocaleString}원</span><span class="delta" style="color: #7dd3d3">${(((r.p/fixedPrice)-1)*100).toFixed(0)}%</span></div>`;
+                     <div><span class="value">${r.p.toLocaleString()}원</span><span class="delta" style="color: #7dd3d3">${(((r.p/fixedPrice)-1)*100).toFixed(0)}%</span></div>`;
     rows.append(row);
   }
 }
 
 document.querySelectorAll('.station-picker button').forEach(b =>
-  b.addEventListener('click',  => activateStation(b.dataset.st)));
+  b.addEventListener('click', () => activateStation(b.dataset.st)));
 activateStation('강남역');
 
 // ============== 라이브 citydata 연동 ==============
@@ -491,15 +491,15 @@ const VER_AD = 'v3.2-ad-live';
 const dbgEl = document.createElement('div');
 dbgEl.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:99999;background:rgba(16,185,129,0.12);border:2px solid #10b981;border-radius:8px;padding:8px 14px;font:12px ui-monospace,monospace;color:#fff;line-height:1.5;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.5);min-width:340px';
 document.body.appendChild(dbgEl);
-function updDbg {
+function updDbg() {
   const c = _wsState==='open' ? '#10b981' : _wsState==='connecting' ? '#f0b46a' : '#ff5e57';
   const liveCount = Object.keys(liveDensity).length;
   dbgEl.innerHTML = `<span style="color:#10b981;font-weight:700">[AD LIVE ${VER_AD}]</span><br>` +
-    `WS:<b style="color:${c}">${_wsState}</b>  LIVE POI:<b style="color:#10b981">${liveCount}/${STATIONS.length}</b>  현 시각: ${new Date.toTimeString.slice(0,5)}`;
+    `WS:<b style="color:${c}">${_wsState}</b>  LIVE POI:<b style="color:#10b981">${liveCount}/${STATIONS.length}</b>  현 시각: ${new Date().toTimeString().slice(0,5)}`;
 }
-updDbg;
+updDbg();
 
-function pickWsUrl {
+function pickWsUrl() {
   const p = new URLSearchParams(location.search).get('ws');
   if (p) return p;
   if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
@@ -521,42 +521,42 @@ function applyAdLlmContext(j) {
   const lvl = (j.trigger && j.trigger.lvl) || j.congest_lvl || '';
   const ppl = (j.trigger && j.trigger.ppltn) || j.ppltn_max || null;
   if (poiEl) poiEl.textContent = poi || '—';
-  if (trgEl) trgEl.textContent = [lvl, ppl ? ppl.toLocaleString + '명' : ''].filter(Boolean).join(' · ') || '—';
+  if (trgEl) trgEl.textContent = [lvl, ppl ? ppl.toLocaleString() + '명' : ''].filter(Boolean).join(' · ') || '—';
   txtEl.textContent = text.slice(0, 220);
-  if (tsEl) tsEl.textContent = `갱신 ${new Date.toLocaleTimeString} · Claude Haiku 4.5`;
+  if (tsEl) tsEl.textContent = `갱신 ${new Date().toLocaleTimeString()} · Claude Haiku 4.5`;
   card.hidden = false;
   try {
     localStorage.setItem(AD_LLM_KEY, JSON.stringify({
-      poi, lvl, ppl, text: text.slice(0, 220), at: Date.now
+      poi, lvl, ppl, text: text.slice(0, 220), at: Date.now()
     }));
   } catch {}
 }
 // 페이지 로드 시 직전 컨텍스트 1회 복원 — 광고주가 새 탭 열어도 마지막 근거 즉시 노출
-window.addEventListener('DOMContentLoaded',  => {
+window.addEventListener('DOMContentLoaded', () => {
   try {
     const raw = localStorage.getItem(AD_LLM_KEY);
     if (!raw) return;
     const v = JSON.parse(raw);
     // 30분 이내 컨텍스트만 복원
-    if (v && v.text && (Date.now - (v.at || 0)) < 30 * 60 * 1000) {
+    if (v && v.text && (Date.now() - (v.at || 0)) < 30 * 60 * 1000) {
       applyAdLlmContext({
         type: 'context', poi: v.poi, summary: v.text,
         trigger: { poi: v.poi, lvl: v.lvl, ppltn: v.ppl }
       });
       const tsEl = document.getElementById('ad-llm-ts');
-      if (tsEl) tsEl.textContent = `직전 캐시 (${new Date(v.at).toLocaleTimeString}) · 새 컨텍스트 수신 시 갱신`;
+      if (tsEl) tsEl.textContent = `직전 캐시 (${new Date(v.at).toLocaleTimeString()}) · 새 컨텍스트 수신 시 갱신`;
     }
   } catch {}
 });
 
-function connectAdLive {
-  try { if (_ws) _ws.close; } catch {}
-  _wsState = 'connecting'; updDbg;
-  _ws = new WebSocket(pickWsUrl);
+function connectAdLive() {
+  try { if (_ws) _ws.close(); } catch {}
+  _wsState = 'connecting'; updDbg();
+  _ws = new WebSocket(pickWsUrl());
   window.LIVE_WS = _ws;
-  _ws.onopen =  => {
-    _wsState = 'open'; updDbg;
-    requestAllPois;
+  _ws.onopen = () => {
+    _wsState = 'open'; updDbg();
+    requestAllPois();
   };
   _ws.onmessage = ev => {
     try {
@@ -565,9 +565,9 @@ function connectAdLive {
         const mid = ((j.ppltn_min || 0) + (j.ppltn_max || 0)) / 2;
         // 정규화: 5만명 = 1.0, 1만명 = 0.2 같이 max 5만 기준
         const d = Math.min(1.0, Math.max(0.05, mid / 50000));
-        liveDensity[j.poi] = { density: d, ppltn: mid, lvl: j.congest_lvl, ts: Date.now };
-        applyLiveDensity;
-        updDbg;
+        liveDensity[j.poi] = { density: d, ppltn: mid, lvl: j.congest_lvl, ts: Date.now() };
+        applyLiveDensity();
+        updDbg();
       }
       // 🤖 AI 자동 단가 근거 (cycle 356) — backend 의 폭증 컨텍스트 수신 시 카드 노출
       else if (j.type === 'context' || j.type === 'surge_context' || j.type === 'llm_context' || j.llm_text || j.summary) {
@@ -590,11 +590,11 @@ function connectAdLive {
       }
     } catch {}
   };
-  _ws.onclose =  => { _wsState='closed'; updDbg; setTimeout(connectAdLive, 5000); };
-  _ws.onerror =  => { _wsState='error'; updDbg; };
+  _ws.onclose = () => { _wsState='closed'; updDbg(); setTimeout(connectAdLive, 5000); };
+  _ws.onerror = () => { _wsState='error'; updDbg(); };
 }
 
-function requestAllPois {
+function requestAllPois() {
   if (!_ws || _ws.readyState !== 1) return;
   for (const poi of STATIONS) {
     try { _ws.send(JSON.stringify({ type: 'population_query', poi })); } catch {}
@@ -602,15 +602,15 @@ function requestAllPois {
 }
 
 // ▶︎ 시연 모드 — 30초 동안 가짜 density 변동으로 단가 라이브 갱신 시연
-document.getElementById('demo-trigger')?.addEventListener('click',  => {
+document.getElementById('demo-trigger')?.addEventListener('click', () => {
   const btn = document.getElementById('demo-trigger');
   btn.disabled = true; btn.style.opacity = '.65';
   btn.style.position = 'relative'; btn.style.overflow = 'hidden';
   btn.innerHTML = '시연 진행 중... <span id="demo-prog-ad" style="position:absolute;left:0;bottom:0;height:2px;width:0;background:#fff;transition:width .25s linear;"></span>';
-  const t0 = Date.now;
+  const t0 = Date.now();
   const T = 30000;
-  const tick =  => {
-    const dt = Date.now - t0;
+  const tick = () => {
+    const dt = Date.now() - t0;
     const p = document.getElementById('demo-prog-ad');
     if (p) p.style.width = Math.min(100, dt / T * 100) + '%';
     if (dt > T) {
@@ -626,18 +626,18 @@ document.getElementById('demo-trigger')?.addEventListener('click',  => {
       const amp = hot ? 0.30 : 0.20;
       const d = Math.max(0.15, Math.min(1.0, base + amp * Math.sin(t * 0.6 + phase)));
       const ppltn = Math.round(d * 50000);
-      liveDensity[poi] = { density: d, ppltn, lvl: d > 0.85 ? '붐빔' : d > 0.6 ? '약간 붐빔' : '보통', ts: Date.now };
+      liveDensity[poi] = { density: d, ppltn, lvl: d > 0.85 ? '붐빔' : d > 0.6 ? '약간 붐빔' : '보통', ts: Date.now() };
     });
-    applyLiveDensity;
+    applyLiveDensity();
     setTimeout(tick, 600);
   };
-  tick;
+  tick();
 });
 
 // === 광고 실 노출 보정 (TOP 5) ===
 // 명목 노출 = 정원 100% 가정 / 실 노출 = 라이브 인구 비율
 // 보정 단가 = 명목 단가 × (실/명목)  → 광고주 신뢰 ↑
-function effectiveImpressionRatio {
+function effectiveImpressionRatio() {
   const lives = Object.values(liveDensity);
   if (!lives.length) return null;
   const avgD = lives.reduce((a, b) => a + b.density, 0) / lives.length;
@@ -645,9 +645,9 @@ function effectiveImpressionRatio {
   return Math.max(0.3, Math.min(1.5, avgD / 0.5));
 }
 
-function applyLiveDensity {
+function applyLiveDensity() {
   // 현 시각 셀의 색상 + 가격을 라이브 값으로 redraw
-  const nowH = new Date.getHours;
+  const nowH = new Date().getHours();
   document.querySelectorAll('.cell[data-station]').forEach(cell => {
     const st = cell.dataset.station;
     const h = parseInt(cell.dataset.hour, 10);
@@ -657,7 +657,7 @@ function applyLiveDensity {
     cell.style.background = colorFor(live.density);
     cell.style.outline = '2px solid #10b981';
     cell.style.outlineOffset = '-1px';
-    cell.title = `${st} ${h}시 [LIVE]: ${Math.round(live.ppltn).toLocaleString}명 / ${live.lvl} / 단가 ${Math.round(BASE_PRICE * (0.6 + 1.4 * live.density)).toLocaleString}원`;
+    cell.title = `${st} ${h}시 [LIVE]: ${Math.round(live.ppltn).toLocaleString()}명 / ${live.lvl} / 단가 ${Math.round(BASE_PRICE * (0.6 + 1.4 * live.density)).toLocaleString()}원`;
     if (live.density > 0.7) cell.textContent = (live.density * 100).toFixed(0);
   });
 
@@ -668,15 +668,15 @@ function applyLiveDensity {
     const avgLivePrice = livePrices.reduce((a,b)=>a+b,0) / livePrices.length;
     const peakIdx = livePrices.indexOf(Math.max(...livePrices));
     const peakPoi = Object.keys(liveDensity)[peakIdx];
-    const liveAvg = Math.round(avgLivePrice).toLocaleString;
+    const liveAvg = Math.round(avgLivePrice).toLocaleString();
     document.getElementById('kpi-avg').innerHTML = `${liveAvg}원<span style="font-size: 13px; color:#10b981; margin-left:6px;">LIVE</span>`;
-    document.getElementById('kpi-peak').innerHTML = `${Math.round(Math.max(...livePrices)).toLocaleString}원<span style="font-size: 13px; color:#10b981; margin-left:6px;">LIVE</span>`;
+    document.getElementById('kpi-peak').innerHTML = `${Math.round(Math.max(...livePrices)).toLocaleString()}원<span style="font-size: 13px; color:#10b981; margin-left:6px;">LIVE</span>`;
     document.getElementById('kpi-peak-when').textContent = `${peakPoi} · 현재`;
     const uplift = ((avgLivePrice - BASE_PRICE) / BASE_PRICE) * 100;
     document.getElementById('kpi-uplift').textContent = `${uplift > 0 ? '+' : ''}${uplift.toFixed(1)}%`;
     document.getElementById('kpi-rev').textContent = `+${(2000 * uplift / 100).toFixed(0)}억/년`;
     // ★ 실 노출 보정 — 명목 vs 실 노출 비율
-    const ratio = effectiveImpressionRatio;
+    const ratio = effectiveImpressionRatio();
     if (ratio != null) {
       const subEl = document.getElementById('kpi-peak-when');
       if (subEl && !subEl.textContent.includes('실노출')) {
@@ -694,22 +694,22 @@ function _tickerPush(poi, oldPrice, newPrice, lvl) {
   if (pct == null || Math.abs(parseFloat(pct)) < 0.5) return;
   const up = newPrice > oldPrice;
   _ticker.events.unshift({
-    ts: new Date.toLocaleTimeString('ko', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    ts: new Date().toLocaleTimeString('ko', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
     poi: poi.replace('관광특구', '').replace('카페거리', '').slice(0, 6),
     price: newPrice, pct, up, lvl,
   });
-  if (_ticker.events.length > 20) _ticker.events.pop;
-  _renderTicker;
+  if (_ticker.events.length > 20) _ticker.events.pop();
+  _renderTicker();
 }
 
-function _renderTicker {
+function _renderTicker() {
   const el = document.getElementById('ad-ticker-list');
   if (!el) return;
   el.innerHTML = _ticker.events.slice(0, 8).map(e =>
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
       <span style="color:var(--muted);font-size: 14px;min-width:52px;">${e.ts}</span>
       <span style="color:var(--fg);font-size: 13px;min-width:56px;">${e.poi}</span>
-      <span style="font-size: 13px;font-weight:500;color:${e.up?'#ff5e57':'#7dd3d3'};min-width:56px;">${Math.round(e.price).toLocaleString}원</span>
+      <span style="font-size: 13px;font-weight:500;color:${e.up?'#ff5e57':'#7dd3d3'};min-width:56px;">${Math.round(e.price).toLocaleString()}원</span>
       <span style="font-size: 14px;color:${e.up?'#ff5e57':'#7dd3d3'};font-weight:700;">${e.up?'▲':'▼'}${Math.abs(parseFloat(e.pct))}%</span>
     </div>`
   ).join('');
@@ -722,15 +722,15 @@ function _kpiFlash(id, up) {
   const col = up ? 'rgba(255,94,87,0.25)' : 'rgba(125,211,211,0.25)';
   el.style.transition = 'background 0.1s';
   el.style.background = col;
-  setTimeout( => { el.style.background = ''; }, 600);
+  setTimeout(() => { el.style.background = ''; }, 600);
 }
 
 // applyLiveDensity를 호출할 때 ticker 업데이트
 const _origApplyLiveDensity = applyLiveDensity;
-function applyLiveDensity {
-  _origApplyLiveDensity;
+function applyLiveDensity() {
+  _origApplyLiveDensity();
   // 가격 변동 감지 + ticker push
-  const nowH = new Date.getHours;
+  const nowH = new Date().getHours();
   for (const poi of STATIONS) {
     const live = liveDensity[poi];
     if (!live) continue;
@@ -745,7 +745,7 @@ function applyLiveDensity {
 }
 
 // Ticker DOM 삽입 (insight 섹션 앞에 동적 추가)
-window.addEventListener('DOMContentLoaded',  => {
+window.addEventListener('DOMContentLoaded', () => {
   const insertBefore = document.querySelector('.insight');
   if (!insertBefore) return;
   const tickerDiv = document.createElement('div');
@@ -763,9 +763,9 @@ window.addEventListener('DOMContentLoaded',  => {
   insertBefore.parentNode.insertBefore(tickerDiv, insertBefore);
 });
 
-connectAdLive;
+connectAdLive();
 // 60초마다 라이브 갱신
-setInterval( => { if (_ws && _ws.readyState === 1) requestAllPois; }, 60000);
+setInterval(() => { if (_ws && _ws.readyState === 1) requestAllPois(); }, 60000);
 setInterval(updDbg, 30000);
 </script>
 <script src="../shared/health_pill.js" defer></script>

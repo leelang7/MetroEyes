@@ -163,7 +163,7 @@
 }
 </script>
 <script>
-(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -256,9 +256,9 @@ const I18N_OP_REALCAM = {
     pl_panel: '▼ ライブ分析パネル — 実カメラ + BEV 3D を統合した運用ダッシュボード',
   },
 };
-let _curRealLang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
+let _curRealLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
 if (!I18N_OP_REALCAM[_curRealLang]) _curRealLang = 'ko';
-function applyRealcamI18n {
+function applyRealcamI18n() {
   const t = I18N_OP_REALCAM[_curRealLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
@@ -272,10 +272,10 @@ function applyRealcamI18n {
   if (btn) btn.textContent = t.flag;
   document.documentElement.lang = _curRealLang;
 }
-document.getElementById('lang-toggle')?.addEventListener('click',  => {
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curRealLang = order[(order.indexOf(_curRealLang) + 1) % 4];
-  applyRealcamI18n;
+  applyRealcamI18n();
 });
 window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 </script>
@@ -294,29 +294,29 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       <b id="cam-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="cam-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="cam-tier-tp" style="color: #f59e0b;">0</b>
     </span>
 <script>
-(async function pollCamTier {
+(async function pollCamTier() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       const tc = j.impact && j.impact.tier_counts;
       if (tc && (tc.basic + tc.od + tc.transfer) > 0) {
-        document.getElementById('cam-tier-basic').textContent = (tc.basic || 0).toLocaleString;
-        document.getElementById('cam-tier-od').textContent = (tc.od || 0).toLocaleString;
-        document.getElementById('cam-tier-tp').textContent = (tc.transfer || 0).toLocaleString;
+        document.getElementById('cam-tier-basic').textContent = (tc.basic || 0).toLocaleString();
+        document.getElementById('cam-tier-od').textContent = (tc.od || 0).toLocaleString();
+        document.getElementById('cam-tier-tp').textContent = (tc.transfer || 0).toLocaleString();
         document.getElementById('cam-tier-pill').hidden = false;
       }
     }
   } catch {}
   setTimeout(pollCamTier, 8000);
-});
+})();
 </script>
 <script>
-(async function pollDispersionCam {
+(async function pollDispersionCam() {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.live && j.live.estimated_response_rate > 0) {
         document.getElementById('cam-dp-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
         document.getElementById('cam-dp-peak').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
@@ -325,23 +325,23 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     }
   } catch {}
   setTimeout(pollDispersionCam, 12000);
-});
+})();
 </script>
 <script>
-(async function pollCamKPI {
+(async function pollCamKPI() {
   const url = window.METROEYES_BACKEND + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
-    const j = await r.json;
+    const j = await r.json();
     const im = j.impact;
     if (im && im.total_count > 0) {
-      document.getElementById('cam-kpi-cnt').textContent = im.total_count.toLocaleString;
+      document.getElementById('cam-kpi-cnt').textContent = im.total_count.toLocaleString();
       document.getElementById('cam-kpi-roi').textContent = im.roi_x ? Math.round(im.roi_x) : '—';
       document.getElementById('cam-live-kpi').hidden = false;
     }
   } catch {}
   setTimeout(pollCamKPI, 8000);
-});
+})();
 </script>
   </div>
   <div class="controls">
@@ -373,7 +373,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 (function() {
   const ctrl = document.getElementById('ctrl-station-sel');
   if (!ctrl) return;
-  ctrl.addEventListener('change',  => {
+  ctrl.addEventListener('change', () => {
     const panel = document.getElementById('fc-station-sel');
     if (!panel) return;
     panel.value = ctrl.value;
@@ -382,12 +382,12 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     // update header label text to confirm selection
     const opt = ctrl.options[ctrl.selectedIndex];
     if (opt) ctrl.title = opt.textContent;
-  })();
-  window.addEventListener('DOMContentLoaded',  => {
+  });
+  window.addEventListener('DOMContentLoaded', () => {
     const panel = document.getElementById('fc-station-sel');
     if (panel && panel.value) ctrl.value = panel.value;
   });
-});
+})();
 </script>
 
 <main>
@@ -781,12 +781,12 @@ const diagEl = document.getElementById('diag');
 const cornerMeta = document.getElementById('corner-meta');
 
 let ws = null, stream = null, captureLoopRunning = false;
-let txFrames = 0, txWindowStart = performance.now;
+let txFrames = 0, txWindowStart = performance.now();
 
 function diag(level, msg) {
   const span = document.createElement('span');
   span.className = level;
-  span.textContent = `[${new Date.toLocaleTimeString}] ${msg}\n`;
+  span.textContent = `[${new Date().toLocaleTimeString()}] ${msg}\n`;
   diagEl.appendChild(span);
   diagEl.scrollTop = diagEl.scrollHeight;
   while (diagEl.children.length > 40) diagEl.removeChild(diagEl.firstChild);
@@ -800,7 +800,7 @@ function setStatus(state, text) {
 
 // =================== Three.js scene ===================
 const container = document.getElementById('bev-3d');
-const scene = new THREE.Scene;
+const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x05080f);
 scene.fog = new THREE.Fog(0x05080f, 12, 28);
 
@@ -933,12 +933,12 @@ scene.add(horizon);
 // === 중앙 → 진행방향 축 라인 (FOV center axis) ===
 {
   const points = [new THREE.Vector3(0, 0.04, 4.0), new THREE.Vector3(0, 0.04, -6.0)];
-  const axisGeo = new THREE.BufferGeometry.setFromPoints(points);
+  const axisGeo = new THREE.BufferGeometry().setFromPoints(points);
   const axisMat = new THREE.LineDashedMaterial({
     color: 0x7dd3d3, dashSize: 0.2, gapSize: 0.15, transparent: true, opacity: 0.45,
   });
   const axis = new THREE.Line(axisGeo, axisMat);
-  axis.computeLineDistances;
+  axis.computeLineDistances();
   scene.add(axis);
 }
 
@@ -964,7 +964,7 @@ scene.add(horizon);
   scene.add(camRing);
 
   // 3. 진행방향 화살표 (큰 삼각형, ground plane 위) — "어디를 보고 있는지" 명확
-  const arrowShape = new THREE.Shape;
+  const arrowShape = new THREE.Shape();
   arrowShape.moveTo(0, 0.4);     // tip 앞쪽 (-z)
   arrowShape.lineTo(-0.25, 0);   // 왼쪽 base
   arrowShape.lineTo(-0.10, 0);
@@ -972,7 +972,7 @@ scene.add(horizon);
   arrowShape.lineTo(0.10, -0.15);    // 오른쪽 꼬리
   arrowShape.lineTo(0.10, 0);
   arrowShape.lineTo(0.25, 0);
-  arrowShape.closePath;
+  arrowShape.closePath();
   const arrowGeo = new THREE.ShapeGeometry(arrowShape);
   const arrowMat = new THREE.MeshBasicMaterial({
     color: 0x10b981,    // emerald — 카메라 방향 분명
@@ -994,7 +994,7 @@ scene.add(horizon);
   scene.add(arrowOutline);
 
   // 5. "📷 CAM" 라벨 sprite
-  const _camLabelTex = ( => {
+  const _camLabelTex = (() => {
     const c = document.createElement('canvas');
     c.width = 128; c.height = 32;
     const x = c.getContext('2d');
@@ -1005,7 +1005,7 @@ scene.add(horizon);
     x.textAlign = 'center'; x.textBaseline = 'middle';
     x.fillText('📷 CAM', 64, 16);
     return new THREE.CanvasTexture(c);
-  });
+  })();
   const camLabel = new THREE.Sprite(new THREE.SpriteMaterial({
     map: _camLabelTex, transparent: true, depthTest: false,
   }));
@@ -1015,7 +1015,7 @@ scene.add(horizon);
 }
 
 // 글로우 텍스처 (radial)
-const glowTexture = ( => {
+const glowTexture = (() => {
   const c = document.createElement('canvas');
   c.width = c.height = 128;
   const cctx = c.getContext('2d');
@@ -1026,7 +1026,7 @@ const glowTexture = ( => {
   cctx.fillStyle = g;
   cctx.fillRect(0, 0, 128, 128);
   return new THREE.CanvasTexture(c);
-});
+})();
 
 // 클래스별 색상 (Tesla 스타일)
 const CLASS_COLOR = {
@@ -1059,8 +1059,8 @@ function addGroundGlow(group, klass) {
 }
 
 // Slim humanoid (capsule) — 인체 비율, 청회색 + 약한 cyan glow
-function createPersonMesh {
-  const group = new THREE.Group;
+function createPersonMesh() {
+  const group = new THREE.Group();
   group.userData.role = 'person';
 
   const bodyMat = new THREE.MeshStandardMaterial({
@@ -1100,7 +1100,7 @@ function createPersonMesh {
   // 팔 — shoulder pivot
   const armGeom = new THREE.CapsuleGeometry(0.045, 0.55, 5, 10);
   function makeArmPivot(side) {
-    const pivot = new THREE.Group;
+    const pivot = new THREE.Group();
     pivot.position.set(side * 0.18, 1.42, 0);
     const arm = new THREE.Mesh(armGeom, bodyMat);
     arm.position.set(0, -0.30, 0);
@@ -1125,7 +1125,7 @@ function createPersonMesh {
   const legGeom = new THREE.CapsuleGeometry(0.07, 0.72, 5, 10);
   const footGeom = new THREE.BoxGeometry(0.10, 0.045, 0.20);
   function makeLegPivot(side) {
-    const pivot = new THREE.Group;
+    const pivot = new THREE.Group();
     pivot.position.set(side * 0.085, 0.86, 0);
     const leg = new THREE.Mesh(legGeom, bodyMat);
     leg.position.set(0, -0.41, 0);
@@ -1143,7 +1143,7 @@ function createPersonMesh {
   group.userData.legL = legL;
   group.userData.legR = legR;
   group.userData.walkPhase = 0;
-  group.userData.idlePhase = Math.random * 10;
+  group.userData.idlePhase = Math.random() * 10;
 
   addGroundGlow(group, 'person');
   return group;
@@ -1185,7 +1185,7 @@ function animatePersonWalking(personGroup, dt, speed) {
 
 // 자전거/오토바이 메시 — 두 휠 + 프레임 + 안장 + 핸들 + (오토바이는 빨간 위험 글로우)
 function createBikeMesh(klass) {
-  const group = new THREE.Group;
+  const group = new THREE.Group();
   const c = colorFor(klass);
   const frameMat = new THREE.MeshStandardMaterial({
     color: c.main, roughness: 0.45, metalness: 0.55,
@@ -1250,8 +1250,8 @@ function createBikeMesh(klass) {
 }
 
 // 휠체어 메시 — 큰 휠 + 시트 + 등받이 + 앉은 사람
-function createWheelchairMesh {
-  const group = new THREE.Group;
+function createWheelchairMesh() {
+  const group = new THREE.Group();
   const chairMat = new THREE.MeshStandardMaterial({
     color: 0x88a0c0, roughness: 0.5, metalness: 0.4,
     emissive: 0x355570, emissiveIntensity: 0.18,
@@ -1303,7 +1303,7 @@ function createWheelchairMesh {
 
 // 차량 메시 — 박스 + 휠 4개
 function createVehicleMesh(klass) {
-  const group = new THREE.Group;
+  const group = new THREE.Group();
   const c = colorFor(klass);
   const dims = klass === 'bus'   ? { l: 4.2, w: 1.4, h: 1.6 }
             : klass === 'truck' ? { l: 3.2, w: 1.2, h: 1.3 }
@@ -1357,7 +1357,7 @@ function createVehicleMesh(klass) {
 
 // 4족 동물 (dog/cat) 메시 — body + 4 legs + head + tail
 function createAnimalMesh(klass) {
-  const group = new THREE.Group;
+  const group = new THREE.Group();
   group.userData.role = 'animal';
   const c = colorFor(klass);
   const isCat = klass === 'cat';
@@ -1386,7 +1386,7 @@ function createAnimalMesh(klass) {
   const earL = new THREE.Mesh(earGeom, mat);
   earL.position.set(0.32 * sizeScale, 0.55 * sizeScale, -0.07 * sizeScale);
   group.add(earL);
-  const earR = earL.clone;
+  const earR = earL.clone();
   earR.position.z = 0.07 * sizeScale;
   group.add(earR);
   // 다리 4개
@@ -1415,16 +1415,16 @@ function createAnimalMesh(klass) {
 
 // 메인 ensure: 클래스에 따라 다른 메시 생성
 function createClassMesh(klass) {
-  if (klass === 'person')                       return createPersonMesh;
+  if (klass === 'person')                       return createPersonMesh();
   if (klass === 'bicycle' || klass === 'motorcycle') return createBikeMesh(klass);
   if (klass === 'car' || klass === 'bus' || klass === 'truck') return createVehicleMesh(klass);
   if (klass === 'dog' || klass === 'cat')       return createAnimalMesh(klass);
-  if (klass === 'wheelchair')                   return createWheelchairMesh;
-  return createPersonMesh;   // fallback
+  if (klass === 'wheelchair')                   return createWheelchairMesh();
+  return createPersonMesh();   // fallback
 }
 
 // =================== 트랙 → 3D 메시 ===================
-const tracks = new Map;   // id → { x, y, lastUpdate, mesh, targetX, targetZ, currentX, currentZ, heading_target, heading }
+const tracks = new Map();   // id → { x, y, lastUpdate, mesh, targetX, targetZ, currentX, currentZ, heading_target, heading }
 
 function bevToWorld(bx, by) {
   // bx 0~1: 좌→우, by 0~1: 0=image top=먼곳, 1=image bottom=가까움
@@ -1441,7 +1441,7 @@ function bevToWorld(bx, by) {
 }
 
 function onTracksUpdate(list) {
-  const now = performance.now;
+  const now = performance.now();
   for (const trk of list) {
     let h = tracks.get(trk.id);
     const w = bevToWorld(trk.bev_x, trk.bev_y);
@@ -1480,7 +1480,7 @@ function onTracksUpdate(list) {
     }
   }
   // stale 제거
-  for (const [id, h] of [...tracks.entries]) {
+  for (const [id, h] of [...tracks.entries()]) {
     if (now - h.lastUpdate > 1500) {
       scene.remove(h.mesh);
       tracks.delete(id);
@@ -1488,21 +1488,21 @@ function onTracksUpdate(list) {
   }
   // 클래스별 카운트 라벨
   const counts = {};
-  for (const h of tracks.values) counts[h.klass] = (counts[h.klass] || 0) + 1;
+  for (const h of tracks.values()) counts[h.klass] = (counts[h.klass] || 0) + 1;
   const labels = { person: '사람', bicycle: '자전거', motorcycle: '오토바이', car: '차', bus: '버스', truck: '트럭', wheelchair: '휠체어', dog: '개', cat: '고양이' };
   const parts = Object.entries(counts).map(([k, v]) => `${labels[k] || k} ${v}`);
   cornerMeta.textContent = parts.length ? `${tracks.size} · ${parts.join(' · ')}` : '0';
 }
 window.onTracksUpdate = onTracksUpdate;   // for headless test injection
 
-let lastFrameTs = performance.now;
-function animate {
-  const now = performance.now;
+let lastFrameTs = performance.now();
+function animate() {
+  const now = performance.now();
   const dt = Math.min(0.1, (now - lastFrameTs) / 1000);
   lastFrameTs = now;
 
   // 사람 위치 lerp + heading + walking 애니메이션
-  for (const h of tracks.values) {
+  for (const h of tracks.values()) {
     const k = Math.min(1, dt * 7);
     const newX = h.currentX + (h.targetX - h.currentX) * k;
     const newZ = h.currentZ + (h.targetZ - h.currentZ) * k;
@@ -1542,39 +1542,39 @@ function animate {
     horizon.material.opacity = 0.06 + Math.sin(now / 1500) * 0.04;
   }
 
-  controls.update;
+  controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
-animate;
+animate();
 
 // 리사이즈
-window.addEventListener('resize',  => {
+window.addEventListener('resize', () => {
   const w = container.clientWidth, h = container.clientHeight;
   if (w > 0 && h > 0) {
     camera.aspect = w / h;
-    camera.updateProjectionMatrix;
+    camera.updateProjectionMatrix();
     renderer.setSize(w, h);
   }
 });
 
 // =================== 카메라 / WebSocket ===================
 function connect(url) {
-  if (ws) { try { ws.close; } catch {} ws = null; }
+  if (ws) { try { ws.close(); } catch {} ws = null; }
   setStatus('', '연결 중...');
   diag('info', `WS 연결: ${url}`);
   ws = new WebSocket(url);
   ws.binaryType = 'arraybuffer';
   window.ws = ws;   // module 외부 (MLChart 등)에서 ws 상태 접근 가능하게
-  ws.onopen =  => {
+  ws.onopen = () => {
     setStatus('connected', '연결됨'); diag('ok', 'WebSocket OPEN');
     // 4중 데이터 융합 — 도착정보 + 역세권 인구 즉시 + 폴링
-    Fusion.startPolling;
+    Fusion.startPolling();
     // ML 모델 메트릭 1회 조회
     try { ws.send(JSON.stringify({ type: 'model_metrics_query' })); } catch {}
   };
-  ws.onclose = (e) => { setStatus('error', '연결 끊김'); ws = null; diag('warn', `CLOSE code=${e.code}`); Fusion.stopPolling; };
-  ws.onerror =  => { setStatus('error', '연결 오류'); diag('err', 'WS ERROR'); };
+  ws.onclose = (e) => { setStatus('error', '연결 끊김'); ws = null; diag('warn', `CLOSE code=${e.code}`); Fusion.stopPolling(); };
+  ws.onerror = () => { setStatus('error', '연결 오류'); diag('err', 'WS ERROR'); };
   ws.onmessage = (ev) => {
     let p; try { p = JSON.parse(ev.data); } catch { return; }
     if (p.type === 'arrival') { Fusion.applyArrival(p); return; }
@@ -1590,13 +1590,13 @@ function connect(url) {
       document.getElementById('mt-rmse').textContent = fmt(p.rmse_val);
       document.getElementById('mt-r2').textContent = fmt(p.r2_val, 2);
       document.getElementById('mt-cv').textContent = fmt(p.mae_cv5);
-      document.getElementById('mt-n').textContent = (p.n_samples || 0).toLocaleString;
+      document.getElementById('mt-n').textContent = (p.n_samples || 0).toLocaleString();
       return;
     }
     if (p.type === 'occupancy_predict') { window.MLChart && MLChart.applyPredict(p); return; }
     if (p.type === 'impact_summary') {
       document.getElementById('impact-card').hidden = false;
-      document.getElementById('ic-count').textContent = (p.total_count || 0).toLocaleString;
+      document.getElementById('ic-count').textContent = (p.total_count || 0).toLocaleString();
       const saved = +p.avg_saved_pct || 0;
       document.getElementById('ic-saved').textContent = saved.toFixed(0);
       document.getElementById('ic-bar').style.width = Math.min(100, saved * 4) + '%';
@@ -1607,11 +1607,11 @@ function connect(url) {
         const dispEl = document.getElementById('kpi-disp');
         const minEl = document.getElementById('kpi-min');
         const wonEl = document.getElementById('kpi-won');
-        if (dispEl) dispEl.textContent = (p.total_count || 0).toLocaleString;
-        if (minEl) minEl.textContent = Math.round(p.saved_min_total || 0).toLocaleString;
+        if (dispEl) dispEl.textContent = (p.total_count || 0).toLocaleString();
+        if (minEl) minEl.textContent = Math.round(p.saved_min_total || 0).toLocaleString();
         if (wonEl) {
           const w = p.value_won || 0;
-          wonEl.textContent = w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString}`;
+          wonEl.textContent = w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${w.toLocaleString()}`;
         }
         const tc = p.tier_counts || { basic: 0, od: 0, transfer: 0 };
         const tot = (tc.basic || 0) + (tc.od || 0) + (tc.transfer || 0);
@@ -1635,12 +1635,12 @@ function connect(url) {
           emergency: '#ff5e57', suspicious: '#f0b46a', lost: '#7dd3d3',
           free_ride: '#a78bfa', priority_seat: '#ec4899', bottleneck: '#fb7185',
         };
-        const events = (p.events || (p.ev_type ? [p] : [])).slice(-10).reverse;
+        const events = (p.events || (p.ev_type ? [p] : [])).slice(-10).reverse();
         const el = document.getElementById('evt-hist');
         if (el && events.length) {
           el.innerHTML = events.map(e => {
             const ty = e.ev_type || e.type || 'unknown';
-            const ago = e.ts ? Math.round((Date.now/1000 - e.ts)) : 0;
+            const ago = e.ts ? Math.round((Date.now()/1000 - e.ts)) : 0;
             const agoTxt = ago < 60 ? `${ago}s` : ago < 3600 ? `${Math.round(ago/60)}m` : `${Math.round(ago/3600)}h`;
             return `<div style="display:flex; gap:6px; padding:3px 0; border-bottom:1px solid rgba(255,255,255,.04);">
               <span style="color:${colors[ty]||'#fff'}; font-weight:600; min-width:90px;">${labels[ty]||ty}</span>
@@ -1665,9 +1665,9 @@ function connect(url) {
       const camRes = document.getElementById('cam-res-mini');
       if (camFps) camFps.textContent = (p.fps || 0).toFixed(1);
       if (camTracks) camTracks.textContent = (p.tracks || []).length;
-      if (camTx) camTx.textContent = (txFrames > 0 ? `${(txFrames * 1000 / Math.max(1, performance.now - txWindowStart)).toFixed(1)}/s` : '—');
+      if (camTx) camTx.textContent = (txFrames > 0 ? `${(txFrames * 1000 / Math.max(1, performance.now() - txWindowStart)).toFixed(1)}/s` : '—');
       if (camWs) { camWs.textContent = (ws && ws.readyState === 1) ? 'CONNECTED' : '—'; camWs.style.color = (ws && ws.readyState === 1) ? '#10b981' : 'var(--muted)'; }
-      if (camFrames) camFrames.textContent = (p.frame_idx || 0).toLocaleString;
+      if (camFrames) camFrames.textContent = (p.frame_idx || 0).toLocaleString();
       if (camRes && p.input_size) camRes.textContent = `${p.input_size[0]}×${p.input_size[1]}`;
     } catch {}
     onTracksUpdate(p.tracks || []);
@@ -1729,7 +1729,7 @@ function drawCamOverlay(boxes, inputSize) {
   const cv = document.getElementById('overlay-cam');
   const img = document.getElementById('img-input');
   // 캔버스를 img 표시 영역에 맞춤
-  const r = img.getBoundingClientRect;
+  const r = img.getBoundingClientRect();
   if (r.width === 0 || r.height === 0) return;
   cv.width = Math.round(r.width * devicePixelRatio);
   cv.height = Math.round(r.height * devicePixelRatio);
@@ -1767,9 +1767,9 @@ function drawCamOverlay(boxes, inputSize) {
   }
 }
 
-async function listCameras {
+async function listCameras() {
   if (!navigator.mediaDevices) return;
-  const devs = await navigator.mediaDevices.enumerateDevices;
+  const devs = await navigator.mediaDevices.enumerateDevices();
   const cams = devs.filter(d => d.kind === 'videoinput');
   camSelect.innerHTML = '';
   cams.forEach((c, i) => {
@@ -1781,7 +1781,7 @@ async function listCameras {
   diag('info', `카메라 ${cams.length}개: ${cams.map(c => c.label || '(라벨 가림)').join(' | ')}`);
 }
 
-async function startCam {
+async function startCam() {
   try {
     if (!navigator.mediaDevices?.getUserMedia) { diag('err', 'getUserMedia 미지원'); return; }
     const deviceId = camSelect.value;
@@ -1795,9 +1795,9 @@ async function startCam {
     vidCam.srcObject = stream;
     await new Promise(r => vidCam.onloadedmetadata = r);
     camSize.textContent = `${vidCam.videoWidth}×${vidCam.videoHeight}`;
-    diag('ok', `트랙: ${stream.getVideoTracks.map(t => t.label || '(라벨 없음)').join(', ')}`);
-    listCameras;
-    if (!captureLoopRunning) { captureLoopRunning = true; captureLoop; diag('info', '캡처 루프 시작'); }
+    diag('ok', `트랙: ${stream.getVideoTracks().map(t => t.label || '(라벨 없음)').join(', ')}`);
+    listCameras();
+    if (!captureLoopRunning) { captureLoopRunning = true; captureLoop(); diag('info', '캡처 루프 시작'); }
   } catch (e) {
     setStatus('error', `카메라 실패: ${e.name}`);
     diag('err', `getUserMedia 실패: ${e.name} — ${e.message}`);
@@ -1805,8 +1805,8 @@ async function startCam {
     if (e.name === 'NotReadableError') diag('warn', '다른 앱 점유 중 (Camo/Teams/Zoom 등)');
   }
 }
-function stopCam {
-  if (stream) { stream.getTracks.forEach(t => t.stop); stream = null; }
+function stopCam() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   vidCam.srcObject = null;
   captureLoopRunning = false;
 }
@@ -1818,7 +1818,7 @@ const TARGET_TX_FPS = 10;
 
 // 영상 전환 중 (vidCam.src 변경 → onloadedmetadata 직전) 일시 정지
 let captureSuspended = false;
-async function captureLoop {
+async function captureLoop() {
   while (captureLoopRunning) {
     if (!captureSuspended &&
         ws && ws.readyState === WebSocket.OPEN &&
@@ -1827,11 +1827,11 @@ async function captureLoop {
       cctx.drawImage(vidCam, 0, 0, 480, 360);
       const blob = await new Promise(r => captureCanvas.toBlob(r, 'image/jpeg', 0.7));
       if (blob) {
-        const buf = await blob.arrayBuffer;
+        const buf = await blob.arrayBuffer();
         try { ws.send(buf); txFrames++; } catch {}
       }
     }
-    const now = performance.now;
+    const now = performance.now();
     if (now - txWindowStart > 1000) {
       txEl.textContent = `송신 ${txFrames} fps`;
       txFrames = 0; txWindowStart = now;
@@ -1913,7 +1913,7 @@ const VIDEO_PRESETS = {
 };
 
 // 영상 파일 존재 여부 사전 체크 — 없으면 버튼 비활성화 (회색 + disabled)
-async function probeVideoSlots {
+async function probeVideoSlots() {
   const btns = document.querySelectorAll('.vid-btn[data-optional="1"]');
   for (const btn of btns) {
     const preset = VIDEO_PRESETS[btn.dataset.vid];
@@ -1924,11 +1924,11 @@ async function probeVideoSlots {
     } catch {
       btn.disabled = true;
       btn.style.opacity = '0.4';
-      btn.title = '영상 파일 없음 — frontend/videos/' + preset.src.split('/').pop + ' 다운로드 후 활성화';
+      btn.title = '영상 파일 없음 — frontend/videos/' + preset.src.split('/').pop() + ' 다운로드 후 활성화';
     }
   }
 }
-probeVideoSlots;
+probeVideoSlots();
 
 let currentVideoMode = null;   // 'webcam' | 'eyelevel' | ...
 
@@ -1958,69 +1958,69 @@ function startVideoFile(vidId) {
   // 전환 중 캡처 일시 정지 — 깜빡임 방지
   captureSuspended = true;
   // 웹캠 정지
-  if (stream) { stream.getTracks.forEach(t => t.stop); stream = null; vidCam.srcObject = null; }
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; vidCam.srcObject = null; }
   // 이전 frame 잔여 제거
-  vidCam.pause;
+  vidCam.pause();
   vidCam.removeAttribute('src');
-  try { vidCam.load; } catch {}
+  try { vidCam.load(); } catch {}
   // 새 영상
   vidCam.src = preset.src;
   vidCam.loop = true;
   vidCam.muted = true;
-  vidCam.play.catch(e => diag('err', `재생 실패: ${e.message}`));
-  vidCam.onloadeddata =  => {   // canplay/loadeddata 시점이 첫 frame 디코드 완료
+  vidCam.play().catch(e => diag('err', `재생 실패: ${e.message}`));
+  vidCam.onloadeddata = () => {   // canplay/loadeddata 시점이 첫 frame 디코드 완료
     camSize.textContent = `${vidCam.videoWidth}×${vidCam.videoHeight}`;
     diag('ok', `영상: ${vidId} (${vidCam.videoWidth}×${vidCam.videoHeight})`);
     setHomographyOnServer(preset);
     captureSuspended = false;   // 전환 완료 → 캡처 재개
   };
-  if (!captureLoopRunning) { captureLoopRunning = true; captureLoop; }
+  if (!captureLoopRunning) { captureLoopRunning = true; captureLoop(); }
   currentVideoMode = vidId;
   document.querySelectorAll('.vid-btn').forEach(b => b.classList.toggle('active', b.dataset.vid === vidId));
 }
 
-document.getElementById('ws-connect').addEventListener('click',  => connect(wsUrlEl.value));
-document.getElementById('ws-disconnect').addEventListener('click',  => { if (ws) ws.close; });
-document.getElementById('cam-start').addEventListener('click',  => {
+document.getElementById('ws-connect').addEventListener('click', () => connect(wsUrlEl.value));
+document.getElementById('ws-disconnect').addEventListener('click', () => { if (ws) ws.close(); });
+document.getElementById('cam-start').addEventListener('click', () => {
   document.querySelectorAll('.vid-btn').forEach(b => b.classList.remove('active'));
-  vidCam.removeAttribute('src'); vidCam.load;
+  vidCam.removeAttribute('src'); vidCam.load();
   try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'claim_active' })); } catch {}
-  startCam;
+  startCam();
   setHomographyOnServer({ homography: null });
   currentVideoMode = 'webcam';
 });
-document.getElementById('cam-stop').addEventListener('click',  => {
+document.getElementById('cam-stop').addEventListener('click', () => {
   try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'release_active' })); } catch {}
-  stopCam;
+  stopCam();
 });
 // 페이지 떠날 때 release
-window.addEventListener('beforeunload',  => {
+window.addEventListener('beforeunload', () => {
   try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'release_active' })); } catch {}
 });
-camSelect.addEventListener('change',  => { if (stream) startCam; });
+camSelect.addEventListener('change', () => { if (stream) startCam(); });
 document.querySelectorAll('.vid-btn').forEach(b => {
-  b.addEventListener('click',  => startVideoFile(b.dataset.vid));
+  b.addEventListener('click', () => startVideoFile(b.dataset.vid));
 });
 
-listCameras;
+listCameras();
 
 // =================== 4중 데이터 융합 (CV + 도착 + 인구 + 평가) ===================
-const Fusion = ( => {
+const Fusion = (() => {
   let arrivalT = null, popT = null;
   let lastBev = null, lastArr = null, lastPop = null;
   const stationSel = document.getElementById('fc-station-sel');
-  function station {
+  function station() {
     const [name, line, poi] = (stationSel.value || '잠실|2|잠실역').split('|');
     return { name, line: parseInt(line, 10), poi };
   }
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
-  function queryArrival { const s = station; send({ type: 'arrival_query', stationName: s.name, line: s.line }); }
-  function queryPpltn { const s = station; send({ type: 'population_query', poi: s.poi }); }
+  function queryArrival() { const s = station(); send({ type: 'arrival_query', stationName: s.name, line: s.line }); }
+  function queryPpltn() { const s = station(); send({ type: 'population_query', poi: s.poi }); }
   let cdT = null, evT = null;
-  function queryCitydata { const s = station; send({ type: 'citydata_query', poi: s.poi }); }
-  function queryEvents { const s = station; send({ type: 'events_query', poi: s.poi }); }
-  function startPolling {
-    queryArrival; queryPpltn; queryCitydata; queryEvents;
+  function queryCitydata() { const s = station(); send({ type: 'citydata_query', poi: s.poi }); }
+  function queryEvents() { const s = station(); send({ type: 'events_query', poi: s.poi }); }
+  function startPolling() {
+    queryArrival(); queryPpltn(); queryCitydata(); queryEvents();
     if (arrivalT) clearInterval(arrivalT);
     arrivalT = setInterval(queryArrival, 20000);
     if (popT) clearInterval(popT);
@@ -2030,7 +2030,7 @@ const Fusion = ( => {
     if (evT) clearInterval(evT);
     evT = setInterval(queryEvents, 600000);   // 10분
   }
-  function stopPolling {
+  function stopPolling() {
     if (arrivalT) { clearInterval(arrivalT); arrivalT = null; }
     if (popT) { clearInterval(popT); popT = null; }
     if (cdT) { clearInterval(cdT); cdT = null; }
@@ -2045,12 +2045,12 @@ const Fusion = ( => {
       <div class="ev-row">
         <span class="ev-place">${(e.place || '-').substring(0, 14)}</span>
         <span class="ev-name">${(e.name || '-').substring(0, 50)}</span>
-        <span class="ev-cap">${e.v_max ? e.v_max.toLocaleString + '명' : '—'}</span>
+        <span class="ev-cap">${e.v_max ? e.v_max.toLocaleString() + '명' : '—'}</span>
         <span class="ev-dist">${e.dist_km != null ? e.dist_km.toFixed(1) + 'km' : '—'}</span>
       </div>`).join('');
     const totalCap = j.total_capacity || 0;
     document.getElementById('events-summary').innerHTML =
-      `반경 내 <b>${j.total_count}건</b> · 누적 수용 <b>${totalCap.toLocaleString}명</b> — 운행 분배에 반영 권장`;
+      `반경 내 <b>${j.total_count}건</b> · 누적 수용 <b>${totalCap.toLocaleString()}명</b> — 운행 분배에 반영 권장`;
   }
   function applyCitydata(j) {
     if (j.error) return;
@@ -2122,11 +2122,11 @@ const Fusion = ( => {
     ['5','10','30'].forEach((tag, i) => {
       if (subVals[i] != null) {
         document.getElementById(`sub-${tag}`).style.height = `${(subVals[i] / subMax * 100)}%`;
-        document.getElementById(`sub-${tag}-v`).textContent = subVals[i].toLocaleString;
+        document.getElementById(`sub-${tag}-v`).textContent = subVals[i].toLocaleString();
       }
       if (busVals[i] != null) {
         document.getElementById(`bus-${tag}`).style.height = `${(busVals[i] / busMax * 100)}%`;
-        document.getElementById(`bus-${tag}-v`).textContent = busVals[i].toLocaleString;
+        document.getElementById(`bus-${tag}-v`).textContent = busVals[i].toLocaleString();
       }
     });
     // 안전 배너 (위/아래 둘 다)
@@ -2135,7 +2135,7 @@ const Fusion = ( => {
     const sStripTop = document.getElementById('safety-strip-top');
     if (safety.length > 0) {
       const f = safety[0];
-      const msg = (f.EVENT_NM || f.MESSAGE || f.ACDNT_TYPE || '안전 알림').toString.substring(0, 100);
+      const msg = (f.EVENT_NM || f.MESSAGE || f.ACDNT_TYPE || '안전 알림').toString().substring(0, 100);
       document.getElementById('safety-strip-text').textContent = msg;
       document.getElementById('safety-strip-text-top').textContent = msg;
       sStrip.classList.add('show'); sStripTop.classList.add('show');
@@ -2151,14 +2151,14 @@ const Fusion = ( => {
       const peak = peaks[j.poi];
       if (peak >= 100) {
         const actual = (((j.ppltn_min || 0) + (j.ppltn_max || 0)) / 2) / peak;
-        const hour = new Date.getHours;
+        const hour = new Date().getHours();
         const pred = MLChart.predictAt(hour);
         const acc = Math.max(0, Math.round(100 * (1 - Math.abs(pred - actual))));
         const el = document.getElementById('acc-pct');
         el.innerHTML = `${acc}<span style="font-size:13px;color:var(--muted);">%</span>`;
         el.className = 'acc-pct ' + (acc >= 85 ? '' : acc >= 70 ? 'warn' : 'crit');
         document.getElementById('acc-detail').textContent =
-          `예측 ${(pred * 100).toFixed(0)}% / 실측 ${(actual * 100).toFixed(0)}%${MLChart.isMlAvailable ? ' · ML' : ' · sim'}`;
+          `예측 ${(pred * 100).toFixed(0)}% / 실측 ${(actual * 100).toFixed(0)}%${MLChart.isMlAvailable() ? ' · ML' : ' · sim'}`;
       }
     }
   }
@@ -2225,7 +2225,7 @@ const Fusion = ( => {
       }
 
       // 우선석/병목 토스트 (60초 쿨다운)
-      const now = Date.now;
+      const now = Date.now();
       if (priorCars.length > 0 && now - _carAlertTs.priority > 60000) {
         _carAlertTs.priority = now;
         pushIncidentToast({ type: 'priority', severity: 'med', icon: '♿', title: '우선석 점유',
@@ -2241,7 +2241,7 @@ const Fusion = ( => {
       document.getElementById('fc-cv-sub').textContent =
         `YOLO ${(p.fps ?? 0).toFixed(1)} fps · ${(p.tracks || []).length} 트랙`;
     }
-    evalCongest;
+    evalCongest();
   }
   function applyArrival(j) {
     lastArr = j;
@@ -2285,10 +2285,10 @@ const Fusion = ( => {
     document.getElementById('fc-pop-v').innerHTML = `${fmtNum(mid)}<span class="unit">명</span>`;
     document.getElementById('fc-pop-sub').textContent =
       `${j.area_nm || j.poi} · ${j.congest_lvl || '?'} · ${j.ppltn_time || ''}`;
-    evalCongest;
+    evalCongest();
   }
   /** CV 검출 + 인구 결합 → 종합 혼잡 레벨 */
-  function evalCongest {
+  function evalCongest() {
     const personN = lastBev ? (lastBev.tracks || []).filter(t => t.class === 'person').length : null;
     const popLvl = lastPop && !lastPop.error ? lastPop.congest_lvl : null;
     const card = document.getElementById('fc-cong');
@@ -2317,7 +2317,7 @@ const Fusion = ( => {
     document.getElementById('fc-cong-sub').textContent =
       `CV ${personN ?? '—'}명 · 인구 ${popLvl ?? '—'} · 융합점수 ${(combined * 100).toFixed(0)}`;
   }
-  stationSel.addEventListener('change',  => {
+  stationSel.addEventListener('change', () => {
     // 헤더 ctrl-station-sel 동기화
     const ctrlSel = document.getElementById('ctrl-station-sel');
     if (ctrlSel && ctrlSel.value !== stationSel.value) ctrlSel.value = stationSel.value;
@@ -2328,21 +2328,21 @@ const Fusion = ( => {
     });
     document.getElementById('fc-cong-v').textContent = '—';
     if (ws && ws.readyState === 1) {
-      queryArrival;
-      queryPpltn;
-      queryCitydata;
-      queryEvents;
+      queryArrival();
+      queryPpltn();
+      queryCitydata();
+      queryEvents();
     }
     // 24h 예측 sparkline 업데이트
     if (window.MLChart && typeof MLChart.fetch24h === 'function') {
-      MLChart.fetch24h(station);
+      MLChart.fetch24h(station());
     }
   });
   return { startPolling, stopPolling, applyBev, applyArrival, applyPopulation, applyCitydata, applyEvents };
-});
+})();
 
 // =================== 24h 점유율 예측 sparkline ===================
-const MLChart = ( => {
+const MLChart = (() => {
   const canvas = document.getElementById('ml-canvas');
   const ctx2d = canvas.getContext('2d');
   const series = new Array(24).fill(null);  // null=미수집
@@ -2360,10 +2360,10 @@ const MLChart = ( => {
 
   // 시연 모드용 시간 오버라이드 (null이면 실 시각, 숫자면 그 시각으로 표시)
   let _demoHour = null;
-  function setDemoHour(h) { _demoHour = h; draw; }
-  function clearDemoHour { _demoHour = null; draw; }
+  function setDemoHour(h) { _demoHour = h; draw(); }
+  function clearDemoHour() { _demoHour = null; draw(); }
 
-  function draw {
+  function draw() {
     const W = canvas.clientWidth || 600, H = canvas.clientHeight || 110;
     canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
     ctx2d.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
@@ -2394,67 +2394,67 @@ const MLChart = ( => {
     ctx2d.lineWidth = 1;
     [0.25, 0.50, 0.75, 1.0].forEach(v => {
       const y = valToY(v);
-      ctx2d.beginPath; ctx2d.moveTo(padX, y); ctx2d.lineTo(padX + innerW, y); ctx2d.stroke;
+      ctx2d.beginPath(); ctx2d.moveTo(padX, y); ctx2d.lineTo(padX + innerW, y); ctx2d.stroke();
     });
 
     // ── 채움 영역 + 곡선 ──
-    ctx2d.beginPath;
+    ctx2d.beginPath();
     data.forEach((v, i) => {
       const x = hourToX(i), y = valToY(v);
       if (i === 0) ctx2d.moveTo(x, y); else ctx2d.lineTo(x, y);
     });
     ctx2d.lineTo(padX + innerW, padY + innerH);
     ctx2d.lineTo(padX, padY + innerH);
-    ctx2d.closePath;
+    ctx2d.closePath();
     const grad = ctx2d.createLinearGradient(0, padY, 0, padY + innerH);
     grad.addColorStop(0, 'rgba(125,211,211,0.45)');
     grad.addColorStop(1, 'rgba(125,211,211,0.02)');
     ctx2d.fillStyle = grad;
-    ctx2d.fill;
-    ctx2d.beginPath;
+    ctx2d.fill();
+    ctx2d.beginPath();
     data.forEach((v, i) => {
       const x = hourToX(i), y = valToY(v);
       if (i === 0) ctx2d.moveTo(x, y); else ctx2d.lineTo(x, y);
     });
     ctx2d.strokeStyle = usingMl ? '#7DD3D3' : '#9CC';
     ctx2d.lineWidth = 2.2;
-    ctx2d.stroke;
+    ctx2d.stroke();
 
     // ── 두 봉우리 마커 (출근 08시 / 퇴근 18시) ──
     [{h:8, color:'#7dd3d3', label:'출근 08시'}, {h:18, color:'#f59e0b', label:'퇴근 18시'}].forEach(p => {
       const px = hourToX(p.h), py = valToY(data[p.h]);
-      ctx2d.beginPath;
+      ctx2d.beginPath();
       ctx2d.arc(px, py, 5, 0, Math.PI * 2);
       ctx2d.fillStyle = p.color;
-      ctx2d.fill;
+      ctx2d.fill();
       ctx2d.strokeStyle = 'rgba(255,255,255,0.85)';
       ctx2d.lineWidth = 1.5;
-      ctx2d.stroke;
+      ctx2d.stroke();
       ctx2d.fillStyle = p.color;
       ctx2d.font = 'bold 10px ui-monospace, monospace';
       ctx2d.fillText(`${Math.round(data[p.h]*100)}%`, px - 12, py - 9);
     });
 
     // ── 현재 시각 표시 (또는 시연 hour) ──
-    const nowH = (_demoHour != null) ? _demoHour : new Date.getHours;
+    const nowH = (_demoHour != null) ? _demoHour : new Date().getHours();
     const x = hourToX(nowH), y = valToY(data[nowH]);
     // 수직 줄
     ctx2d.strokeStyle = 'rgba(255,94,87,0.55)';
     ctx2d.lineWidth = 1.5;
     ctx2d.setLineDash([4, 4]);
-    ctx2d.beginPath; ctx2d.moveTo(x, padY); ctx2d.lineTo(x, padY + innerH); ctx2d.stroke;
+    ctx2d.beginPath(); ctx2d.moveTo(x, padY); ctx2d.lineTo(x, padY + innerH); ctx2d.stroke();
     ctx2d.setLineDash([]);
     // 펄스 dot
-    ctx2d.beginPath;
+    ctx2d.beginPath();
     ctx2d.arc(x, y, 6, 0, Math.PI * 2);
     ctx2d.fillStyle = '#FF5E57';
     ctx2d.shadowColor = 'rgba(255,94,87,0.7)';
     ctx2d.shadowBlur = 8;
-    ctx2d.fill;
+    ctx2d.fill();
     ctx2d.shadowBlur = 0;
     ctx2d.strokeStyle = 'rgba(255,255,255,0.85)';
     ctx2d.lineWidth = 1.5;
-    ctx2d.stroke;
+    ctx2d.stroke();
 
     // ── 시간 눈금 (0/6/12/18/23) ──
     ctx2d.fillStyle = 'rgba(139,152,172,0.65)';
@@ -2498,11 +2498,11 @@ const MLChart = ( => {
   function applyPredict(j) {
     if (!j || j.hour == null) return;
     if (j.predicted == null || !j.available) {
-      mlAvailable = false; draw; return;
+      mlAvailable = false; draw(); return;
     }
     mlAvailable = true;
     series[j.hour] = +j.predicted;
-    draw;
+    draw();
   }
   // 첫 그리기 (시뮬 fallback)
   setTimeout(draw, 100);
@@ -2512,19 +2512,19 @@ const MLChart = ( => {
     if (s != null) return s;          // ML 응답 있으면 그걸
     return simOccAt(hour, 'hub');     // 없으면 시뮬 곡선
   }
-  function isMlAvailable { return mlAvailable; }
+  function isMlAvailable() { return mlAvailable; }
   return { fetch24h, applyPredict, predictAt, isMlAvailable, setDemoHour, clearDemoHour };
-});
+})();
 window.MLChart = MLChart;
 
 // ws 메시지 핸들러에 occupancy_predict 분기 — Fusion 객체 안에 넣기 위해 patch
-( => {
+(() => {
   // ws.onopen 시 24h 예측 요청
   const origConnect = window.connect;
   // realbev.html의 connect 함수가 module이라 직접 접근 X — 대신 ws onmessage 후크
   // 가장 단순하게: 1초 polling으로 ws 상태 체크해서 처음 connected될 때 fetch
   let triggered = false;
-  setInterval( => {
+  setInterval(() => {
     if (window.ws && window.ws.readyState === 1 && !triggered) {
       triggered = true;
       MLChart.fetch24h(window.ws, { name: '잠실', line: 2 });
@@ -2532,13 +2532,13 @@ window.MLChart = MLChart;
       triggered = false;
     }
   }, 1500);
-});
+})();
 
 // connect 함수 안 ws.onmessage에 occupancy_predict 분기 — 위 ws.onmessage 코드는 module scope이라 직접 추가 못함.
 // 우회: realbev.html의 ws onmessage가 Fusion.applyArrival/applyPopulation을 위해 호출되는 점에 추가.
 
 // 자동 WS URL: host 기반 분기
-(function() {
+(function () {
   const p = new URLSearchParams(location.search).get('ws');
   const saved = localStorage.getItem('subwaybev_ws');
   let url = window.METROEYES_WS;
@@ -2548,18 +2548,18 @@ window.MLChart = MLChart;
   else if (location.hostname.endsWith('github.io') || location.protocol === 'https:')
     url = 'wss://app.allthatai.kr';
   wsUrlEl.value = url;
-});
-setTimeout( => connect(wsUrlEl.value), 400);
+})();
+setTimeout(() => connect(wsUrlEl.value), 400);
 
 // ============== IDEA-6 비상 동선 + IDEA-7 분실물 자동 검출 ==============
 let _lastTracksForEvac = [];
 // 분실물 후보 = 짐 트랙 + 인근에 사람 없음 (10초 이상)
 const BAG_CLASSES = new Set(['backpack', 'handbag', 'suitcase', 'umbrella', 'cell phone', 'book']);
-const _bagTracking = new Map;   // track_id → { firstSeen, lastSeen, x, y, withPerson, alerted }
+const _bagTracking = new Map();   // track_id → { firstSeen, lastSeen, x, y, withPerson, alerted }
 const _LOST_THRESHOLD_MS = 10000;  // 10초 이상 사람 없음
 
 function checkLostItems(tracks) {
-  const now = Date.now;
+  const now = Date.now();
   const persons = tracks.filter(t => t.class === 'person' && Number.isFinite(t.bev_x));
   const bags = tracks.filter(t => BAG_CLASSES.has(t.class) && Number.isFinite(t.bev_x));
   // 짐 위치 갱신
@@ -2620,20 +2620,20 @@ function pushIncidentToast(ev) {
     const isCrit = ev.severity === 'high' || ev.type === 'emergency';
     toast.style.cssText = `position:fixed;top:${ev.type==='emergency'?'80':'180'}px;right:20px;z-index:9999;background:rgba(4,6,10,0.95);border:2px solid ${isCrit?'#ff5e57':'#f0b46a'};border-radius:10px;padding:10px 14px;min-width:280px;color:#fff;font:13px/-apple-system,'Malgun Gothic',sans-serif;box-shadow:0 6px 20px rgba(0,0,0,0.5);`;
     document.body.appendChild(toast);
-    toast.addEventListener('click',  => toast.remove);
+    toast.addEventListener('click', () => toast.remove());
   }
   const icon  = ev.icon  || (ev.type === 'emergency' ? '🚨' : '🎒');
   const title = ev.title || (ev.type === 'emergency' ? '응급 의심' : '분실물 후보');
   toast.innerHTML = `<div style="font-weight:700;margin-bottom:4px;color:${isCrit?'#ff5e57':'#f0b46a'}">${icon} ${title}</div><div style="font-size: 13px;opacity:0.85;line-height:1.5">${ev.msg}</div><div style="font-size: 13px;opacity:0.5;margin-top:4px;">클릭으로 닫기</div>`;
   // 30초 자동 제거
-  setTimeout( => { try { toast.remove; } catch {} }, 30000);
+  setTimeout(() => { try { toast.remove(); } catch {} }, 30000);
 }
 window._lostItemListener = pushIncidentToast;
 window._emergencyListener = pushIncidentToast;
 
 // ============== IDEA-7 응급 골든타임 (사람 30초+ 정지) ==============
 // 같은 사람 트랙이 같은 위치에 머무름 → 의식 잃은 환자 가능성
-const _personStill = new Map;   // id → { since, x, y, alerted }
+const _personStill = new Map();   // id → { since, x, y, alerted }
 const _STILL_THRESHOLD_MS = 30000;
 // AED 위치 — 서울시 공공데이터 API 로드 (fallback: 역사 내 시뮬)
 let AED_LOCATIONS = [
@@ -2641,12 +2641,12 @@ let AED_LOCATIONS = [
   { id: 'AED-2', label: '환승 통로', x: 0.50, y: 0.50 },
   { id: 'AED-3', label: '역무실', x: 0.90, y: 0.90 },
 ];
-(async  => {
+(async () => {
   try {
     const apiBase = location.hostname.endsWith('github.io') ? 'https://app.allthatai.kr' : `${window.METROEYES_BACKEND}`;
     const r = await fetch(`${apiBase}/api/v1/aed`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json;
+      const j = await r.json();
       if (j.aed && j.aed.length > 0) {
         AED_LOCATIONS = j.aed.slice(0, 5).map((a, i) => ({
           id: `AED-${i+1}`,
@@ -2659,10 +2659,10 @@ let AED_LOCATIONS = [
       }
     }
   } catch {}
-});
+})();
 
 function checkEmergency(persons) {
-  const now = Date.now;
+  const now = Date.now();
   for (const p of persons) {
     const id = p.id;
     const exist = _personStill.get(id);
@@ -2696,7 +2696,7 @@ function checkEmergency(persons) {
   }
   // GC: 안 보인 사람 제거
   const ids = new Set(persons.map(p => p.id));
-  for (const id of _personStill.keys) if (!ids.has(id)) _personStill.delete(id);
+  for (const id of _personStill.keys()) if (!ids.has(id)) _personStill.delete(id);
 }
 
 // onTracksUpdate hook 보강
@@ -2713,7 +2713,7 @@ onTracksUpdate = function (trks) {
 const GRID_N = 16;  // 16x16 grid on BEV [0,1]^2
 
 function buildCostField(persons) {
-  const cost = Array(GRID_N).fill(0).map( => new Float32Array(GRID_N).fill(1));
+  const cost = Array(GRID_N).fill(0).map(() => new Float32Array(GRID_N).fill(1));
   // 사람 위치 주변 인플레이션 (가우시안)
   for (const p of persons) {
     const cx = Math.floor(p.bev_x * GRID_N);
@@ -2735,7 +2735,7 @@ function aStar(cost, sx, sy, ex, ey) {
   const idx = (x, y) => y * N + x;
   const inb = (x, y) => x >= 0 && y >= 0 && x < N && y < N;
   const dirs = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
-  const open = new Map;   // simple priority via array sort
+  const open = new Map();   // simple priority via array sort
   const g = new Float32Array(N*N).fill(Infinity);
   const parent = new Int32Array(N*N).fill(-1);
   const visited = new Uint8Array(N*N);
@@ -2755,7 +2755,7 @@ function aStar(cost, sx, sy, ex, ey) {
         path.push([cur % N, Math.floor(cur / N)]);
         cur = parent[cur];
       }
-      return { path: path.reverse, cost: g[bestId] };
+      return { path: path.reverse(), cost: g[bestId] };
     }
     visited[bestId] = 1;
     for (const [dx, dy] of dirs) {
@@ -2785,7 +2785,7 @@ function drawPathOverlay(paths, exits, best, worst) {
     cv.width = 480; cv.height = 480;
     cv.style.cssText = 'position:fixed;top:80px;right:20px;z-index:9998;background:rgba(4,6,10,0.94);border:2px solid #ff5e57;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.5);padding:6px';
     document.body.appendChild(cv);
-    cv.addEventListener('click',  => cv.remove);   // 클릭 시 닫힘
+    cv.addEventListener('click', () => cv.remove());   // 클릭 시 닫힘
   }
   const ctx = cv.getContext('2d');
   const W = 480, H = 480;
@@ -2796,15 +2796,15 @@ function drawPathOverlay(paths, exits, best, worst) {
   ctx.lineWidth = 0.5;
   for (let i = 0; i <= GRID_N; i++) {
     const p = i * W / GRID_N;
-    ctx.beginPath; ctx.moveTo(p, 0); ctx.lineTo(p, H); ctx.stroke;
-    ctx.beginPath; ctx.moveTo(0, p); ctx.lineTo(W, p); ctx.stroke;
+    ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(W, p); ctx.stroke();
   }
   // 사람 위치 점
   ctx.fillStyle = 'rgba(255,255,255,0.5)';
   for (const p of _lastTracksForEvac) {
-    ctx.beginPath;
+    ctx.beginPath();
     ctx.arc(p.bev_x * W, p.bev_y * H, 4, 0, Math.PI*2);
-    ctx.fill;
+    ctx.fill();
   }
   // 모든 경로
   for (const [exId, path] of Object.entries(paths)) {
@@ -2813,21 +2813,21 @@ function drawPathOverlay(paths, exits, best, worst) {
     const isWorst = exId === worst.id;
     ctx.strokeStyle = isBest ? '#7dd3d3' : isWorst ? 'rgba(255,94,87,0.4)' : 'rgba(240,180,106,0.35)';
     ctx.lineWidth = isBest ? 4 : 2;
-    ctx.beginPath;
+    ctx.beginPath();
     path.path.forEach((pt, i) => {
       const x = (pt[0] + 0.5) * W / GRID_N;
       const y = (pt[1] + 0.5) * H / GRID_N;
       if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     });
-    ctx.stroke;
+    ctx.stroke();
   }
   // 출구 마커
   for (const ex of exits) {
     const x = ex.tx * W, y = ex.ty * H;
     ctx.fillStyle = ex.id === best.id ? '#7dd3d3' : ex.id === worst.id ? '#ff5e57' : '#f0b46a';
-    ctx.beginPath;
+    ctx.beginPath();
     ctx.arc(x, y, 14, 0, Math.PI*2);
-    ctx.fill;
+    ctx.fill();
     ctx.fillStyle = '#04060a';
     ctx.font = 'bold 13px sans-serif';
     ctx.textAlign = 'center';
@@ -2912,9 +2912,9 @@ function assign1to1(groups, exits, costMatrix) {
 }
 
 // 출구 차단 상태 (cycle 358) — 화재/침수 시뮬, 광역 = 차단된 출구는 매칭에서 제외
-const _blockedExits = new Set;
+const _blockedExits = new Set();
 document.querySelectorAll('.exit-block-btn').forEach(btn => {
-  btn.addEventListener('click',  => {
+  btn.addEventListener('click', () => {
     const id = btn.dataset.exit;
     if (_blockedExits.has(id)) {
       _blockedExits.delete(id);
@@ -2937,7 +2937,7 @@ const GRID_CELL_M = 0.5;
 const WALK_SPEED_MS = 1.4;
 const stepsToSec = (cost) => (cost * GRID_CELL_M / WALK_SPEED_MS);
 
-document.getElementById('evac-btn').addEventListener('click',  => {
+document.getElementById('evac-btn').addEventListener('click', () => {
   const persons = _lastTracksForEvac;
   const result = document.getElementById('evac-result');
   if (persons.length < 2) {
@@ -3071,17 +3071,17 @@ document.getElementById('evac-btn').addEventListener('click',  => {
 <script>
 // ▶︎ 실 카메라 시연 모드 — 30초 시퀀스 (backend incident_log 송신)
 // realbev ESM module 안에서 BEV 캔버스 inject 어려워, backend 통해 다른 페이지/탭 동기화로 데모
-(function() {
+(function () {
   const btn = document.getElementById('demo-trigger');
   if (!btn) return;
-  function findWS {
+  function findWS() {
     // realbev 의 module-internal ws 변수에 접근 어려워, location 기반으로 자체 ws 1회 연결
     if (window.LIVE_WS && window.LIVE_WS.readyState === 1) return window.LIVE_WS;
     return null;
   }
   // realbev module 의 ws 변수가 window 에 노출 안 되어 있을 수 있어, 자체 short-lived ws 연결
   let demoWS = null;
-  function ensureWS {
+  function ensureWS() {
     if (demoWS && demoWS.readyState === 1) return demoWS;
     const url = window.METROEYES_WS || (location.protocol === 'https:'
       ? 'wss://app.allthatai.kr' : 'ws://localhost:8765');
@@ -3089,14 +3089,14 @@ document.getElementById('evac-btn').addEventListener('click',  => {
     return demoWS;
   }
   function send(o) {
-    const ws = findWS || ensureWS;
+    const ws = findWS() || ensureWS();
     if (ws.readyState === 1) {
       try { ws.send(JSON.stringify(o)); } catch {}
     } else if (ws.readyState === 0) {
-      ws.addEventListener('open',  => { try { ws.send(JSON.stringify(o)); } catch {} }, { once: true });
+      ws.addEventListener('open', () => { try { ws.send(JSON.stringify(o)); } catch {} }, { once: true });
     }
   }
-  btn.addEventListener('click',  => {
+  btn.addEventListener('click', () => {
     if (!window.DemoOverlay) { alert('demo_overlay.js 로드 안 됨'); return; }
     btn.disabled = true; btn.style.opacity = '.65';
     btn.innerHTML = '시연 진행 중...';
@@ -3114,17 +3114,17 @@ document.getElementById('evac-btn').addEventListener('click',  => {
       onSetHour: (h) => { if (window.MLChart?.setDemoHour) window.MLChart.setDemoHour(h); },
       onSendIncident: (e) => send({ type: 'incident_log', ev_type: e.type, severity: e.sev, msg: e.msg, source: 'operator-realbev-demo' }),
     });
-    setTimeout( => {
+    setTimeout(() => {
       btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1';
-      if (window.MLChart?.clearDemoHour) window.MLChart.clearDemoHour;
+      if (window.MLChart?.clearDemoHour) window.MLChart.clearDemoHour();
     }, 30000);
   });
-});
+})();
 </script>
 <script src="../shared/health_pill.js" defer></script>
 <script>
 // ─── BLE 인구 밀도 패널 폴링 (2초 간격, /api/v1/ble_state) ───
-(function() {
+(function () {
   const barsEl = document.getElementById('ble-bars');
   const mapCanvas = document.getElementById('ble-map');
   if (!barsEl || !mapCanvas) return;
@@ -3134,7 +3134,7 @@ document.getElementById('evac-btn').addEventListener('click',  => {
   const levelLabel = (lv) => ({ sparse: '한산', moderate: '보통', busy: '분주', crowded: '혼잡' })[lv] || '—';
 
   let _latest = null;
-  function drawMap {
+  function drawMap() {
     if (!_latest) return;
     const beacons = _latest.beacons, hot = _latest.hottest;
     const dpr = devicePixelRatio || 1;
@@ -3161,11 +3161,11 @@ document.getElementById('evac-btn').addEventListener('click',  => {
       grad.addColorStop(0.6, col + '44');
       grad.addColorStop(1, col + '00');
       ctx.fillStyle = grad;
-      ctx.beginPath; ctx.arc(x, y, r * 1.9, 0, Math.PI * 2); ctx.fill;
+      ctx.beginPath(); ctx.arc(x, y, r * 1.9, 0, Math.PI * 2); ctx.fill();
       // 중심점
       ctx.fillStyle = col;
       ctx.shadowColor = col; ctx.shadowBlur = 8;
-      ctx.beginPath; ctx.arc(x, y, Math.min(r, 9), 0, Math.PI * 2); ctx.fill;
+      ctx.beginPath(); ctx.arc(x, y, Math.min(r, 9), 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
       // 인구 숫자
       ctx.fillStyle = '#fff';
@@ -3178,26 +3178,26 @@ document.getElementById('evac-btn').addEventListener('click',  => {
     if (hot) {
       const sx = 12 + hot.x * (W - 24);
       const sy = 12 + hot.y * (H - 24);
-      const pulse = (Math.sin(Date.now / 350) + 1) / 2;
+      const pulse = (Math.sin(Date.now() / 350) + 1) / 2;
       ctx.strokeStyle = `rgba(239,68,68,${0.55 + pulse * 0.45})`;
       ctx.lineWidth = 1.8;
-      ctx.beginPath; ctx.arc(sx, sy, 14 + pulse * 8, 0, Math.PI * 2); ctx.stroke;
+      ctx.beginPath(); ctx.arc(sx, sy, 14 + pulse * 8, 0, Math.PI * 2); ctx.stroke();
     }
   }
 
   let _raf;
-  function loop { drawMap; _raf = requestAnimationFrame(loop); }
-  loop;
+  function loop() { drawMap(); _raf = requestAnimationFrame(loop); }
+  loop();
 
-  async function pollBLE {
+  async function pollBLE() {
     try {
       const r = await fetch(window.METROEYES_BACKEND + '/api/v1/ble_state', { cache: 'no-cache' });
       if (!r.ok) throw new Error(r.status);
-      const j = await r.json;
+      const j = await r.json();
       if (!j.beacons) throw new Error('no beacons');
       _latest = j;
       // 좌측 메타
-      document.getElementById('ble-total').textContent = (j.total_devices || 0).toLocaleString;
+      document.getElementById('ble-total').textContent = (j.total_devices || 0).toLocaleString();
       document.getElementById('ble-peak').textContent = (j.peak_factor || 1).toFixed(2) + ' x';
       const hot = j.hottest;
       document.getElementById('ble-hot-name').textContent = hot.name + (j.hottest_zone ? ` (${j.hottest_zone})` : '');
@@ -3221,9 +3221,9 @@ document.getElementById('evac-btn').addEventListener('click',  => {
       }).join('');
     } catch (e) { /* silent */ }
   }
-  pollBLE;
+  pollBLE();
   setInterval(pollBLE, 2000);
-});
+})();
 </script>
 </body>
 </html>
