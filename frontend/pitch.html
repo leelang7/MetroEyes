@@ -737,7 +737,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 
 <figure>
   <img src="figs/policy_roi_v3_scenarios.png" alt="응답률별 sensitivity + 95% CI" loading="lazy">
-  <figcaption>그림 3 — 시나리오 민감도 (응답률 5/15/30/50/70%) + <b style="color:#10b981;">Monte Carlo 1,000회 95% CI 리본</b> · <b style="color:#a78bfa;">30% 가정 점추정 1,393억 [CI: 1,064억 ~ 1,808억]</b> · ROI 347x [270x ~ 424x] · 4축 perturbation: 응답률 ±15% / 절감분 ±20% / 시간가치 ±10% / 호선 cap ±10% · <b style="color:#10b981;">CI 모두 광고 KPI 포함</b> (CI 회귀 가드 7건 자동 검증)</figcaption>
+  <figcaption>그림 3 — 시나리오 민감도 (응답률 5/15/30/50/70%) + <b style="color:#10b981;">Monte Carlo 1,000회 95% CI 리본</b> · <b style="color:#a78bfa;">30% 가정 점추정 1,393억 [CI: 1,064억 ~ 1,808억]</b> · ROI 347x [270x ~ 424x] · 4축 perturbation: 응답률 ±15% / 절감분 ±20% / 시간가치 ±10% / 호선 cap ±10% · <b style="color:#10b981;">CI 모두 광고 KPI 포함</b> (CI 회귀 검증 자동화 자동 검증)</figcaption>
 </figure>
 
 <!-- cycle 364 — Monte Carlo 95% CI 정량 callout -->
@@ -811,13 +811,13 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <p style="margin: 6px 0; color: var(--muted-2); font-size: 14px;">
     <b style="color: var(--text);">반대로 8호선은 16.6M분 / ROI 75x (가장 낮음) — 우선도 870 같지만 통행량 절대치 작음</b>.
-    "예산 1순위는 2호선" 이라는 정책 답을 정량적으로 도출 — <b style="color: #10b981;">CI 6 회귀 가드로 자동 검증</b>.
+    "예산 1순위는 2호선" 이라는 정책 답을 정량적으로 도출 — <b style="color: #10b981;">CI 자동 회귀 검증로 자동 검증</b>.
   </p>
   <p style="margin: 8px 0 0; padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 14px; color: var(--muted-2);">
     <b style="color: #10b981;">🎯 한 단계 더 (cycle 368) — 호선 × 시간대 우선순위 매트릭스</b>:
     Top 5 cell 모두 priority 158 — <b style="color: var(--text);">2호선 9시 / 17시 / 19시 + 3호선 17시 / 19시</b>.
     Bottom 5 = 1호선 5~6시 (priority 9~15). 운영자 일정표에 직접 배정 가능.
-    <code>scripts/eda_line_hour_priority.py</code> · CI 7 회귀 가드 자동 검증.
+    <code>scripts/eda_line_hour_priority.py</code> · CI 자동 회귀 검증 자동 검증.
   </p>
 </div>
 
@@ -1351,7 +1351,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 </div>
 
 <div style="margin-top: 14px; padding: 14px 18px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(245,158,11,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 12px;">
-  <div style="font-size: 14px; color: #a78bfa; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px;">🎯 v6.15 MetroEyes 제출 완료 (D-1, 541+ 사이클)</div>
+  <div style="font-size: 14px; color: #a78bfa; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px;">🎯 v6.15 MetroEyes 제출 완료 (자동 사이클 운영)</div>
   <div style="font-size: 13px; line-height: 1.7; color: var(--muted);">
     <b style="color: var(--text);">설계</b> (4단 차등 정책 정의) →
     <b style="color: var(--text);">EDA</b> (3 실 데이터 검증: 분산 σ −9% / OD 12x / 환승 +1.56) →
@@ -1522,7 +1522,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <b style="color: var(--text);">탄소 절감 정량 EDA (cycle 390)</b>: 30% 시나리오 분산 행동 236M회/년 × CO₂/회 →
     <b style="color: #10b981;">ultra 0.012 kg = 2,834 톤/년 (광고, 한국인 236년 배출 등가)</b> · <b style="color: #f59e0b;">standard 0.088 kg = 20,837 톤 (실효 7배)</b>.
     derivation: 자가용 회피율 (ultra 0.7% / standard 5%) × 8.4km × 0.21 kg/km. 출처: 환경부 2023 / 서울교통공사 2023 / 한국교통연구원 modal split.
-    <code>scripts/eda_co2_savings.py</code> · CI 6 회귀 가드 자동 검증.
+    <code>scripts/eda_co2_savings.py</code> · CI 자동 회귀 검증 자동 검증.
   </p>
 </div>
 
@@ -1640,7 +1640,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 </table>
 
 <p style="font-size: 14px; color: var(--muted); margin-top: 8px;">
-  <b style="color: var(--text);">8-Moat</b>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10 공공 API fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/844 회귀 가드 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 ⑧ 시민신고 FAB + 오프라인큐 — 양면 가치사슬 완성
+  <b style="color: var(--text);">8-Moat</b>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10 공공 API fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/자동 회귀 검증 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 ⑧ 시민신고 FAB + 오프라인큐 — 양면 가치사슬 완성
 </p>
 
 <h3 style="margin-top: 28px;">🗓 3년 로드맵 — Y3 ₩200억 + Series A ₩50억</h3>
@@ -1776,7 +1776,7 @@ document.getElementById('api-curl-link').href = window.METROEYES_BACKEND + '/api
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 1차 서류 D-1
   <br>
-  <span style="color: var(--accent);">자동 모드 v6.15 — 541+ 사이클 🎉 (Monte Carlo 95% CI + 호선 ROI 708x + canonical KPI drift 자동 차단 + 844 회귀 가드 + 10 공공API + 1-Pager 4언어 + RUNBOOK + dday.ps1/sh + Makefile + 3D OpenFreeMap + citydata 통합)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
+  <span style="color: var(--accent);">자동 모드 v6.15 — 자동 회귀 검증 🎉 (Monte Carlo 95% CI + 호선 ROI 708x + canonical KPI drift 자동 차단 + 자동 회귀 검증 + 10 공공API + 1-Pager 4언어 + RUNBOOK + dday.ps1/sh + Makefile + 3D OpenFreeMap + citydata 통합)</span> · <a href="https://github.com/leelang7/MetroEyes" target="_blank" style="color: var(--link);">GitHub: leelang7/MetroEyes</a> · <a href="https://leelang7.github.io/MetroEyes/" target="_blank" style="color: var(--link);">Live: leelang7.github.io/MetroEyes</a>
 </footer>
 
 <button class="print-btn" onclick="window.print()" title="브라우저 인쇄 → PDF로 저장 (Ctrl+P)">📄 PDF 저장</button>
