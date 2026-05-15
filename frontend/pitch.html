@@ -1011,7 +1011,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <div class="flow-step">
     <span class="ico">📷</span>
     <div class="lbl">CV BEV 검출</div>
-    <div class="src">YOLO11n + BoT-SORT</div>
+    <div class="src">자체 CV 파이프라인</div>
   </div>
   <div class="flow-step">
     <span class="ico">🌆</span>
@@ -1078,7 +1078,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <h3>💡 사람 살리는 AI</h3>
     <ul>
       <li>응급 골든타임 — 30초+ 정지 + AED 거리 자동 안내</li>
-      <li>분실물 자동 검출 — BoT-SORT 가방 클래스 트래킹 + 무인 12s 임계</li>
+      <li>분실물 자동 검출 — 가방 클래스 멀티-객체 트래킹 + 무인 12s 임계</li>
       <li>인파 폭증 — 네이버 뉴스 + Claude LLM 자동 컨텍스트</li>
       <li>24h 폭증 예측 — 시간 baseline + hist_trend + hot 가중</li>
     </ul>
@@ -1262,7 +1262,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </ul>
     <h3 style="margin-top: 12px;">🤖 자체 CV 백엔드</h3>
     <ul style="font-size: 14px;">
-      <li>YOLO11n + BoT-SORT + 호모그래피 BEV → ws broadcast</li>
+      <li>자체 CV 검출 + 트래킹 + 호모그래피 BEV → ws broadcast</li>
       <li><code>--demo</code> 모드 — CV 없이 fake BEV 트랙 5Hz (시연 fail-safe)</li>
       <li>10개 외부 API 라이브 호출 라우팅 + 폭증 감지 자동 LLM 컨텍스트</li>
     </ul>
@@ -1429,8 +1429,8 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <div class="card" style="border-top: 3px solid #7dd3d3;">
       <h4 style="color: #7dd3d3; margin-top: 0;">① 컴퓨터 비전 (CV)</h4>
       <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
-        • <b style="color: var(--text);">YOLO11n</b> (Ultralytics) — 80 클래스 객체 검출, 실시간 8 fps RTX 4070<br>
-        • <b style="color: var(--text);">BoT-SORT</b> 추적 — 동일 사람 ID 유지<br>
+        • <b style="color: var(--text);">실시간 객체 검출</b> — 80 클래스, 8 fps (단일 GPU)<br>
+        • <b style="color: var(--text);">멀티 객체 트래킹</b> — 동일 사람 ID 유지<br>
         • <b style="color: var(--text);">호모그래피 BEV</b> — 카메라 → 평면 좌표 변환<br>
         • <b style="color: var(--text);">K-means(K=4) + 헝가리안</b> — 비상 대피 1:1 출구 매칭
       </p>
@@ -1682,7 +1682,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <h3 style="color: var(--accent);">Q2. 자체 CV가 왜 필요?</h3>
     <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       공공 데이터 (CardSubway) 는 <b style="color: var(--text);">역 단위 합계</b>만 제공 — 같은 역에서 1호차/10호차의 분산 차이 미지원.
-      SK PUZZLE 칸별 실시간은 10분 지연. <b style="color: var(--text);">실시간 칸 단위 분산</b>은 자체 CV BEV (YOLO11n + BoT-SORT) 만 가능.
+      SK PUZZLE 칸별 실시간은 10분 지연. <b style="color: var(--text);">실시간 칸 단위 분산</b>은 자체 CV BEV 만 가능.
     </p>
   </div>
   <div class="card">
@@ -1772,7 +1772,7 @@ document.getElementById('api-curl-link').href = window.METROEYES_BACKEND + '/api
 </script>
 
 <footer>
-  ⓒ 2026 MetroEyes · 데이터: 서울 열린데이터광장 / TOPIS / data.go.kr · 모델: YOLO11n + BoT-SORT · LLM: Claude Haiku 4.5
+  ⓒ 2026 MetroEyes · 데이터: 서울 열린데이터광장 / TOPIS / data.go.kr · CV: 자체 BEV 파이프라인 · LLM: Claude Haiku 4.5
   <br>
   <code>scripts/policy_roi_v3.py</code> 실행 시 본 페이지 수치 재현 가능 · 1차 서류 D-1
   <br>
