@@ -1351,49 +1351,68 @@ async def fake_bev_loop():
 
 
 async def fake_ble_loop():
-    """역사 내 BLE 비콘 RSSI 시뮬 — 2초마다 8개 비콘 신호 갱신.
+    """역사 내 BLE 비콘 — 구역별 인구 밀도 추정 (2초 갱신).
 
-    실데이터 통합 전 stub: 양봉 피크 시간엔 사람 많아 RSSI 흔들림 ↑.
-    페이로드: type/ts/station/beacons[]/strongest/inferred_zone
+    핵심 아이디어: 각 anchor 비콘이 주변 모든 시민 폰의 BLE 광고를 수신.
+    이때 (감지된 폰 수, 평균 RSSI)로 그 구역의 인구 밀도를 정량화.
+      - n_devices 많고 avg_rssi 강함 = 가까이 많은 사람 = 밀집
+      - n_devices 적고 avg_rssi 약함 = 멀고 띄엄띄엄 = 한산
+
+    페이로드: beacons[{id, name, zone, x, y, n_devices, avg_rssi, strong_count, density}]
+    + total_devices (역 전체 추정 인구), hottest (가장 붐비는 비콘), peak_factor (양봉 시간대 가중치)
     """
-    import random
+    import math, random
     rng = random.Random(11)
-    _strongest_id = "B-05"   # 최강 신호 비콘 (잠시 유지 → 부드러운 전환)
-    _strongest_until = 0.0
+    # 각 비콘별 "기본 인구 가중치" — 승강장 > 환승 > 개찰구 > 엘베/AED > 출구
+    zone_weights = {"platform": 1.0, "transfer": 0.75, "gate": 0.55, "elev": 0.25, "aed": 0.20, "exit": 0.30}
+    # 미세 변동용 비콘별 phase offset
+    phases = {b["id"]: rng.uniform(0, 6.28) for b in _BLE_BEACONS}
     while True:
         await asyncio.sleep(2.0)
         now = time.time()
         h = time.localtime(now).tm_hour
-        # 피크 시간엔 사람 많아 신호 흔들림 큼
-        noise = 4.5 if (7 <= h <= 9 or 17 <= h <= 19) else 2.2
-        # 최강 비콘 5~10초마다 변경 (사람 이동 시뮬)
-        if now > _strongest_until:
-            _strongest_id = rng.choice([b["id"] for b in _BLE_BEACONS])
-            _strongest_until = now + rng.uniform(5, 12)
+        # 양봉 피크 — 07-09 출근(1.25), 17-19 퇴근(1.35), 야간(0.25), 평상(0.65)
+        if 7 <= h <= 9: peak = 1.25
+        elif 17 <= h <= 19: peak = 1.35
+        elif 10 <= h <= 16: peak = 0.65
+        elif 20 <= h <= 22: peak = 0.50
+        else: peak = 0.25
         beacons = []
+        total_dev = 0
         for b in _BLE_BEACONS:
-            base = b["anchor_rssi"]
-            # 최강 비콘이면 boost (-3 ~ -6 dBm 더 강함)
-            boost = -rng.uniform(3, 6) if b["id"] == _strongest_id else 0
-            rssi = base + boost + rng.gauss(0, noise)
-            quality = "excellent" if rssi > -55 else "good" if rssi > -65 else "fair" if rssi > -75 else "poor"
+            zw = zone_weights.get(b["zone"], 0.5)
+            # 미세 시간 변동 (오실레이션 + 노이즈)
+            osc = 0.85 + 0.30 * math.sin(now * 0.15 + phases[b["id"]])
+            base_n = 18 * zw * peak * osc      # 비콘 주변 폰 수 평균
+            n = max(0, int(rng.gauss(base_n, max(1.5, base_n * 0.15))))
+            # 평균 RSSI — 밀집할수록 가까운 폰이 많아 평균이 강함 (-55 base에 밀도 보너스)
+            density_norm = min(1.0, n / 28.0)
+            avg_rssi = b["anchor_rssi"] + 6 * density_norm + rng.gauss(0, 1.2)  # 밀집 → +dB
+            strong_count = int(n * (0.30 + 0.50 * density_norm))   # -65 이상 폰 비율
+            density_score = round(0.55 * density_norm + 0.45 * min(1.0, (avg_rssi + 80) / 30), 3)
             beacons.append({
                 "id": b["id"], "name": b["name"], "zone": b["zone"],
                 "x": b["x"], "y": b["y"],
-                "rssi": round(rssi, 1),
-                "quality": quality,
+                "n_devices": n,
+                "avg_rssi": round(avg_rssi, 1),
+                "strong_count": strong_count,
+                "density": density_score,
+                "level": "crowded" if density_score > 0.75 else "busy" if density_score > 0.50 else "moderate" if density_score > 0.25 else "sparse",
             })
-        strongest = max(beacons, key=lambda x: x["rssi"])
-        zone_map = {"exit": "출구 근처", "gate": "개찰구 통과", "transfer": "환승 통로",
-                    "platform": "승강장 진입", "elev": "엘리베이터 인근", "aed": "AED 비치 구역"}
+            total_dev += n
+        hottest = max(beacons, key=lambda x: x["density"])
+        zone_map = {"exit": "출구", "gate": "개찰구", "transfer": "환승 통로",
+                    "platform": "승강장", "elev": "엘리베이터", "aed": "AED"}
         _last_ble.clear()
         _last_ble.update({
             "type": "ble_state",
             "ts": now,
             "station": "잠실역",
+            "peak_factor": round(peak, 2),
+            "total_devices": total_dev,
             "beacons": beacons,
-            "strongest": strongest,
-            "inferred_zone": zone_map.get(strongest["zone"], "—"),
+            "hottest": hottest,
+            "hottest_zone": zone_map.get(hottest["zone"], "—"),
         })
         if clients:
             await broadcast(json.dumps(_last_ble, ensure_ascii=False))
