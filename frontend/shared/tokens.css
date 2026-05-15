@@ -39,4 +39,15 @@
   --domain-ads: #10b981;
   --domain-arch: #a78bfa;
   --domain-citizen: #f59e0b;
+
+  /* typography scale — 가독성 우선 (작은 라벨도 12px 이상 유지) */
+  --fs-micro: 11px;    /* 보조 메타 (한 줄 부가 정보) */
+  --fs-xs:    12px;    /* 작은 라벨 (UPPERCASE 칩, 메타) */
+  --fs-sm:    13px;    /* 본문 보조 */
+  --fs-base:  15px;    /* 본문 기본 */
+  --fs-md:    16px;    /* 강조 본문 */
+  --fs-lg:    19px;    /* 부제목 */
+  --fs-xl:    24px;    /* 카드 KPI 값 */
+  --fs-2xl:   32px;    /* 큰 숫자 */
+  --fs-3xl:   44px;    /* 히어로 메가 */
 }

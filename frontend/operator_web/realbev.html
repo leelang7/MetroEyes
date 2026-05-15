@@ -11,102 +11,102 @@
 <link rel="stylesheet" href="../shared/bev_console.css">
 <script src="../shared/demo_overlay.js" defer></script>
 <style>
-.realbev-status { display: flex; gap: 14px; align-items: center; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.realbev-status { display: flex; gap: 14px; align-items: center; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .realbev-status .led { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 6px; vertical-align: middle; }
 .realbev-status.connected .led { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); animation: pulse 1.6s ease-in-out infinite; }
 .realbev-status.error .led { background: var(--crit); }
 .ws-controls { display: flex; gap: 8px; align-items: center; margin: 10px 0; }
-.ws-controls input { flex: 1; min-width: 200px; background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-family: inherit; font-size: 12px; outline: none; }
-.ws-controls button { background: var(--accent); color: #04060a; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 500; font-size: 12px; cursor: pointer; }
+.ws-controls input { flex: 1; min-width: 200px; background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; }
+.ws-controls button { background: var(--accent); color: #04060a; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 500; font-size: 14px; cursor: pointer; }
 .ws-controls button.secondary { background: rgba(255,255,255,0.06); color: var(--fg); }
 .cam-picker { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
-.cam-picker select { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-family: inherit; font-size: 12px; }
-.cam-picker button { background: rgba(125, 211, 211, 0.10); color: var(--accent); border: 1px solid rgba(125,211,211,0.3); padding: 8px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+.cam-picker select { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-family: inherit; font-size: 14px; }
+.cam-picker button { background: rgba(125, 211, 211, 0.10); color: var(--accent); border: 1px solid rgba(125,211,211,0.3); padding: 8px 12px; border-radius: 8px; font-size: 14px; cursor: pointer; }
 .vid-btn.active { background: var(--accent); color: #04060a; }
 
 .split { display: grid; gap: 14px; grid-template-columns: minmax(280px, 1fr) 2fr; }
 .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.tile h3 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--muted); font-weight: 500; }
+.tile h3 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--muted); font-weight: 500; }
 .tile h3 b { color: var(--fg); margin-right: 8px; font-weight: 500; }
 .tile .stage { width: 100%; aspect-ratio: 4 / 3; background: #04060a; border-radius: 10px; position: relative; overflow: hidden; }
 .tile.bev .stage { aspect-ratio: 16 / 10; }
 .tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
 #bev-3d { width: 100%; height: 100%; display: block; }
-.tile .badge { position: absolute; top: 8px; left: 10px; font-size: 10px; padding: 3px 8px; border-radius: 999px; background: rgba(4, 6, 10, 0.7); border: 1px solid var(--line-2); color: var(--accent); font-weight: 500; backdrop-filter: blur(4px); z-index: 2; }
+.tile .badge { position: absolute; top: 8px; left: 10px; font-size: 14px; padding: 3px 8px; border-radius: 999px; background: rgba(4, 6, 10, 0.7); border: 1px solid var(--line-2); color: var(--accent); font-weight: 500; backdrop-filter: blur(4px); z-index: 2; }
 .tile .badge.live { color: var(--crit); border-color: rgba(255,94,87,0.4); }
 .tile .stage .corner-meta {
   position: absolute; top: 8px; right: 12px; z-index: 2;
-  font-size: 11px; color: var(--accent); font-variant-numeric: tabular-nums;
+  font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums;
   background: rgba(4, 6, 10, 0.7); padding: 3px 10px; border-radius: 999px;
   border: 1px solid rgba(125, 211, 211, 0.3);
   backdrop-filter: blur(4px);
 }
-.tile .meta { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
-.diag-log { margin-top: 10px; background: #04060a; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-family: ui-monospace, "Consolas", monospace; font-size: 11px; line-height: 1.55; color: var(--muted-2); max-height: 130px; overflow-y: auto; white-space: pre-wrap; }
+.tile .meta { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+.diag-log { margin-top: 10px; background: #04060a; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-family: ui-monospace, "Consolas", monospace; font-size: 13px; line-height: 1.55; color: var(--muted-2); max-height: 130px; overflow-y: auto; white-space: pre-wrap; }
 .fusion-strip { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin: 10px 0; }
 @media (max-width: 900px) { .fusion-strip { grid-template-columns: repeat(2, 1fr); } }
 .fusion-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; min-height: 76px; }
-.fusion-card .fc-label { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-.fusion-card .fc-label .src { color: var(--accent); font-weight: 500; letter-spacing: 0.6px; text-transform: none; font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; }
+.fusion-card .fc-label { font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.fusion-card .fc-label .src { color: var(--accent); font-weight: 500; letter-spacing: 0.6px; text-transform: none; font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; }
 .fusion-card .fc-value { font-size: 22px; color: var(--fg); font-weight: 300; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
 .fusion-card .fc-value .unit { font-size: 13px; color: var(--muted); margin-left: 4px; }
-.fusion-card .fc-sub { font-size: 11px; color: var(--muted-2); }
+.fusion-card .fc-sub { font-size: 13px; color: var(--muted-2); }
 .fusion-card.ok .fc-value { color: var(--accent); }
 .fusion-card.warn .fc-value { color: var(--warn); }
 .fusion-card.crit .fc-value { color: var(--crit); }
 .fusion-card.dim .fc-value { color: var(--muted); }
 .ml-sparkline { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 0 0 14px 0; display: flex; align-items: stretch; gap: 16px; }
 .ml-sparkline .ml-meta { display: flex; flex-direction: column; gap: 4px; min-width: 200px; }
-.ml-sparkline .ml-label { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); }
-.ml-sparkline .ml-label .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-left: 4px; }
-.ml-sparkline .ml-label .peak-pill { color: #f59e0b; font-size: 9px; padding: 1px 5px; background: rgba(245,158,11,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-left: 4px; }
+.ml-sparkline .ml-label { font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); }
+.ml-sparkline .ml-label .src { color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-left: 4px; }
+.ml-sparkline .ml-label .peak-pill { color: #f59e0b; font-size: 13px; padding: 1px 5px; background: rgba(245,158,11,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-left: 4px; }
 .ml-sparkline .ml-now { font-size: 24px; font-weight: 300; color: var(--fg); font-variant-numeric: tabular-nums; }
 .ml-sparkline .ml-now b { color: var(--accent); font-weight: 500; }
-.ml-sparkline .ml-peak-info { font-size: 11px; color: var(--muted-2); font-variant-numeric: tabular-nums; display: flex; gap: 8px; flex-wrap: wrap; }
+.ml-sparkline .ml-peak-info { font-size: 13px; color: var(--muted-2); font-variant-numeric: tabular-nums; display: flex; gap: 8px; flex-wrap: wrap; }
 .ml-sparkline .ml-peak-info span.am { color: #7dd3d3; }
 .ml-sparkline .ml-peak-info span.pm { color: #f59e0b; }
-.ml-sparkline .ml-sub { font-size: 11px; color: var(--muted-2); }
+.ml-sparkline .ml-sub { font-size: 13px; color: var(--muted-2); }
 .ml-sparkline canvas { flex: 1; height: 110px; min-width: 0; }
 .ml-sparkline .accuracy {
   display: flex; flex-direction: column; gap: 2px; padding: 0 12px; min-width: 110px;
   border-left: 1px solid var(--line);
 }
-.ml-sparkline .accuracy .acc-label { font-size: 9px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
+.ml-sparkline .accuracy .acc-label { font-size: 13px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
 .ml-sparkline .accuracy .acc-pct { font-size: 24px; font-weight: 300; color: var(--accent); font-variant-numeric: tabular-nums; }
 .ml-sparkline .accuracy .acc-pct.warn { color: var(--warn); }
 .ml-sparkline .accuracy .acc-pct.crit { color: var(--crit); }
-.ml-sparkline .accuracy .acc-detail { font-size: 10px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+.ml-sparkline .accuracy .acc-detail { font-size: 14px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
 
 /* 5/10/30분 단위 막대 그래프 — 지하철·버스 단기 활동 */
 .short-term-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 14px; }
 .short-bar { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-.short-bar .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
-.short-bar .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
+.short-bar .lbl { font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; }
+.short-bar .lbl .src { color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
 .short-bar .bars { display: flex; align-items: flex-end; gap: 12px; margin-top: 8px; height: 50px; }
 .short-bar .bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .short-bar .bar .fill { width: 100%; background: linear-gradient(180deg, rgba(125,211,211,0.6), rgba(125,211,211,0.1)); border-radius: 4px 4px 0 0; min-height: 2px; }
-.short-bar .bar .val { font-size: 11px; color: var(--fg); font-variant-numeric: tabular-nums; }
-.short-bar .bar .tag { font-size: 9px; color: var(--muted); letter-spacing: 0.6px; }
+.short-bar .bar .val { font-size: 13px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.short-bar .bar .tag { font-size: 13px; color: var(--muted); letter-spacing: 0.6px; }
 
 .safety-strip {
   display: none; align-items: center; gap: 10px;
   padding: 10px 14px; margin: 0 0 14px;
   background: rgba(255,94,87,0.08); border: 1px solid rgba(255,94,87,0.3); border-radius: 10px;
-  font-size: 12px; color: var(--crit); font-weight: 500;
+  font-size: 14px; color: var(--crit); font-weight: 500;
 }
 .safety-strip.show { display: flex; }
 
 /* 막힌 도로 list — 운영자 컨텍스트 */
 .roads-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
-.roads-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.roads-card .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
-.roads-card .road-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; font-size: 12px; }
+.roads-card .lbl { font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.roads-card .lbl .src { color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
+.roads-card .road-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; font-size: 14px; }
 .roads-card .road-row .name { color: var(--fg); flex: 1; }
 .roads-card .road-row .spd { color: var(--crit); font-weight: 500; font-variant-numeric: tabular-nums; }
 .roads-card .road-row .spd.fast { color: var(--accent); }
-.roads-card .road-row .from-to { color: var(--muted); font-size: 10px; }
+.roads-card .road-row .from-to { color: var(--muted); font-size: 14px; }
 .roads-card .roads-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.roads-card h4 { margin: 0 0 6px; font-size: 11px; color: var(--muted); font-weight: 500; }
+.roads-card h4 { margin: 0 0 6px; font-size: 13px; color: var(--muted); font-weight: 500; }
 .roads-card h4.slow { color: var(--crit); }
 .roads-card h4.fast { color: var(--accent); }
 
@@ -120,35 +120,35 @@
 .impact-card .ic-num { font-size: 38px; font-weight: 200; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; }
 .impact-card .ic-num small { font-size: 14px; color: var(--muted); margin-left: 4px; }
 .impact-card .ic-meta { display: flex; flex-direction: column; gap: 4px; }
-.impact-card .ic-meta .ic-label { font-size: 10px; color: var(--muted); letter-spacing: 1.4px; text-transform: uppercase; }
+.impact-card .ic-meta .ic-label { font-size: 14px; color: var(--muted); letter-spacing: 1.4px; text-transform: uppercase; }
 .impact-card .ic-meta .ic-detail { font-size: 13px; color: var(--fg); }
 .impact-card .ic-bar { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.impact-card .ic-bar .ic-bar-label { font-size: 10px; color: var(--muted); display: flex; justify-content: space-between; }
+.impact-card .ic-bar .ic-bar-label { font-size: 14px; color: var(--muted); display: flex; justify-content: space-between; }
 .impact-card .ic-bar .ic-bar-fill { height: 6px; background: rgba(125,211,211,0.15); border-radius: 999px; overflow: hidden; }
 .impact-card .ic-bar .ic-bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), rgba(125,211,211,0.4)); border-radius: 999px; transition: width 0.6s ease; }
 
 /* 주변 행사 카드 — 인구 영향 신호 */
 .events-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
-.events-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.events-card .lbl .src { color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
-.events-card .ev-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 12px; }
+.events-card .lbl { font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.events-card .lbl .src { color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; }
+.events-card .ev-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .events-card .ev-row:first-of-type { border-top: 0; }
-.events-card .ev-row .ev-place { color: var(--muted); font-size: 11px; min-width: 100px; }
+.events-card .ev-row .ev-place { color: var(--muted); font-size: 13px; min-width: 100px; }
 .events-card .ev-row .ev-name { color: var(--fg); flex: 1; }
 .events-card .ev-row .ev-cap { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 500; min-width: 56px; text-align: right; }
-.events-card .ev-row .ev-dist { color: var(--muted-2); font-size: 10px; min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; }
-.events-card .ev-summary { font-size: 11px; color: var(--muted-2); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+.events-card .ev-row .ev-dist { color: var(--muted-2); font-size: 14px; min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; }
+.events-card .ev-summary { font-size: 13px; color: var(--muted-2); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
 .events-card .ev-summary b { color: var(--warn); font-weight: 500; }
 
 /* ML 모델 검증 메트릭 카드 */
 .metrics-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; display: flex; align-items: center; gap: 18px; }
-.metrics-card .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); min-width: 140px; }
-.metrics-card .lbl .src { display: block; color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-top: 4px; width: fit-content; }
+.metrics-card .lbl { font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); min-width: 140px; }
+.metrics-card .lbl .src { display: block; color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none; margin-top: 4px; width: fit-content; }
 .metrics-card .m { display: flex; flex-direction: column; gap: 2px; padding: 0 16px; border-left: 1px solid var(--line); }
 .metrics-card .m .v { font-size: 20px; font-weight: 300; color: var(--fg); font-variant-numeric: tabular-nums; }
 .metrics-card .m .v.ok { color: var(--accent); }
-.metrics-card .m .k { font-size: 10px; color: var(--muted); letter-spacing: 1.2px; }
-.metrics-card .miss { color: var(--muted-2); font-size: 12px; }
+.metrics-card .m .k { font-size: 14px; color: var(--muted); letter-spacing: 1.2px; }
+.metrics-card .miss { color: var(--muted-2); font-size: 14px; }
 .diag-log .ok { color: var(--accent); }
 .diag-log .err { color: var(--crit); }
 .diag-log .warn { color: var(--warn); }
@@ -184,10 +184,10 @@
     <a href="realbev.html" class="active" data-i18n="nav_realcam">📷 실 카메라</a>
     <a href="ad_pricing.html" data-i18n="nav_ads">📺 디스플레이</a>
     <a href="../passenger_app/index.html" class="cta-citizen" data-i18n="nav_citizen">📱 시민 앱 →</a>
-    <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
-    <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
-    <a href="admin.html" title="관리자 콘솔 — API 상태·버스BEV·인시던트" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(99,102,241,.10)); border: 1px solid rgba(168,85,247,.55); color: #a855f7; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">⚙️ 관리</a>
-    <button id="demo-trigger" title="실 카메라 BEV 30초 응급/분실 시연 (backend 동기화)" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
+    <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
+    <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
+    <a href="admin.html" title="관리자 콘솔 — API 상태·버스BEV·인시던트" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(99,102,241,.10)); border: 1px solid rgba(168,85,247,.55); color: #a855f7; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">⚙️ 관리</a>
+    <button id="demo-trigger" title="실 카메라 BEV 30초 응급/분실 시연 (backend 동기화)" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
     <button id="lang-toggle" style="margin-left: 6px; padding: 2px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language">🇰🇷</button>
 <script>
 const I18N_OP_REALCAM = {
@@ -279,18 +279,18 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
 });
 window.addEventListener('DOMContentLoaded', applyRealcamI18n);
 </script>
-    <span id="cam-live-kpi" hidden class="tag" style="margin-left: 8px; padding: 4px 10px; background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.45); color: #fff; border-radius: 6px; font-size: 11px;">
-      <span style="color: #10b981; font-weight: 700; font-size: 9px; letter-spacing: 1.2px;">🟢 LIVE</span>
-      <b id="cam-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 9px; opacity: .7;">분산</em>
-      <b id="cam-kpi-roi" style="margin-left: 6px;">—</b><em style="font-size: 9px; opacity: .7;">x ROI</em>
+    <span id="cam-live-kpi" hidden class="tag" style="margin-left: 8px; padding: 4px 10px; background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.45); color: #fff; border-radius: 6px; font-size: 13px;">
+      <span style="color: #10b981; font-weight: 700; font-size: 13px; letter-spacing: 1.2px;">🟢 LIVE</span>
+      <b id="cam-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 13px; opacity: .7;">분산</em>
+      <b id="cam-kpi-roi" style="margin-left: 6px;">—</b><em style="font-size: 13px; opacity: .7;">x ROI</em>
     </span>
-    <span id="cam-dispersion-pill" hidden class="tag" style="margin-left: 6px; padding: 4px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(167,139,250,.08)); border: 1px solid rgba(125,211,211,.45); color: #fff; border-radius: 6px; font-size: 11px;">
-      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">📈 분산효과</span>
+    <span id="cam-dispersion-pill" hidden class="tag" style="margin-left: 6px; padding: 4px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(167,139,250,.08)); border: 1px solid rgba(125,211,211,.45); color: #fff; border-radius: 6px; font-size: 13px;">
+      <span style="color: #7dd3d3; font-size: 14px; font-weight: 700;">📈 분산효과</span>
       <span style="margin-left: 4px;">σ<b id="cam-dp-sigma" style="margin-left:3px;">—%</b></span>
       <span style="margin-left: 4px;">피크<b id="cam-dp-peak" style="margin-left:3px;">—%</b></span>
     </span>
-    <span id="cam-tier-pill" hidden class="tag" style="margin-left: 6px; padding: 4px 10px; background: linear-gradient(135deg, rgba(245,158,11,.14), rgba(167,139,250,.06)); border: 1px solid rgba(245,158,11,.35); color: #fff; border-radius: 6px; font-size: 11px;">
-      <span style="color: #f59e0b; font-size: 10px; font-weight: 700;">💰 차등</span>
+    <span id="cam-tier-pill" hidden class="tag" style="margin-left: 6px; padding: 4px 10px; background: linear-gradient(135deg, rgba(245,158,11,.14), rgba(167,139,250,.06)); border: 1px solid rgba(245,158,11,.35); color: #fff; border-radius: 6px; font-size: 13px;">
+      <span style="color: #f59e0b; font-size: 14px; font-weight: 700;">💰 차등</span>
       <b id="cam-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="cam-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="cam-tier-tp" style="color: #f59e0b;">0</b>
     </span>
 <script>
@@ -347,7 +347,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
   <div class="controls">
     <span class="tag gps-tag" style="cursor:default; padding: 4px 10px;">
       <span class="gps-led"></span>
-      <select id="ctrl-station-sel" style="background:transparent; border:none; color:var(--fg); font-size:12px; font-weight:700; cursor:pointer; outline:none; min-width:120px;">
+      <select id="ctrl-station-sel" style="background:transparent; border:none; color:var(--fg); font-size: 14px; font-weight:700; cursor:pointer; outline:none; min-width:120px;">
         <option value="잠실|2|잠실역">잠실역 (2호선)</option>
         <option value="강남|2|강남역">강남역 (2호선)</option>
         <option value="홍대입구|2|홍대 관광특구">홍대입구 (2호선)</option>
@@ -559,7 +559,7 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       <input id="ws-url" type="text" value="" placeholder="${window.METROEYES_WS}" />
       <button id="ws-connect">연결</button>
       <button id="ws-disconnect" class="secondary">해제</button>
-      <select id="fc-station-sel" style="background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-size: 12px;">
+      <select id="fc-station-sel" style="background: rgba(255,255,255,0.04); border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; border-radius: 8px; font-size: 14px;">
         <option value="잠실|2|잠실역" selected>잠실 (2호선)</option>
         <option value="강남|2|강남역">강남 (2호선)</option>
         <option value="홍대입구|2|홍대 관광특구">홍대입구 (2호선)</option>
@@ -583,11 +583,11 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       <button id="cam-stop" class="secondary">정지</button>
     </div>
     <div class="cam-picker">
-      <span style="color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;">샘플 영상:</span>
+      <span style="color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px;">샘플 영상:</span>
       <button class="vid-btn" data-vid="subway">🚇 지하철 차내</button>
       <button class="vid-btn" data-vid="vtest">광장 군중</button>
       <button class="vid-btn" data-vid="dog_park">공원 (사람·반려동물)</button>
-      <span style="color: var(--muted); font-size: 11px; margin-left: 8px;">|</span>
+      <span style="color: var(--muted); font-size: 13px; margin-left: 8px;">|</span>
       <button class="vid-btn" data-vid="subway_platform" data-optional="1">🚇 지하철 승강장 CCTV</button>
       <button class="vid-btn" data-vid="bus_stop" data-optional="1">🚌 버스 정류장 CCTV</button>
       <button class="vid-btn" data-vid="transfer" data-optional="1">🚇 환승 통로</button>
@@ -595,12 +595,12 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     </div>
     <div class="cam-picker" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
       <button id="evac-btn" style="background: linear-gradient(135deg, #ff5e57, #ff8a4c); color: #fff; font-weight: 600;">🚨 비상 동선 추론</button>
-      <span style="color: var(--muted); font-size: 11px; margin-left: 8px;">차단 출구:</span>
-      <button class="exit-block-btn" data-exit="NW" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;" title="북서 출구 차단/해제">NW</button>
-      <button class="exit-block-btn" data-exit="NE" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;">NE</button>
-      <button class="exit-block-btn" data-exit="SW" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;">SW</button>
-      <button class="exit-block-btn" data-exit="SE" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 11px; cursor: pointer;">SE</button>
-      <span id="evac-result" style="color: var(--muted); font-size: 12px; margin-left: 6px;">— 클릭 시 현재 점유 분포로 최적 대피 출구 추천 (IDEA-6)</span>
+      <span style="color: var(--muted); font-size: 13px; margin-left: 8px;">차단 출구:</span>
+      <button class="exit-block-btn" data-exit="NW" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 13px; cursor: pointer;" title="북서 출구 차단/해제">NW</button>
+      <button class="exit-block-btn" data-exit="NE" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 13px; cursor: pointer;">NE</button>
+      <button class="exit-block-btn" data-exit="SW" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 13px; cursor: pointer;">SW</button>
+      <button class="exit-block-btn" data-exit="SE" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; font-size: 13px; cursor: pointer;">SE</button>
+      <span id="evac-result" style="color: var(--muted); font-size: 14px; margin-left: 6px;">— 클릭 시 현재 점유 분포로 최적 대피 출구 추천 (IDEA-6)</span>
     </div>
     <div class="diag-log" id="diag">[준비] 페이지 로드됨\n</div>
   </section>
@@ -621,15 +621,15 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
       </div>
       <!-- 영상 밑 통계 패널 (좌측 빈 공간 채움) -->
       <div style="margin-top: 6px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px; background: linear-gradient(135deg, rgba(125,211,211,.08), rgba(167,139,250,.04)); border: 1px solid rgba(125,211,211,.18); border-radius: 10px;">
-        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">📷 FPS</div><b id="cam-fps-mini" style="color: #7dd3d3; font-size: 18px;">—</b></div>
-        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">🎯 트랙</div><b id="cam-tracks-mini" style="color: #a78bfa; font-size: 18px;">—</b></div>
-        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">⏱ 송신</div><b id="cam-tx-mini" style="color: #f59e0b; font-size: 18px;">—</b></div>
-        <div><div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">🔌 WS</div><b id="cam-ws-mini" style="color: var(--muted); font-size: 13px;">—</b></div>
+        <div><div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">📷 FPS</div><b id="cam-fps-mini" style="color: #7dd3d3; font-size: 18px;">—</b></div>
+        <div><div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">🎯 트랙</div><b id="cam-tracks-mini" style="color: #a78bfa; font-size: 18px;">—</b></div>
+        <div><div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">⏱ 송신</div><b id="cam-tx-mini" style="color: #f59e0b; font-size: 18px;">—</b></div>
+        <div><div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">🔌 WS</div><b id="cam-ws-mini" style="color: var(--muted); font-size: 13px;">—</b></div>
       </div>
       <!-- 좌측 mini KPI — BEV 3D 큰 높이만큼 빈 공간 보강 -->
       <div style="margin-top: 6px; padding: 10px 12px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); border-radius: 10px;">
-        <div style="font-size: 10px; color: var(--muted); letter-spacing: 1.0px; text-transform: uppercase;">⚙ Pipeline</div>
-        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted-2); margin-top: 6px;">
+        <div style="font-size: 14px; color: var(--muted); letter-spacing: 1.0px; text-transform: uppercase;">⚙ Pipeline</div>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted-2); margin-top: 6px;">
           <div style="display: flex; justify-content: space-between;"><span>모델</span><span style="color: #fff;">YOLO11n + BoT-SORT</span></div>
           <div style="display: flex; justify-content: space-between;"><span>입력 해상도</span><span style="color: #fff;" id="cam-res-mini">640×480</span></div>
           <div style="display: flex; justify-content: space-between;"><span>디바이스</span><span style="color: #10b981;" id="cam-dev-mini">cuda · RTX 4070 SUPER</span></div>
@@ -653,16 +653,16 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
   </section>
 
   <!-- ③ 라이브 트랙 분포 + 사고 history + KPI (실영상 밑 빈칸 보강) -->
-  <div style="margin-top: 18px; padding: 8px 14px; background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(167,139,250,.06)); border: 1px solid rgba(125,211,211,.30); border-radius: 10px; font-size: 12px; color: var(--muted-2);">
+  <div style="margin-top: 18px; padding: 8px 14px; background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(167,139,250,.06)); border: 1px solid rgba(125,211,211,.30); border-radius: 10px; font-size: 14px; color: var(--muted-2);">
     <b style="color: var(--accent); letter-spacing: 1px;">▼ 라이브 분석 패널 (cycle 341 신규)</b> — 실 카메라 영상 + BEV 3D 뷰 결과를 실시간 집계한 운영자 종합 대시보드
   </div>
   <section style="margin-top: 10px; display: grid; grid-template-columns: 1.2fr 1.4fr 1fr; gap: 12px;">
     <div class="tile" style="padding: 12px 14px;">
       <h3><b data-i18n="h_track">③ 라이브 트랙 분포</b><span style="color: var(--muted); font-weight: 400;" data-i18n="h_track_sub">YOLO11n 클래스별 카운트</span></h3>
       <div id="track-dist" style="display: flex; flex-direction: column; gap: 6px; padding: 6px 0;">
-        <div style="color: var(--muted); font-size: 12px;">트랙 수신 대기...</div>
+        <div style="color: var(--muted); font-size: 14px;">트랙 수신 대기...</div>
       </div>
-      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.06); display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px;">
+      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.06); display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 13px;">
         <div><span style="color: var(--muted);">최대 동시</span><br><b id="td-peak" style="color: #f59e0b; font-size: 16px;">—</b></div>
         <div><span style="color: var(--muted);">평균 트랙</span><br><b id="td-avg" style="color: #7dd3d3; font-size: 16px;">—</b></div>
         <div><span style="color: var(--muted);">FPS 평균</span><br><b id="td-fps" style="color: #10b981; font-size: 16px;">—</b></div>
@@ -670,23 +670,23 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     </div>
     <div class="tile" style="padding: 12px 14px;">
       <h3><b data-i18n="h_evt">④ 사고 history</b><span style="color: var(--muted); font-weight: 400;" data-i18n="h_evt_sub">최근 10건 (6 type)</span></h3>
-      <div id="evt-hist" style="display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; font-size: 12px;">
+      <div id="evt-hist" style="display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; font-size: 14px;">
         <div style="color: var(--muted);">사고 알림 없음 — 정상 운영</div>
       </div>
     </div>
     <div class="tile" style="padding: 12px 14px;">
       <h3><b data-i18n="h_kpi">⑤ 누적 KPI</b><span style="color: var(--muted); font-weight: 400;" data-i18n="h_kpi_sub">backend impact_summary</span></h3>
       <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 0;">
-        <div><span style="color: var(--muted); font-size: 11px;">분산 액션</span><br><b id="kpi-disp" style="color: #a78bfa; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 12px;"> 회</span></div>
-        <div><span style="color: var(--muted); font-size: 11px;">절감 시간</span><br><b id="kpi-min" style="color: #7dd3d3; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 12px;"> 분</span></div>
-        <div><span style="color: var(--muted); font-size: 11px;">사회적 가치</span><br><b id="kpi-won" style="color: #10b981; font-size: 22px;">₩0</b></div>
-        <div><span style="color: var(--muted); font-size: 11px;">차등 4단 분포</span>
+        <div><span style="color: var(--muted); font-size: 13px;">분산 액션</span><br><b id="kpi-disp" style="color: #a78bfa; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 14px;"> 회</span></div>
+        <div><span style="color: var(--muted); font-size: 13px;">절감 시간</span><br><b id="kpi-min" style="color: #7dd3d3; font-size: 22px;">0</b><span style="color: var(--muted); font-size: 14px;"> 분</span></div>
+        <div><span style="color: var(--muted); font-size: 13px;">사회적 가치</span><br><b id="kpi-won" style="color: #10b981; font-size: 22px;">₩0</b></div>
+        <div><span style="color: var(--muted); font-size: 13px;">차등 4단 분포</span>
           <div style="display: flex; gap: 2px; margin-top: 4px; height: 10px; border-radius: 4px; overflow: hidden;">
             <div id="kpi-tier-basic" style="background: #7dd3d3; flex: 1;" title="기본 ₩200"></div>
             <div id="kpi-tier-od" style="background: #a78bfa; flex: 0;" title="OD +₩100"></div>
             <div id="kpi-tier-tp" style="background: #f59e0b; flex: 0;" title="환승 +₩200"></div>
           </div>
-          <div style="font-size: 10px; color: var(--muted-2); margin-top: 3px;">
+          <div style="font-size: 14px; color: var(--muted-2); margin-top: 3px;">
             <span id="kpi-tier-text">기본 0 / OD 0 / 환승 0</span>
           </div>
         </div>
@@ -695,11 +695,11 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
     <div class="tile" style="padding: 12px 14px;">
       <h3><b>⑥ 에너지 절감 추정</b><span style="color: var(--muted); font-weight: 400;">칸별 점유율 → HVAC 절감</span></h3>
       <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 0;">
-        <div><span style="color: var(--muted); font-size: 11px;">저점유 칸 (30% 미만)</span><br><b id="e-low-cars" style="color: #10b981; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 12px;"> 칸</span></div>
-        <div><span style="color: var(--muted); font-size: 11px;">HVAC 절감 추정</span><br><b id="e-kw" style="color: #34d399; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 12px;"> kW</span></div>
-        <div><span style="color: var(--muted); font-size: 11px;">CO₂ 절감 추정</span><br><b id="e-co2" style="color: #6ee7b7; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 12px;"> g/분</span></div>
+        <div><span style="color: var(--muted); font-size: 13px;">저점유 칸 (30% 미만)</span><br><b id="e-low-cars" style="color: #10b981; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 14px;"> 칸</span></div>
+        <div><span style="color: var(--muted); font-size: 13px;">HVAC 절감 추정</span><br><b id="e-kw" style="color: #34d399; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 14px;"> kW</span></div>
+        <div><span style="color: var(--muted); font-size: 13px;">CO₂ 절감 추정</span><br><b id="e-co2" style="color: #6ee7b7; font-size: 22px;">—</b><span style="color: var(--muted); font-size: 14px;"> g/분</span></div>
         <div id="e-car-bars" style="display:flex;gap:2px;height:28px;align-items:flex-end;margin-top:4px;border-radius:4px;overflow:hidden;"></div>
-        <div style="font-size:10px;color:var(--muted-2);">■ 초록 &lt;50% · ■ 노랑 &lt;80% · ■ 빨강 ≥80%</div>
+        <div style="font-size: 14px;color:var(--muted-2);">■ 초록 &lt;50% · ■ 노랑 &lt;80% · ■ 빨강 ≥80%</div>
       </div>
     </div>
   </section>
@@ -1590,7 +1590,7 @@ function connect(url) {
             return `<div style="display:flex; gap:6px; padding:3px 0; border-bottom:1px solid rgba(255,255,255,.04);">
               <span style="color:${colors[ty]||'#fff'}; font-weight:600; min-width:90px;">${labels[ty]||ty}</span>
               <span style="color:#fff; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${e.msg||'—'}</span>
-              <span style="color:var(--muted-2); font-size:11px;">${agoTxt}</span>
+              <span style="color:var(--muted-2); font-size: 13px;">${agoTxt}</span>
             </div>`;
           }).join('');
         }
@@ -1635,7 +1635,7 @@ function connect(url) {
           td.innerHTML = rows.map(([cls, n]) => {
             const w = total > 0 ? (n/total*100).toFixed(0) : 0;
             const c = colors[cls] || '#888';
-            return `<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
+            return `<div style="display:flex; align-items:center; gap:8px; font-size: 14px;">
               <span style="min-width:60px; color:${c}; font-weight:600;">${cls}</span>
               <div style="flex:1; height:8px; background:rgba(255,255,255,.05); border-radius:4px; overflow:hidden;">
                 <div style="height:100%; width:${w}%; background:${c};"></div>
@@ -2569,7 +2569,7 @@ function pushIncidentToast(ev) {
   }
   const icon  = ev.icon  || (ev.type === 'emergency' ? '🚨' : '🎒');
   const title = ev.title || (ev.type === 'emergency' ? '응급 의심' : '분실물 후보');
-  toast.innerHTML = `<div style="font-weight:700;margin-bottom:4px;color:${isCrit?'#ff5e57':'#f0b46a'}">${icon} ${title}</div><div style="font-size:11px;opacity:0.85;line-height:1.5">${ev.msg}</div><div style="font-size:9px;opacity:0.5;margin-top:4px;">클릭으로 닫기</div>`;
+  toast.innerHTML = `<div style="font-weight:700;margin-bottom:4px;color:${isCrit?'#ff5e57':'#f0b46a'}">${icon} ${title}</div><div style="font-size: 13px;opacity:0.85;line-height:1.5">${ev.msg}</div><div style="font-size: 13px;opacity:0.5;margin-top:4px;">클릭으로 닫기</div>`;
   // 30초 자동 제거
   setTimeout(() => { try { toast.remove(); } catch {} }, 30000);
 }
@@ -2996,11 +2996,11 @@ document.getElementById('evac-btn').addEventListener('click', () => {
     .join(' · ');
 
   const blockedNote = _blockedExits.size > 0
-    ? ` <span style="color:#fca5a5; font-size:11px;">차단 ${_blockedExits.size}/4</span>`
+    ? ` <span style="color:#fca5a5; font-size: 13px;">차단 ${_blockedExits.size}/4</span>`
     : '';
   result.innerHTML = `
     <span style="color:#7dd3d3; font-weight:600;">▶ ${exits.length}-출구 분산</span>${blockedNote}
-    <span style="color:#fff; font-size:11px;">${summary}</span>
+    <span style="color:#fff; font-size: 13px;">${summary}</span>
     &nbsp;|&nbsp;
     <span style="color:#fff; font-weight:600;">ETA ${etaSec.toFixed(1)}s</span>
     &nbsp;|&nbsp;

@@ -35,13 +35,13 @@
     transition: width .25s linear; box-shadow: 0 0 8px var(--accent);
   }
   header .brand { font-size: 14px; font-weight: 800; letter-spacing: .8px; color: var(--accent); }
-  header .brand small { display: block; font-size: 9px; letter-spacing: 1.2px; color: var(--muted); font-weight: 500; }
-  header .scenario { flex: 1; font-size: 11px; color: var(--muted); }
+  header .brand small { display: block; font-size: 13px; letter-spacing: 1.2px; color: var(--muted); font-weight: 500; }
+  header .scenario { flex: 1; font-size: 13px; color: var(--muted); }
   header .scenario b { color: var(--text); font-weight: 700; }
-  header .timer { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--accent); padding: 4px 10px; background: rgba(125,211,211,.10); border: 1px solid var(--line); border-radius: 6px; min-width: 64px; text-align: center; }
+  header .timer { font-family: 'Roboto Mono', monospace; font-size: 14px; color: var(--accent); padding: 4px 10px; background: rgba(125,211,211,.10); border: 1px solid var(--line); border-radius: 6px; min-width: 64px; text-align: center; }
   header button {
     padding: 6px 14px; background: linear-gradient(135deg, #f59e0b, #ef4444);
-    color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 800;
+    color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 800;
     cursor: pointer; letter-spacing: .4px;
   }
   header button:disabled { opacity: .55; cursor: not-allowed; }
@@ -57,7 +57,7 @@
     position: absolute; top: 0; left: 0; right: 0; height: 28px;
     display: flex; align-items: center; gap: 8px; padding: 0 12px;
     background: rgba(0,0,0,.4); backdrop-filter: blur(6px);
-    font-size: 11px; letter-spacing: .8px; text-transform: uppercase; z-index: 5;
+    font-size: 13px; letter-spacing: .8px; text-transform: uppercase; z-index: 5;
     border-bottom: 1px solid var(--line);
   }
   .panel-head .led {
@@ -109,14 +109,14 @@
 <header>
   <div class="brand"><a href="index.html" class="brand-link" title="홈으로">MetroEyes</a> <span id="brand-text">통합 시연</span><small id="brand-sub">5도메인 · 실시간 CV + 빅데이터 + AI</small></div>
   <!-- 라이브 사회적 가치 누적 카운터 -->
-  <div id="demo-impact" hidden style="display:flex;gap:10px;align-items:center;padding:4px 10px;background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.35);border-radius:8px;font-size:11px;font-variant-numeric:tabular-nums;">
-    <span style="color:#10b981;font-weight:700;font-size:10px;letter-spacing:.8px;">🎯 LIVE</span>
+  <div id="demo-impact" hidden style="display:flex;gap:10px;align-items:center;padding:4px 10px;background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.35);border-radius:8px;font-size: 13px;font-variant-numeric:tabular-nums;">
+    <span style="color:#10b981;font-weight:700;font-size: 14px;letter-spacing:.8px;">🎯 LIVE</span>
     <span style="color:var(--muted);">분산 <b id="dh-cnt" style="color:#e8e8ee;">0</b>명</span>
     <span style="color:var(--muted);">절감 <b id="dh-min" style="color:#7dd3d3;">0</b>분</span>
     <span style="color:var(--muted);">가치 <b id="dh-val" style="color:#10b981;">₩0</b></span>
     <span style="color:var(--muted);">ROI <b id="dh-roi" style="color:#a78bfa;">—x</b></span>
   </div>
-  <a href="pitch.html" style="padding: 4px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
+  <a href="pitch.html" style="padding: 4px 10px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
   <button id="lang-toggle" style="padding: 4px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language toggle">🇰🇷</button>
   <div class="scenario" id="scenario">▶︎ <b>시연 시작</b> 버튼을 눌러 5분 전체 흐름을 자동 재생하세요. <span style="opacity:.65;">(잠실 18시 → 폭증 → 분산 → 보상 → 광고 라이브)</span></div>
   <div class="timer" id="timer">00:00</div>
@@ -159,7 +159,7 @@
 <div id="demo-welcome" hidden style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,rgba(125,211,211,.20),rgba(16,185,129,.10));border:1px solid rgba(125,211,211,.55);border-radius:14px;padding:14px 22px;max-width:520px;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:ui-sans-serif,system-ui;color:#fff;line-height:1.5;font-size:13px;backdrop-filter:blur(10px)">
   <div id="dw-text" style="margin-bottom:10px"></div>
   <div style="display:flex;gap:8px;justify-content:flex-end">
-    <button id="dw-ok" style="background:linear-gradient(135deg,#7dd3d3,#10b981);border:none;color:#04060a;padding:6px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">OK</button>
+    <button id="dw-ok" style="background:linear-gradient(135deg,#7dd3d3,#10b981);border:none;color:#04060a;padding:6px 16px;border-radius:8px;font-size: 14px;font-weight:700;cursor:pointer">OK</button>
   </div>
 </div>
 <script>
@@ -405,9 +405,9 @@ function showCitizenReportOverlay() {
     ov.innerHTML = `
       <div style="font:700 15px sans-serif;color:#a78bfa;letter-spacing:1.2px;margin-bottom:12px">📱 시민 신고 FAB — 양면 가치 사슬 완성</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-        <div style="background:#7c3aed;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">🚨 응급 신고<br><span style="font-size:10px;font-weight:400">AED 위치 즉시 안내</span></div>
-        <div style="background:#1e40af;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">📦 분실물 신고<br><span style="font-size:10px;font-weight:400">역×시각 자동 기록</span></div>
-        <div style="background:#2a9d8f;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">♿ 배려 요청<br><span style="font-size:10px;font-weight:400">역무원 즉시 호출</span></div>
+        <div style="background:#7c3aed;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">🚨 응급 신고<br><span style="font-size: 14px;font-weight:400">AED 위치 즉시 안내</span></div>
+        <div style="background:#1e40af;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">📦 분실물 신고<br><span style="font-size: 14px;font-weight:400">역×시각 자동 기록</span></div>
+        <div style="background:#2a9d8f;color:#fff;padding:10px 6px;border-radius:8px;font:700 12px sans-serif">♿ 배려 요청<br><span style="font-size: 14px;font-weight:400">역무원 즉시 호출</span></div>
       </div>
       <div style="font:500 11px sans-serif;color:#fff;line-height:1.7">
         시민 탭 1번 →

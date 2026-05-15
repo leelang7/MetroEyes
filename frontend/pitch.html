@@ -44,11 +44,11 @@
     display: flex; align-items: center; gap: 18px;
   }
   header .brand { font-size: 16px; font-weight: 800; letter-spacing: .5px; color: var(--accent); }
-  header .brand small { display: block; font-size: 9px; letter-spacing: 1.6px; color: var(--muted); font-weight: 500; }
+  header .brand small { display: block; font-size: 13px; letter-spacing: 1.6px; color: var(--muted); font-weight: 500; }
   header .nav { margin-left: auto; display: flex; gap: 8px; align-items: center; }
   header .nav a {
     padding: 5px 12px; border: 1px solid var(--line); border-radius: 6px;
-    color: var(--muted); font-size: 11px; letter-spacing: .3px;
+    color: var(--muted); font-size: 13px; letter-spacing: .3px;
   }
   header .nav a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
   header .nav a.demo {
@@ -100,7 +100,7 @@
   }
   @keyframes kpiBeam { 0%, 100% { opacity: .35; transform: translateX(-50%); } 50% { opacity: 1; transform: translateX(50%); } }
   .kpi .lbl {
-    font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
+    font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase;
     color: var(--muted); font-weight: 600; margin-bottom: 8px;
   }
   .kpi .val {
@@ -108,7 +108,7 @@
     color: var(--text); line-height: 1.1;
   }
   .kpi .val small { font-size: 14px; font-weight: 500; color: var(--muted); }
-  .kpi .sub { font-size: 11px; color: var(--muted-2); margin-top: 4px; }
+  .kpi .sub { font-size: 13px; color: var(--muted-2); margin-top: 4px; }
 
   h2 {
     font-size: 16px; font-weight: 700; margin: 36px 0 14px;
@@ -130,7 +130,7 @@
   .card ul li b { color: var(--text); font-weight: 600; }
 
   table {
-    width: 100%; border-collapse: collapse; font-size: 12px;
+    width: 100%; border-collapse: collapse; font-size: 14px;
     background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
     overflow: hidden;
   }
@@ -140,7 +140,7 @@
   }
   th {
     background: rgba(125,211,211,.06); color: var(--accent);
-    font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700;
+    font-size: 14px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700;
   }
   td.num { text-align: right; }
   tr:hover td { background: rgba(255,255,255,.02); }
@@ -149,15 +149,15 @@
 
   .flow {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 16px 0;
-    font-size: 11px;
+    font-size: 13px;
   }
   .flow-step {
     background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
     padding: 12px 8px; text-align: center; position: relative;
   }
   .flow-step .ico { font-size: 20px; display: block; margin-bottom: 4px; }
-  .flow-step .lbl { font-weight: 700; color: var(--text); font-size: 12px; margin-bottom: 2px; }
-  .flow-step .src { color: var(--muted); font-size: 10px; }
+  .flow-step .lbl { font-weight: 700; color: var(--text); font-size: 14px; margin-bottom: 2px; }
+  .flow-step .src { color: var(--muted); font-size: 14px; }
   .flow-step:not(:last-child)::after {
     content: '→'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
     color: var(--accent); font-size: 14px; z-index: 5;
@@ -173,20 +173,20 @@
     border: 1px solid var(--line); display: block;
   }
   figure figcaption {
-    margin-top: 8px; font-size: 11px; color: var(--muted); text-align: center;
+    margin-top: 8px; font-size: 13px; color: var(--muted); text-align: center;
   }
 
   .badge {
     display: inline-block; padding: 2px 8px; background: rgba(16,185,129,.14);
     border: 1px solid rgba(16,185,129,.42); color: var(--good);
-    border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: .4px;
+    border-radius: 4px; font-size: 14px; font-weight: 700; letter-spacing: .4px;
     margin-right: 4px;
   }
   .badge.warn { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.4); color: var(--warn); }
 
   footer {
     margin-top: 48px; padding: 20px 28px; border-top: 1px solid var(--line);
-    text-align: center; color: var(--muted-2); font-size: 11px;
+    text-align: center; color: var(--muted-2); font-size: 13px;
   }
   footer code { background: rgba(255,255,255,.04); padding: 1px 6px; border-radius: 3px; color: var(--accent); }
 
@@ -221,7 +221,7 @@
   .print-btn {
     position: fixed; bottom: 24px; right: 24px; z-index: 50;
     padding: 10px 16px; background: var(--panel); border: 1px solid var(--accent);
-    color: var(--accent); border-radius: 999px; font-size: 12px; font-weight: 700;
+    color: var(--accent); border-radius: 999px; font-size: 14px; font-weight: 700;
     cursor: pointer; box-shadow: 0 8px 24px rgba(125,211,211,.15);
     transition: transform .15s, box-shadow .15s;
   }
@@ -242,7 +242,7 @@
 <body>
 <header>
   <div class="brand"><a href="index.html" class="brand-link" title="홈으로">MetroEyes</a> <span class="brand-suffix">정책 보고</span><small>분산 운임 인센티브 — ROI v3 정량 분석</small></div>
-  <button id="lang-toggle" style="padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;" title="언어 토글 (Korean / English)">🇰🇷 KO</button>
+  <button id="lang-toggle" style="padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;" title="언어 토글 (Korean / English)">🇰🇷 KO</button>
   <div class="nav">
     <a href="operator_web/index.html">🚇 운영자</a>
     <a href="passenger_app/index.html">📱 시민 앱</a>
@@ -260,8 +260,8 @@
 </header>
 <main>
 
-<div id="pitch-live-kpi" hidden style="margin-bottom: 14px; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; font-size: 12px; font-feature-settings: 'tnum';">
-  <span style="color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;">🟢 라이브</span>
+<div id="pitch-live-kpi" hidden style="margin-bottom: 14px; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; font-size: 14px; font-feature-settings: 'tnum';">
+  <span style="color: var(--accent); font-size: 14px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;">🟢 라이브</span>
   <span style="color: var(--muted);">분산 <b id="plk-cnt" style="color: var(--text);">0</b>명</span>
   <span style="color: var(--muted);">절감 <b id="plk-min" style="color: var(--text);">0</b>분</span>
   <span style="color: var(--muted);">사회 <b id="plk-val" style="color: var(--text);">₩0</b></span>
@@ -269,7 +269,7 @@
   <span style="color: var(--muted); border-left: 1px solid var(--line); padding-left: 14px;">σ 라이브 <b id="plk-sigma" style="color: var(--warn);">—%</b></span>
   <span style="color: var(--muted);">피크 <b id="plk-peak" style="color: var(--warn);">—%</b></span>
   <span style="color: var(--muted); border-left: 1px solid var(--line); padding-left: 14px;">차등 <b id="plk-tier-basic" style="color: #7dd3d3;">0</b>/<b id="plk-tier-od" style="color: #a78bfa;">0</b>/<b id="plk-tier-tp" style="color: #f59e0b;">0</b></span>
-  <span style="color: var(--muted-2); font-size: 10px; margin-left: auto;">/health 8s + /api/v1/dispersion 12s</span>
+  <span style="color: var(--muted-2); font-size: 14px; margin-left: auto;">/health 8s + /api/v1/dispersion 12s</span>
 </div>
 <script>
 (async function pollDispersionPitch() {
@@ -287,20 +287,20 @@
   setTimeout(pollDispersionPitch, 12000);
 })();
 </script>
-<div id="plk-stations" hidden style="margin-bottom: 10px; padding: 6px 14px; background: rgba(125,211,211,.04); border: 1px solid var(--line); border-radius: 8px; font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-  <span style="color: var(--muted); font-size: 10px;">📍 핫스팟:</span>
+<div id="plk-stations" hidden style="margin-bottom: 10px; padding: 6px 14px; background: rgba(125,211,211,.04); border: 1px solid var(--line); border-radius: 8px; font-size: 13px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+  <span style="color: var(--muted); font-size: 14px;">📍 핫스팟:</span>
   <span id="plk-st-list" style="display: contents;"></span>
 </div>
 <!-- 현 시각 OD 우선순위 chip (라이브 1분 폴링) -->
-<div id="pitch-od-strip" hidden style="margin-bottom: 10px; padding: 6px 14px; background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(125,211,211,.03)); border: 1px solid rgba(167,139,250,.30); border-radius: 8px; font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-  <span style="color: #a78bfa; font-size: 10px; font-weight: 700; letter-spacing: 1.0px;">📍 OD 우선:</span>
-  <span id="pitch-od-rationale" style="color: var(--muted); font-size: 10px;">—</span>
+<div id="pitch-od-strip" hidden style="margin-bottom: 10px; padding: 6px 14px; background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(125,211,211,.03)); border: 1px solid rgba(167,139,250,.30); border-radius: 8px; font-size: 13px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+  <span style="color: #a78bfa; font-size: 14px; font-weight: 700; letter-spacing: 1.0px;">📍 OD 우선:</span>
+  <span id="pitch-od-rationale" style="color: var(--muted); font-size: 14px;">—</span>
   <span id="pitch-od-list" style="display: contents;"></span>
 </div>
 <!-- 환승 흐름 우세 chip (라이브 1분 폴링) -->
-<div id="pitch-tp-strip" hidden style="margin-bottom: 10px; padding: 6px 14px; background: linear-gradient(135deg, rgba(245,158,11,.08), rgba(125,211,211,.03)); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; font-size: 11px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-  <span style="color: #f59e0b; font-size: 10px; font-weight: 700; letter-spacing: 1.0px;">🔀 환승 흐름:</span>
-  <span id="pitch-tp-rationale" style="color: var(--muted); font-size: 10px;">—</span>
+<div id="pitch-tp-strip" hidden style="margin-bottom: 10px; padding: 6px 14px; background: linear-gradient(135deg, rgba(245,158,11,.08), rgba(125,211,211,.03)); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; font-size: 13px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+  <span style="color: #f59e0b; font-size: 14px; font-weight: 700; letter-spacing: 1.0px;">🔀 환승 흐름:</span>
+  <span id="pitch-tp-rationale" style="color: var(--muted); font-size: 14px;">—</span>
   <span id="pitch-tp-list" style="display: contents;"></span>
 </div>
 <script>
@@ -314,7 +314,7 @@
         document.getElementById('pitch-tp-rationale').textContent = j.rationale;
         const sl = document.getElementById('pitch-tp-list');
         sl.innerHTML = j.priority_stations.slice(0, 5).map(s =>
-          `<span style="padding: 2px 7px; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.40); border-radius: 999px; font-size: 10px; color: #f59e0b; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size:9px;">+${s.diff.toFixed(2)}</em></span>`
+          `<span style="padding: 2px 7px; background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.40); border-radius: 999px; font-size: 14px; color: #f59e0b; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size: 13px;">+${s.diff.toFixed(2)}</em></span>`
         ).join('');
         document.getElementById('pitch-tp-strip').hidden = false;
       }
@@ -335,7 +335,7 @@
         const isDep = j.priority_type === 'departure';
         const sl = document.getElementById('pitch-od-list');
         sl.innerHTML = j.priority_stations.slice(0, 5).map(s => {
-          return `<span style="padding: 2px 7px; background: ${isDep ? 'rgba(16,185,129,.14)' : 'rgba(255,94,87,.14)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.40)' : 'rgba(255,94,87,.40)'}; border-radius: 999px; font-size: 10px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station}</span>`;
+          return `<span style="padding: 2px 7px; background: ${isDep ? 'rgba(16,185,129,.14)' : 'rgba(255,94,87,.14)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.40)' : 'rgba(255,94,87,.40)'}; border-radius: 999px; font-size: 14px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station}</span>`;
         }).join('');
         document.getElementById('pitch-od-strip').hidden = false;
       }
@@ -345,9 +345,9 @@
 })();
 </script>
 <div id="pitch-hourly" hidden style="margin-bottom: 14px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;">
-  <div style="font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;">⏰ 시간대 분산 응답 분포 (라이브) — ROI v3 시간 비대칭 가설 실증</div>
+  <div style="font-size: 14px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;">⏰ 시간대 분산 응답 분포 (라이브) — ROI v3 시간 비대칭 가설 실증</div>
   <canvas id="plk-hourly" width="900" height="60" style="width: 100%; height: 60px; background: rgba(255,255,255,.02); border-radius: 6px;"></canvas>
-  <div style="display: flex; gap: 12px; font-size: 9px; color: var(--muted-2); margin-top: 4px;">
+  <div style="display: flex; gap: 12px; font-size: 13px; color: var(--muted-2); margin-top: 4px;">
     <span>05시</span>
     <span style="color:#f59e0b;">● 양봉 8/18시 강조</span>
     <span style="color:#7dd3d3;">● 일반 시간</span>
@@ -461,15 +461,15 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
 });
 </script>
 
-<h2>핵심 KPI <span style="font-size: 11px; color: var(--muted); font-weight: 500;">— 응답률 슬라이더로 라이브 갱신</span></h2>
+<h2>핵심 KPI <span style="font-size: 13px; color: var(--muted); font-weight: 500;">— 응답률 슬라이더로 라이브 갱신</span></h2>
 
 <div style="margin: 0 0 14px; padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;">
   <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-    <span style="font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 700;">응답률</span>
+    <span style="font-size: 13px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 700;">응답률</span>
     <input type="range" min="0" max="80" value="30" step="1" id="resp-slider" style="flex: 1; min-width: 200px; accent-color: var(--accent);">
     <span style="font-size: 24px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 70px; text-align: right;"><span id="resp-pct">30</span>%</span>
   </div>
-  <div style="font-size: 11px; color: var(--muted); margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap;">
+  <div style="font-size: 13px; color: var(--muted); margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap;">
     <span>기준 30% = 현실적 중간 시나리오 (행동경제학 인센티브 응답률 평균). 0% = 인프라만 도입, 80% = 이상.</span>
     <span id="live-rate" hidden style="margin-left: auto; padding: 2px 8px; background: rgba(16,185,129,.10); border: 1px solid rgba(16,185,129,.40); border-radius: 999px; color: #10b981; font-weight: 700;">🟢 라이브 추정 <span id="live-rate-pct">0</span>%</span>
   </div>
@@ -499,16 +499,16 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
 </div>
 
 <div style="margin: 14px 0 0; padding: 14px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px;">
-  <div style="font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px;">ROI 응답률 곡선 — 0~80%</div>
+  <div style="font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 10px;">ROI 응답률 곡선 — 0~80%</div>
   <canvas id="roi-curve" width="900" height="180" style="width: 100%; height: 180px; background: rgba(255,255,255,.02); border-radius: 8px;"></canvas>
-  <div style="font-size: 10px; color: var(--muted); margin-top: 6px; display: flex; gap: 14px; flex-wrap: wrap;">
+  <div style="font-size: 14px; color: var(--muted); margin-top: 6px; display: flex; gap: 14px; flex-wrap: wrap;">
     <span style="color: var(--accent);">━ 순 사회적 가치 (억/년)</span>
     <span style="color: var(--good);">━ ROI 배수 (x10)</span>
     <span style="color: var(--warn);">━ 정책 비용 (억/년)</span>
     <span style="color: rgba(125,211,211,.55);">▓ ±15% 민감도 (보수/낙관 CI)</span>
     <span style="margin-left: auto; color: var(--text);">● 현재 슬라이더 위치</span>
   </div>
-  <div id="ci-summary" style="margin-top: 8px; padding: 8px 12px; background: rgba(125,211,211,.04); border: 1px solid rgba(125,211,211,.20); border-radius: 6px; font-size: 11px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap;">
+  <div id="ci-summary" style="margin-top: 8px; padding: 8px 12px; background: rgba(125,211,211,.04); border: 1px solid rgba(125,211,211,.20); border-radius: 6px; font-size: 13px; color: var(--muted); display: flex; gap: 14px; flex-wrap: wrap;">
     <span>응답률 <b id="ci-rate" style="color: var(--text);">30%</b> 시나리오:</span>
     <span style="color: var(--warn);">보수 −15%: <b id="ci-low">—</b>억 / <b id="ci-low-roi">—</b>x</span>
     <span style="color: var(--accent);">기본: <b id="ci-mid">—</b>억 / <b id="ci-mid-roi">—</b>x</span>
@@ -747,34 +747,34 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     단순 점추정의 한계를 넘어 <b>4축 입력 불확실성 동시 perturbation</b>:
     응답률 ±15% / 통근 절감분 ±20% / 시간가치 ±10% / 호선 cap ±10% × 1,000 sim/시나리오 = 5,000 시뮬레이션.
   </p>
-  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 10px 0; font-size: 11px;">
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 10px 0; font-size: 13px;">
     <div style="padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: #10b981; font-weight: 700;">5%</div>
-      <div style="color: var(--text); font-size: 12px;"><b>484억</b></div>
-      <div style="font-size: 10px; color: var(--muted);">[404~579]</div>
+      <div style="font-size: 14px; color: #10b981; font-weight: 700;">5%</div>
+      <div style="color: var(--text); font-size: 14px;"><b>484억</b></div>
+      <div style="font-size: 14px; color: var(--muted);">[404~579]</div>
     </div>
     <div style="padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: #10b981; font-weight: 700;">15%</div>
-      <div style="color: var(--text); font-size: 12px;"><b>851억</b></div>
-      <div style="font-size: 10px; color: var(--muted);">[675~1,065]</div>
+      <div style="font-size: 14px; color: #10b981; font-weight: 700;">15%</div>
+      <div style="color: var(--text); font-size: 14px;"><b>851억</b></div>
+      <div style="font-size: 14px; color: var(--muted);">[675~1,065]</div>
     </div>
     <div style="padding: 8px 10px; background: rgba(167,139,250,.18); border-radius: 8px; text-align: center; border: 2px solid rgba(167,139,250,.5);">
-      <div style="font-size: 10px; color: #a78bfa; font-weight: 700;">30% (현실)</div>
+      <div style="font-size: 14px; color: #a78bfa; font-weight: 700;">30% (현실)</div>
       <div style="color: var(--text); font-size: 13px;"><b>1,400억</b></div>
-      <div style="font-size: 10px; color: var(--muted);">[1,064~1,808]</div>
+      <div style="font-size: 14px; color: var(--muted);">[1,064~1,808]</div>
     </div>
     <div style="padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: #10b981; font-weight: 700;">50%</div>
-      <div style="color: var(--text); font-size: 12px;"><b>2,139억</b></div>
-      <div style="font-size: 10px; color: var(--muted);">[1,604~2,794]</div>
+      <div style="font-size: 14px; color: #10b981; font-weight: 700;">50%</div>
+      <div style="color: var(--text); font-size: 14px;"><b>2,139억</b></div>
+      <div style="font-size: 14px; color: var(--muted);">[1,604~2,794]</div>
     </div>
     <div style="padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: #10b981; font-weight: 700;">70%</div>
-      <div style="color: var(--text); font-size: 12px;"><b>2,936억</b></div>
-      <div style="font-size: 10px; color: var(--muted);">[2,202~3,809]</div>
+      <div style="font-size: 14px; color: #10b981; font-weight: 700;">70%</div>
+      <div style="color: var(--text); font-size: 14px;"><b>2,936억</b></div>
+      <div style="font-size: 14px; color: var(--muted);">[2,202~3,809]</div>
     </div>
   </div>
-  <p style="margin: 6px 0; color: var(--muted-2); font-size: 12px;">
+  <p style="margin: 6px 0; color: var(--muted-2); font-size: 14px;">
     <b style="color: var(--text);">광고 KPI 1,393억은 30% 시나리오 95% CI 안에 안전하게 위치</b> —
     "그 숫자 어떻게 정당화?" 라는 질문에 통계적 근거 즉답 가능.
     재현성: <code>scripts/policy_roi_v3.py</code> · seed=42 · CI 가드 7건 자동 검증.
@@ -792,28 +792,28 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <p style="margin: 6px 0; color: var(--muted-2); font-size: 13px;">
     <code>scripts/eda_line_priority_roi.py</code> · 호선별 점유 부담 + 절감분 합치 → 정책 v3 30% 시나리오 (473.4M분/년) 비중 분배.
   </p>
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0; font-size: 12px;">
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0; font-size: 14px;">
     <div style="padding: 8px 10px; background: rgba(167,139,250,.10); border-radius: 8px;">
-      <div style="font-size: 10px; color: #a78bfa; letter-spacing: 1.0px; font-weight: 700;">🥇 2호선</div>
+      <div style="font-size: 14px; color: #a78bfa; letter-spacing: 1.0px; font-weight: 700;">🥇 2호선</div>
       <div style="color: var(--text);">우선도 870 · ROI <b style="color: #10b981;">708x</b></div>
-      <div style="font-size: 10px; color: var(--muted);">절감 157M분 · 사회 가치 315억</div>
+      <div style="font-size: 14px; color: var(--muted);">절감 157M분 · 사회 가치 315억</div>
     </div>
     <div style="padding: 8px 10px; background: rgba(125,211,211,.10); border-radius: 8px;">
-      <div style="font-size: 10px; color: #7dd3d3; letter-spacing: 1.0px; font-weight: 700;">🥈 9호선</div>
+      <div style="font-size: 14px; color: #7dd3d3; letter-spacing: 1.0px; font-weight: 700;">🥈 9호선</div>
       <div style="color: var(--text);">우선도 915 · ROI <b style="color: #10b981;">236x</b></div>
-      <div style="font-size: 10px; color: var(--muted);">절감 52M분 · 사회 가치 105억</div>
+      <div style="font-size: 14px; color: var(--muted);">절감 52M분 · 사회 가치 105억</div>
     </div>
     <div style="padding: 8px 10px; background: rgba(245,158,11,.10); border-radius: 8px;">
-      <div style="font-size: 10px; color: #f59e0b; letter-spacing: 1.0px; font-weight: 700;">🥉 7호선</div>
+      <div style="font-size: 14px; color: #f59e0b; letter-spacing: 1.0px; font-weight: 700;">🥉 7호선</div>
       <div style="color: var(--text);">우선도 915 · ROI <b style="color: #10b981;">224x</b></div>
-      <div style="font-size: 10px; color: var(--muted);">절감 50M분 · 사회 가치 100억</div>
+      <div style="font-size: 14px; color: var(--muted);">절감 50M분 · 사회 가치 100억</div>
     </div>
   </div>
-  <p style="margin: 6px 0; color: var(--muted-2); font-size: 12px;">
+  <p style="margin: 6px 0; color: var(--muted-2); font-size: 14px;">
     <b style="color: var(--text);">반대로 8호선은 16.6M분 / ROI 75x (가장 낮음) — 우선도 870 같지만 통행량 절대치 작음</b>.
     "예산 1순위는 2호선" 이라는 정책 답을 정량적으로 도출 — <b style="color: #10b981;">CI 6 회귀 가드로 자동 검증</b>.
   </p>
-  <p style="margin: 8px 0 0; padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 12px; color: var(--muted-2);">
+  <p style="margin: 8px 0 0; padding: 8px 10px; background: rgba(16,185,129,.10); border-radius: 6px; font-size: 14px; color: var(--muted-2);">
     <b style="color: #10b981;">🎯 한 단계 더 (cycle 368) — 호선 × 시간대 우선순위 매트릭스</b>:
     Top 5 cell 모두 priority 158 — <b style="color: var(--text);">2호선 9시 / 17시 / 19시 + 3호선 17시 / 19시</b>.
     Bottom 5 = 1호선 5~6시 (priority 9~15). 운영자 일정표에 직접 배정 가능.
@@ -823,9 +823,9 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 
 <!-- 호선별 ROI 라이브 API 바 차트 (cycle 433) -->
 <div id="line-roi-live" hidden style="margin: 20px 0; padding: 14px 18px; background: var(--panel); border: 1px solid rgba(167,139,250,.35); border-radius: 12px;">
-  <div style="font-size: 10px; color: #a78bfa; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;">🎯 호선별 ROI 우선순위 — /api/v1/line_roi 라이브 <span id="lrl-peak" style="margin-left:8px; font-weight:500; color:var(--warn);"></span></div>
+  <div style="font-size: 14px; color: #a78bfa; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;">🎯 호선별 ROI 우선순위 — /api/v1/line_roi 라이브 <span id="lrl-peak" style="margin-left:8px; font-weight:500; color:var(--warn);"></span></div>
   <canvas id="line-roi-canvas" width="900" height="100" style="width:100%;height:100px;border-radius:6px;"></canvas>
-  <div id="lrl-rec" style="margin-top:8px;font-size:11px;color:var(--muted);line-height:1.5;"></div>
+  <div id="lrl-rec" style="margin-top:8px;font-size: 13px;color:var(--muted);line-height:1.5;"></div>
 </div>
 <script>
 (async function pollLineRoi() {
@@ -895,22 +895,22 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <div class="kpi" style="border-left: 3px solid #ff5e57;">
     <div class="lbl">σ 표준편차</div>
     <div class="val" style="color: #ff5e57;">−9.0<small>%</small></div>
-    <div style="font-size: 11px; color: var(--muted);">129,618 → 117,940</div>
+    <div style="font-size: 13px; color: var(--muted);">129,618 → 117,940</div>
   </div>
   <div class="kpi" style="border-left: 3px solid #f59e0b;">
     <div class="lbl">피크 평균 감소</div>
     <div class="val" style="color: #f59e0b;">−13.5<small>%</small></div>
-    <div style="font-size: 11px; color: var(--muted);">7,8,9 / 17,18,19시</div>
+    <div style="font-size: 13px; color: var(--muted);">7,8,9 / 17,18,19시</div>
   </div>
   <div class="kpi" style="border-left: 3px solid #10b981;">
     <div class="lbl">비피크 평균 증가</div>
     <div class="val" style="color: #10b981;">+5.6<small>%</small></div>
-    <div style="font-size: 11px; color: var(--muted);">5~23시 비피크 시간대</div>
+    <div style="font-size: 13px; color: var(--muted);">5~23시 비피크 시간대</div>
   </div>
   <div class="kpi" style="border-left: 3px solid #7dd3d3;">
     <div class="lbl">피크/비피크 비율</div>
     <div class="val" style="color: #7dd3d3;">1.78 → 1.46</div>
-    <div style="font-size: 11px; color: var(--muted);">−18% (체감 혼잡 직접 개선)</div>
+    <div style="font-size: 13px; color: var(--muted);">−18% (체감 혼잡 직접 개선)</div>
   </div>
 </div>
 <figure>
@@ -997,11 +997,11 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </tr>
   </tbody>
 </table>
-<p style="font-size: 12px; color: var(--muted);">
+<p style="font-size: 14px; color: var(--muted);">
   ※ 시민 PWA에 차등 보상이 라이브로 표시됨 (📍 +₩300 / 🔀 +₩400 chip).
   /api/v1/od_asymmetry + /api/v1/transfer_priority 1분 폴링으로 자동 매칭 → 시간대마다 자연 전환.
 </p>
-<p style="font-size: 12px; color: var(--muted-2); padding: 10px 14px; background: rgba(245,158,11,.06); border-left: 3px solid var(--warn); border-radius: 4px;">
+<p style="font-size: 14px; color: var(--muted-2); padding: 10px 14px; background: rgba(245,158,11,.06); border-left: 3px solid var(--warn); border-radius: 4px;">
   💡 <b style="color: var(--warn);">차등 보상 효과 추정</b>: OD/환승역 인센티브 차등화로 우선순위 역에서의 응답률 <b>+50%</b> 가속 →
   분산 효과 σ 감소가 동일 응답률에서 <b>20% 추가 개선</b> 예상 (피크 평탄화 효과 직접적). backend가 자동 매칭 + tier_counts 라이브 broadcast.
 </p>
@@ -1127,7 +1127,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <div class="card">
     <h3>🔌 오픈 REST API v1 + OpenAPI 3.0</h3>
-    <ul style="font-size: 12px;">
+    <ul style="font-size: 14px;">
       <li><code>GET /health</code> — 시스템 상태 (api/cv/incidents/msg)</li>
       <li><code>GET /api/v1/roi_curve</code> — 0~80% 81 샘플 ROI</li>
       <li><code>GET /api/v1/impact</code> — 누적 분산 임팩트</li>
@@ -1190,7 +1190,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </tr>
   </tbody>
 </table>
-<p style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+<p style="font-size: 14px; color: var(--muted); margin-top: 8px;">
   <b style="color: var(--text);">차별 핵심:</b> 런던/도쿄/싱가포르 모두 <b>역 단위</b> 통계 기반 시간 분산.
   MetroEyes는 <b>칸 단위 BEV CV</b> + <b>분산률 차등 보상</b> + <b>backend 누적 ROI 라이브</b>로
   3-축 통합 시스템 — 시민 행동 1건이 운영자 KPI 1수치로 즉시 반영되는 양면 클로즈드 루프.
@@ -1242,7 +1242,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 <div class="row">
   <div class="card">
     <h3>🌆 서울 열린데이터광장 (7)</h3>
-    <ul style="font-size: 12px;">
+    <ul style="font-size: 14px;">
       <li><code>citydata</code> — 통합 도시데이터 (110 POI 분단위)</li>
       <li><code>citydata_ppltn</code> — 인구·혼잡도 (성수동 폭증 포착)</li>
       <li><code>SPOP_DAILYSUM_JACHI</code> — 자치구 일별 생활인구</li>
@@ -1254,14 +1254,14 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <div class="card">
     <h3>🔌 공공데이터포털 / 외부 (4)</h3>
-    <ul style="font-size: 12px;">
+    <ul style="font-size: 14px;">
       <li>버스 도착 BIS (별도 키)</li>
       <li><code>IndoorAirQualityMeasureService</code> — 지하역사 실내 공기질 (CO₂/PM10/TEMP)</li>
       <li><code>SubwayElevatorStatus</code> — 서울 지하철 엘리베이터 운행 현황</li>
       <li>네이버 검색 + Anthropic Claude — 인파 폭증 시 자동 컨텍스트 (네이버 뉴스 → Claude Haiku 4.5 요약)</li>
     </ul>
     <h3 style="margin-top: 12px;">🤖 자체 CV 백엔드</h3>
-    <ul style="font-size: 12px;">
+    <ul style="font-size: 14px;">
       <li>YOLO11n + BoT-SORT + 호모그래피 BEV → ws broadcast</li>
       <li><code>--demo</code> 모드 — CV 없이 fake BEV 트랙 5Hz (시연 fail-safe)</li>
       <li>10개 외부 API 라이브 호출 라우팅 + 폭증 감지 자동 LLM 컨텍스트</li>
@@ -1271,9 +1271,9 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 
 <!-- 라이브 API 상태 위젯 — /api/v1/data_sources 폴링 -->
 <div id="ds-live" hidden style="margin: 14px 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;">
-  <div style="font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;">🟢 API 활성 상태 — 실시간 /api/v1/data_sources</div>
+  <div style="font-size: 14px; color: var(--muted); font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;">🟢 API 활성 상태 — 실시간 /api/v1/data_sources</div>
   <div id="ds-chips" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
-  <div id="ds-summary" style="margin-top: 8px; font-size: 11px; color: var(--muted-2);"></div>
+  <div id="ds-summary" style="margin-top: 8px; font-size: 13px; color: var(--muted-2);"></div>
 </div>
 <script>
 (async function pollDataSources() {
@@ -1291,7 +1291,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       const color = !live ? 'rgba(125,211,211,.15)' : active ? 'rgba(16,185,129,.15)' : 'rgba(245,158,11,.15)';
       const border = !live ? 'rgba(125,211,211,.35)' : active ? 'rgba(16,185,129,.45)' : 'rgba(245,158,11,.45)';
       const dot = !live ? '⚪' : active ? '🟢' : '🟡';
-      return `<span style="padding:3px 10px;background:${color};border:1px solid ${border};border-radius:999px;font-size:10px;color:#e8e8ee;">
+      return `<span style="padding:3px 10px;background:${color};border:1px solid ${border};border-radius:999px;font-size: 14px;color:#e8e8ee;">
         ${dot} <b>${ds.id}</b> <em style="opacity:.6;font-style:normal;">${ds.type}</em>
       </span>`;
     }).join('');
@@ -1322,7 +1322,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <figcaption>그림 4 — 실 parquet 예측 vs 실측 (대각선 = 완벽 일치) · 5-fold R² 0.931 ± 0.048</figcaption>
   </figure>
 </div>
-<div style="margin-top: 12px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 12px;">
+<div style="margin-top: 12px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 14px;">
   <b style="color: var(--good);">5-fold CV detail:</b>
   <span style="color: var(--muted);">fold R² =</span>
   <code style="color: var(--accent);">0.939, 0.974, 0.841, 0.929, 0.972</code>
@@ -1331,7 +1331,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 </div>
 
 <h2>EDA v2 — Synth target sanity check <span class="badge" style="opacity:.7;">R²=0.981</span></h2>
-<p style="color: var(--muted); font-size: 12px; margin: 0;">
+<p style="color: var(--muted); font-size: 14px; margin: 0;">
   v1 cap_ratio + 양봉 곡선 위 1,080 샘플 sanity check — is_peak_am/pm + hour 가 점유율의 97% 설명.
   실 데이터 v3 R² 0.931 보다 높은 이유: target 자체가 양봉 함수의 deterministic 변환이라 GBR 이 거의 완벽 예측.
   v3 가 신뢰할 만한 검증.
@@ -1351,7 +1351,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 </div>
 
 <div style="margin-top: 14px; padding: 14px 18px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(245,158,11,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 12px;">
-  <div style="font-size: 12px; color: #a78bfa; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px;">🎯 v6.15 MetroEyes 제출 완료 (D-1, 541+ 사이클)</div>
+  <div style="font-size: 14px; color: #a78bfa; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px;">🎯 v6.15 MetroEyes 제출 완료 (D-1, 541+ 사이클)</div>
   <div style="font-size: 13px; line-height: 1.7; color: var(--muted);">
     <b style="color: var(--text);">설계</b> (4단 차등 정책 정의) →
     <b style="color: var(--text);">EDA</b> (3 실 데이터 검증: 분산 σ −9% / OD 12x / 환승 +1.56) →
@@ -1364,7 +1364,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 </div>
 
 <h2>다년차 누적 효과 — 학습 곡선 가정</h2>
-<p style="color: var(--muted); font-size: 12px; margin: 0 0 12px;">
+<p style="color: var(--muted); font-size: 14px; margin: 0 0 12px;">
   분산 인센티브 정책은 시간이 지날수록 시민이 행동 패턴을 학습 (응답률 ↑). 5년차 응답률 50% 가정 시:
 </p>
 <table>
@@ -1385,7 +1385,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     <tr><td>5년차</td><td class="num">50%</td><td class="num">2,122억</td><td class="num">7,247억</td><td class="num">1,809x</td></tr>
   </tbody>
 </table>
-<p style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+<p style="font-size: 14px; color: var(--muted); margin-top: 8px;">
   <b style="color: var(--text);">5년 누적 7,247억</b> · 인프라 4억 1회 투자만으로 ROI <b style="color:var(--accent);">1,809x</b>.
   학습 곡선은 행동경제학 표준 모델 (Cialdini & Goldstein, 2004) 기반.
 </p>
@@ -1428,7 +1428,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <div class="row" style="grid-template-columns: 1fr 1fr; gap: 12px;">
     <div class="card" style="border-top: 3px solid #7dd3d3;">
       <h4 style="color: #7dd3d3; margin-top: 0;">① 컴퓨터 비전 (CV)</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
         • <b style="color: var(--text);">YOLO11n</b> (Ultralytics) — 80 클래스 객체 검출, 실시간 8 fps RTX 4070<br>
         • <b style="color: var(--text);">BoT-SORT</b> 추적 — 동일 사람 ID 유지<br>
         • <b style="color: var(--text);">호모그래피 BEV</b> — 카메라 → 평면 좌표 변환<br>
@@ -1437,7 +1437,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div class="card" style="border-top: 3px solid #a78bfa;">
       <h4 style="color: #a78bfa; margin-top: 0;">② 생성형 AI (LLM)</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
         • <b style="color: var(--text);">Anthropic Claude Haiku 4.5</b> — 인구 폭증 감지 시 자연어 컨텍스트 자동 생성<br>
         • <b style="color: var(--text);">Naver Search API</b> 융합 — "왜 이 시각 이 역에 사람이 몰리는가" 자동 답변<br>
         • IDEA-9 SpeechSynthesis 4언어 — <b style="color: var(--text);">음성 합성 (TTS = generative)</b><br>
@@ -1446,7 +1446,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div class="card" style="border-top: 3px solid #f59e0b;">
       <h4 style="color: #f59e0b; margin-top: 0;">③ 회귀 ML (예측)</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
         • <b style="color: var(--text);">Gradient Boosting Regressor (GBR)</b> R²=0.931 (실 parquet 28일)<br>
         • 호선 × 시간대 점유율 24h 예측<br>
         • <b style="color: var(--text);">CV 5-fold</b> validation — 과적합 방지<br>
@@ -1455,7 +1455,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div class="card" style="border-top: 3px solid #10b981;">
       <h4 style="color: #10b981; margin-top: 0;">④ Edge AI (Privacy)</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
         • <b style="color: var(--text);">Jetson Orin Nano on-device</b> — 클라우드 전송 없음<br>
         • 얼굴 / 번호판 인식 X — BEV 좌표 + bbox count만 broadcast<br>
         • <b style="color: var(--text);">익명 트랙 ID</b> + 개인정보 zero<br>
@@ -1463,7 +1463,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       </p>
     </div>
   </div>
-  <div style="margin-top: 14px; padding: 10px 14px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; font-size: 12px; color: var(--text);">
+  <div style="margin-top: 14px; padding: 10px 14px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; font-size: 14px; color: var(--text);">
     <b style="color: #10b981;">★ AI 혁신성 핵심 narrative</b>: "단일 AI 모델이 아닌, <b>CV(detect/track) + LLM(context) + ML(predict) + TTS(accessibility)</b>의 <b>4축 통합 AI 파이프라인</b>이 칸 단위 BEV 점유 → 정책 차등 → 시민 안전을 end-to-end로 자동화하는 <b>글로벌 최초 통합 도시철도 AI 솔루션</b>."
   </div>
 </div>
@@ -1474,8 +1474,8 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <div class="row" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px;">
     <div style="padding: 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; text-align: center;">
       <div style="font-size: 22px;">🌱</div>
-      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">ENV — 탄소중립</div>
-      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+      <div style="font-size: 14px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">ENV — 탄소중립</div>
+      <div style="font-size: 13px; color: var(--text); margin-top: 6px; line-height: 1.5;">
         분산 30% × 자가용 회피<br>
         <b style="color: #10b981;">2,834 톤/년 (ultra 광고)</b><br>
         <span style="color: #f59e0b; font-weight: 600;">20,837 톤 (실효, 7배)</span>
@@ -1483,8 +1483,8 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div style="padding: 12px; background: rgba(125,211,211,.08); border: 1px solid rgba(125,211,211,.30); border-radius: 8px; text-align: center;">
       <div style="font-size: 22px;">♿</div>
-      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">SOC — 약자 배려</div>
-      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+      <div style="font-size: 14px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">SOC — 약자 배려</div>
+      <div style="font-size: 13px; color: var(--text); margin-top: 6px; line-height: 1.5;">
         IDEA-7 임산부석 양보<br>
         IDEA-9 청각 약자 42만<br>
         <b style="color: #7dd3d3;">접근성 제도 직결</b>
@@ -1492,8 +1492,8 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div style="padding: 12px; background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; text-align: center;">
       <div style="font-size: 22px;">💼</div>
-      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">JOB — 일자리</div>
-      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+      <div style="font-size: 14px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">JOB — 일자리</div>
+      <div style="font-size: 13px; color: var(--text); margin-top: 6px; line-height: 1.5;">
         Y1 5명 → Y3 25명<br>
         다국어 운영팀<br>
         <b style="color: #f59e0b;">25 FTE 신규 고용</b>
@@ -1501,8 +1501,8 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div style="padding: 12px; background: rgba(167,139,250,.08); border: 1px solid rgba(167,139,250,.30); border-radius: 8px; text-align: center;">
       <div style="font-size: 22px;">🤝</div>
-      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">CO — 상생협력</div>
-      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+      <div style="font-size: 14px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">CO — 상생협력</div>
+      <div style="font-size: 13px; color: var(--text); margin-top: 6px; line-height: 1.5;">
         공사 + 광고 대행사<br>
         + 시민 + 광고주<br>
         <b style="color: #a78bfa;">8단 양면 가치 사슬</b>
@@ -1510,15 +1510,15 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div style="padding: 12px; background: rgba(255,94,87,.08); border: 1px solid rgba(255,94,87,.30); border-radius: 8px; text-align: center;">
       <div style="font-size: 22px;">🛡</div>
-      <div style="font-size: 10px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">GOV — 윤리경영</div>
-      <div style="font-size: 11px; color: var(--text); margin-top: 6px; line-height: 1.5;">
+      <div style="font-size: 14px; letter-spacing: 0.8px; color: var(--muted); margin-top: 4px;">GOV — 윤리경영</div>
+      <div style="font-size: 13px; color: var(--text); margin-top: 6px; line-height: 1.5;">
         얼굴·번호판 인식 X<br>
         Edge AI 클라우드 X<br>
         <b style="color: #ff5e57;">개인정보 zero</b>
       </div>
     </div>
   </div>
-  <p style="font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.7;">
+  <p style="font-size: 14px; color: var(--muted); margin-top: 12px; line-height: 1.7;">
     <b style="color: var(--text);">탄소 절감 정량 EDA (cycle 390)</b>: 30% 시나리오 분산 행동 236M회/년 × CO₂/회 →
     <b style="color: #10b981;">ultra 0.012 kg = 2,834 톤/년 (광고, 한국인 236년 배출 등가)</b> · <b style="color: #f59e0b;">standard 0.088 kg = 20,837 톤 (실효 7배)</b>.
     derivation: 자가용 회피율 (ultra 0.7% / standard 5%) × 8.4km × 0.21 kg/km. 출처: 환경부 2023 / 서울교통공사 2023 / 한국교통연구원 modal split.
@@ -1532,7 +1532,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   <div class="row" style="grid-template-columns: 1fr 1fr; gap: 14px;">
     <div style="padding: 12px; background: rgba(125,211,211,.06); border: 1px dashed rgba(125,211,211,.40); border-radius: 8px;">
       <h4 style="color: #7dd3d3; margin-top: 0;">📊 가점 +2 — 서로 다른 분야 데이터 결합</h4>
-      <p style="font-size: 11px; line-height: 1.7; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.7; color: var(--muted-2); margin: 0;">
         ✅ <b style="color: var(--text);">교통</b> (CardSubway / TOPIS / 버스 BIS) ×<br>
         ✅ <b style="color: var(--text);">인구</b> (citydata_ppltn 110 POI 분 단위) ×<br>
         ✅ <b style="color: var(--text);">문화</b> (ListPublicReservationCulture) ×<br>
@@ -1543,7 +1543,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div style="padding: 12px; background: rgba(167,139,250,.06); border: 1px dashed rgba(167,139,250,.40); border-radius: 8px;">
       <h4 style="color: #a78bfa; margin-top: 0;">👨‍💼 가점 +3 — 예비창업자</h4>
-      <p style="font-size: 11px; line-height: 1.7; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.7; color: var(--muted-2); margin: 0;">
         ✅ <b style="color: var(--text);">개발자</b>: 이석창 (자율주행 CV 출신)<br>
         ✅ <b style="color: var(--text);">사업자등록</b>: <b style="color: #a78bfa;">없음</b> (공고일 기준)<br>
         ✅ <b style="color: var(--text);">국세청 사실증명원</b>: 제출 예정 (<i>아직 사업자 X</i>)<br>
@@ -1552,7 +1552,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
       </p>
     </div>
   </div>
-  <div style="margin-top: 12px; padding: 10px 14px; background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; font-size: 12px;">
+  <div style="margin-top: 12px; padding: 10px 14px; background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; font-size: 14px;">
     <b style="color: #f59e0b;">★ 차별 포인트</b> 분야 결합 (CV+빅데이터+정책+UX 4축) + 예비창업자 추진 + 솔로 풀스택 — 동일 자원 대비 산출 밀도가 다름
   </div>
 </div>
@@ -1561,13 +1561,13 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 
 <div class="card" style="background: linear-gradient(135deg, rgba(167,139,250,.06), rgba(245,158,11,.04)); border-color: rgba(167,139,250,.40); padding: 18px;">
   <h3 style="color: #a78bfa; margin-top: 0;">💰 수익 3 채널 — Y3 연 ₩152억 매출</h3>
-  <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0 0 14px;">
+  <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0 0 14px;">
     <b style="color: var(--text);">중요</b>: 시민 보상 ₩100~₩400은 운영자(공사) <b>비용</b>이며 인프라 ROI 347x로 회수. 회사 매출은 <b>아래 3 채널</b>으로 분리.
   </p>
   <div class="row" style="grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
     <div class="card" style="border-top: 3px solid #7dd3d3;">
       <h4 style="color: #7dd3d3; margin-top: 0;">B2G SaaS</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
         도시별 라이선스 (CV + 10 REST API + 운영자 대시보드)<br>
         <b style="color: var(--text);">고객</b>: 서울교통공사 / 부산·대구·인천 도철 + 광역지자체<br>
         <b style="color: var(--text);">가격</b>: ₩3-8억/도시/년<br>
@@ -1576,7 +1576,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div class="card" style="border-top: 3px solid #a78bfa;">
       <h4 style="color: #a78bfa; margin-top: 0;">B2B 광고 API</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
         역세권 분 단위 인구 → 광고 단가 동적 매트릭스<br>
         <b style="color: var(--text);">고객</b>: CJ파워캐스트 / 제이씨데코 / 미디어캔버스<br>
         <b style="color: var(--text);">가격</b>: 매출 4-7% Rev share<br>
@@ -1585,7 +1585,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
     </div>
     <div class="card" style="border-top: 3px solid #f59e0b;">
       <h4 style="color: #f59e0b; margin-top: 0;">B2B Data API</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--muted-2); margin: 0;">
+      <p style="font-size: 13px; line-height: 1.6; color: var(--muted-2); margin: 0;">
         익명 BEV 통계 시계열 (시간대별 점유율)<br>
         <b style="color: var(--text);">고객</b>: 부동산 / 리테일 / 광고 / 컨설팅<br>
         <b style="color: var(--text);">가격</b>: ₩2,400만/년 (Tier 무제한)<br>
@@ -1595,19 +1595,19 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px;">
     <div style="padding: 10px; background: rgba(125,211,211,.06); border: 1px solid rgba(125,211,211,.30); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">Y3 매출 합계</div>
+      <div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">Y3 매출 합계</div>
       <div style="font-size: 22px; font-weight: 800; color: #7dd3d3;">₩152억</div>
     </div>
     <div style="padding: 10px; background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">단위 OPM</div>
+      <div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">단위 OPM</div>
       <div style="font-size: 22px; font-weight: 800; color: #10b981;">48%</div>
     </div>
     <div style="padding: 10px; background: rgba(167,139,250,.06); border: 1px solid rgba(167,139,250,.30); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">시민 보상</div>
+      <div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">시민 보상</div>
       <div style="font-size: 14px; font-weight: 700; color: #a78bfa; margin-top: 4px;">운영자 비용 분리</div>
     </div>
     <div style="padding: 10px; background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.30); border-radius: 8px; text-align: center;">
-      <div style="font-size: 10px; color: var(--muted); letter-spacing: 0.8px;">Hikvision US BIS 제재</div>
+      <div style="font-size: 14px; color: var(--muted); letter-spacing: 0.8px;">Hikvision US BIS 제재</div>
       <div style="font-size: 14px; font-weight: 700; color: #f59e0b; margin-top: 4px;">한국 솔루션 수요 ↑</div>
     </div>
   </div>
@@ -1639,7 +1639,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </tbody>
 </table>
 
-<p style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+<p style="font-size: 14px; color: var(--muted); margin-top: 8px;">
   <b style="color: var(--text);">8-Moat</b>: ① 자율주행 CV 인재 ② 칸 컬럼 부재 정량 입증 ③ 10 공공 API fusion ④ 4언어 11페이지 ⑤ CI 15 jobs/844 회귀 가드 + canonical KPI drift 차단 ⑥ TRIZ 8 모순 9 IDEA ⑦ IDEA-9 접근성 제도 직결 ⑧ 시민신고 FAB + 오프라인큐 — 양면 가치사슬 완성
 </p>
 
@@ -1660,7 +1660,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </tbody>
 </table>
 
-<p style="font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.7;">
+<p style="font-size: 14px; color: var(--muted); margin-top: 12px; line-height: 1.7;">
   <b style="color: var(--text);">Why now (결정적 timing)</b>:
   citydata 110 POI 분 단위(2024-, 5년 전 불가능) ·
   Jetson Orin Nano ₩30만(5년 전 ₩200만, 1/7 가격) ·
@@ -1673,28 +1673,28 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
 <div class="row">
   <div class="card">
     <h3 style="color: var(--accent);">Q1. 응답률 30% 가정 근거는?</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       행동경제학 인센티브 응답률 평균값입니다. 싱가포르 GP-S 시범사업(2018) 5%, 카카오 카풀 ~25%, T맵 친환경 운전 ~35% 사이의 중앙값.
       슬라이더로 5%~70% 범위 모두 시뮬 가능 — <b style="color: var(--text);">5%만 응답해도 ROI 120x</b> 보장 (보수 시나리오).
     </p>
   </div>
   <div class="card">
     <h3 style="color: var(--accent);">Q2. 자체 CV가 왜 필요?</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       공공 데이터 (CardSubway) 는 <b style="color: var(--text);">역 단위 합계</b>만 제공 — 같은 역에서 1호차/10호차의 분산 차이 미지원.
       SK PUZZLE 칸별 실시간은 10분 지연. <b style="color: var(--text);">실시간 칸 단위 분산</b>은 자체 CV BEV (YOLO11n + BoT-SORT) 만 가능.
     </p>
   </div>
   <div class="card">
     <h3 style="color: var(--accent);">Q3. 1,393억 산출 근거?</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       통근 1,183억 (절감 분 × 시간당 임금 15,000원) + 사고 회피 348억 + 광고 85억 + 에너지 58억 − 인센티브 282억.
       <b style="color: var(--text);">한국교통연구원 혼잡비용 167원/분</b> 환산 — 외부 검증 가능. v3 호선별 cap 도달도 차등 모델로 v2 (283억) 대비 5배 정밀화.
     </p>
   </div>
   <div class="card">
     <h3 style="color: var(--accent);">Q4. 싱가포르 GP-S 실패 (5% 응답) 이유는?</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       ① <b style="color: var(--text);">고정 25¢ 보상</b> (분산률 무관) → 행동 변화 동기 부족.
       ② 카드 단위 (EZ-Link) 로 분산 효과 측정 — <b style="color: var(--text);">실시간 차량 단위 정보 없음</b>.
       MetroEyes 는 분산률 5%p/15%p/30%p 차등 + 칸 단위 BEV 표시 → 사용자가 실제 더 한산한 칸을 즉시 확인.
@@ -1702,7 +1702,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <div class="card">
     <h3 style="color: var(--accent);">Q5. 개인정보? 영상 보존?</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       ① 카메라 → <b style="color: var(--text);">즉시 BEV 좌표로 변환</b>, 원본 영상 미저장 (엣지 inference).
       ② 트랙은 <b style="color: var(--text);">익명 ID</b> + 좌표만 broadcast (얼굴/행동 인식 없음).
       ③ 응급/분실 검출 시에만 운영자에 알림 — 정원 30% 이하 절전은 0인 상태가 트리거.
@@ -1711,7 +1711,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <div class="card" style="background: linear-gradient(135deg, rgba(167,139,250,.06), rgba(255,94,87,.04)); border-color: rgba(167,139,250,.45);">
     <h3 style="color: #a78bfa;">Q7. 임산부석 / 에스컬레이터 병목 — 칸 단위 BEV 활용 사례</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       <b style="color: var(--text);">IDEA-7 임산부석</b>: 칸 양 끝 ROI(분홍 좌석 좌표)에 30초+ 점유 + 동행 미감지 → 비강제 양보 안내.
       <b style="color: var(--text);">서울 지하철 임산부석 양보율은 정량 데이터 부재</b> — MetroEyes가 첫 정책 근거.
       <br><br>
@@ -1722,7 +1722,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <div class="card" style="background: linear-gradient(135deg, rgba(245,158,11,.06), rgba(167,139,250,.04)); border-color: rgba(245,158,11,.45);">
     <h3 style="color: var(--warn);">Q6. 차등 보상 ₩100~₩400 산정 근거?</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       ① <b style="color: var(--text);">기본 ₩200</b>: 분산률 30%p에 비례 (20분 통근 × 167원/분 × 6%p 효과).
       ② <b style="color: var(--text);">OD 우선 +₩100 (₩300)</b>: 그림 4 — 출근 도착지 OFF/ON 12배 비대칭 (삼성/역삼/광화문) → 분산 효과 1.5배 가속.
       ③ <b style="color: var(--text);">환승역 +₩200 (₩400)</b>: 그림 5 — 호선 간 비대칭 차이 +1.56 (충무로/연신내) → 양 호선 동시 절감 → 분산 가치 2배.
@@ -1731,7 +1731,7 @@ window.addEventListener('resize', () => drawROICurve(parseInt(slider.value,10)/1
   </div>
   <div class="card" style="background: linear-gradient(135deg, rgba(16,185,129,.06), rgba(125,211,211,.04)); border-color: rgba(16,185,129,.45);">
     <h3 style="color: #10b981;">Q8. 도착 알림 — 노이즈 캔슬링·이어폰·청각 약자 배려는?</h3>
-    <p style="color: var(--muted); font-size: 12px; line-height: 1.7; margin: 0;">
+    <p style="color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0;">
       <b style="color: var(--text);">IDEA-9 (M8 모순)</b>. 차내 방송 의존성을 제거하고 시민 폰이 GPS로 자기 도착을 추출.
       <br><br>
       <b style="color: var(--text);">5중 모달리티 동시 발사</b>:

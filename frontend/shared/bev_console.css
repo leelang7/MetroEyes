@@ -50,7 +50,7 @@ body {
   margin: 0; color: var(--fg);
   font-family: "Pretendard Variable", "Pretendard", -apple-system, "Segoe UI",
                "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
-  font-size: 14px; line-height: 1.55;
+  font-size: 15px; line-height: 1.6;
   background:
     radial-gradient(ellipse 800px 500px at 30% -20%, rgba(125, 211, 211, 0.05), transparent 60%),
     radial-gradient(ellipse 800px 500px at 70% 120%, rgba(255, 94, 87, 0.04), transparent 60%),

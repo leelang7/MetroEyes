@@ -43,10 +43,10 @@
     <a href="realbev.html" data-i18n="nav_realcam">📷 실 카메라</a>
     <a href="ad_pricing.html" data-i18n="nav_ads">📺 디스플레이</a>
     <a href="../passenger_app/index.html" class="cta-citizen" data-i18n="nav_citizen">📱 시민 앱 →</a>
-    <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
-    <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
-    <a href="admin.html" title="관리자 콘솔" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(99,102,241,.10)); border: 1px solid rgba(168,85,247,.55); color: #a855f7; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">⚙️ 관리</a>
-    <button id="demo-trigger" title="시연 시나리오 30초 자동 재생" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
+    <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
+    <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
+    <a href="admin.html" title="관리자 콘솔" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(99,102,241,.10)); border: 1px solid rgba(168,85,247,.55); color: #a855f7; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">⚙️ 관리</a>
+    <button id="demo-trigger" title="시연 시나리오 30초 자동 재생" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
     <button id="lang-toggle" style="margin-left: 6px; padding: 2px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language">🇰🇷</button>
 <script>
 const I18N_OP_BUS = {
@@ -75,17 +75,17 @@ document.getElementById('lang-toggle')?.addEventListener('click', () => {
 window.addEventListener('DOMContentLoaded', applyBusI18n);
 </script>
     <span id="bus-live-kpi" hidden class="tag" style="margin-left: 8px; background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.45);">
-      <span style="color: #10b981; font-weight: 700; font-size: 9px; letter-spacing: 1.2px;">🟢 LIVE</span>
-      <b id="bus-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 9px; color: var(--muted);">분산</em>
-      <b id="bus-kpi-roi" style="margin-left: 6px;">—</b><em style="font-size: 9px; color: var(--muted);">x ROI</em>
+      <span style="color: #10b981; font-weight: 700; font-size: 13px; letter-spacing: 1.2px;">🟢 LIVE</span>
+      <b id="bus-kpi-cnt" style="margin-left: 4px;">0</b><em style="font-size: 13px; color: var(--muted);">분산</em>
+      <b id="bus-kpi-roi" style="margin-left: 6px;">—</b><em style="font-size: 13px; color: var(--muted);">x ROI</em>
     </span>
     <span id="bus-dispersion-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(167,139,250,.08)); border: 1px solid rgba(125,211,211,.45);">
-      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">📈 분산효과</span>
+      <span style="color: #7dd3d3; font-size: 14px; font-weight: 700;">📈 분산효과</span>
       <span style="margin-left: 4px;">σ<b id="bus-dp-sigma" style="margin-left:3px;">—%</b></span>
       <span style="margin-left: 4px;">피크<b id="bus-dp-peak" style="margin-left:3px;">—%</b></span>
     </span>
     <span id="bus-tier-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(245,158,11,.14), rgba(167,139,250,.06)); border: 1px solid rgba(245,158,11,.35);">
-      <span style="color: #f59e0b; font-size: 10px; font-weight: 700;">💰 차등</span>
+      <span style="color: #f59e0b; font-size: 14px; font-weight: 700;">💰 차등</span>
       <b id="bus-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="bus-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="bus-tier-tp" style="color: #f59e0b;">0</b>
     </span>
 <script>
@@ -148,7 +148,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
       <div class="station-picker" id="station-picker">
         <div class="picker-head">정류장 변경 (관제 시점 전환)</div>
         <input id="picker-search" type="search" placeholder="정류장·노선 검색…" autocomplete="off"
-          style="width:100%;box-sizing:border-box;padding:5px 8px;margin-bottom:6px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-size:12px;outline:none;"
+          style="width:100%;box-sizing:border-box;padding:5px 8px;margin-bottom:6px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:6px;color:var(--fg);font-size: 14px;outline:none;"
           oninput="renderPicker(this.value)">
         <div id="picker-rows" style="max-height:260px;overflow-y:auto;"></div>
         <div class="picker-foot">
@@ -171,16 +171,16 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 <!-- 현 시각 분산 우선순위 패널 (OD 비대칭 — 버스 운영자 시점) -->
 <section id="bus-od-strip" hidden style="margin-bottom: 12px; padding: 10px 14px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border: 1px solid rgba(167,139,250,.40); border-radius: 10px;">
   <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-    <span style="color: #a78bfa; font-weight: 700; font-size: 11px; letter-spacing: 1.4px;">📍 분산 우선순위 (지하철 OD 참조)</span>
-    <span id="bus-od-rationale" style="color: var(--muted); font-size: 11px;">—</span>
+    <span style="color: #a78bfa; font-weight: 700; font-size: 13px; letter-spacing: 1.4px;">📍 분산 우선순위 (지하철 OD 참조)</span>
+    <span id="bus-od-rationale" style="color: var(--muted); font-size: 13px;">—</span>
     <span id="bus-od-stations" style="display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto;"></span>
   </div>
 </section>
 <!-- 환승 흐름 우세 패널 (지하철 환승역 → 버스 환승 가이드) -->
 <section id="bus-tp-strip" hidden style="margin-bottom: 12px; padding: 10px 14px; background: linear-gradient(135deg, rgba(245,158,11,.10), rgba(125,211,211,.04)); border: 1px solid rgba(245,158,11,.40); border-radius: 10px;">
   <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-    <span style="color: #f59e0b; font-weight: 700; font-size: 11px; letter-spacing: 1.4px;">🔀 환승 흐름 (지하철 ↔ 버스 연계)</span>
-    <span id="bus-tp-rationale" style="color: var(--muted); font-size: 11px;">—</span>
+    <span style="color: #f59e0b; font-weight: 700; font-size: 13px; letter-spacing: 1.4px;">🔀 환승 흐름 (지하철 ↔ 버스 연계)</span>
+    <span id="bus-tp-rationale" style="color: var(--muted); font-size: 13px;">—</span>
     <span id="bus-tp-list" style="display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto;"></span>
   </div>
 </section>
@@ -194,7 +194,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
         document.getElementById('bus-tp-rationale').textContent = j.rationale;
         const sl = document.getElementById('bus-tp-list');
         sl.innerHTML = j.priority_stations.map(s =>
-          `<span style="padding: 3px 9px; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.45); border-radius: 999px; font-size: 11px; color: #f59e0b; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size:9px;">+${s.diff.toFixed(2)}</em></span>`
+          `<span style="padding: 3px 9px; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.45); border-radius: 999px; font-size: 13px; color: #f59e0b; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size: 13px;">+${s.diff.toFixed(2)}</em></span>`
         ).join('');
         document.getElementById('bus-tp-strip').hidden = false;
       }
@@ -217,7 +217,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
           const ratio = isDep
             ? (s.on / Math.max(1, s.off)).toFixed(1) + 'x ON'
             : (s.off / Math.max(1, s.on)).toFixed(1) + 'x OFF';
-          return `<span style="padding: 3px 9px; background: ${isDep ? 'rgba(16,185,129,.18)' : 'rgba(255,94,87,.18)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.45)' : 'rgba(255,94,87,.45)'}; border-radius: 999px; font-size: 11px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size:9px;">${ratio}</em></span>`;
+          return `<span style="padding: 3px 9px; background: ${isDep ? 'rgba(16,185,129,.18)' : 'rgba(255,94,87,.18)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.45)' : 'rgba(255,94,87,.45)'}; border-radius: 999px; font-size: 13px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station} <em style="opacity:.7;font-style:normal;font-size: 13px;">${ratio}</em></span>`;
         }).join('');
         document.getElementById('bus-od-strip').hidden = false;
       } else {
@@ -231,24 +231,24 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 
   <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
     <div class="fusion-card dim" id="fc-cv" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">검출 인원 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">자체 CV</span></div>
+      <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">검출 인원 <span style="color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">자체 CV</span></div>
       <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-cv-v">—명</div>
-      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cv-sub">백엔드 미연결</div>
+      <div style="font-size: 13px; color: var(--muted-2);" id="fc-cv-sub">백엔드 미연결</div>
     </div>
     <div class="fusion-card dim" id="fc-arr" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">차량 도착 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 BIS</span></div>
+      <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">차량 도착 <span style="color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 BIS</span></div>
       <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-arr-v">—분</div>
-      <div style="font-size: 11px; color: var(--muted-2);" id="fc-arr-sub">data.go.kr 키 필요</div>
+      <div style="font-size: 13px; color: var(--muted-2);" id="fc-arr-sub">data.go.kr 키 필요</div>
     </div>
     <div class="fusion-card dim" id="fc-pop" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">정류장 인구 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 도시데이터</span></div>
+      <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">정류장 인구 <span style="color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">서울 도시데이터</span></div>
       <div style="font-size: 22px; color: var(--muted); font-weight: 300; font-variant-numeric: tabular-nums;" id="fc-pop-v">—명</div>
-      <div style="font-size: 11px; color: var(--muted-2);" id="fc-pop-sub">citydata_ppltn</div>
+      <div style="font-size: 13px; color: var(--muted-2);" id="fc-pop-sub">citydata_ppltn</div>
     </div>
     <div class="fusion-card dim" id="fc-cong" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
-      <div style="font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">혼잡 레벨 <span style="color: var(--accent); font-size: 9px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">융합</span></div>
+      <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">혼잡 레벨 <span style="color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">융합</span></div>
       <div style="font-size: 22px; color: var(--muted); font-weight: 300;" id="fc-cong-v">—</div>
-      <div style="font-size: 11px; color: var(--muted-2);" id="fc-cong-sub">CV + 인구 결합</div>
+      <div style="font-size: 13px; color: var(--muted-2);" id="fc-cong-sub">CV + 인구 결합</div>
     </div>
   </section>
 
@@ -307,7 +307,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
       <div id="recommend" class="recommend">
         <div class="head">권장 탑승 차량</div>
         <div><span class="num" id="rec-num">—</span> · <span id="rec-pct" style="color: var(--fg)">—%</span> · <span id="rec-eta" style="color: var(--fg)">—분 후</span></div>
-        <div style="color: var(--muted); font-size: 11px; margin-top: 6px;" id="rec-meta">—</div>
+        <div style="color: var(--muted); font-size: 13px; margin-top: 6px;" id="rec-meta">—</div>
       </div>
       <div id="priority-kpi" class="priority-kpi">
         <span class="label">약자석/휠체어 공간</span>

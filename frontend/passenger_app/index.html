@@ -16,17 +16,17 @@
 <style>
 /* mini-map (cycle 425) — 3D OpenFreeMap with user GPS + nearest station highlight */
 #mini-map-card { margin: 8px 14px 0; padding: 0; border: 1px solid rgba(125,211,211,.40); border-radius: 12px; overflow: hidden; background: rgba(8,12,18,.6); }
-#mini-map-card .mm-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; font-size: 11px; color: #7dd3d3; letter-spacing: .8px; font-weight: 700; }
-#mini-map-card .mm-head button { background: transparent; border: 1px solid rgba(125,211,211,.40); color: #7dd3d3; padding: 2px 8px; border-radius: 6px; font-size: 10px; cursor: pointer; }
+#mini-map-card .mm-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; font-size: 13px; color: #7dd3d3; letter-spacing: .8px; font-weight: 700; }
+#mini-map-card .mm-head button { background: transparent; border: 1px solid rgba(125,211,211,.40); color: #7dd3d3; padding: 2px 8px; border-radius: 6px; font-size: 14px; cursor: pointer; }
 #mini-map { height: 220px; width: 100%; background: #0a0d12; }
 #mini-map.failed { display: none; }
-#mini-map-fallback { padding: 10px 14px; font-size: 11px; color: var(--muted-2, #94a3b8); display: none; }
+#mini-map-fallback { padding: 10px 14px; font-size: 13px; color: var(--muted-2, #94a3b8); display: none; }
 #mini-map-card.failed #mini-map-fallback { display: block; }
 .mm-marker-user { width: 14px; height: 14px; border-radius: 50%; background: #10b981; border: 2px solid #fff; box-shadow: 0 0 0 4px rgba(16,185,129,.30); }
 .mm-marker-station { width: 10px; height: 10px; border-radius: 50%; background: #7dd3d3; border: 1.5px solid #04060a; cursor: pointer; }
 .mm-marker-station.nearest { width: 16px; height: 16px; background: #f59e0b; border: 2px solid #fff; box-shadow: 0 0 0 4px rgba(245,158,11,.40); }
 .mm-marker-station.dest { width: 16px; height: 16px; background: #a78bfa; border: 2px solid #fff; box-shadow: 0 0 0 4px rgba(167,139,250,.40); }
-.maplibregl-popup-content { background: #0a0d12; color: #fff; border: 1px solid rgba(125,211,211,.40); font-size: 11px; padding: 6px 10px; }
+.maplibregl-popup-content { background: #0a0d12; color: #fff; border: 1px solid rgba(125,211,211,.40); font-size: 13px; padding: 6px 10px; }
 .maplibregl-popup-tip { border-top-color: rgba(125,211,211,.40) !important; }
 body.a11y-high #mini-map-card { background: #000 !important; border-color: #fff !important; }
 
@@ -74,7 +74,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     <div class="brand">
       <a href="../index.html" class="brand-link" title="홈으로 (8페이지 진입 허브)"><span class="dot"></span>MetroEyes</a><small>Citizen</small>
       <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label">오프라인</span></span>
-      <span id="header-reward" hidden style="margin-left: 8px; padding: 3px 9px; background: linear-gradient(135deg, rgba(16,185,129,.20), rgba(16,185,129,.08)); border: 1px solid rgba(16,185,129,.45); color: #10b981; border-radius: 999px; font-size: 11px; font-weight: 700; font-feature-settings: 'tnum';" title="누적 분산 보상"><span style="margin-right: 3px;">🪙</span><span id="header-reward-krw">0</span><span style="font-size: 9px; opacity: .8;">원</span></span>
+      <span id="header-reward" hidden style="margin-left: 8px; padding: 3px 9px; background: linear-gradient(135deg, rgba(16,185,129,.20), rgba(16,185,129,.08)); border: 1px solid rgba(16,185,129,.45); color: #10b981; border-radius: 999px; font-size: 13px; font-weight: 700; font-feature-settings: 'tnum';" title="누적 분산 보상"><span style="margin-right: 3px;">🪙</span><span id="header-reward-krw">0</span><span style="font-size: 13px; opacity: .8;">원</span></span>
     </div>
     <a class="back-btn" href="../operator_web/index.html">관제 →</a>
     <a class="back-btn" href="../demo.html" title="4-패널 통합 시연" style="background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border-color: rgba(245,158,11,.55); color: #fbbf24;">🎬</a>
@@ -92,7 +92,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
       <span class="gps-pulse" id="gps-pulse" title="GPS로 자동 매칭됨"></span>
       <span id="ctx-name">잠실역</span>
       <small id="ctx-meta">2호선 · 잠실행</small>
-      <span id="cluster-badge" style="display:none;margin-left:4px;padding:1px 5px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.3px;"></span>
+      <span id="cluster-badge" style="display:none;margin-left:4px;padding:1px 5px;border-radius:999px;font-size: 13px;font-weight:700;letter-spacing:.3px;"></span>
       <span class="picker-arrow">▾</span>
     </div>
     <!-- ♿ 접근성 toggle (cycle 354 — 시각 약자/고령층 + IDEA-9 chain 확장) -->
@@ -117,52 +117,52 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
   <div id="dest-banner" hidden style="margin: 6px 14px 0; padding: 10px 14px; background: linear-gradient(135deg, rgba(16,185,129,.20), rgba(125,211,211,.10)); border: 1px solid rgba(16,185,129,.55); border-radius: 12px; display: flex; align-items: center; gap: 10px; font-size: 13px;">
     <span style="font-size: 18px;">🔔</span>
     <div style="flex: 1; min-width: 0;">
-      <div style="font-size: 10px; letter-spacing: 1.1px; color: #10b981; font-weight: 700;" id="dest-label">도착 알림 ON</div>
+      <div style="font-size: 14px; letter-spacing: 1.1px; color: #10b981; font-weight: 700;" id="dest-label">도착 알림 ON</div>
       <div style="color: #fff; font-weight: 600;" id="dest-name">강남역</div>
-      <div style="color: var(--muted-2); font-size: 11px;" id="dest-status">GPS 추적 중...</div>
-      <div id="dest-safeguards" style="font-size: 10px; color: var(--muted-2); margin-top: 2px; letter-spacing: .4px;" title="활성화된 안전망"></div>
+      <div style="color: var(--muted-2); font-size: 13px;" id="dest-status">GPS 추적 중...</div>
+      <div id="dest-safeguards" style="font-size: 14px; color: var(--muted-2); margin-top: 2px; letter-spacing: .4px;" title="활성화된 안전망"></div>
     </div>
-    <button id="dest-test" style="background: rgba(125,211,211,.18); border: 1px solid rgba(125,211,211,.45); color: #7dd3d3; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;" title="도착 알림 미리 보기 (진동/소리/음성/시각 모두 테스트)" data-i18n="dest_test">🔔 테스트</button>
-    <button id="dest-clear" style="background: rgba(255,94,87,.18); border: 1px solid rgba(255,94,87,.45); color: #ff8a8a; padding: 4px 10px; border-radius: 8px; font-size: 11px; cursor: pointer;">해제</button>
+    <button id="dest-test" style="background: rgba(125,211,211,.18); border: 1px solid rgba(125,211,211,.45); color: #7dd3d3; padding: 4px 10px; border-radius: 8px; font-size: 13px; cursor: pointer;" title="도착 알림 미리 보기 (진동/소리/음성/시각 모두 테스트)" data-i18n="dest_test">🔔 테스트</button>
+    <button id="dest-clear" style="background: rgba(255,94,87,.18); border: 1px solid rgba(255,94,87,.45); color: #ff8a8a; padding: 4px 10px; border-radius: 8px; font-size: 13px; cursor: pointer;">해제</button>
   </div>
   <div style="display: flex; gap: 6px; margin: 6px 14px 0;">
-    <button id="dest-trigger" style="flex: 1; padding: 8px 14px; background: rgba(167,139,250,.10); border: 1px dashed rgba(167,139,250,.40); border-radius: 10px; color: #a78bfa; font-size: 12px; font-weight: 600; cursor: pointer; text-align: left;" data-i18n="dest_set">🔔 도착지 설정 — 노이즈 캔슬링·이어폰 사용 시 도착 알림</button>
+    <button id="dest-trigger" style="flex: 1; padding: 8px 14px; background: rgba(167,139,250,.10); border: 1px dashed rgba(167,139,250,.40); border-radius: 10px; color: #a78bfa; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left;" data-i18n="dest_set">🔔 도착지 설정 — 노이즈 캔슬링·이어폰 사용 시 도착 알림</button>
     <button id="dest-stt" title="음성으로 도착지 입력 (Web Speech API STT)" style="padding: 8px 12px; background: rgba(16,185,129,.14); border: 1px solid rgba(16,185,129,.45); border-radius: 10px; color: #10b981; font-size: 14px; font-weight: 700; cursor: pointer;">🎤</button>
   </div>
   <!-- STT 결과 표출 -->
-  <div id="stt-feedback" hidden style="margin: 4px 14px 0; padding: 6px 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; font-size: 11px; color: #10b981;"></div>
+  <div id="stt-feedback" hidden style="margin: 4px 14px 0; padding: 6px 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.30); border-radius: 8px; font-size: 13px; color: #10b981;"></div>
   <!-- 🌱 CO₂ 절감 카운터 (분산 액션 → 자가용 전환 회피) -->
-  <div id="co2-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(16,185,129,.16), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.40); border-radius: 10px; font-size: 12px; color: #fff; display: flex; align-items: center; gap: 8px;">
+  <div id="co2-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(16,185,129,.16), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.40); border-radius: 10px; font-size: 14px; color: #fff; display: flex; align-items: center; gap: 8px;">
     <span style="font-size: 18px;">🌱</span>
     <div style="flex: 1; min-width: 0;">
-      <div style="font-size: 9px; letter-spacing: 1.0px; color: #10b981; font-weight: 700;">CO₂ 누적 절감</div>
-      <div><b id="co2-kg" style="color: #fff; font-size: 14px;">0</b><span style="font-size: 10px; color: var(--muted);"> kg eq · 오늘 시민 분산</span></div>
+      <div style="font-size: 13px; letter-spacing: 1.0px; color: #10b981; font-weight: 700;">CO₂ 누적 절감</div>
+      <div><b id="co2-kg" style="color: #fff; font-size: 14px;">0</b><span style="font-size: 14px; color: var(--muted);"> kg eq · 오늘 시민 분산</span></div>
     </div>
-    <span style="padding: 1px 6px; background: rgba(16,185,129,.18); border: 1px solid rgba(16,185,129,.45); border-radius: 999px; color: #10b981; font-size: 9px; font-weight: 600;">탄소중립</span>
+    <span style="padding: 1px 6px; background: rgba(16,185,129,.18); border: 1px solid rgba(16,185,129,.45); border-radius: 999px; color: #10b981; font-size: 13px; font-weight: 600;">탄소중립</span>
   </div>
 
   <!-- 🌬️ 역사 실내 공기질 카드 (IndoorAirQualityMeasure API) -->
-  <div id="air-quality-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(6,182,212,.12), rgba(59,130,246,.06)); border: 1px solid rgba(6,182,212,.35); border-radius: 10px; font-size: 12px; color: #fff; display: flex; align-items: center; gap: 10px;">
+  <div id="air-quality-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(6,182,212,.12), rgba(59,130,246,.06)); border: 1px solid rgba(6,182,212,.35); border-radius: 10px; font-size: 14px; color: #fff; display: flex; align-items: center; gap: 10px;">
     <span style="font-size: 18px;">💨</span>
     <div style="flex: 1; min-width: 0;">
-      <div style="font-size: 9px; letter-spacing: 1.0px; color: #06b6d4; font-weight: 700; margin-bottom: 2px;">역사 실내 공기질</div>
+      <div style="font-size: 13px; letter-spacing: 1.0px; color: #06b6d4; font-weight: 700; margin-bottom: 2px;">역사 실내 공기질</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <span>CO₂ <b id="aq-co2" style="color:#fbbf24">—</b><span style="font-size:10px;color:var(--muted)"> ppm</span></span>
-        <span>PM2.5 <b id="aq-pm25" style="color:#34d399">—</b><span style="font-size:10px;color:var(--muted)"> μg</span></span>
-        <span>온도 <b id="aq-temp" style="color:#93c5fd">—</b><span style="font-size:10px;color:var(--muted)"> °C</span></span>
+        <span>CO₂ <b id="aq-co2" style="color:#fbbf24">—</b><span style="font-size: 14px;color:var(--muted)"> ppm</span></span>
+        <span>PM2.5 <b id="aq-pm25" style="color:#34d399">—</b><span style="font-size: 14px;color:var(--muted)"> μg</span></span>
+        <span>온도 <b id="aq-temp" style="color:#93c5fd">—</b><span style="font-size: 14px;color:var(--muted)"> °C</span></span>
       </div>
     </div>
-    <span id="aq-badge" style="padding:1px 6px;background:rgba(6,182,212,.18);border:1px solid rgba(6,182,212,.45);border-radius:999px;color:#06b6d4;font-size:9px;font-weight:600;">측정중</span>
+    <span id="aq-badge" style="padding:1px 6px;background:rgba(6,182,212,.18);border:1px solid rgba(6,182,212,.45);border-radius:999px;color:#06b6d4;font-size: 13px;font-weight:600;">측정중</span>
   </div>
 
   <!-- ♿ 엘리베이터 현황 카드 (SubwayElevatorStatus API) -->
-  <div id="elev-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(168,85,247,.10), rgba(99,102,241,.06)); border: 1px solid rgba(168,85,247,.35); border-radius: 10px; font-size: 12px; color: #fff; display: flex; align-items: center; gap: 10px;">
+  <div id="elev-card" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(168,85,247,.10), rgba(99,102,241,.06)); border: 1px solid rgba(168,85,247,.35); border-radius: 10px; font-size: 14px; color: #fff; display: flex; align-items: center; gap: 10px;">
     <span style="font-size: 18px;">🛗</span>
     <div style="flex: 1; min-width: 0;">
-      <div style="font-size: 9px; letter-spacing: 1.0px; color: #a855f7; font-weight: 700; margin-bottom: 2px;">엘리베이터 현황</div>
-      <div id="elev-summary" style="font-size:12px;">로딩 중…</div>
+      <div style="font-size: 13px; letter-spacing: 1.0px; color: #a855f7; font-weight: 700; margin-bottom: 2px;">엘리베이터 현황</div>
+      <div id="elev-summary" style="font-size: 14px;">로딩 중…</div>
     </div>
-    <button id="elev-route-btn" style="padding:3px 8px;background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.45);color:#a855f7;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;" onclick="showElevDetail()">경로</button>
+    <button id="elev-route-btn" style="padding:3px 8px;background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.45);color:#a855f7;border-radius:6px;font-size: 14px;font-weight:600;cursor:pointer;" onclick="showElevDetail()">경로</button>
   </div>
 
   <!-- 역 picker 모달 (시민 수동 선택, mode: 'cur' 또는 'dest') -->
@@ -175,17 +175,17 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
       </div>
       <input class="modal-search" id="modal-search" placeholder="역 이름 검색..." autocomplete="off">
       <!-- 호선 필터 chips (cycle 359) — 빠른 역 검색 -->
-      <div id="modal-line-chips" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 12px 0; font-size: 11px;">
-        <button type="button" class="line-chip active" data-line="all" style="padding: 3px 9px; background: rgba(125,211,211,.18); border: 1px solid rgba(125,211,211,.5); color: #7dd3d3; border-radius: 999px; cursor: pointer; font-size: 11px;">전체</button>
-        <button type="button" class="line-chip" data-line="1" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">1호</button>
-        <button type="button" class="line-chip" data-line="2" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">2호</button>
-        <button type="button" class="line-chip" data-line="3" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">3호</button>
-        <button type="button" class="line-chip" data-line="4" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">4호</button>
-        <button type="button" class="line-chip" data-line="5" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">5호</button>
-        <button type="button" class="line-chip" data-line="6" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">6호</button>
-        <button type="button" class="line-chip" data-line="7" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">7호</button>
-        <button type="button" class="line-chip" data-line="9" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 11px;">9호</button>
-        <button type="button" class="line-chip" data-line="bonus" title="OD/환승 보너스 역만" style="padding: 3px 9px; background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.4); color: #f59e0b; border-radius: 999px; cursor: pointer; font-size: 11px;">💰 보너스</button>
+      <div id="modal-line-chips" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 12px 0; font-size: 13px;">
+        <button type="button" class="line-chip active" data-line="all" style="padding: 3px 9px; background: rgba(125,211,211,.18); border: 1px solid rgba(125,211,211,.5); color: #7dd3d3; border-radius: 999px; cursor: pointer; font-size: 13px;">전체</button>
+        <button type="button" class="line-chip" data-line="1" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">1호</button>
+        <button type="button" class="line-chip" data-line="2" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">2호</button>
+        <button type="button" class="line-chip" data-line="3" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">3호</button>
+        <button type="button" class="line-chip" data-line="4" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">4호</button>
+        <button type="button" class="line-chip" data-line="5" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">5호</button>
+        <button type="button" class="line-chip" data-line="6" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">6호</button>
+        <button type="button" class="line-chip" data-line="7" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">7호</button>
+        <button type="button" class="line-chip" data-line="9" style="padding: 3px 9px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; cursor: pointer; font-size: 13px;">9호</button>
+        <button type="button" class="line-chip" data-line="bonus" title="OD/환승 보너스 역만" style="padding: 3px 9px; background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.4); color: #f59e0b; border-radius: 999px; cursor: pointer; font-size: 13px;">💰 보너스</button>
       </div>
       <div class="modal-list" id="modal-list"></div>
       <div class="modal-foot">
@@ -203,16 +203,16 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
   </div>
 
   <!-- OD 우선순위 chip — 현 시각 자동 (시민 시점: 분산하면 보상 ↑) -->
-  <div id="pwa-od-chip" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(167,139,250,.16), rgba(125,211,211,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 10px; font-size: 12px; color: #fff;">
-    <span style="color: #a78bfa; font-weight: 700; font-size: 10px; letter-spacing: 1.0px; margin-right: 4px;">📍 오늘 우선 분산</span>
+  <div id="pwa-od-chip" hidden style="margin: 6px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(167,139,250,.16), rgba(125,211,211,.06)); border: 1px solid rgba(167,139,250,.40); border-radius: 10px; font-size: 14px; color: #fff;">
+    <span style="color: #a78bfa; font-weight: 700; font-size: 14px; letter-spacing: 1.0px; margin-right: 4px;">📍 오늘 우선 분산</span>
     <span id="pwa-od-text" style="color: var(--muted-2);">—</span>
-    <span style="float: right; padding: 1px 6px; background: rgba(16,185,129,.18); border: 1px solid rgba(16,185,129,.45); border-radius: 999px; color: #10b981; font-size: 10px; font-weight: 600;">+₩300 보너스</span>
+    <span style="float: right; padding: 1px 6px; background: rgba(16,185,129,.18); border: 1px solid rgba(16,185,129,.45); border-radius: 999px; color: #10b981; font-size: 14px; font-weight: 600;">+₩300 보너스</span>
   </div>
   <!-- 환승 흐름 chip — 환승역 분산은 +₩400 -->
-  <div id="pwa-tp-chip" hidden style="margin: 4px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(245,158,11,.16), rgba(125,211,211,.06)); border: 1px solid rgba(245,158,11,.40); border-radius: 10px; font-size: 12px; color: #fff;">
-    <span style="color: #f59e0b; font-weight: 700; font-size: 10px; letter-spacing: 1.0px; margin-right: 4px;">🔀 환승역 보너스</span>
+  <div id="pwa-tp-chip" hidden style="margin: 4px 14px 0; padding: 8px 12px; background: linear-gradient(135deg, rgba(245,158,11,.16), rgba(125,211,211,.06)); border: 1px solid rgba(245,158,11,.40); border-radius: 10px; font-size: 14px; color: #fff;">
+    <span style="color: #f59e0b; font-weight: 700; font-size: 14px; letter-spacing: 1.0px; margin-right: 4px;">🔀 환승역 보너스</span>
     <span id="pwa-tp-text" style="color: var(--muted-2);">—</span>
-    <span style="float: right; padding: 1px 6px; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.45); border-radius: 999px; color: #f59e0b; font-size: 10px; font-weight: 600;">+₩400</span>
+    <span style="float: right; padding: 1px 6px; background: rgba(245,158,11,.18); border: 1px solid rgba(245,158,11,.45); border-radius: 999px; color: #f59e0b; font-size: 14px; font-weight: 600;">+₩400</span>
   </div>
 <script>
 (async function pollPwaTransfer() {
@@ -299,29 +299,29 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
   </div>
 
   <div id="impact-counter" hidden role="region" aria-label="시민 분산 누적 임팩트" aria-live="polite" style="margin: -2px 0 10px; padding: 10px 12px; background: linear-gradient(135deg, var(--accent-soft), rgba(125,211,211,.05)); border: 1px solid var(--accent); border-radius: 12px; font-feature-settings: 'tnum';">
-    <div style="font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: .5px; margin-bottom: 4px;">🎯 시민 분산 임팩트 (누적)</div>
+    <div style="font-size: 13px; color: var(--accent); font-weight: 700; letter-spacing: .5px; margin-bottom: 4px;">🎯 시민 분산 임팩트 (누적)</div>
     <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: baseline;">
-      <span style="font-size: 18px; font-weight: 800; color: var(--text);"><span id="impact-count">—</span><span style="font-size: 11px; color: var(--muted); font-weight: 600; margin-left: 2px;">명</span></span>
-      <span style="font-size: 13px; color: var(--text);">⏱ <span id="impact-min" style="font-weight: 700;">—</span><span style="font-size: 10px; color: var(--muted);">분 절감</span></span>
+      <span style="font-size: 18px; font-weight: 800; color: var(--text);"><span id="impact-count">—</span><span style="font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 2px;">명</span></span>
+      <span style="font-size: 13px; color: var(--text);">⏱ <span id="impact-min" style="font-weight: 700;">—</span><span style="font-size: 14px; color: var(--muted);">분 절감</span></span>
       <span style="font-size: 13px; color: var(--text);">💰 <span id="impact-value" style="font-weight: 700;">—</span></span>
     </div>
-    <div id="impact-detail" style="font-size: 10px; color: var(--muted); margin-top: 4px;"></div>
+    <div id="impact-detail" style="font-size: 14px; color: var(--muted); margin-top: 4px;"></div>
   </div>
-  <div id="my-reward-line" hidden style="margin: -6px 0 10px; padding: 8px 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.32); border-radius: 10px; font-size: 11px;"></div>
+  <div id="my-reward-line" hidden style="margin: -6px 0 10px; padding: 8px 12px; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.32); border-radius: 10px; font-size: 13px;"></div>
   <!-- 🎒 시민 신고 버튼 — 분실물 / 응급 -->
   <div style="margin: 4px 14px 8px; display: flex; gap: 6px;">
-    <button id="btn-report-lost" onclick="reportIncident('lost')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(245,158,11,.15), rgba(245,158,11,.05)); border: 1px solid rgba(245,158,11,.50); color: #fbbf24; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
+    <button id="btn-report-lost" onclick="reportIncident('lost')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(245,158,11,.15), rgba(245,158,11,.05)); border: 1px solid rgba(245,158,11,.50); color: #fbbf24; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
       🎒 분실물 신고
     </button>
-    <button id="btn-report-emg" onclick="reportIncident('emergency')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(239,68,68,.15), rgba(239,68,68,.05)); border: 1px solid rgba(239,68,68,.50); color: #f87171; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
+    <button id="btn-report-emg" onclick="reportIncident('emergency')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(239,68,68,.15), rgba(239,68,68,.05)); border: 1px solid rgba(239,68,68,.50); color: #f87171; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
       🚨 응급 신고
     </button>
-    <button id="btn-report-priority" onclick="reportIncident('priority_seat')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(168,85,247,.15), rgba(168,85,247,.05)); border: 1px solid rgba(168,85,247,.50); color: #c084fc; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
+    <button id="btn-report-priority" onclick="reportIncident('priority_seat')" style="flex:1; padding: 8px 0; background: linear-gradient(135deg, rgba(168,85,247,.15), rgba(168,85,247,.05)); border: 1px solid rgba(168,85,247,.50); color: #c084fc; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s;">
       ♿ 배려 요청
     </button>
   </div>
-  <div id="incident-notice" hidden role="alert" aria-live="polite" style="margin: 4px 0 10px; padding: 10px 14px; background: linear-gradient(135deg, rgba(239,68,68,.14), rgba(245,158,11,.06)); border: 1px solid rgba(239,68,68,.45); border-radius: 12px; font-size: 12px;">
-    <div style="font-weight: 700; color: #ef4444; margin-bottom: 4px;">🚨 인근 사고 알림 <span style="font-size: 9px; color: var(--muted); font-weight: 500; margin-left: 4px;">backend 동기화</span></div>
+  <div id="incident-notice" hidden role="alert" aria-live="polite" style="margin: 4px 0 10px; padding: 10px 14px; background: linear-gradient(135deg, rgba(239,68,68,.14), rgba(245,158,11,.06)); border: 1px solid rgba(239,68,68,.45); border-radius: 12px; font-size: 14px;">
+    <div style="font-weight: 700; color: #ef4444; margin-bottom: 4px;">🚨 인근 사고 알림 <span style="font-size: 13px; color: var(--muted); font-weight: 500; margin-left: 4px;">backend 동기화</span></div>
     <div id="incident-notice-text" style="color: var(--text);">—</div>
   </div>
 
@@ -401,10 +401,10 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
       <span>실시간 BEV · <span id="mini-title">5호차</span></span>
       <span class="bev-people"><b id="bev-cnt">—</b>명 검출</span>
       <span class="live">LIVE</span>
-      <span id="bev-freshness" style="display:none;margin-left:4px;font-size:10px;font-weight:600;padding:2px 6px;border-radius:999px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);transition:all .4s;">방금</span>
+      <span id="bev-freshness" style="display:none;margin-left:4px;font-size: 14px;font-weight:600;padding:2px 6px;border-radius:999px;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);transition:all .4s;">방금</span>
     </div>
     <canvas id="bev"></canvas>
-    <div id="bev-bus-status" style="display:none;margin-top:6px;font-size:11px;padding:5px 8px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:6px;">
+    <div id="bev-bus-status" style="display:none;margin-top:6px;font-size: 13px;padding:5px 8px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:6px;">
       <span id="bev-sig-icon" style="font-size:14px;">📶</span>
       <span id="bev-sig-text" style="color:var(--muted);flex:1;">버스 카메라 대기 중</span>
       <span id="bev-fps-badge" style="color:#7dd3fc;font-weight:700;">—fps</span>
@@ -452,7 +452,7 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
 <div id="ob-toast" hidden style="position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,rgba(125,211,211,.18),rgba(16,185,129,.10));border:1px solid rgba(125,211,211,.55);border-radius:14px;padding:14px 18px;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:ui-sans-serif,system-ui;color:#fff;line-height:1.5;font-size:13px;backdrop-filter:blur(10px)">
   <div id="ob-text" style="margin-bottom:10px"></div>
   <div style="display:flex;gap:8px;justify-content:flex-end">
-    <button id="ob-dismiss" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;padding:5px 12px;border-radius:8px;font-size:12px;cursor:pointer">OK</button>
+    <button id="ob-dismiss" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;padding:5px 12px;border-radius:8px;font-size: 14px;cursor:pointer">OK</button>
   </div>
 </div>
 <script>
@@ -599,7 +599,7 @@ function renderCompare() {
     row.innerHTML = `
       <span class="when">${whenText}</span>
       <div class="bar ${cls}"><div style="width: ${Math.min(100, opt.occ * 100)}%"></div></div>
-      <span class="pct">${Math.round(opt.occ * 100)}%<small style="color:var(--muted);font-weight:400;font-size:10px;margin-left:4px;">${cnt}명</small></span>
+      <span class="pct">${Math.round(opt.occ * 100)}%<small style="color:var(--muted);font-weight:400;font-size: 14px;margin-left:4px;">${cnt}명</small></span>
       <span class="verdict ${verdictCls}">${verdictText}</span>
     `;
     root.appendChild(row);
@@ -757,7 +757,7 @@ function showRewardToast(krw, savedPct) {
     <div style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);border-radius:24px;padding:18px 28px;box-shadow:0 16px 48px rgba(16,185,129,.55),0 4px 12px rgba(0,0,0,.35);border:1.5px solid rgba(255,255,255,.20);">
       <div style="font-size:13px;font-weight:600;opacity:.85;margin-bottom:4px;">${t18.title}</div>
       <div id="_reward-count" style="font-size:40px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;">+₩0</div>
-      <div style="font-size:11px;font-weight:600;opacity:.75;margin-top:6px;">${t18.sub(savedPct)}</div>
+      <div style="font-size: 13px;font-weight:600;opacity:.75;margin-top:6px;">${t18.sub(savedPct)}</div>
     </div>`;
   badge.style.animation = '_badgePop .45s cubic-bezier(.2,1.4,.4,1) forwards';
 
@@ -900,7 +900,7 @@ function applyIncidentNotice(j) {
   const lang = (typeof getI18nLang === 'function') ? getI18nLang() : 'ko';
   const lblObj = labels[top.type] || {};
   const lbl = lblObj[lang] || lblObj.ko || top.type;
-  txt.innerHTML = `<b>${lbl}</b> — ${top.msg || '대응 중'}<br><span style="font-size: 10px; color: var(--muted);">우회 경로 또는 다음 차 권고 · ${top.source}</span>`;
+  txt.innerHTML = `<b>${lbl}</b> — ${top.msg || '대응 중'}<br><span style="font-size: 14px; color: var(--muted);">우회 경로 또는 다음 차 권고 · ${top.source}</span>`;
   el.hidden = false;
   // 음성 안내 — 응급/이상 + 5분 throttle
   const isHigh = top.severity === 'high' || top.type === 'emergency' || top.type === 'suspicious';
@@ -942,7 +942,7 @@ function _updateQueueBadge() {
       if (!btn) return;
       let badge = btn.querySelector('._q-badge');
       if (cnt > 0) {
-        if (!badge) { badge = document.createElement('span'); badge.className = '_q-badge'; badge.style.cssText = 'position:absolute;top:-5px;right:-5px;background:#ef4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1'; btn.style.position = 'relative'; btn.appendChild(badge); }
+        if (!badge) { badge = document.createElement('span'); badge.className = '_q-badge'; badge.style.cssText = 'position:absolute;top:-5px;right:-5px;background:#ef4444;color:#fff;border-radius:50%;width:16px;height:16px;font-size: 13px;font-weight:800;display:flex;align-items:center;justify-content:center;line-height:1'; btn.style.position = 'relative'; btn.appendChild(badge); }
         badge.textContent = cnt;
       } else if (badge) { badge.remove(); }
     });
@@ -2043,8 +2043,8 @@ const LIVE = (() => {
       const cur = curStation && s.name === curStation.name;
       row.className = 'modal-row' + (cur ? ' current' : '');
       const hot = s.hot ? '<span class="hot" title="인파 폭증 핫스팟">🔥</span>' : '';
-      const odTag = s.od ? '<span class="od-tag" title="OD 비대칭 — 분산 시 +₩300" style="display:inline-block;margin-left:4px;padding:1px 6px;background:rgba(167,139,250,.20);border:1px solid rgba(167,139,250,.50);border-radius:999px;color:#a78bfa;font-size:10px;font-weight:600;">+₩300</span>' : '';
-      const trTag = s.transfer ? '<span class="tr-tag" title="환승역 — 분산 시 +₩400" style="display:inline-block;margin-left:4px;padding:1px 6px;background:rgba(245,158,11,.20);border:1px solid rgba(245,158,11,.50);border-radius:999px;color:#f59e0b;font-size:10px;font-weight:600;">🔀 +₩400</span>' : '';
+      const odTag = s.od ? '<span class="od-tag" title="OD 비대칭 — 분산 시 +₩300" style="display:inline-block;margin-left:4px;padding:1px 6px;background:rgba(167,139,250,.20);border:1px solid rgba(167,139,250,.50);border-radius:999px;color:#a78bfa;font-size: 14px;font-weight:600;">+₩300</span>' : '';
+      const trTag = s.transfer ? '<span class="tr-tag" title="환승역 — 분산 시 +₩400" style="display:inline-block;margin-left:4px;padding:1px 6px;background:rgba(245,158,11,.20);border:1px solid rgba(245,158,11,.50);border-radius:999px;color:#f59e0b;font-size: 14px;font-weight:600;">🔀 +₩400</span>' : '';
       const lineLabel = s.line > 0 ? `${s.line}호선` : 'POI';
       const km = s.km != null ? `<span class="km">${s.km < 1 ? Math.round(s.km*1000)+'m' : s.km.toFixed(1)+'km'}</span>` : '';
       row.innerHTML = `
@@ -2085,13 +2085,13 @@ const LIVE = (() => {
     wrap.style.cssText = 'padding: 6px 4px 10px; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;';
     const lbl = document.createElement('span');
     lbl.textContent = '⏱ 최근:';
-    lbl.style.cssText = 'font-size: 10px; color: var(--muted-2); font-weight: 700; letter-spacing: 0.8px; align-self: center; margin-right: 2px;';
+    lbl.style.cssText = 'font-size: 14px; color: var(--muted-2); font-weight: 700; letter-spacing: 0.8px; align-self: center; margin-right: 2px;';
     wrap.appendChild(lbl);
     for (const r of recent) {
       const chip = document.createElement('button');
       chip.type = 'button';
       chip.textContent = `${r.name}${r.line > 0 ? ` ${r.line}호` : ''}`;
-      chip.style.cssText = 'padding: 4px 10px; background: rgba(167,139,250,.14); border: 1px solid rgba(167,139,250,.40); border-radius: 999px; color: #fff; font-size: 11px; cursor: pointer;';
+      chip.style.cssText = 'padding: 4px 10px; background: rgba(167,139,250,.14); border: 1px solid rgba(167,139,250,.40); border-radius: 999px; color: #fff; font-size: 13px; cursor: pointer;';
       chip.addEventListener('click', () => { setDestination(r); closeModal(); });
       wrap.appendChild(chip);
     }
@@ -2631,7 +2631,7 @@ const LIVE = (() => {
     if (!cluster) { badge.style.display = 'none'; return; }
     const c = _CLUSTER_LABELS[cluster];
     badge.textContent = c.ko;
-    badge.style.cssText = `display:inline;margin-left:4px;padding:1px 5px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.3px;color:${c.color};background:${c.bg};border:1px solid ${c.border}`;
+    badge.style.cssText = `display:inline;margin-left:4px;padding:1px 5px;border-radius:999px;font-size: 13px;font-weight:700;letter-spacing:.3px;color:${c.color};background:${c.bg};border:1px solid ${c.border}`;
   }
 
   // 🌬️ 실내 공기질 + 엘리베이터 카드 — /api/v1/indoor_air + /api/v1/elevator
@@ -2677,7 +2677,7 @@ const LIVE = (() => {
       if (!elevs.length) { summary.textContent = '정보 없음'; return; }
       const ok = elevs.filter(e => e.status === '정상').length;
       const fault = elevs.filter(e => e.status !== '정상').length;
-      summary.innerHTML = `<span style="color:#22c55e">✓ 정상 ${ok}대</span>${fault ? `<span style="color:#ef4444;margin-left:8px">⚠ 고장/점검 ${fault}대</span>` : ''} <span style="color:var(--muted);font-size:10px;margin-left:8px">총 ${elevs.length}대</span>`;
+      summary.innerHTML = `<span style="color:#22c55e">✓ 정상 ${ok}대</span>${fault ? `<span style="color:#ef4444;margin-left:8px">⚠ 고장/점검 ${fault}대</span>` : ''} <span style="color:var(--muted);font-size: 14px;margin-left:8px">총 ${elevs.length}대</span>`;
       // 고장 있으면 카드 강조
       if (fault > 0) { card.style.borderColor = 'rgba(239,68,68,.55)'; card.style.background = 'linear-gradient(135deg,rgba(239,68,68,.10),rgba(168,85,247,.06))'; }
       else { card.style.borderColor = 'rgba(168,85,247,.35)'; card.style.background = 'linear-gradient(135deg,rgba(168,85,247,.10),rgba(99,102,241,.06))'; }

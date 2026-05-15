@@ -8,42 +8,42 @@
 <link rel="stylesheet" href="../shared/bev_console.css">
 <style>
   .grid-wrap { padding: 14px; }
-  .heatmap { display: grid; gap: 2px; grid-template-columns: 80px repeat(24, 1fr); margin: 14px 0; font-size: 10px; }
+  .heatmap { display: grid; gap: 2px; grid-template-columns: 80px repeat(24, 1fr); margin: 14px 0; font-size: 14px; }
   .heatmap .cell { aspect-ratio: 1; border-radius: 3px; display: flex; align-items: center; justify-content: center;
                    color: rgba(255,255,255,0.85); font-weight: 500; cursor: pointer; transition: transform 0.1s; }
   .heatmap .cell:hover { transform: scale(1.4); z-index: 10; box-shadow: 0 0 12px rgba(125,211,211,0.6); }
-  .heatmap .label-r { display: flex; align-items: center; color: var(--muted); padding: 0 8px; font-size: 11px; }
+  .heatmap .label-r { display: flex; align-items: center; color: var(--muted); padding: 0 8px; font-size: 13px; }
   .heatmap .label-c { color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
-  .legend { display: flex; gap: 12px; align-items: center; font-size: 11px; color: var(--muted); margin: 8px 0; }
+  .legend { display: flex; gap: 12px; align-items: center; font-size: 13px; color: var(--muted); margin: 8px 0; }
   .legend-bar { width: 200px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #1a4a4a 0%, #2d7d7d 25%, #f0b46a 60%, #ff5e57 100%); }
   .price-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin: 14px 0; }
   .price-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.05); }
   .price-row:last-child { border-bottom: none; }
   .price-row .name { color: var(--fg); font-size: 14px; font-weight: 500; }
-  .price-row .meta { color: var(--muted); font-size: 11px; margin-left: 8px; }
+  .price-row .meta { color: var(--muted); font-size: 13px; margin-left: 8px; }
   .price-row .value { color: var(--accent); font-size: 18px; font-weight: 300; font-variant-numeric: tabular-nums; }
-  .price-row .delta { color: var(--warn); font-size: 11px; margin-left: 6px; }
+  .price-row .delta { color: var(--warn); font-size: 13px; margin-left: 6px; }
   .insight { background: linear-gradient(135deg, rgba(125,211,211,0.06), rgba(125,211,211,0.02));
              border: 1px solid rgba(125,211,211,0.25); border-radius: 14px; padding: 16px 18px; margin: 14px 0; }
-  .insight h3 { margin: 0 0 6px; color: var(--accent); font-size: 12px; letter-spacing: 1.4px; font-weight: 500; }
+  .insight h3 { margin: 0 0 6px; color: var(--accent); font-size: 14px; letter-spacing: 1.4px; font-weight: 500; }
   .insight p { margin: 4px 0; color: var(--muted-2); font-size: 13px; line-height: 1.6; }
   .insight b { color: var(--fg); font-weight: 500; }
   .station-picker { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 14px; }
   .station-picker button { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 6px 12px;
-                          border-radius: 999px; font-size: 12px; cursor: pointer; }
+                          border-radius: 999px; font-size: 14px; cursor: pointer; }
   .station-picker button.active { background: rgba(125,211,211,0.15); border-color: var(--accent); color: var(--accent); }
   .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 14px; }
   .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-  .kpi .l { font-size: 10px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
+  .kpi .l { font-size: 14px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
   .kpi .v { font-size: 22px; color: var(--fg); font-weight: 300; font-variant-numeric: tabular-nums; margin-top: 4px; }
-  .kpi .s { font-size: 11px; color: var(--accent); margin-top: 2px; }
+  .kpi .s { font-size: 13px; color: var(--accent); margin-top: 2px; }
 
   /* 모바일 반응형 — 폰에서 가로 스크롤 방지 */
   @media (max-width: 760px) {
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
     .heatmap { grid-template-columns: 56px repeat(24, minmax(14px, 1fr)); font-size: 8px; }
     .heatmap .cell { font-size: 8px; }
-    .heatmap .label-r { font-size: 9px; padding: 0 4px; }
+    .heatmap .label-r { font-size: 13px; padding: 0 4px; }
     .grid-wrap { padding: 8px; }
     .price-row .value { font-size: 16px; }
     .insight { padding: 12px 14px; }
@@ -86,10 +86,10 @@
     <a href="realbev.html" data-i18n="nav_realcam">📷 실 카메라</a>
     <a href="ad_pricing.html" class="active" data-i18n="nav_ads">📺 디스플레이</a>
     <a href="../passenger_app/index.html" class="cta-citizen" data-i18n="nav_citizen">📱 시민 앱 →</a>
-    <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
-    <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
-    <a href="admin.html" title="관리자 콘솔" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(99,102,241,.10)); border: 1px solid rgba(168,85,247,.55); color: #a855f7; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none;">⚙️ 관리</a>
-    <button id="demo-trigger" title="라이브 단가 변동 30초 시연" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
+    <a href="../demo.html" title="4-패널 통합 시연 (5분 자동 재생)" style="margin-left: 6px; padding: 2px 8px; background: linear-gradient(135deg, rgba(245,158,11,.20), rgba(239,68,68,.20)); border: 1px solid rgba(245,158,11,.55); color: #fbbf24; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">🎬 통합 시연</a>
+    <a href="../pitch.html" title="정책 ROI v3 정량 보고" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(16,185,129,.10)); border: 1px solid rgba(125,211,211,.55); color: #7dd3d3; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">📊 정책 보고</a>
+    <a href="admin.html" title="관리자 콘솔" style="margin-left: 4px; padding: 2px 8px; background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(99,102,241,.10)); border: 1px solid rgba(168,85,247,.55); color: #a855f7; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none;">⚙️ 관리</a>
+    <button id="demo-trigger" title="라이브 단가 변동 30초 시연" style="margin-left: 10px; padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: .3px;">▶︎ 시연 모드</button>
     <button id="lang-toggle" style="margin-left: 6px; padding: 2px 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 14px; cursor: pointer;" title="Language">🇰🇷</button>
 <script>
 const I18N_OP_AD = {
@@ -133,22 +133,22 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
     <span class="tag">데이터<b>citydata_ppltn 분 단위</b></span>
     <span class="tag">시장<b>지하철 광고 ~2,000억/년</b></span>
     <span id="ad-live-kpi" hidden class="tag" style="background: linear-gradient(135deg, rgba(16,185,129,.15), rgba(125,211,211,.06)); border: 1px solid rgba(16,185,129,.4);">
-      <span style="color: #10b981; font-weight: 700; font-size: 9px; letter-spacing: 1.2px; margin-right: 4px;">🟢 LIVE</span>
-      <b id="ad-kpi-cnt">0</b><em style="color: var(--muted); font-size: 9px;">분산</em>
-      <span style="margin-left: 4px;"><b id="ad-kpi-roi">—</b><em style="color: var(--muted); font-size: 9px;">x ROI</em></span>
+      <span style="color: #10b981; font-weight: 700; font-size: 13px; letter-spacing: 1.2px; margin-right: 4px;">🟢 LIVE</span>
+      <b id="ad-kpi-cnt">0</b><em style="color: var(--muted); font-size: 13px;">분산</em>
+      <span style="margin-left: 4px;"><b id="ad-kpi-roi">—</b><em style="color: var(--muted); font-size: 13px;">x ROI</em></span>
     </span>
     <span id="ad-dispersion-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(125,211,211,.18), rgba(167,139,250,.08)); border: 1px solid rgba(125,211,211,.45);">
-      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">📈 평탄화</span>
+      <span style="color: #7dd3d3; font-size: 14px; font-weight: 700;">📈 평탄화</span>
       <span style="margin-left: 4px; color: var(--muted);">σ<b id="ad-dp-sigma" style="color: var(--text); margin-left:3px;">—%</b></span>
       <span style="margin-left: 4px; color: var(--muted);">노출<b id="ad-dp-stable" style="color: var(--text); margin-left:3px;">—%</b></span>
     </span>
     <span id="ad-tier-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(245,158,11,.14), rgba(167,139,250,.06)); border: 1px solid rgba(245,158,11,.35);">
-      <span style="color: #f59e0b; font-size: 10px; font-weight: 700;">💰 차등</span>
+      <span style="color: #f59e0b; font-size: 14px; font-weight: 700;">💰 차등</span>
       <b id="ad-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="ad-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="ad-tier-tp" style="color: #f59e0b;">0</b>
     </span>
     <!-- 🌍 환경 라이브 (cycle 394) — PM2.5 / UV → 광고 노출 환경 modulation -->
     <span id="ad-env-pill" hidden class="tag" style="margin-left: 6px; background: linear-gradient(135deg, rgba(125,211,211,.14), rgba(167,139,250,.06)); border: 1px solid rgba(125,211,211,.40);">
-      <span style="color: #7dd3d3; font-size: 10px; font-weight: 700;">🌍 환경</span>
+      <span style="color: #7dd3d3; font-size: 14px; font-weight: 700;">🌍 환경</span>
       <span style="margin-left: 4px; color: var(--muted);">PM2.5<b id="ad-env-pm25" style="color: var(--text); margin-left:3px;">—</b></span>
       <span style="margin-left: 4px; color: var(--muted);">UV<b id="ad-env-uv" style="color: var(--text); margin-left:3px;">—</b></span>
     </span>
@@ -232,7 +232,7 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
   </section>
 
   <section class="grid-wrap">
-    <h3 style="font-size: 12px; letter-spacing: 1.4px; color: var(--muted); margin: 0 0 6px; font-weight: 500;">
+    <h3 style="font-size: 14px; letter-spacing: 1.4px; color: var(--muted); margin: 0 0 6px; font-weight: 500;">
       역 × 시간대 인구 밀도 → 동적 광고 단가 매트릭스
     </h3>
     <div class="legend">
@@ -245,7 +245,7 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
     </div>
 
     <div class="station-picker">
-      <span style="color: var(--muted); font-size: 11px; padding: 6px 10px;">집중 분석:</span>
+      <span style="color: var(--muted); font-size: 13px; padding: 6px 10px;">집중 분석:</span>
       <button class="active" data-st="강남역">강남역</button>
       <button data-st="홍대 관광특구">홍대</button>
       <button data-st="잠실역">잠실</button>
@@ -255,7 +255,7 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
     </div>
 
     <div class="price-card">
-      <h3 style="margin: 0 0 10px; color: var(--muted); font-size: 12px; letter-spacing: 1.4px; font-weight: 500;">
+      <h3 style="margin: 0 0 10px; color: var(--muted); font-size: 14px; letter-spacing: 1.4px; font-weight: 500;">
         선택 역 — 시간대별 단가 (24시간)
       </h3>
       <div id="price-rows"></div>
@@ -299,12 +299,12 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
       </p>
       <p style="background: rgba(167,139,250,.08); padding: 10px 12px; border-radius: 8px; border-left: 3px solid #a78bfa; margin: 8px 0;">
         <b id="ad-llm-poi" style="color: #a78bfa;">—</b>
-        <span id="ad-llm-trigger" style="color: var(--muted); font-size: 11px; margin-left: 6px;">—</span><br/>
+        <span id="ad-llm-trigger" style="color: var(--muted); font-size: 13px; margin-left: 6px;">—</span><br/>
         <span id="ad-llm-text" style="color: var(--fg); font-size: 13px; line-height: 1.6;">—</span>
       </p>
-      <p style="font-size: 11px; color: var(--muted-2);">
+      <p style="font-size: 13px; color: var(--muted-2);">
         <b>광고주 가치</b>: "왜 이 단가인가?" 가 분 단위로 투명해짐 → 고정 옥외광고 대비 <b>입찰 신뢰도 ↑</b>. 폭증 이벤트 시 자동 트리거됨 (수동 조회 불필요).<br/>
-        <span id="ad-llm-ts" style="color: var(--muted); font-size: 10px;">—</span>
+        <span id="ad-llm-ts" style="color: var(--muted); font-size: 14px;">—</span>
       </p>
     </div>
 
@@ -454,7 +454,7 @@ function activateStation(st) {
   const bot3 = hourPrices.slice(-3).reverse();
   const banner = (label, color) => {
     const div = document.createElement('div');
-    div.style.cssText = `font-size: 10px; letter-spacing: 1.4px; color: ${color}; padding: 6px 0 2px; font-weight: 500;`;
+    div.style.cssText = `font-size: 14px; letter-spacing: 1.4px; color: ${color}; padding: 6px 0 2px; font-weight: 500;`;
     div.textContent = label;
     return div;
   };
@@ -669,8 +669,8 @@ function applyLiveDensity() {
     const peakIdx = livePrices.indexOf(Math.max(...livePrices));
     const peakPoi = Object.keys(liveDensity)[peakIdx];
     const liveAvg = Math.round(avgLivePrice).toLocaleString();
-    document.getElementById('kpi-avg').innerHTML = `${liveAvg}원<span style="font-size:11px; color:#10b981; margin-left:6px;">LIVE</span>`;
-    document.getElementById('kpi-peak').innerHTML = `${Math.round(Math.max(...livePrices)).toLocaleString()}원<span style="font-size:11px; color:#10b981; margin-left:6px;">LIVE</span>`;
+    document.getElementById('kpi-avg').innerHTML = `${liveAvg}원<span style="font-size: 13px; color:#10b981; margin-left:6px;">LIVE</span>`;
+    document.getElementById('kpi-peak').innerHTML = `${Math.round(Math.max(...livePrices)).toLocaleString()}원<span style="font-size: 13px; color:#10b981; margin-left:6px;">LIVE</span>`;
     document.getElementById('kpi-peak-when').textContent = `${peakPoi} · 현재`;
     const uplift = ((avgLivePrice - BASE_PRICE) / BASE_PRICE) * 100;
     document.getElementById('kpi-uplift').textContent = `${uplift > 0 ? '+' : ''}${uplift.toFixed(1)}%`;
@@ -707,10 +707,10 @@ function _renderTicker() {
   if (!el) return;
   el.innerHTML = _ticker.events.slice(0, 8).map(e =>
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
-      <span style="color:var(--muted);font-size:10px;min-width:52px;">${e.ts}</span>
-      <span style="color:var(--fg);font-size:11px;min-width:56px;">${e.poi}</span>
-      <span style="font-size:11px;font-weight:500;color:${e.up?'#ff5e57':'#7dd3d3'};min-width:56px;">${Math.round(e.price).toLocaleString()}원</span>
-      <span style="font-size:10px;color:${e.up?'#ff5e57':'#7dd3d3'};font-weight:700;">${e.up?'▲':'▼'}${Math.abs(parseFloat(e.pct))}%</span>
+      <span style="color:var(--muted);font-size: 14px;min-width:52px;">${e.ts}</span>
+      <span style="color:var(--fg);font-size: 13px;min-width:56px;">${e.poi}</span>
+      <span style="font-size: 13px;font-weight:500;color:${e.up?'#ff5e57':'#7dd3d3'};min-width:56px;">${Math.round(e.price).toLocaleString()}원</span>
+      <span style="font-size: 14px;color:${e.up?'#ff5e57':'#7dd3d3'};font-weight:700;">${e.up?'▲':'▼'}${Math.abs(parseFloat(e.pct))}%</span>
     </div>`
   ).join('');
 }
@@ -752,12 +752,12 @@ window.addEventListener('DOMContentLoaded', () => {
   tickerDiv.style.cssText = 'background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 14px;';
   tickerDiv.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <h3 style="margin:0;font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);font-weight:500;">
-        📈 실시간 단가 변동 Ticker <span style="color:var(--accent);font-size:9px;padding:1px 5px;background:rgba(125,211,211,0.10);border-radius:4px;text-transform:none;margin-left:6px;">LIVE</span>
+      <h3 style="margin:0;font-size: 13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);font-weight:500;">
+        📈 실시간 단가 변동 Ticker <span style="color:var(--accent);font-size: 13px;padding:1px 5px;background:rgba(125,211,211,0.10);border-radius:4px;text-transform:none;margin-left:6px;">LIVE</span>
       </h3>
-      <span style="font-size:10px;color:var(--muted);">인구밀도 변화 → 자동 단가 재산정</span>
+      <span style="font-size: 14px;color:var(--muted);">인구밀도 변화 → 자동 단가 재산정</span>
     </div>
-    <div id="ad-ticker-list" style="font-family:ui-monospace,Consolas,monospace;min-height:40px;color:var(--muted-2);font-size:11px;">
+    <div id="ad-ticker-list" style="font-family:ui-monospace,Consolas,monospace;min-height:40px;color:var(--muted-2);font-size: 13px;">
       <div style="padding:8px 0;color:var(--muted);">WS 연결 후 라이브 단가 변동 표시 ↑</div>
     </div>`;
   insertBefore.parentNode.insertBefore(tickerDiv, insertBefore);

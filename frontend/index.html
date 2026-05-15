@@ -78,7 +78,7 @@
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 12px; background: rgba(125,211,211,.10);
     border: 1px solid var(--line); color: var(--accent); border-radius: 999px;
-    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 12px;
+    font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 12px;
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   }
   .brand .tag::before {
@@ -88,11 +88,11 @@
   @keyframes dotPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.78); } }
   @keyframes fadeUpIn { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: translateY(0); } }
   .lede {
-    color: var(--muted); font-size: 13px; max-width: 640px; text-align: center; line-height: 1.7;
+    color: var(--muted); font-size: 16px; max-width: 720px; text-align: center; line-height: 1.75;
     margin: 16px 0 32px;
     animation: fadeUpIn 1.1s cubic-bezier(.22,.61,.36,1) both; animation-delay: .15s;
   }
-  .lede b { color: var(--text); }
+  .lede b { color: var(--text); font-weight: 700; font-size: 17px; }
   .grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 14px; max-width: 1080px; width: 100%;
@@ -129,13 +129,13 @@
     box-shadow: 0 18px 40px rgba(0,0,0,.4), 0 0 32px rgba(125,211,211,.22);
   }
   .card:active { transform: translateY(-2px) scale(.99); }
-  .card .ico { font-size: 28px; }
-  .card .title { font-size: 17px; font-weight: 800; }
-  .card .sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .card .ico { font-size: 34px; line-height: 1; margin-bottom: 2px; }
+  .card .title { font-size: 20px; font-weight: 800; letter-spacing: -.3px; }
+  .card .sub { font-size: 14px; color: var(--muted); line-height: 1.55; }
   .card .badge {
     position: absolute; top: 14px; right: 14px;
-    font-size: 9px; padding: 1px 6px; border-radius: 4px;
-    font-weight: 700; letter-spacing: .4px;
+    font-size: 11px; padding: 3px 8px; border-radius: 6px;
+    font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
   }
   .card.subway .badge { color: var(--accent); background: rgba(125,211,211,.12); border: 1px solid var(--line); }
   .card.bus .badge { color: var(--bus); background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.30); }
@@ -153,7 +153,7 @@
   }
   .card.pitch .badge { color: var(--accent); background: rgba(125,211,211,.14); border: 1px solid var(--line); }
   footer {
-    margin-top: 40px; color: var(--muted); font-size: 10px; opacity: .65;
+    margin-top: 40px; color: var(--muted); font-size: 14px; opacity: .65;
   }
   footer code { background: rgba(255,255,255,.04); padding: 1px 6px; border-radius: 3px; }
 </style>
@@ -164,7 +164,7 @@
   <div class="brand" style="position: relative;">
     <h1>MetroEyes</h1>
     <div class="tag">2026 Seoul Big Data</div>
-    <button id="lang-toggle" style="position: absolute; top: 0; right: 0; padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">🇰🇷 KO</button>
+    <button id="lang-toggle" style="position: absolute; top: 0; right: 0; padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">🇰🇷 KO</button>
   </div>
   <div class="lede" id="lede-text">
     <b>지하철·버스 BEV CV</b> + <b>실시간 도시데이터</b> + <b>시민 분산 인센티브</b> 의 통합 시스템<br>
@@ -200,29 +200,29 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
 });
 </script>
 
-  <div id="live-kpi" hidden style="position: relative; margin: -10px 0 14px; padding: 12px 18px; background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(16,185,129,.03)); border: 1px solid var(--line); border-radius: 14px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; font-size: 12px; font-feature-settings: 'tnum'; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overflow: hidden;">
+  <div id="live-kpi" hidden style="position: relative; margin: -10px 0 14px; padding: 12px 18px; background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(16,185,129,.03)); border: 1px solid var(--line); border-radius: 14px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; font-size: 14px; font-feature-settings: 'tnum'; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overflow: hidden;">
     <canvas id="lk-spark" style="position: absolute; right: 0; top: 0; height: 100%; width: 220px; opacity: .5; pointer-events: none;"></canvas>
-    <span style="display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; position: relative; z-index: 1;">
+    <span style="display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-size: 14px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; position: relative; z-index: 1;">
       <span style="position: relative; width: 8px; height: 8px;">
         <span style="position: absolute; inset: 0; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: livePulse 1.6s ease-in-out infinite;"></span>
         <span style="position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid #10b981; animation: liveRing 1.6s ease-out infinite;"></span>
       </span>
       LIVE
     </span>
-    <span style="color: var(--muted); position: relative; z-index: 1;">분산 <b id="lk-cnt" style="color: var(--text); font-size: 15px; font-weight: 700;">0</b>명</span>
-    <span style="color: var(--muted); position: relative; z-index: 1;">절감 <b id="lk-min" style="color: var(--text); font-size: 15px; font-weight: 700;">0</b>분</span>
-    <span style="color: var(--muted); position: relative; z-index: 1;">사회 <b id="lk-val" style="color: var(--text); font-size: 15px; font-weight: 700;">₩0</b></span>
-    <span style="color: var(--muted); position: relative; z-index: 1;">ROI <b id="lk-roi" style="color: var(--good); font-size: 15px; font-weight: 700;">—x</b></span>
+    <span style="color: var(--muted); position: relative; z-index: 1; font-size: 14px;">분산 <b id="lk-cnt" style="color: var(--text); font-size: 22px; font-weight: 800; margin: 0 2px;">0</b>명</span>
+    <span style="color: var(--muted); position: relative; z-index: 1; font-size: 14px;">절감 <b id="lk-min" style="color: var(--text); font-size: 22px; font-weight: 800; margin: 0 2px;">0</b>분</span>
+    <span style="color: var(--muted); position: relative; z-index: 1; font-size: 14px;">사회 <b id="lk-val" style="color: var(--text); font-size: 22px; font-weight: 800; margin: 0 2px;">₩0</b></span>
+    <span style="color: var(--muted); position: relative; z-index: 1; font-size: 14px;">ROI <b id="lk-roi" style="color: var(--good); font-size: 22px; font-weight: 800; margin: 0 2px; text-shadow: 0 0 14px rgba(16,185,129,.4);">—x</b></span>
     <span id="lk-stations" style="display: contents;"></span>
-    <span style="color: var(--muted-2); font-size: 10px; margin-left: auto; position: relative; z-index: 1;">/health · 8s</span>
+    <span style="color: var(--muted-2); font-size: 12px; margin-left: auto; position: relative; z-index: 1; letter-spacing: .8px;">/health · 8s</span>
   </div>
   <style>
     @keyframes livePulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.7); opacity: .65; } }
     @keyframes liveRing  { 0% { transform: scale(.7); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
   </style>
   <!-- 진입 허브 OD 우선순위 chip — 1분 폴링 -->
-  <div id="hub-od" hidden style="margin: 0 0 24px; padding: 8px 14px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border: 1px solid rgba(167,139,250,.30); border-radius: 10px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 11px;">
-    <span style="color: #a78bfa; font-weight: 700; font-size: 10px; letter-spacing: 1.0px;">📍 OD 우선순위</span>
+  <div id="hub-od" hidden style="margin: 0 0 24px; padding: 8px 14px; background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(125,211,211,.04)); border: 1px solid rgba(167,139,250,.30); border-radius: 10px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 13px;">
+    <span style="color: #a78bfa; font-weight: 700; font-size: 14px; letter-spacing: 1.0px;">📍 OD 우선순위</span>
     <span id="hub-od-rationale" style="color: var(--muted);">—</span>
     <span id="hub-od-list" style="display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto;"></span>
   </div>
@@ -238,7 +238,7 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
           const isDep = j.priority_type === 'departure';
           const sl = document.getElementById('hub-od-list');
           sl.innerHTML = j.priority_stations.slice(0, 5).map(s =>
-            `<span style="padding: 2px 8px; background: ${isDep ? 'rgba(16,185,129,.14)' : 'rgba(255,94,87,.14)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.40)' : 'rgba(255,94,87,.40)'}; border-radius: 999px; font-size: 10px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station}</span>`
+            `<span style="padding: 2px 8px; background: ${isDep ? 'rgba(16,185,129,.14)' : 'rgba(255,94,87,.14)'}; border: 1px solid ${isDep ? 'rgba(16,185,129,.40)' : 'rgba(255,94,87,.40)'}; border-radius: 999px; font-size: 14px; color: ${isDep ? '#10b981' : '#ff5e57'}; font-weight: 600;">${s.station}</span>`
           ).join('');
           document.getElementById('hub-od').hidden = false;
         }
@@ -316,7 +316,7 @@ document.getElementById('lang-toggle').addEventListener('click', () => {
             const top = Object.entries(im.stations).sort((a,b)=>b[1]-a[1]).slice(0, 3);
             const medals = ['🥇','🥈','🥉'];
             document.getElementById('lk-stations').innerHTML = top.map(([n,c],i) =>
-              `<span style="position: relative; z-index: 1; padding: 3px 10px; background: rgba(125,211,211,.10); border: 1px solid var(--accent); border-radius: 999px; color: var(--text); font-size: 11px;">${medals[i]} ${n} <b style="color: var(--accent);">${c}</b></span>`).join('');
+              `<span style="position: relative; z-index: 1; padding: 3px 10px; background: rgba(125,211,211,.10); border: 1px solid var(--accent); border-radius: 999px; color: var(--text); font-size: 13px;">${medals[i]} ${n} <b style="color: var(--accent);">${c}</b></span>`).join('');
           }
           document.getElementById('live-kpi').hidden = false;
           drawSpark(document.getElementById('lk-spark'), im.hourly || []);
