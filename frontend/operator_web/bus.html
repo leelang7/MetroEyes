@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../shared/bev_console.css">
 <script src="../shared/demo_overlay.js" defer></script>
 <script>
-(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -24,14 +24,14 @@
 <body data-domain="bus">
 <script>
 // 자동 캐시 무효화 — sessionStorage 마커로 버전 다르면 1회 reload
-(function () {
+(function() {
   const CUR = 'v3.8-stations-2026-05-11';
   if (sessionStorage.getItem('me_ver_bus') !== CUR) {
     sessionStorage.setItem('me_ver_bus', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
-    if (navType !== 'reload') location.reload();
+    if (navType !== 'reload') location.reload;
   }
-})();
+});
 </script>
 <div class="domain-bar bus"></div>
 <header>
@@ -55,9 +55,9 @@ const I18N_OP_BUS = {
   zh: { nav_subway: '🚇 地铁', nav_bus: '🚌 巴士', nav_realcam: '📷 实摄像', nav_ads: '📺 显示', nav_citizen: '📱 市民 →', flag: '🇨🇳' },
   ja: { nav_subway: '🚇 地下鉄', nav_bus: '🚌 バス', nav_realcam: '📷 実カメラ', nav_ads: '📺 表示', nav_citizen: '📱 市民 →', flag: '🇯🇵' },
 };
-let _curBusLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+let _curBusLang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
 if (!I18N_OP_BUS[_curBusLang]) _curBusLang = 'ko';
-function applyBusI18n() {
+function applyBusI18n {
   const t = I18N_OP_BUS[_curBusLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
@@ -67,10 +67,10 @@ function applyBusI18n() {
   if (btn) btn.textContent = t.flag;
   document.documentElement.lang = _curBusLang;
 }
-document.getElementById('lang-toggle')?.addEventListener('click', () => {
+document.getElementById('lang-toggle')?.addEventListener('click',  => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curBusLang = order[(order.indexOf(_curBusLang) + 1) % 4];
-  applyBusI18n();
+  applyBusI18n;
 });
 window.addEventListener('DOMContentLoaded', applyBusI18n);
 </script>
@@ -89,29 +89,29 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
       <b id="bus-tier-basic" style="color: #7dd3d3; margin-left: 4px;">0</b><em style="opacity:.5;">/</em><b id="bus-tier-od" style="color: #a78bfa;">0</b><em style="opacity:.5;">/</em><b id="bus-tier-tp" style="color: #f59e0b;">0</b>
     </span>
 <script>
-(async function pollBusTier() {
+(async function pollBusTier {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/health`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json();
+      const j = await r.json;
       const tc = j.impact && j.impact.tier_counts;
       if (tc && (tc.basic + tc.od + tc.transfer) > 0) {
-        document.getElementById('bus-tier-basic').textContent = (tc.basic || 0).toLocaleString();
-        document.getElementById('bus-tier-od').textContent = (tc.od || 0).toLocaleString();
-        document.getElementById('bus-tier-tp').textContent = (tc.transfer || 0).toLocaleString();
+        document.getElementById('bus-tier-basic').textContent = (tc.basic || 0).toLocaleString;
+        document.getElementById('bus-tier-od').textContent = (tc.od || 0).toLocaleString;
+        document.getElementById('bus-tier-tp').textContent = (tc.transfer || 0).toLocaleString;
         document.getElementById('bus-tier-pill').hidden = false;
       }
     }
   } catch {}
   setTimeout(pollBusTier, 8000);
-})();
+});
 </script>
 <script>
-(async function pollDispersionBus() {
+(async function pollDispersionBus {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/dispersion`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json();
+      const j = await r.json;
       if (j.live && j.live.estimated_response_rate > 0) {
         document.getElementById('bus-dp-sigma').textContent = (-j.live.sigma_reduction_pct).toFixed(1) + '%';
         document.getElementById('bus-dp-peak').textContent = (-j.live.peak_reduction_pct).toFixed(1) + '%';
@@ -120,23 +120,23 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
     }
   } catch {}
   setTimeout(pollDispersionBus, 12000);
-})();
+});
 </script>
 <script>
-(async function pollBusKPI() {
+(async function pollBusKPI {
   const url = window.METROEYES_BACKEND + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
-    const j = await r.json();
+    const j = await r.json;
     const im = j.impact;
     if (im && im.total_count > 0) {
-      document.getElementById('bus-kpi-cnt').textContent = im.total_count.toLocaleString();
+      document.getElementById('bus-kpi-cnt').textContent = im.total_count.toLocaleString;
       document.getElementById('bus-kpi-roi').textContent = im.roi_x ? Math.round(im.roi_x) : '—';
       document.getElementById('bus-live-kpi').hidden = false;
     }
   } catch {}
   setTimeout(pollBusKPI, 8000);
-})();
+});
 </script>
   </div>
   <div class="controls">
@@ -185,11 +185,11 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
   </div>
 </section>
 <script>
-(async function pollBusTransfer() {
+(async function pollBusTransfer {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/transfer_priority`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json();
+      const j = await r.json;
       if (j.priority_stations && j.priority_stations.length > 0) {
         document.getElementById('bus-tp-rationale').textContent = j.rationale;
         const sl = document.getElementById('bus-tp-list');
@@ -201,14 +201,14 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
     }
   } catch {}
   setTimeout(pollBusTransfer, 60000);
-})();
+});
 </script>
 <script>
-(async function pollBusODPriority() {
+(async function pollBusODPriority {
   try {
     const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/od_asymmetry`, { cache: 'no-cache' });
     if (r.ok) {
-      const j = await r.json();
+      const j = await r.json;
       if (j.priority_stations && j.priority_stations.length > 0) {
         document.getElementById('bus-od-rationale').textContent = j.rationale;
         const isDep = j.priority_type === 'departure';
@@ -226,7 +226,7 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
     }
   } catch {}
   setTimeout(pollBusODPriority, 60000);
-})();
+});
 </script>
 
   <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
@@ -386,7 +386,7 @@ const sim = BEVEngine.createSim({
     incidentsLog.unshift(ev);
     if (incidentsLog.length > 30) incidentsLog.length = 30;
     SF.pushToast(toastStack, ev);
-    renderIncidents();
+    renderIncidents;
     try {
       if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
         window.LIVE_WS.send(JSON.stringify({
@@ -417,21 +417,21 @@ function drawStrip(buses, selectedIdx) {
     const o = buses[i].occ;
     const col = occColor(o);
     BEVEngine.rrect(ctx, x, yTop, carW, carH, 6);
-    ctx.fillStyle = 'rgba(255,255,255,0.025)'; ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.025)'; ctx.fill;
     const fillH = carH * Math.min(1, o);
     BEVEngine.rrect(ctx, x, yTop + (carH - fillH), carW, fillH, 6);
-    ctx.fillStyle = rgba(col, 0.78); ctx.fill();
+    ctx.fillStyle = rgba(col, 0.78); ctx.fill;
     ctx.strokeStyle = (i === selectedIdx) ? rgba([125, 211, 211], 0.85) : 'rgba(255,255,255,0.08)';
     ctx.lineWidth = (i === selectedIdx) ? 1.5 : 1;
     BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 6);
-    ctx.stroke();
+    ctx.stroke;
     if (i === selectedIdx) {
-      ctx.save();
+      ctx.save;
       ctx.shadowColor = rgba([125, 211, 211], 0.5);
       ctx.shadowBlur = 14;
       BEVEngine.rrect(ctx, x + 0.5, yTop + 0.5, carW - 1, carH - 1, 6);
-      ctx.stroke();
-      ctx.restore();
+      ctx.stroke;
+      ctx.restore;
     }
     ctx.font = '500 11px Inter, "Malgun Gothic"';
     ctx.fillStyle = (i === selectedIdx) ? '#7dd3d3' : '#6b768a';
@@ -469,10 +469,10 @@ let selected = 0;
 let prevSelected = selected;
 
 // === strip 클릭 → 차량 선택 ===
-(function bindStripClick() {
+(function bindStripClick {
   const cv = document.getElementById('strip');
   function pickFromX(clientX, n) {
-    const r = cv.getBoundingClientRect();
+    const r = cv.getBoundingClientRect;
     const x = clientX - r.left;
     const pad = 16, gap = 4;
     const carW = (r.width - pad * 2 - gap * (n - 1)) / n;
@@ -484,27 +484,27 @@ let prevSelected = selected;
   cv.addEventListener('click', e => {
     if (!lastBuses.length) return;
     selected = pickFromX(e.clientX, lastBuses.length);
-    applyHour();
+    applyHour;
   });
   cv.addEventListener('mousemove', e => {
     if (!lastBuses.length) { cv.title = ''; return; }
     const i = pickFromX(e.clientX, lastBuses.length);
     cv.title = `${i + 1}순위 — ${Math.round(lastBuses[i].occ * 100)}% / ${lastBuses[i].eta}분 후`;
   });
-})();
+});
 
 function generateBuses(hour) {
   const avg = model.trainOccupancyAt(hour, ROUTE.cluster);
-  const r = (n => { let s = n; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3);
+  const r = (n => { let s = n; return  => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3);
   return Array.from({ length: BUS_COUNT }, (_, i) => {
-    const noise = (r() - 0.5) * 0.20;
+    const noise = (r - 0.5) * 0.20;
     const occ = Math.max(0.05, Math.min(1.05, avg * 0.92 + noise));
-    const eta = i === 0 ? Math.max(1, Math.round(r() * 3)) : Math.round((i + 1) * 4 + r() * 2);
+    const eta = i === 0 ? Math.max(1, Math.round(r * 3)) : Math.round((i + 1) * 4 + r * 2);
     return { occ, eta };
   });
 }
 
-function applyHour() {
+function applyHour {
   const hour = +hourEl.value;
   hourLabel.textContent = hour + '시';
   const buses = generateBuses(hour);
@@ -536,7 +536,7 @@ function applyHour() {
       <span class="num">${i + 1}</span>
       <div class="car-bar ${cls}"><div style="width: ${Math.min(100, b.occ * 100)}%"></div></div>
       <span style="text-align: right;">${Math.round(b.occ * 100)}%</span>`;
-    row.addEventListener('click', () => { selected = i; applyHour(); });
+    row.addEventListener('click',  => { selected = i; applyHour; });
     busList.appendChild(row);
   });
 
@@ -591,28 +591,28 @@ function applyHour() {
   recMeta.textContent = `노선 평균 ${Math.round(model.trainOccupancyAt(hour, ROUTE.cluster) * 100)}% · ${model.CLUSTERS[ROUTE.cluster].label} · ${hour}시`;
 }
 
-function updatePhaseTag() {
+function updatePhaseTag {
   const m = { arriving: ['도착 중', ''], stopped: ['정차', 'stopped'], departing: ['출발', ''], running: ['운행 중', ''] };
-  const [text, cls] = m[sim.getPhase()];
+  const [text, cls] = m[sim.getPhase];
   phaseTag.textContent = text;
   phaseTag.className = 'phase-tag ' + cls;
 }
 
-function updateLiveKpi() {
-  const cnt = sim.liveCount();
+function updateLiveKpi {
+  const cnt = sim.liveCount;
   kpiCnt.textContent = cnt;
   const myOcc = cnt / CAPACITY;
   alertEl.classList.toggle('show', myOcc >= 0.92);
 
   // 약자석/휠체어 공간 모니터
-  const pr = sim.priorityStats();
+  const pr = sim.priorityStats;
   const valEl = document.getElementById('pri-val');
   const kpiBox = document.getElementById('priority-kpi');
   valEl.textContent = `${pr.occupied} / ${pr.total}` + (pr.blocked > 0 ? ` · 차단 ${pr.blocked}` : '');
   kpiBox.classList.toggle('warn', pr.blocked > 0);
 }
 
-function renderIncidents() {
+function renderIncidents {
   const root = document.getElementById('incidents');
   root.innerHTML = '';
   let nE = 0, nS = 0, nL = 0, nF = 0;
@@ -644,7 +644,7 @@ function injectIncidentBus(ev) {
   incidentsLog.unshift(ev);
   if (incidentsLog.length > 30) incidentsLog.length = 30;
   if (window.SafetyFeatures && SF.pushToast) SF.pushToast(toastStack, ev);
-  renderIncidents();
+  renderIncidents;
   try {
     if (window.LIVE_WS && window.LIVE_WS.readyState === 1) {
       window.LIVE_WS.send(JSON.stringify({
@@ -655,7 +655,7 @@ function injectIncidentBus(ev) {
     }
   } catch {}
 }
-document.getElementById('demo-trigger')?.addEventListener('click', () => {
+document.getElementById('demo-trigger')?.addEventListener('click',  => {
   const btn = document.getElementById('demo-trigger');
   if (!window.DemoOverlay) { alert('demo_overlay.js 로드 안 됨'); return; }
   btn.disabled = true; btn.style.opacity = '.65';
@@ -674,21 +674,21 @@ document.getElementById('demo-trigger')?.addEventListener('click', () => {
     onSendIncident: (e) => {
       try { ws && ws.readyState === 1 && ws.send(JSON.stringify({ type: 'incident_log', ev_type: e.type, severity: e.sev, msg: e.msg, source: 'operator-bus-demo' })); } catch {}
       // 페이지 내 incident timeline에도 즉시 표시
-      injectIncidentBus({ id: Date.now() + Math.random(), type: e.type, severity: e.sev, msg: e.msg, ts: Date.now() / 1000 });
+      injectIncidentBus({ id: Date.now + Math.random, type: e.type, severity: e.sev, msg: e.msg, ts: Date.now / 1000 });
     },
   });
-  setTimeout(() => { btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1'; }, 30000);
+  setTimeout( => { btn.disabled = false; btn.innerHTML = '▶︎ 시연 모드'; btn.style.opacity = '1'; }, 30000);
 });
 
 let ttsLang = 'ko';
 document.querySelectorAll('.tts-lang button').forEach(b => {
-  b.addEventListener('click', () => {
+  b.addEventListener('click',  => {
     document.querySelectorAll('.tts-lang button').forEach(x => x.classList.remove('active'));
     b.classList.add('active');
     ttsLang = b.dataset.lang;
   });
 });
-document.getElementById('ttsBtn').addEventListener('click', () => {
+document.getElementById('ttsBtn').addEventListener('click',  => {
   const myOcc = lastBuses[selected].occ;
   let mi = 0, mv = lastBuses[0].occ;
   lastBuses.forEach((b, i) => { if (b.occ < mv) { mv = b.occ; mi = i; } });
@@ -696,7 +696,7 @@ document.getElementById('ttsBtn').addEventListener('click', () => {
   const recCar = `${mi + 1}순위 차량`;
   const btn = document.getElementById('ttsBtn');
   btn.classList.add('speaking');
-  setTimeout(() => btn.classList.remove('speaking'), 3000);
+  setTimeout( => btn.classList.remove('speaking'), 3000);
   if (myOcc >= 0.85) {
     SF.announce('crowded', ttsLang, [carLabel, recCar]);
   } else {
@@ -704,23 +704,23 @@ document.getElementById('ttsBtn').addEventListener('click', () => {
   }
 });
 
-let lastT = performance.now();
+let lastT = performance.now;
 function tick(now) {
   const dt = Math.min(0.05, (now - lastT) / 1000);
   lastT = now;
   sim.tick(dt);
   drawStrip(lastBuses, selected);
-  updatePhaseTag();
-  updateLiveKpi();
+  updatePhaseTag;
+  updateLiveKpi;
   requestAnimationFrame(tick);
 }
 
 hourEl.addEventListener('input', applyHour);
-window.addEventListener('resize', () => {
-  sim.invalidateLayout();
-  applyHour();
+window.addEventListener('resize',  => {
+  sim.invalidateLayout;
+  applyHour;
 });
-applyHour();
+applyHour;
 requestAnimationFrame(tick);
 
 // === 24시간 sparkline — 이 순위 차량의 시간대별 점유 ===
@@ -729,14 +729,14 @@ function drawBusSparkline(busIdx, currentHour) {
   if (!svg) return;
   const W = 240, H = 56, pad = 4;
   const occs = Array.from({ length: 24 }, (_, h) => {
-    const buses = (function () {
+    const buses = (function() {
       const avg = model.trainOccupancyAt(h, ROUTE.cluster);
-      const r = (n => { let s = n; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(h * 17 + 3);
+      const r = (n => { let s = n; return  => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(h * 17 + 3);
       return Array.from({ length: BUS_COUNT }, (_, i) => {
-        const noise = (r() - 0.5) * 0.20;
+        const noise = (r - 0.5) * 0.20;
         return Math.max(0.05, Math.min(1.05, avg * 0.92 + noise));
       });
-    })();
+    });
     return buses[busIdx];
   });
   const xAt = h => pad + (h / 23) * (W - pad * 2);
@@ -796,8 +796,8 @@ function selectStop(s, kmFromUser) {
   document.getElementById('t-line').textContent = s.route;
   document.getElementById('t-stop').textContent = s.name;
   document.getElementById('t-cluster').textContent = model.CLUSTERS[s.cluster].label;
-  applyHour();
-  renderPicker();
+  applyHour;
+  renderPicker;
   // 라이브 ws 쿼리 재호출 — 정류장 인구 새 POI 로 갱신
   if (window.LIVE && window.LIVE.setStop) {
     window.LIVE.setStop(s.short, s.poi);
@@ -807,13 +807,13 @@ function renderPicker(filter) {
   const rows = document.getElementById('picker-rows');
   if (!rows) return;
   rows.innerHTML = '';
-  const f = (filter || '').trim().toLowerCase();
+  const f = (filter || '').trim.toLowerCase;
   let list = _userPos
     ? STOP_LIST.map(s => ({ ...s, km: busHaversineKm(_userPos.lat, _userPos.lon, s.lat, s.lon) }))
                .sort((a, b) => a.km - b.km)
     : STOP_LIST;
   if (f) list = list.filter(s =>
-    s.name.toLowerCase().includes(f) || s.short.toLowerCase().includes(f) || s.route.toLowerCase().includes(f));
+    s.name.toLowerCase.includes(f) || s.short.toLowerCase.includes(f) || s.route.toLowerCase.includes(f));
   for (const s of list) {
     const row = document.createElement('div');
     const isCurrent = s.name === ROUTE.stop;
@@ -824,7 +824,7 @@ function renderPicker(filter) {
       <span><b>${s.short}</b>${hot}<span class="meta"> · ${s.route}</span></span>
       ${km ? `<span class="km">${km}</span>` : ''}`;
     row.addEventListener('click', (e) => {
-      e.stopPropagation();
+      e.stopPropagation;
       document.getElementById('station-picker').classList.remove('open');
       selectStop(s, s.km);
     });
@@ -839,12 +839,12 @@ document.getElementById('gps-tag').addEventListener('click', e => {
     const si = document.getElementById('picker-search');
     if (si) si.value = '';
     renderPicker('');
-    setTimeout(() => {
-      if (si) si.focus();
+    setTimeout( => {
+      if (si) si.focus;
       else { const first = picker.querySelector('.picker-row'); if (first) first.classList.add('kbd-focus'); }
     }, 30);
   }
-  e.stopPropagation();
+  e.stopPropagation;
 });
 document.addEventListener('click', e => {
   if (!e.target.closest('#gps-tag')) {
@@ -856,7 +856,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', (e) => {
   const picker = document.getElementById('station-picker');
   if (!picker || !picker.classList.contains('open')) return;
-  if (e.key === 'Escape') { picker.classList.remove('open'); e.preventDefault(); return; }
+  if (e.key === 'Escape') { picker.classList.remove('open'); e.preventDefault; return; }
   const rows = Array.from(picker.querySelectorAll('.picker-row'));
   if (!rows.length) return;
   const cur = rows.findIndex(r => r.classList.contains('kbd-focus'));
@@ -865,34 +865,34 @@ document.addEventListener('keydown', (e) => {
     const next = (cur + 1) % rows.length;
     rows[next].classList.add('kbd-focus');
     rows[next].scrollIntoView({ block: 'nearest' });
-    e.preventDefault();
+    e.preventDefault;
   } else if (e.key === 'ArrowUp') {
     rows.forEach(r => r.classList.remove('kbd-focus'));
     const prev = (cur - 1 + rows.length) % rows.length;
     rows[prev].classList.add('kbd-focus');
     rows[prev].scrollIntoView({ block: 'nearest' });
-    e.preventDefault();
+    e.preventDefault;
   } else if (e.key === 'Enter') {
     const focused = picker.querySelector('.picker-row.kbd-focus');
-    if (focused) focused.click();
-    e.preventDefault();
+    if (focused) focused.click;
+    e.preventDefault;
   }
 });
-(function injectKbdStyle() {
+(function injectKbdStyle {
   if (document.getElementById('kbd-focus-style')) return;
   const s = document.createElement('style');
   s.id = 'kbd-focus-style';
   s.textContent = '.picker-row.kbd-focus { background: rgba(125,211,211,.18) !important; outline: 1px solid var(--accent); outline-offset: -1px; }';
   document.head.appendChild(s);
-})();
-function tryGps() {
+});
+function tryGps {
   const tag = document.getElementById('gps-tag');
   const stEl = document.getElementById('gps-stop');
   const dEl = document.getElementById('gps-dist');
   if (!('geolocation' in navigator)) {
     tag.classList.add('error');
     stEl.textContent = '미지원'; dEl.textContent = '—';
-    renderPicker();
+    renderPicker;
     return;
   }
   tag.classList.add('searching');
@@ -912,18 +912,18 @@ function tryGps() {
       tag.classList.remove('searching');
       tag.classList.add('error');
       dEl.textContent = '권한 거부';
-      renderPicker();
+      renderPicker;
     },
     { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
   );
 }
 document.getElementById('picker-gps-btn').addEventListener('click', e => {
-  e.stopPropagation();
+  e.stopPropagation;
   document.getElementById('gps-tag').classList.remove('error');
-  tryGps();
+  tryGps;
 });
-tryGps();
-renderPicker();
+tryGps;
+renderPicker;
 
 // ============== LLM 어시스턴트 ==============
 const llmFab = document.getElementById('llmFab');
@@ -934,18 +934,18 @@ const llmSend = document.getElementById('llmSend');
 const llmMsgs = document.getElementById('llmMsgs');
 const llmMic = document.getElementById('llmMic');
 
-llmFab.addEventListener('click', () => llmPanel.classList.add('open'));
-llmClose.addEventListener('click', () => llmPanel.classList.remove('open'));
+llmFab.addEventListener('click',  => llmPanel.classList.add('open'));
+llmClose.addEventListener('click',  => llmPanel.classList.remove('open'));
 
 document.querySelectorAll('#llmSuggest .chip').forEach(c => {
-  c.addEventListener('click', () => {
+  c.addEventListener('click',  => {
     llmInput.value = c.textContent;
-    askLLM();
+    askLLM;
   });
 });
 
-async function askLLM() {
-  const q = llmInput.value.trim();
+async function askLLM {
+  const q = llmInput.value.trim;
   if (!q) return;
   const um = document.createElement('div');
   um.className = 'llm-msg user';
@@ -963,35 +963,35 @@ async function askLLM() {
   await LLMAssistant.streamTo(bm, resp);
   llmMsgs.scrollTop = llmMsgs.scrollHeight;
   llmSend.disabled = false;
-  llmInput.focus();
+  llmInput.focus;
 }
 llmSend.addEventListener('click', askLLM);
-llmInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askLLM(); });
+llmInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') askLLM; });
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SR) {
-  const rec = new SR();
+  const rec = new SR;
   rec.lang = 'ko-KR';
   rec.continuous = false;
   rec.interimResults = false;
   let listening = false;
-  llmMic.addEventListener('click', () => {
-    if (listening) { rec.stop(); return; }
-    try { rec.start(); listening = true; llmMic.classList.add('listening'); } catch {}
+  llmMic.addEventListener('click',  => {
+    if (listening) { rec.stop; return; }
+    try { rec.start; listening = true; llmMic.classList.add('listening'); } catch {}
   });
   rec.addEventListener('result', (ev) => {
     llmInput.value = ev.results[0][0].transcript;
-    askLLM();
+    askLLM;
   });
-  rec.addEventListener('end', () => { listening = false; llmMic.classList.remove('listening'); });
-  rec.addEventListener('error', () => { listening = false; llmMic.classList.remove('listening'); });
+  rec.addEventListener('end',  => { listening = false; llmMic.classList.remove('listening'); });
+  rec.addEventListener('error',  => { listening = false; llmMic.classList.remove('listening'); });
 } else {
   llmMic.style.display = 'none';
 }
 
 // ============== 4중 데이터 융합 (BUS) ==============
-(() => {
-  const wsUrl = (() => {
+( => {
+  const wsUrl = ( => {
     const p = new URLSearchParams(location.search).get('ws');
     if (p) return p;
     const saved = localStorage.getItem('subwaybev_ws');
@@ -999,7 +999,7 @@ if (SR) {
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
     return window.METROEYES_WS;
-  })();
+  });
   let ws = null, lastBev = null, lastPop = null, lastCd = null, popT = null, cdT = null;
   // 버스 모드 — POI는 잠실역.7번출구 인근 → 잠실역으로 매핑
   const stop = { poi: '잠실역' };
@@ -1012,16 +1012,16 @@ if (SR) {
     const v = (p.tracks || []).filter(t => ['bus','car','truck'].includes(t.class || t.cls || '')).length;
     document.getElementById('fc-cv-v').textContent = `${n}명`;
     document.getElementById('fc-cv-sub').textContent = `보행 ${n} · 차량 ${v} · YOLO ${(p.fps ?? 0).toFixed(1)} fps`;
-    setCard('fc-cv', 'ok'); evalCong();
+    setCard('fc-cv', 'ok'); evalCong;
   }
 
   // ───── 버스 차내 BEV 폴링 (lite_server /api/v1/bus_state) ─────
   // fake_bus_bev_loop가 갱신하는 풍부한 페이로드: route/plate/dest/zone_summary/occ_pct/congestion
-  async function pollBusState() {
+  async function pollBusState {
     try {
       const r = await fetch(`${window.METROEYES_BACKEND}/api/v1/bus_state`, { cache: 'no-cache' });
       if (!r.ok) return;
-      const p = await r.json();
+      const p = await r.json;
       if (!p || !p.tracks) return;
       lastBev = p;
       // ① fc-cv 카드 (검출 인원) — total_pax
@@ -1047,7 +1047,7 @@ if (SR) {
       const bLost = document.getElementById('b-lost'); if (bLost) bLost.textContent = `분실 ${bagN}`;
     } catch (e) { /* 실패는 조용히 무시 — 5초 후 재시도 */ }
   }
-  pollBusState();
+  pollBusState;
   setInterval(pollBusState, 5000);
 
   function applyPpltn(j) {
@@ -1057,9 +1057,9 @@ if (SR) {
     document.getElementById('fc-pop-v').textContent = `${fmtN(mid)}명`;
     document.getElementById('fc-pop-sub').textContent = `${j.area_nm} · ${j.congest_lvl} · ${j.ppltn_time||''}`;
     const lvl = j.congest_lvl === '붐빔' ? 'crit' : j.congest_lvl === '약간 붐빔' ? 'warn' : 'ok';
-    setCard('fc-pop', lvl); evalCong();
+    setCard('fc-pop', lvl); evalCong;
   }
-  function evalCong() {
+  function evalCong {
     const personN = lastBev ? (lastBev.tracks || []).filter(t => t.class === 'person').length : null;
     const popLvl = lastPop && !lastPop.error ? lastPop.congest_lvl : null;
     if (personN == null && popLvl == null) { document.getElementById('fc-cong-v').textContent = '—'; setCard('fc-cong', 'dim'); return; }
@@ -1074,8 +1074,8 @@ if (SR) {
     setCard('fc-cong', lvl === '붐빔' ? 'crit' : lvl === '약간 붐빔' ? 'warn' : 'ok');
   }
   function send(o) { try { ws && ws.readyState === 1 && ws.send(JSON.stringify(o)); } catch {} }
-  function queryPop() { send({ type: 'population_query', poi: stop.poi }); }
-  function queryCitydata() { send({ type: 'citydata_query', poi: stop.poi }); }
+  function queryPop { send({ type: 'population_query', poi: stop.poi }); }
+  function queryCitydata { send({ type: 'citydata_query', poi: stop.poi }); }
   function applyCitydata(j) {
     lastCd = j;
     if (j.error) return;
@@ -1084,17 +1084,17 @@ if (SR) {
     if (j.bus_30wthn_gton_max != null) {
       const n = j.bus_30wthn_gton_max;
       card.classList.remove('dim','crit'); card.classList.add(n > 200 ? 'warn' : 'ok');
-      document.getElementById('fc-arr-v').innerHTML = `${n.toLocaleString()}<span class="unit">/30분</span>`;
+      document.getElementById('fc-arr-v').innerHTML = `${n.toLocaleString}<span class="unit">/30분</span>`;
       document.getElementById('fc-arr-sub').textContent = `정류장 30분 누적 승차 (citydata LIVE_BUS_PPLTN)`;
     }
-    evalCong();
+    evalCong;
   }
-  function connect() {
-    try { if (ws) ws.close(); } catch {}
+  function connect {
+    try { if (ws) ws.close; } catch {}
     ws = new WebSocket(wsUrl);
     window.LIVE_WS = ws;
-    ws.onopen = () => {
-      queryPop(); queryCitydata();
+    ws.onopen =  => {
+      queryPop; queryCitydata;
       popT = setInterval(queryPop, 60000);
       cdT = setInterval(queryCitydata, 90000);
     };
@@ -1107,8 +1107,8 @@ if (SR) {
         else applyBev(j);
       } catch {}
     };
-    ws.onclose = () => { _dbg.ws='closed'; updDbg(); if (popT) clearInterval(popT); if (cdT) clearInterval(cdT); setTimeout(connect, 3000); };
-    ws.onerror = () => { _dbg.ws='error'; updDbg(); };
+    ws.onclose =  => { _dbg.ws='closed'; updDbg; if (popT) clearInterval(popT); if (cdT) clearInterval(cdT); setTimeout(connect, 3000); };
+    ws.onerror =  => { _dbg.ws='error'; updDbg; };
   }
 
   // ───── 좌하단 디버그 바 ─────
@@ -1117,7 +1117,7 @@ if (SR) {
   dbgEl.style.cssText = 'position:fixed;bottom:12px;left:12px;z-index:99999;background:rgba(255,94,87,0.12);border:2px solid #ff5e57;border-radius:8px;padding:8px 14px;font:12px ui-monospace,Consolas,monospace;color:#fff;line-height:1.5;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.5);min-width:340px';
   document.body.appendChild(dbgEl);
   const _dbg = { ws:'init', sta:'잠실역', sent:0, recv:0, last:'-' };
-  function updDbg() {
+  function updDbg {
     const c = _dbg.ws==='open' ? '#7dd3d3' : _dbg.ws==='connecting' ? '#f0b46a' : '#ff5e57';
     dbgEl.innerHTML = `<span style="color:#ff5e57;font-weight:700">[BUS DEBUG ${VER}]</span><br>` +
       `WS:<b style="color:${c}">${_dbg.ws}</b>  POI:<b style="color:#7dd3d3">${_dbg.sta}</b>  TX:${_dbg.sent}  RX:${_dbg.recv}  last:${_dbg.last}`;
@@ -1128,36 +1128,36 @@ if (SR) {
     ws.onmessage = (ev) => {
       _dbg.recv++;
       try { _dbg.last = (JSON.parse(ev.data).type) || 'bev'; } catch {}
-      updDbg();
+      updDbg;
       if (_origMsg) _origMsg(ev);
     };
   }
   const _origSend = send;
-  send = function(o) { _origSend(o); _dbg.sent++; updDbg(); };
-  updDbg();
+  send = function(o) { _origSend(o); _dbg.sent++; updDbg; };
+  updDbg;
 
-  connect();
+  connect;
   // (re-hook after re-connect)
-  setInterval(() => {
+  setInterval( => {
     if (ws && ws.onmessage && !ws.onmessage._hooked) {
       const orig = ws.onmessage;
       ws.onmessage = (ev) => {
         _dbg.recv++;
         try { _dbg.last = (JSON.parse(ev.data).type) || 'bev'; } catch {}
-        updDbg();
+        updDbg;
         orig(ev);
       };
       ws.onmessage._hooked = true;
       _dbg.ws = ws.readyState === 1 ? 'open' : _dbg.ws;
-      updDbg();
+      updDbg;
     }
   }, 1000);
 
-  // 외부 selectStop() 가 호출 — 새 정류장 즉시 ws 재쿼리
+  // 외부 selectStop 가 호출 — 새 정류장 즉시 ws 재쿼리
   window.LIVE = {
     setStop(name, poi) {
       stop.poi = poi;
-      _dbg.sta = `${name}/${poi||'—'}`; updDbg();
+      _dbg.sta = `${name}/${poi||'—'}`; updDbg;
       lastPop = null; lastCd = null;
       if (!poi) {
         document.getElementById('fc-pop-v').textContent = '—명';
@@ -1168,14 +1168,14 @@ if (SR) {
       document.getElementById('fc-pop-v').textContent = '—명';
       document.getElementById('fc-pop-sub').textContent = `${poi} 갱신 중...`;
       setCard('fc-pop', 'dim');
-      const ok1 = queryPop !== undefined && (queryPop(), true);
-      const ok2 = queryCitydata !== undefined && (queryCitydata(), true);
+      const ok1 = queryPop !== undefined && (queryPop, true);
+      const ok2 = queryCitydata !== undefined && (queryCitydata, true);
       if (ws && ws.readyState !== 1) {
-        setTimeout(() => { queryPop(); queryCitydata(); }, 1500);
+        setTimeout( => { queryPop; queryCitydata; }, 1500);
       }
     },
   };
-})();
+});
 </script>
 <script src="../shared/health_pill.js" defer></script>
 </body>

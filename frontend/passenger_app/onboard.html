@@ -12,17 +12,17 @@
 <link rel="stylesheet" href="styles.css">
 <script>
 // 자동 캐시 무효화 — sessionStorage 마커
-(function () {
+(function() {
   const CUR = 'v4.1-i18n-onboard';
   if (sessionStorage.getItem('me_ver_onboard') !== CUR) {
     sessionStorage.setItem('me_ver_onboard', CUR);
     const navType = (performance.getEntriesByType('navigation')[0]||{}).type;
-    if (navType !== 'reload') location.reload();
+    if (navType !== 'reload') location.reload;
   }
-})();
+});
 </script>
 <script>
-(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -35,7 +35,7 @@
 <body>
 <div class="app">
   <header class="app-header">
-    <button class="back-btn" onclick="history.back()" data-i18n="back">← 뒤로</button>
+    <button class="back-btn" onclick="history.back" data-i18n="back">← 뒤로</button>
     <div class="brand">
       <a href="../index.html" class="brand-link" title="홈으로 (8페이지 진입 허브)"><span class="dot"></span>MetroEyes</a><small>Onboard</small>
       <span class="live-badge" id="live-badge"><span class="led"></span><span id="live-label" data-i18n="live_off">오프라인</span></span>
@@ -129,7 +129,7 @@ const VEHICLES = {
     line: '2호선 잠실행',
     cluster: 'hub',
     nextStop: (h) => ['잠실나루역', '강변역', '구의역'][h % 3] || '잠실나루역',
-    transfer: () => ({
+    transfer:  => ({
       head: '3호선 환승 (잠실나루역 도착 시)',
       text: '<b>좌측 두 번째 문</b>으로 내리면 환승 통로 가까움 · 약 1분 30초',
     }),
@@ -144,7 +144,7 @@ const VEHICLES = {
     line: '간선 142',
     cluster: 'hub',
     nextStop: (h) => ['올림픽공원역', '몽촌토성역', '잠실나루역'][h % 3] || '올림픽공원역',
-    transfer: () => ({
+    transfer:  => ({
       head: '하차 안내',
       text: '하차 시 <b>뒷문 사용</b>. 다음 정류장에 25명 하차 예정 → 한산해질 예정',
     }),
@@ -159,7 +159,7 @@ document.getElementById('t-car').textContent = cfg.label(idx);
 document.getElementById('t-line').textContent = cfg.line;
 
 // 누적 분산 보상 카드 렌더 (페이지 진입 시 1회 + window storage 변화 시)
-function renderRewardCard() {
+function renderRewardCard {
   let my = {};
   try { my = JSON.parse(localStorage.getItem('metroeyes_my_impact') || '{}'); } catch {}
   const card = document.getElementById('reward-card');
@@ -170,18 +170,18 @@ function renderRewardCard() {
   const nEl = document.getElementById('rw-n');
   const savedEl = document.getElementById('rw-saved');
   const msgEl = document.getElementById('rw-msg');
-  if (krwEl) krwEl.textContent = krw.toLocaleString();
+  if (krwEl) krwEl.textContent = krw.toLocaleString;
   if (nEl) nEl.textContent = my.n;
   const avgSaved = my.n > 0 ? Math.round(my.saved / my.n) : 0;
   if (savedEl) savedEl.textContent = avgSaved;
   if (msgEl) {
     const minSaved = Math.round(my.saved * 0.25);  // 25분 통행 가정 × saved%/100 × 100 = saved*0.25분
     const value = minSaved * 167;  // 한국교통연구원 167원/분
-    msgEl.textContent = `당신의 분산이 ~${minSaved}분 절감 / 사회적 가치 ₩${value.toLocaleString()} 환산 — 정책 ROI 기여`;
+    msgEl.textContent = `당신의 분산이 ~${minSaved}분 절감 / 사회적 가치 ₩${value.toLocaleString} 환산 — 정책 ROI 기여`;
   }
   card.hidden = false;
 }
-renderRewardCard();
+renderRewardCard;
 window.addEventListener('storage', renderRewardCard);
 
 // ==== 4개 언어 페이지 텍스트 토글 (외국인 시민 포용) ====
@@ -191,9 +191,9 @@ const I18N_ONBOARD = {
   zh: { back: '← 返回', live_off: '离线', flag: '🇨🇳' },
   ja: { back: '← 戻る', live_off: 'オフライン', flag: '🇯🇵' },
 };
-let _curOnLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+let _curOnLang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
 if (!I18N_ONBOARD[_curOnLang]) _curOnLang = 'ko';
-function applyOnboardI18n() {
+function applyOnboardI18n {
   const t = I18N_ONBOARD[_curOnLang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
@@ -203,10 +203,10 @@ function applyOnboardI18n() {
   if (btn) btn.textContent = t.flag;
   document.documentElement.lang = _curOnLang;
 }
-document.getElementById('lang-toggle')?.addEventListener('click', () => {
+document.getElementById('lang-toggle')?.addEventListener('click',  => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curOnLang = order[(order.indexOf(_curOnLang) + 1) % 4];
-  applyOnboardI18n();
+  applyOnboardI18n;
 });
 window.addEventListener('DOMContentLoaded', applyOnboardI18n);
 
@@ -221,7 +221,7 @@ function startEtaCountdown(seconds) {
     if (m === 0) return `${sec}초`;
     return `${m}분 ${String(sec).padStart(2, '0')}초`;
   };
-  function tick() {
+  function tick {
     const el = document.getElementById('next-eta');
     if (!el) { clearInterval(_etaTimer); return; }
     el.textContent = fmt(remaining);
@@ -247,20 +247,20 @@ function startEtaCountdown(seconds) {
         const cx = window.innerWidth / 2, cy = window.innerHeight * 0.5;
         for (let i = 0; i < 7; i++) {
           const p = document.createElement('div'); p.className = '_ob-coin'; p.textContent = '🪙';
-          p.style.left = (cx + (Math.random() - .5) * 160) + 'px';
+          p.style.left = (cx + (Math.random - .5) * 160) + 'px';
           p.style.top = cy + 'px';
           p.style.animationDelay = (i * 70) + 'ms';
           document.body.appendChild(p);
-          setTimeout(() => p.remove(), 1400);
+          setTimeout( => p.remove, 1400);
         }
         // 배지
         let badge = document.getElementById('_ob-badge');
         if (!badge) { badge = document.createElement('div'); badge.id = '_ob-badge'; document.body.appendChild(badge); }
         const stopName = cfg.nextStop ? cfg.nextStop(hour) : '목적지';
-        badge.innerHTML = `<div style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);border-radius:20px;padding:16px 26px;box-shadow:0 12px 40px rgba(16,185,129,.5);color:#fff;"><div style="font-size:28px;margin-bottom:4px;">✅</div><div style="font-size:16px;font-weight:800;">${stopName} 도착</div>${krw > 0 ? `<div style="font-size:13px;opacity:.85;margin-top:4px;">누적 적립 ₩${krw.toLocaleString()}</div>` : ''}</div>`;
-        setTimeout(() => { badge.style.opacity = '0'; badge.style.transition = 'opacity .4s'; setTimeout(() => badge.remove(), 500); }, 2500);
+        badge.innerHTML = `<div style="display:inline-block;background:linear-gradient(135deg,#10b981,#059669);border-radius:20px;padding:16px 26px;box-shadow:0 12px 40px rgba(16,185,129,.5);color:#fff;"><div style="font-size:28px;margin-bottom:4px;">✅</div><div style="font-size:16px;font-weight:800;">${stopName} 도착</div>${krw > 0 ? `<div style="font-size:13px;opacity:.85;margin-top:4px;">누적 적립 ₩${krw.toLocaleString}</div>` : ''}</div>`;
+        setTimeout( => { badge.style.opacity = '0'; badge.style.transition = 'opacity .4s'; setTimeout( => badge.remove, 500); }, 2500);
         if (my.n) {
-          const msg = { ko: `${stopName} 도착. 누적 ${krw.toLocaleString()}원 적립`, en: `Arrived at ${stopName}. Total ${krw.toLocaleString()} won`, zh: `到达 ${stopName}。累计 ${krw} 韩元`, ja: `${stopName} 到着。累計 ${krw} ウォン` }[lang] || `${stopName} 도착`;
+          const msg = { ko: `${stopName} 도착. 누적 ${krw.toLocaleString}원 적립`, en: `Arrived at ${stopName}. Total ${krw.toLocaleString} won`, zh: `到达 ${stopName}。累计 ${krw} 韩元`, ja: `${stopName} 到着。累計 ${krw} ウォン` }[lang] || `${stopName} 도착`;
           if ('speechSynthesis' in window) { const u = new SpeechSynthesisUtterance(msg); u.lang = { ko: 'ko-KR', en: 'en-US', zh: 'zh-CN', ja: 'ja-JP' }[lang] || 'ko-KR'; u.volume = 0.6; u.rate = 1.0; window.speechSynthesis.speak(u); }
         }
       } catch {}
@@ -268,7 +268,7 @@ function startEtaCountdown(seconds) {
     }
     remaining--;
   }
-  tick();
+  tick;
   _etaTimer = setInterval(tick, 1000);
 }
 
@@ -280,26 +280,26 @@ function drawUserOverlay(ctx, L, sim) {
   const ux = L.pad + userPos.x * L.cw;
   const uy = L.pad + userPos.y * L.ch;
   // 외곽 펄스 링
-  const t = (performance.now() / 1000) % 1;
-  ctx.save();
+  const t = (performance.now / 1000) % 1;
+  ctx.save;
   for (let i = 0; i < 2; i++) {
     const phase = (t + i * 0.5) % 1;
     const radius = 8 + phase * 22;
     const alpha = 0.6 * (1 - phase);
     ctx.strokeStyle = `rgba(125, 211, 211, ${alpha})`;
     ctx.lineWidth = 1.5;
-    ctx.beginPath();
+    ctx.beginPath;
     ctx.arc(ux, uy, radius, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.stroke;
   }
   // 코어 점
   ctx.fillStyle = '#7dd3d3';
   ctx.shadowColor = '#7dd3d3';
   ctx.shadowBlur = 12;
-  ctx.beginPath();
+  ctx.beginPath;
   ctx.arc(ux, uy, 5.5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+  ctx.fill;
+  ctx.restore;
 }
 
 const sim = BEVEngine.createSim({
@@ -314,7 +314,7 @@ const sim = BEVEngine.createSim({
 });
 
 let currentOcc = 0.5;
-function applyHour() {
+function applyHour {
   const hour = +document.getElementById('hour').value;
   document.getElementById('hourlabel').textContent = hour + '시';
 
@@ -325,14 +325,14 @@ function applyHour() {
     occ = occs[idx];
   } else {
     const avg = model.trainOccupancyAt(hour, cfg.cluster);
-    const r = ((seed) => { let s = seed; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3 + idx);
-    const noise = (r() - 0.5) * 0.20;
+    const r = ((seed) => { let s = seed; return  => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })(hour * 17 + 3 + idx);
+    const noise = (r - 0.5) * 0.20;
     occ = Math.max(0.05, Math.min(1.05, avg * 0.92 + noise));
   }
   currentOcc = occ;
   sim.setTargetOccupancy(occ);
   // 다음 정거장 예측: 25% 알라이팅 가정 → 약 -15~25%
-  const nextOcc = Math.max(0.1, occ - 0.18 + (Math.random() - 0.5) * 0.06);
+  const nextOcc = Math.max(0.1, occ - 0.18 + (Math.random - 0.5) * 0.06);
 
   document.getElementById('now-pct').textContent = Math.round(occ * 100);
   document.getElementById('next-pct').textContent = Math.round(nextOcc * 100);
@@ -344,7 +344,7 @@ function applyHour() {
   // 도착 ETA 라이브 카운트다운 시작 (4분 전 → 0)
   startEtaCountdown(240);
 
-  const tr = cfg.transfer();
+  const tr = cfg.transfer;
   document.getElementById('transfer').querySelector('.head').textContent = tr.head;
   document.getElementById('transfer-text').innerHTML = tr.text;
 
@@ -355,8 +355,8 @@ function applyHour() {
 const stripCv = document.getElementById('trainStrip');
 let _liveOccs = null;   // 백엔드 라이브 — null 이면 시뮬
 
-function drawTrainStrip() {
-  const r = stripCv.getBoundingClientRect();
+function drawTrainStrip {
+  const r = stripCv.getBoundingClientRect;
   const dpr = devicePixelRatio || 1;
   stripCv.width = r.width * dpr; stripCv.height = r.height * dpr;
   const ctx = stripCv.getContext('2d');
@@ -379,8 +379,8 @@ function drawTrainStrip() {
       occs = model.carOccupancies(avg, N, hour * 13 + 7);
     } else {
       const avg = model.trainOccupancyAt(hour, cfg.cluster);
-      const r2 = (s => () => { s = (s * 9301 + 49297) % 233280; return s / 233280; })(hour * 17 + 3);
-      occs = Array.from({ length: N }, () => Math.max(0.05, Math.min(1.05, avg * 0.92 + (r2() - 0.5) * 0.20)));
+      const r2 = (s =>  => { s = (s * 9301 + 49297) % 233280; return s / 233280; })(hour * 17 + 3);
+      occs = Array.from({ length: N },  => Math.max(0.05, Math.min(1.05, avg * 0.92 + (r2 - 0.5) * 0.20)));
     }
   }
   const meanOcc = occs.reduce((a, b) => a + b, 0) / occs.length;
@@ -396,19 +396,19 @@ function drawTrainStrip() {
     const isBest = i === bestI;
     // 배경 박스
     ctx.fillStyle = 'rgba(255,255,255,0.025)';
-    roundRect(ctx, x, pad, cw, ch, 4); ctx.fill();
+    roundRect(ctx, x, pad, cw, ch, 4); ctx.fill;
     // 점유 막대
     const fillH = ch * Math.min(1, o);
     const c = occColor(o);
     ctx.fillStyle = `rgba(${c[0]|0},${c[1]|0},${c[2]|0},0.78)`;
-    roundRect(ctx, x, pad + (ch - fillH), cw, fillH, 4); ctx.fill();
+    roundRect(ctx, x, pad + (ch - fillH), cw, fillH, 4); ctx.fill;
     // 테두리 (본인 / 추천)
     ctx.lineWidth = isMe || isBest ? 2 : 1;
     ctx.strokeStyle = isMe ? '#7dd3d3' : isBest ? '#7dd3d3' : 'rgba(255,255,255,0.08)';
     if (isMe || isBest) {
       ctx.shadowColor = '#7dd3d3'; ctx.shadowBlur = isMe ? 14 : 8;
     }
-    roundRect(ctx, x + 0.5, pad + 0.5, cw - 1, ch - 1, 4); ctx.stroke();
+    roundRect(ctx, x + 0.5, pad + 0.5, cw - 1, ch - 1, 4); ctx.stroke;
     ctx.shadowBlur = 0;
     // 호차 번호 + %
     ctx.font = '600 11px Inter, "Malgun Gothic"';
@@ -419,7 +419,7 @@ function drawTrainStrip() {
     // 본인 표시 마커 (위)
     if (isMe) {
       ctx.fillStyle = '#7dd3d3';
-      ctx.beginPath(); ctx.moveTo(x + cw/2 - 5, pad - 3); ctx.lineTo(x + cw/2 + 5, pad - 3); ctx.lineTo(x + cw/2, pad + 3); ctx.fill();
+      ctx.beginPath; ctx.moveTo(x + cw/2 - 5, pad - 3); ctx.lineTo(x + cw/2 + 5, pad - 3); ctx.lineTo(x + cw/2, pad + 3); ctx.fill;
     }
   }
 
@@ -436,23 +436,23 @@ function drawTrainStrip() {
   }
 }
 function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
+  ctx.beginPath;
   ctx.moveTo(x + r, y);
   ctx.arcTo(x + w, y, x + w, y + h, r);
   ctx.arcTo(x + w, y + h, x, y + h, r);
   ctx.arcTo(x, y + h, x, y, r);
   ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
+  ctx.closePath;
 }
 
-window.addEventListener('resize', () => { sim.invalidateLayout(); drawTrainStrip(); });
+window.addEventListener('resize',  => { sim.invalidateLayout; drawTrainStrip; });
 document.getElementById('hour').value = initHour;
-document.getElementById('hour').addEventListener('input', () => { applyHour(); drawTrainStrip(); });
-applyHour();
-drawTrainStrip();
+document.getElementById('hour').addEventListener('input',  => { applyHour; drawTrainStrip; });
+applyHour;
+drawTrainStrip;
 setInterval(drawTrainStrip, 1500);
 
-let lastT = performance.now();
+let lastT = performance.now;
 function tick(now) {
   const dt = Math.min(0.05, (now - lastT) / 1000);
   lastT = now;
@@ -462,12 +462,12 @@ function tick(now) {
 requestAnimationFrame(tick);
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
+  navigator.serviceWorker.register('sw.js').catch( => {});
 }
 
 // ============== 라이브 백엔드 (탑승 후 — 차내 점유율 갱신) ==============
-(() => {
-  const wsUrl = (() => {
+( => {
+  const wsUrl = ( => {
     const p = new URLSearchParams(location.search).get('ws');
     if (p) return p;
     const saved = localStorage.getItem('subwaybev_ws');
@@ -475,16 +475,16 @@ if ('serviceWorker' in navigator) {
     if (location.hostname.endsWith('ngrok-free.dev')) return `wss://${location.host}`;
     if (location.hostname.endsWith('github.io') || location.protocol === 'https:') return 'wss://app.allthatai.kr';
     return window.METROEYES_WS;
-  })();
+  });
   const badge = document.getElementById('live-badge');
   const label = document.getElementById('live-label');
   function setBadge(state, text) { badge.classList.remove('connected','connecting','error'); if (state) badge.classList.add(state); label.textContent = text; }
   let ws = null, retryT = null;
-  function connect() {
+  function connect {
     setBadge('connecting', '연결 중');
-    try { if (ws) ws.close(); } catch {}
+    try { if (ws) ws.close; } catch {}
     ws = new WebSocket(wsUrl);
-    ws.onopen = () => setBadge('connected', 'LIVE');
+    ws.onopen =  => setBadge('connected', 'LIVE');
     ws.onmessage = (ev) => {
       try {
         const j = JSON.parse(ev.data);
@@ -507,7 +507,7 @@ if ('serviceWorker' in navigator) {
         // 정원 N명/칸 = 빈도 정규화
         if (personN >= 2) {
           _liveOccs = bins.map(b => Math.min(1.05, b / Math.max(2, personN/N * 1.5)));
-          drawTrainStrip();
+          drawTrainStrip;
         }
         // 다음 정거장 예측 (휴리스틱)
         const nowPctEl = document.getElementById('now-pct');
@@ -517,11 +517,11 @@ if ('serviceWorker' in navigator) {
         if (typeof j.fps === 'number') label.textContent = `LIVE · ${j.fps.toFixed(1)} fps · ${personN}명`;
       } catch {}
     };
-    ws.onclose = () => { setBadge('', '오프라인'); clearTimeout(retryT); retryT = setTimeout(connect, 3000); };
-    ws.onerror = () => setBadge('error', '연결 실패');
+    ws.onclose =  => { setBadge('', '오프라인'); clearTimeout(retryT); retryT = setTimeout(connect, 3000); };
+    ws.onerror =  => setBadge('error', '연결 실패');
   }
-  connect();
-})();
+  connect;
+});
 </script>
 
 <!-- 외국인 탑승자 첫 방문 환영 toast (4언어 자동) -->
@@ -532,7 +532,7 @@ if ('serviceWorker' in navigator) {
   </div>
 </div>
 <script>
-(function () {
+(function() {
   if (localStorage.getItem('me_onboard_seen')) return;
   const OB = {
     ko: '🚆 라이브 칸별 점유율 모니터. 한산한 칸으로 이동 시 +₩200 자동 적립.',
@@ -540,21 +540,21 @@ if ('serviceWorker' in navigator) {
     zh: '🚆 实时车厢占用率监视器。移至人少的车厢自动获得 ₩200。',
     ja: '🚆 ライブ車両占有率モニター。空いている車両に移動すると自動で ₩200 獲得。',
   };
-  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
   const txt = OB[lang] || OB.ko;
   const t = document.getElementById('ob-toast-onboard');
   const x = document.getElementById('ob-text-onboard');
   if (!t || !x) return;
   x.textContent = txt;
   t.hidden = false;
-  document.getElementById('ob-dismiss-onboard')?.addEventListener('click', () => {
+  document.getElementById('ob-dismiss-onboard')?.addEventListener('click',  => {
     t.hidden = true;
     localStorage.setItem('me_onboard_seen', '1');
   });
-  setTimeout(() => {
+  setTimeout( => {
     if (!t.hidden) { t.hidden = true; localStorage.setItem('me_onboard_seen', '1'); }
   }, 12000);
-})();
+});
 </script>
 </body>
 </html>

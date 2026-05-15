@@ -95,7 +95,7 @@
   .stage-banner.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 <script>
-(function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
+(function() {var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script>
 <style>
 /* 브랜드 → 허브 링크 (UI polish) */
@@ -163,7 +163,7 @@
   </div>
 </div>
 <script>
-(function () {
+(function() {
   if (localStorage.getItem('me_demo_welcome_seen')) return;
   const W = {
     ko: '🎬 4-패널 동시 시연. ▶︎ <b>시연 시작</b> 누르면 5분 자동 재생. 우상단 🇰🇷 버튼으로 언어 변경.',
@@ -171,20 +171,20 @@
     zh: '🎬 4面板同步演示。点击 ▶︎ <b>开始演示</b> 自动播放 5 分钟。右上角 🇨🇳 按钮切换语言。',
     ja: '🎬 4パネル同時デモ。▶︎ <b>デモ開始</b> で5分自動再生。右上の 🇯🇵 ボタンで言語変更。',
   };
-  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+  const lang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
   const t = document.getElementById('demo-welcome');
   const x = document.getElementById('dw-text');
   if (!t || !x) return;
   x.innerHTML = W[lang] || W.ko;
   t.hidden = false;
-  document.getElementById('dw-ok')?.addEventListener('click', () => {
+  document.getElementById('dw-ok')?.addEventListener('click',  => {
     t.hidden = true;
     localStorage.setItem('me_demo_welcome_seen', '1');
   });
-  setTimeout(() => {
+  setTimeout( => {
     if (!t.hidden) { t.hidden = true; localStorage.setItem('me_demo_welcome_seen', '1'); }
   }, 15000);
-})();
+});
 </script>
 <script>
 // ==== 4언어 토글 (외국인 시연 대비) ====
@@ -194,9 +194,9 @@ const I18N_DEMO = {
   zh: { brand: '综合演示', sub: '运营者 + 市民 + 显示器 双向价值链', start: '▶︎ 开始演示', startBody: '点击 <b>开始演示</b> 自动播放 5 分钟全流程。', flag: '🇨🇳' },
   ja: { brand: '統合デモ', sub: 'オペレーター + 市民 + ディスプレイ 双方向価値連鎖', start: '▶︎ デモ開始', startBody: '<b>デモ開始</b>ボタンで 5 分全体フロー自動再生。', flag: '🇯🇵' },
 };
-let _curDemoLang = (navigator.language || 'ko').slice(0, 2).toLowerCase();
+let _curDemoLang = (navigator.language || 'ko').slice(0, 2).toLowerCase;
 if (!I18N_DEMO[_curDemoLang]) _curDemoLang = 'ko';
-function applyDemoI18n() {
+function applyDemoI18n {
   const t = I18N_DEMO[_curDemoLang];
   const brand = document.getElementById('brand-text');
   const sub = document.getElementById('brand-sub');
@@ -211,40 +211,40 @@ function applyDemoI18n() {
   document.getElementById('lang-toggle').textContent = t.flag;
   document.documentElement.lang = _curDemoLang;
 }
-document.getElementById('lang-toggle')?.addEventListener('click', () => {
+document.getElementById('lang-toggle')?.addEventListener('click',  => {
   const order = ['ko', 'en', 'zh', 'ja'];
   _curDemoLang = order[(order.indexOf(_curDemoLang) + 1) % 4];
-  applyDemoI18n();
+  applyDemoI18n;
 });
 window.addEventListener('DOMContentLoaded', applyDemoI18n);
 
 // 헤더 라이브 KPI 8s 폴링 (index.html 패턴 동일)
-(async function pollDemoKPI() {
+(async function pollDemoKPI {
   const url = window.METROEYES_BACKEND + '/health';
   try {
     const r = await fetch(url, { cache: 'no-cache' });
-    const j = await r.json();
+    const j = await r.json;
     const im = j.impact;
     if (im && im.total_count > 0) {
-      const fmt = w => w >= 100000000 ? `₩${(w/100000000).toFixed(2)}억` : w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString()}`;
+      const fmt = w => w >= 100000000 ? `₩${(w/100000000).toFixed(2)}억` : w >= 10000 ? `₩${(w/10000).toFixed(1)}만` : `₩${(w||0).toLocaleString}`;
       // 헤더 impact 카운터 갱신
       const di = document.getElementById('demo-impact');
       if (di) {
         di.style.display = 'flex'; di.hidden = false;
-        document.getElementById('dh-cnt').textContent = im.total_count.toLocaleString();
-        document.getElementById('dh-min').textContent = Math.round(im.saved_min_total).toLocaleString();
+        document.getElementById('dh-cnt').textContent = im.total_count.toLocaleString;
+        document.getElementById('dh-min').textContent = Math.round(im.saved_min_total).toLocaleString;
         document.getElementById('dh-val').textContent = fmt(im.value_won);
         document.getElementById('dh-roi').textContent = Math.round(im.roi_x || 0) + 'x';
       }
       // scenario 텍스트 갱신 (시연 시작 전만)
       if (!window._demoStarted) {
         const scen = document.getElementById('scenario');
-        if (scen) scen.innerHTML = `🟢 <b>라이브</b> · 분산 ${im.total_count.toLocaleString()}명 · ⏱${Math.round(im.saved_min_total).toLocaleString()}분 · 💰${fmt(im.value_won)} · ROI ${Math.round(im.roi_x||0)}x`;
+        if (scen) scen.innerHTML = `🟢 <b>라이브</b> · 분산 ${im.total_count.toLocaleString}명 · ⏱${Math.round(im.saved_min_total).toLocaleString}분 · 💰${fmt(im.value_won)} · ROI ${Math.round(im.roi_x||0)}x`;
       }
     }
   } catch {}
   setTimeout(pollDemoKPI, 8000);
-})();
+});
 
 const startBtn = document.getElementById('start');
 const timer = document.getElementById('timer');
@@ -259,7 +259,7 @@ function flash(msg) {
   stage.textContent = msg;
   stage.classList.add('show');
   clearTimeout(stage._t);
-  stage._t = setTimeout(() => stage.classList.remove('show'), 3500);
+  stage._t = setTimeout( => stage.classList.remove('show'), 3500);
 }
 
 // 시연 페이지 안의 iframe ▶︎ 시연 모드 버튼 자동 클릭
@@ -268,12 +268,12 @@ function clickInside(iframeId, btnId) {
     const ifr = document.getElementById(iframeId);
     const doc = ifr.contentDocument;
     const btn = doc && doc.getElementById(btnId);
-    if (btn) btn.click();
+    if (btn) btn.click;
   } catch (e) { /* cross-origin or not loaded */ }
 }
 
 // 환승 흐름 overlay — 4초 표시
-function showTransferOverlay() {
+function showTransferOverlay {
   let ov = document.getElementById('transfer-overlay');
   if (!ov) {
     ov = document.createElement('div');
@@ -291,11 +291,11 @@ function showTransferOverlay() {
     document.body.appendChild(ov);
   }
   ov.style.opacity = '1';
-  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5000);
+  setTimeout( => { ov.style.opacity = '0'; setTimeout( => ov.remove, 400); }, 5000);
 }
 
 // IDEA-9 도착 알림 5중 모달리티 overlay — 5초 표시
-function showIdea9Overlay() {
+function showIdea9Overlay {
   let ov = document.getElementById('idea9-overlay');
   if (!ov) {
     ov = document.createElement('div');
@@ -316,11 +316,11 @@ function showIdea9Overlay() {
     document.body.appendChild(ov);
   }
   ov.style.opacity = '1';
-  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+  setTimeout( => { ov.style.opacity = '0'; setTimeout( => ov.remove, 400); }, 5500);
 }
 
 // 🤖 AI 자동 단가 근거 overlay (cycle 356) — Claude Haiku 라이브 비즈니스 가치
-function showAiPricingOverlay() {
+function showAiPricingOverlay {
   let ov = document.getElementById('ai-pricing-overlay');
   if (!ov) {
     ov = document.createElement('div');
@@ -340,11 +340,11 @@ function showAiPricingOverlay() {
     document.body.appendChild(ov);
   }
   ov.style.opacity = '1';
-  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+  setTimeout( => { ov.style.opacity = '0'; setTimeout( => ov.remove, 400); }, 5500);
 }
 
 // 🚨 A* 비상 동선 강화 overlay (cycle 358) — Hungarian + 출구 차단 + ETA
-function showEvacOverlay() {
+function showEvacOverlay {
   let ov = document.getElementById('evac-overlay-demo');
   if (!ov) {
     ov = document.createElement('div');
@@ -366,11 +366,11 @@ function showEvacOverlay() {
     document.body.appendChild(ov);
   }
   ov.style.opacity = '1';
-  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+  setTimeout( => { ov.style.opacity = '0'; setTimeout( => ov.remove, 400); }, 5500);
 }
 
 // 🎯 호선별 차등 ROI 우선순위 overlay (cycle 360) — 정책 결정 정량 답
-function showLineRoiOverlay() {
+function showLineRoiOverlay {
   let ov = document.getElementById('line-roi-overlay');
   if (!ov) {
     ov = document.createElement('div');
@@ -386,17 +386,17 @@ function showLineRoiOverlay() {
         반대로 8호선 75x (16.6M분 — 가장 낮음)
       </div>
       <div style="font:600 11px sans-serif;color:#a78bfa;margin-top:12px">
-        정량 정책 답: "예산 1순위는 2호선" — CI 6 회귀 가드 자동 검증
+        정량 정책 답: "예산 1순위는 2호선" — CI 자동 회귀 검증 자동 검증
       </div>
     `;
     document.body.appendChild(ov);
   }
   ov.style.opacity = '1';
-  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5500);
+  setTimeout( => { ov.style.opacity = '0'; setTimeout( => ov.remove, 400); }, 5500);
 }
 
 // 시민 신고 FAB 양면 가치 사슬 overlay — 5초
-function showCitizenReportOverlay() {
+function showCitizenReportOverlay {
   let ov = document.getElementById('citizen-report-overlay');
   if (!ov) {
     ov = document.createElement('div');
@@ -420,11 +420,11 @@ function showCitizenReportOverlay() {
     document.body.appendChild(ov);
   }
   ov.style.opacity = '1';
-  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5000);
+  setTimeout( => { ov.style.opacity = '0'; setTimeout( => ov.remove, 400); }, 5000);
 }
 
 // 분산 효과 결과 overlay — 4초 표시
-function showDispersionOverlay() {
+function showDispersionOverlay {
   let ov = document.getElementById('dispersion-overlay');
   if (!ov) {
     ov = document.createElement('div');
@@ -443,17 +443,17 @@ function showDispersionOverlay() {
     document.body.appendChild(ov);
   }
   ov.style.opacity = '1';
-  setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.remove(), 400); }, 5000);
+  setTimeout( => { ov.style.opacity = '0'; setTimeout( => ov.remove, 400); }, 5000);
 }
 
 const SCRIPT = [
   // [ms, banner, action]
   [0,     '🎬 잠실역 18시 — 평상 운영 (지하철+버스+시민+광고 4도메인)',  null],
-  [5000,  '📊 광고 단가 라이브 — 12 POI × 분 단위 실시간 변동',          () => clickInside('if-ad', 'demo-trigger')],
+  [5000,  '📊 광고 단가 라이브 — 12 POI × 분 단위 실시간 변동',           => clickInside('if-ad', 'demo-trigger')],
   [10000, '🤖 AI 자동 단가 근거 — Claude Haiku 4.5 라이브 (80자 요약)', showAiPricingOverlay],
-  [22000, '🚇 지하철 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s',     () => clickInside('if-op', 'demo-trigger')],
-  [40000, '🚌 버스 운영자 시연 — 차내 BEV 3구역 실시간 + 문 병목 감지',  () => clickInside('if-bus', 'demo-trigger')],
-  [55000, '📷 실 카메라 BEV — 응급 골든타임 + AED 위치 자동 안내',        () => clickInside('if-cam', 'demo-trigger')],
+  [22000, '🚇 지하철 운영자 시연 — 무임/분실/응급/이상/분산 5종 30s',      => clickInside('if-op', 'demo-trigger')],
+  [40000, '🚌 버스 운영자 시연 — 차내 BEV 3구역 실시간 + 문 병목 감지',   => clickInside('if-bus', 'demo-trigger')],
+  [55000, '📷 실 카메라 BEV — 응급 골든타임 + AED 위치 자동 안내',         => clickInside('if-cam', 'demo-trigger')],
   [90000, '📱 시민 PWA — 분산 인센티브 보상 시연 (₩200~₩400 차등)',      null],
   [100000,'🆘 시민 신고 FAB — 응급/분실/배려 3종 → admin 즉시 broadcast',showCitizenReportOverlay],
   [110000,'🔔 IDEA-9 도착 알림 5중 모달리티 — 청각 약자/노캔 배려',       showIdea9Overlay],
@@ -467,23 +467,23 @@ const SCRIPT = [
 ];
 
 let started = false;
-startBtn.addEventListener('click', () => {
+startBtn.addEventListener('click',  => {
   if (started) return;
   started = true;
   window._demoStarted = true;
   startBtn.disabled = true;
   startBtn.textContent = '시연 진행 중...';
   scen.innerHTML = '<b>시연 진행 중</b> — 운영자/버스/시민/광고/실카메라 5-도메인 동시 모니터링';
-  const t0 = Date.now();
+  const t0 = Date.now;
   SCRIPT.forEach(([ms, msg, act]) => {
-    setTimeout(() => {
+    setTimeout( => {
       flash(msg);
-      if (act) try { act(); } catch {}
+      if (act) try { act; } catch {}
     }, ms);
   });
   // timer + progress bar
-  const tk = setInterval(() => {
-    const dt = Date.now() - t0;
+  const tk = setInterval( => {
+    const dt = Date.now - t0;
     timer.textContent = fmtT(dt);
     const bar = document.getElementById('demo-bar');
     if (bar) bar.style.width = Math.min(100, dt / (5*60*1000) * 100) + '%';
@@ -493,7 +493,7 @@ startBtn.addEventListener('click', () => {
       startBtn.textContent = '▶︎ 다시 재생';
       started = false;
       scen.innerHTML = '✅ <b>시연 종료</b> — 다시 재생 또는 개별 패널 자유 조작';
-      if (bar) setTimeout(() => bar.style.width = '0', 1500);
+      if (bar) setTimeout( => bar.style.width = '0', 1500);
     }
   }, 250);
 });
