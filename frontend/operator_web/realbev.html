@@ -555,6 +555,47 @@ window.addEventListener('DOMContentLoaded', applyRealcamI18n);
         <span class="acc-detail" id="acc-detail">예측 — / 실측 —</span>
       </div>
     </div>
+
+    <!-- ─── BLE 비콘 라이브 (역사 내 정밀 위치) ─── -->
+    <div id="ble-panel" style="background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(56,189,248,.03)); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin: 0 0 14px 0; backdrop-filter: blur(8px); display: grid; grid-template-columns: 280px 1fr 220px; gap: 18px; align-items: stretch;">
+      <!-- 좌: 메타 + 최강 신호 -->
+      <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+        <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+          📡 BLE 비콘 라이브
+          <span style="color: var(--accent); font-size: 11px; padding: 1px 6px; background: rgba(125,211,211,.10); border-radius: 4px; letter-spacing: .6px; text-transform: none;">8 anchor</span>
+          <span id="ble-live-dot" style="position: relative; width: 8px; height: 8px;">
+            <span style="position: absolute; inset: 0; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: livePulse 1.6s ease-in-out infinite;"></span>
+          </span>
+        </div>
+        <div style="font-size: 11px; color: var(--muted-2);">역사 내 정밀 위치 — RSSI 2초 갱신</div>
+        <div style="margin-top: 6px; padding: 10px 12px; background: rgba(125,211,211,.06); border: 1px solid rgba(125,211,211,.30); border-radius: 10px;">
+          <div style="font-size: 9px; letter-spacing: 1.4px; color: var(--accent); font-weight: 700;">최강 신호</div>
+          <div style="font-size: 18px; font-weight: 700; color: #fff; margin-top: 4px; line-height: 1.2;" id="ble-top-name">—</div>
+          <div style="font-size: 12px; color: var(--muted-2); margin-top: 4px;">
+            <span id="ble-top-rssi" style="color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums;">— dBm</span>
+            <span style="margin: 0 4px;">·</span>
+            추정 위치 <b id="ble-top-zone" style="color: #fff;">—</b>
+          </div>
+        </div>
+      </div>
+      <!-- 중: 8개 비콘 RSSI 바 차트 -->
+      <div id="ble-bars" style="display: flex; flex-direction: column; gap: 6px; min-width: 0;"></div>
+      <!-- 우: floorplan 미니맵 (비콘 위치 + 사용자 추정 위치) -->
+      <div style="display: flex; flex-direction: column; gap: 6px; align-items: stretch;">
+        <div style="font-size: 13px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; font-weight: 600;">📍 역사 도면</div>
+        <canvas id="ble-map" style="width: 100%; height: 130px; background: #04060a; border: 1px solid var(--line); border-radius: 8px;"></canvas>
+        <div style="font-size: 11px; color: var(--muted-2); text-align: center;">청록 = 비콘 · 적색 펄스 = 추정 위치</div>
+      </div>
+    </div>
+    <style>
+      .ble-bar-row { display: grid; grid-template-columns: 130px 1fr 60px; gap: 10px; align-items: center; font-size: 12px; }
+      .ble-bar-row .nm { color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .ble-bar-row .bar { position: relative; height: 8px; background: rgba(255,255,255,.05); border-radius: 99px; overflow: hidden; }
+      .ble-bar-row .bar .fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 99px; transition: width .5s cubic-bezier(.22,.61,.36,1), background .3s; }
+      .ble-bar-row .rssi { color: var(--fg); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; font-size: 11px; }
+      .ble-bar-row.strongest .nm { color: #fff; font-weight: 700; }
+      .ble-bar-row.strongest .bar { box-shadow: 0 0 12px rgba(125,211,211,.45); }
+    </style>
     <div class="ws-controls">
       <input id="ws-url" type="text" value="" placeholder="${window.METROEYES_WS}" />
       <button id="ws-connect">연결</button>
@@ -3067,6 +3108,95 @@ document.getElementById('evac-btn').addEventListener('click', () => {
 })();
 </script>
 <script src="../shared/health_pill.js" defer></script>
+<script>
+// ─── BLE 비콘 패널 폴링 (2초 간격, /api/v1/ble_state) ───
+(function () {
+  const barsEl = document.getElementById('ble-bars');
+  const mapCanvas = document.getElementById('ble-map');
+  if (!barsEl || !mapCanvas) return;
+
+  const rssiToPct = (r) => Math.max(0, Math.min(100, (r + 100) / 50 * 100));  // -100..-50 dBm → 0..100%
+  const quality = (r) => r > -55 ? '#7dd3d3' : r > -65 ? '#10b981' : r > -75 ? '#f59e0b' : '#ef4444';
+
+  function drawMap(beacons, strongest) {
+    const dpr = devicePixelRatio || 1;
+    const W = mapCanvas.clientWidth || 200, H = mapCanvas.clientHeight || 130;
+    mapCanvas.width = W * dpr; mapCanvas.height = H * dpr;
+    const ctx = mapCanvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    // 도면 외곽 (역사 hint)
+    ctx.strokeStyle = 'rgba(125,211,211,.12)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.strokeRect(8, 8, W - 16, H - 16);
+    ctx.setLineDash([]);
+    // 비콘 점
+    beacons.forEach(b => {
+      const x = 12 + b.x * (W - 24);
+      const y = 12 + b.y * (H - 24);
+      const isTop = strongest && b.id === strongest.id;
+      const col = quality(b.rssi);
+      ctx.fillStyle = col;
+      ctx.shadowColor = isTop ? col : 'transparent';
+      ctx.shadowBlur = isTop ? 10 : 0;
+      ctx.beginPath();
+      ctx.arc(x, y, isTop ? 5 : 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+    // 추정 위치 (최강 신호 비콘 위치에 펄스 링)
+    if (strongest) {
+      const sx = 12 + strongest.x * (W - 24);
+      const sy = 12 + strongest.y * (H - 24);
+      const pulse = (Math.sin(Date.now() / 400) + 1) / 2; // 0..1
+      ctx.strokeStyle = `rgba(255,94,87,${0.5 + pulse * 0.5})`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 8 + pulse * 6, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+
+  let _mapRaf;
+  function startMapPulse(beacons, strongest) {
+    if (_mapRaf) cancelAnimationFrame(_mapRaf);
+    function loop() { drawMap(beacons, strongest); _mapRaf = requestAnimationFrame(loop); }
+    loop();
+  }
+
+  async function pollBLE() {
+    try {
+      const r = await fetch(window.METROEYES_BACKEND + '/api/v1/ble_state', { cache: 'no-cache' });
+      if (!r.ok) throw new Error(r.status);
+      const j = await r.json();
+      if (!j.beacons) throw new Error('no beacons');
+      // 정렬: RSSI 내림차순 (강한 순)
+      const sorted = [...j.beacons].sort((a, b) => b.rssi - a.rssi);
+      const strongest = j.strongest;
+      // 메타
+      document.getElementById('ble-top-name').textContent = strongest.name;
+      document.getElementById('ble-top-rssi').textContent = strongest.rssi.toFixed(1) + ' dBm';
+      document.getElementById('ble-top-zone').textContent = j.inferred_zone || '—';
+      // 바 차트 렌더
+      barsEl.innerHTML = sorted.map(b => {
+        const pct = rssiToPct(b.rssi);
+        const col = quality(b.rssi);
+        const cls = b.id === strongest.id ? 'ble-bar-row strongest' : 'ble-bar-row';
+        return `<div class="${cls}" data-id="${b.id}">
+          <span class="nm">${b.name}</span>
+          <span class="bar"><span class="fill" style="width: ${pct.toFixed(0)}%; background: linear-gradient(90deg, ${col}aa, ${col});"></span></span>
+          <span class="rssi" style="color: ${col};">${b.rssi.toFixed(0)}<span style="color: var(--muted); font-size: 9px; font-weight: 500;"> dBm</span></span>
+        </div>`;
+      }).join('');
+      // 도면
+      startMapPulse(j.beacons, strongest);
+    } catch (e) { /* silent */ }
+  }
+  pollBLE();
+  setInterval(pollBLE, 2000);
+})();
+</script>
 </body>
 </html>
 

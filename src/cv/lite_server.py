@@ -123,6 +123,18 @@ _cv_metrics: dict = {"fps": 0.0, "tracks": 0, "frames": 0, "last_ts": 0.0, "demo
 # 최신 BEV 페이로드 캐시 — HTTP /api/v1/bev_state, /api/v1/bus_state 로 노출 (WS 별도 연결 없이 폴링)
 _last_bev: dict = {}
 _last_bus_bev: dict = {}
+# BLE 비콘 시뮬 — 역사 내 8개 anchor 비콘, RSSI 변동 (정밀 위치 추정 UI용)
+_BLE_BEACONS = [
+    {"id": "B-01", "name": "1번 출구",   "x": 0.10, "y": 0.18, "anchor_rssi": -55, "zone": "exit"},
+    {"id": "B-02", "name": "개찰구 A",   "x": 0.30, "y": 0.42, "anchor_rssi": -52, "zone": "gate"},
+    {"id": "B-03", "name": "환승 통로",  "x": 0.50, "y": 0.30, "anchor_rssi": -58, "zone": "transfer"},
+    {"id": "B-04", "name": "승강장 1-3", "x": 0.20, "y": 0.78, "anchor_rssi": -50, "zone": "platform"},
+    {"id": "B-05", "name": "승강장 4-6", "x": 0.50, "y": 0.82, "anchor_rssi": -48, "zone": "platform"},
+    {"id": "B-06", "name": "승강장 7-10","x": 0.82, "y": 0.78, "anchor_rssi": -52, "zone": "platform"},
+    {"id": "B-07", "name": "엘리베이터", "x": 0.68, "y": 0.50, "anchor_rssi": -56, "zone": "elev"},
+    {"id": "B-08", "name": "AED 위치",   "x": 0.40, "y": 0.60, "anchor_rssi": -57, "zone": "aed"},
+]
+_last_ble: dict = {}
 
 # realbev 영상 선택에 따른 fake_bev_loop 시나리오 분기 (실 CV 없을 때 영상별 차별 시뮬)
 # 각 시나리오: target_n(인원 범위), classes(클래스 가중치), spread('train'=호차구조 / 'open'=전체확산 / 'edge'=한쪽몰림 / 'flow'=통로흐름)
@@ -1338,6 +1350,55 @@ async def fake_bev_loop():
         await broadcast(json.dumps(payload, ensure_ascii=False))
 
 
+async def fake_ble_loop():
+    """역사 내 BLE 비콘 RSSI 시뮬 — 2초마다 8개 비콘 신호 갱신.
+
+    실데이터 통합 전 stub: 양봉 피크 시간엔 사람 많아 RSSI 흔들림 ↑.
+    페이로드: type/ts/station/beacons[]/strongest/inferred_zone
+    """
+    import random
+    rng = random.Random(11)
+    _strongest_id = "B-05"   # 최강 신호 비콘 (잠시 유지 → 부드러운 전환)
+    _strongest_until = 0.0
+    while True:
+        await asyncio.sleep(2.0)
+        now = time.time()
+        h = time.localtime(now).tm_hour
+        # 피크 시간엔 사람 많아 신호 흔들림 큼
+        noise = 4.5 if (7 <= h <= 9 or 17 <= h <= 19) else 2.2
+        # 최강 비콘 5~10초마다 변경 (사람 이동 시뮬)
+        if now > _strongest_until:
+            _strongest_id = rng.choice([b["id"] for b in _BLE_BEACONS])
+            _strongest_until = now + rng.uniform(5, 12)
+        beacons = []
+        for b in _BLE_BEACONS:
+            base = b["anchor_rssi"]
+            # 최강 비콘이면 boost (-3 ~ -6 dBm 더 강함)
+            boost = -rng.uniform(3, 6) if b["id"] == _strongest_id else 0
+            rssi = base + boost + rng.gauss(0, noise)
+            quality = "excellent" if rssi > -55 else "good" if rssi > -65 else "fair" if rssi > -75 else "poor"
+            beacons.append({
+                "id": b["id"], "name": b["name"], "zone": b["zone"],
+                "x": b["x"], "y": b["y"],
+                "rssi": round(rssi, 1),
+                "quality": quality,
+            })
+        strongest = max(beacons, key=lambda x: x["rssi"])
+        zone_map = {"exit": "출구 근처", "gate": "개찰구 통과", "transfer": "환승 통로",
+                    "platform": "승강장 진입", "elev": "엘리베이터 인근", "aed": "AED 비치 구역"}
+        _last_ble.clear()
+        _last_ble.update({
+            "type": "ble_state",
+            "ts": now,
+            "station": "잠실역",
+            "beacons": beacons,
+            "strongest": strongest,
+            "inferred_zone": zone_map.get(strongest["zone"], "—"),
+        })
+        if clients:
+            await broadcast(json.dumps(_last_ble, ensure_ascii=False))
+
+
 async def fake_bus_bev_loop():
     """버스 차내 BEV 시뮬 — 문 2개 기준 30석 + 기립 공간.
 
@@ -2046,6 +2107,10 @@ async def http_health(path, headers):
         # BEV 페이지 폴링용 — fake_bev_loop 최신 페이로드 (지하철 차내)
         body = json.dumps(_last_bev or {"ok": False, "msg": "no data yet"}, ensure_ascii=False).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path_only == "/api/v1/ble_state":
+        # BLE 비콘 패널 폴링용 — fake_ble_loop 최신 페이로드 (8개 비콘 RSSI)
+        body = json.dumps(_last_ble or {"ok": False, "msg": "no data yet"}, ensure_ascii=False).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path_only == "/":
         # 브라우저 직접 접속 → GitHub Pages로 리다이렉트 (WebSocket upgrade는 이 코드 안 탐)
         return (301, [("Location", "https://leelang7.github.io/MetroEyes/")] + CORS_HEADERS, b"")
@@ -2141,6 +2206,7 @@ async def main():
             print("[lite_server] DEMO mode - fake_incident_seed_loop 5분마다 자동 사고", flush=True)
             asyncio.create_task(fake_bev_loop())
             asyncio.create_task(fake_bus_bev_loop())
+            asyncio.create_task(fake_ble_loop())
             asyncio.create_task(fake_impact_seed_loop())
             asyncio.create_task(fake_incident_seed_loop())
 
