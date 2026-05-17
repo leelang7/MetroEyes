@@ -2130,6 +2130,28 @@ async def http_health(path, headers):
         # BLE 비콘 패널 폴링용 — fake_ble_loop 최신 페이로드 (8개 비콘 RSSI)
         body = json.dumps(_last_ble or {"ok": False, "msg": "no data yet"}, ensure_ascii=False).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path_only == "/api/v1/ble_24h":
+        # 24시간 시간대별 BLE 인구 밀도 시뮬 — 양봉 패턴 시각화용 (sparkline)
+        # 시간별 peak_factor × 비콘별 기본 가중치 = 그 시간대 예상 인구
+        zone_weights = {"platform": 1.0, "transfer": 0.75, "gate": 0.55,
+                        "elev": 0.25, "aed": 0.20, "exit": 0.30}
+        hours = []
+        for h in range(24):
+            if 7 <= h <= 9: pf = 1.25
+            elif 17 <= h <= 19: pf = 1.35
+            elif 10 <= h <= 16: pf = 0.65
+            elif 20 <= h <= 22: pf = 0.50
+            else: pf = 0.25
+            total = sum(18 * zone_weights.get(b["zone"], 0.5) * pf for b in _BLE_BEACONS)
+            hours.append({"h": h, "peak_factor": round(pf, 2), "total_devices": int(total)})
+        ph = max(hours, key=lambda x: x["total_devices"])
+        body = json.dumps({
+            "ok": True, "type": "ble_24h",
+            "hours": hours,
+            "peak_hour": ph["h"], "peak_count": ph["total_devices"],
+            "current_hour": time.localtime().tm_hour,
+        }, ensure_ascii=False).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path_only == "/":
         # 브라우저 직접 접속 → GitHub Pages로 리다이렉트 (WebSocket upgrade는 이 코드 안 탐)
         return (301, [("Location", "https://leelang7.github.io/MetroEyes/")] + CORS_HEADERS, b"")
