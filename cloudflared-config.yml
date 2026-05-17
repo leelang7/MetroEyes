@@ -2,9 +2,11 @@ tunnel: 30f3e4a4-e310-4677-8b4d-c0f718e10076
 credentials-file: C:\Users\leesc\.cloudflared\30f3e4a4-e310-4677-8b4d-c0f718e10076.json
 
 ingress:
-  # 모든 트래픽 → 백엔드 8765 (WebSocket + API + 리다이렉트 처리)
+  # 모든 트래픽 → lite_server :8766 (HTTP API + WebSocket + 시뮬 BEV)
+  # 평소엔 lite_server만 띄워 자원 절약. 실 카메라 시연 시에만
+  # METROEYES_MODE=full 로 tesla_bev :8765 추가 기동 + 이 ingress 분기 추가.
   - hostname: app.allthatai.kr
-    service: http://127.0.0.1:8765
+    service: http://127.0.0.1:8766
     originRequest:
       noTLSVerify: true
       connectTimeout: 10s
