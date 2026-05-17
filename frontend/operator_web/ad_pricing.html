@@ -231,6 +231,58 @@ window.addEventListener('DOMContentLoaded', applyAdI18n);
     </div>
   </section>
 
+  <!-- ─── BLE 인구 밀도 ↔ 광고 단가 연동 (라이브) ─── -->
+  <section id="ble-ad-link" style="background: linear-gradient(135deg, rgba(16,185,129,.08), rgba(125,211,211,.04)); border: 1px solid rgba(16,185,129,.30); border-radius: 12px; padding: 12px 16px; margin: 0 0 14px 0; display: flex; gap: 18px; align-items: center; flex-wrap: wrap;">
+    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1.4px; color: #10b981; text-transform: uppercase;">
+      <span style="position: relative; width: 8px; height: 8px;">
+        <span style="position: absolute; inset: 0; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: livePulse 1.6s ease-in-out infinite;"></span>
+      </span>
+      📡 BLE → 단가
+    </span>
+    <span style="color: var(--muted); font-size: 13px;">
+      지금 가장 붐비는 곳 <b id="bal-zone" style="color: #fff; font-size: 15px; margin: 0 4px;">—</b>
+      → <b id="bal-people" style="color: var(--accent); font-size: 15px;">—</b>명 동시 노출
+    </span>
+    <span style="margin-left: auto; display: flex; gap: 12px; align-items: baseline;">
+      <span style="color: var(--muted); font-size: 12px;">동적 단가</span>
+      <span id="bal-price" style="color: #f59e0b; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums;">—원</span>
+      <span id="bal-uplift" style="color: #10b981; font-size: 13px; font-weight: 600;">+—%</span>
+    </span>
+    <span style="flex-basis: 100%; font-size: 11px; color: var(--muted-2); line-height: 1.5; margin-top: -4px;">
+      각 anchor 비콘이 측정한 <b style="color: var(--accent);">실시간 시민 폰 밀도</b>가 광고 단가에 직결됨 — 붐빌수록 단가 ↑ (기본 5,000원 × 양봉 가중치 × 밀도)
+    </span>
+  </section>
+  <script>
+    // BLE 밀도 → 광고 단가 라이브 연동
+    (function () {
+      const zoneEl = document.getElementById('bal-zone');
+      const peopleEl = document.getElementById('bal-people');
+      const priceEl = document.getElementById('bal-price');
+      const upliftEl = document.getElementById('bal-uplift');
+      if (!zoneEl) return;
+      const BASE = 5000;  // 기본 단가
+      async function pollBLEAd() {
+        try {
+          const r = await fetch(window.METROEYES_BACKEND + '/api/v1/ble_state', { cache: 'no-cache' });
+          if (!r.ok) throw new Error(r.status);
+          const j = await r.json();
+          const hot = j.hottest;
+          if (!hot) return;
+          zoneEl.textContent = hot.name + (j.hottest_zone ? ` (${j.hottest_zone})` : '');
+          peopleEl.textContent = hot.n_devices.toLocaleString();
+          // 동적 단가: BASE * peak_factor * (1 + density * 2)
+          const peak = j.peak_factor || 1;
+          const dyn = Math.round(BASE * peak * (1 + hot.density * 2));
+          const uplift = ((dyn / BASE - 1) * 100).toFixed(0);
+          priceEl.textContent = dyn.toLocaleString() + '원';
+          upliftEl.textContent = (uplift >= 0 ? '+' : '') + uplift + '%';
+          upliftEl.style.color = uplift > 50 ? '#ef4444' : uplift > 20 ? '#f59e0b' : '#10b981';
+        } catch (e) {}
+      }
+      pollBLEAd(); setInterval(pollBLEAd, 3000);
+    })();
+  </script>
+
   <section class="grid-wrap">
     <h3 style="font-size: 14px; letter-spacing: 1.4px; color: var(--muted); margin: 0 0 6px; font-weight: 500;">
       역 × 시간대 인구 밀도 → 동적 광고 단가 매트릭스
