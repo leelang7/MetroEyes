@@ -254,6 +254,132 @@ window.addEventListener('message', () => {});
     </div>
   </section>
 
+  <!-- ─── BLE 비콘 — 구역별 인구 밀도 ─── -->
+  <div id="ble-panel-sub" style="background: linear-gradient(135deg, rgba(125,211,211,.06), rgba(56,189,248,.03)); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin: 0 0 14px 0; backdrop-filter: blur(8px); display: grid; grid-template-columns: 280px 1fr 230px; gap: 18px; align-items: stretch;">
+    <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+      <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 6px;">
+        📡 BLE 인구 밀도
+        <span style="color: var(--accent); font-size: 11px; padding: 1px 6px; background: rgba(125,211,211,.10); border-radius: 4px; letter-spacing: .6px; text-transform: none;">8 anchor</span>
+        <span style="position: relative; width: 8px; height: 8px;">
+          <span style="position: absolute; inset: 0; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: livePulse 1.6s ease-in-out infinite;"></span>
+        </span>
+      </div>
+      <div style="font-size: 11px; color: var(--muted-2); line-height: 1.5;">각 anchor 비콘이 주변 시민 폰을 집계 — <b style="color: var(--accent);">평균 RSSI ↑ × 폰 수 ↑ = 밀집</b>. 구역별 인구 밀도 (2초 갱신)</div>
+      <div style="margin-top: 4px; padding: 10px 12px; background: rgba(56,189,248,.06); border: 1px solid rgba(56,189,248,.25); border-radius: 10px; display: flex; gap: 14px; align-items: baseline;">
+        <div>
+          <div style="font-size: 9px; letter-spacing: 1.4px; color: #38bdf8; font-weight: 700;">역 전체 추정</div>
+          <div style="font-size: 24px; font-weight: 700; color: #fff; margin-top: 2px; line-height: 1; font-variant-numeric: tabular-nums;"><span id="ble-sub-total">—</span><small style="font-size: 11px; color: var(--muted-2); font-weight: 500; margin-left: 4px;">명</small></div>
+        </div>
+        <div style="border-left: 1px solid var(--line); padding-left: 12px;">
+          <div style="font-size: 9px; letter-spacing: 1.4px; color: var(--muted); font-weight: 700;">양봉 가중</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--warn); margin-top: 2px; line-height: 1.2;" id="ble-sub-peak">— x</div>
+        </div>
+      </div>
+      <div style="padding: 10px 12px; background: rgba(239,68,68,.07); border: 1px solid rgba(239,68,68,.32); border-radius: 10px;">
+        <div style="font-size: 9px; letter-spacing: 1.4px; color: #ef4444; font-weight: 700;">🔥 현재 가장 붐비는 곳</div>
+        <div style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 3px; line-height: 1.2;" id="ble-sub-hot-name">—</div>
+        <div style="font-size: 11px; color: var(--muted-2); margin-top: 3px;">
+          <b id="ble-sub-hot-n" style="color: #fff;">—</b>명 ·
+          평균 <span id="ble-sub-hot-avg" style="color: #ef4444; font-weight: 700; font-variant-numeric: tabular-nums;">— dBm</span> ·
+          <b id="ble-sub-hot-level" style="color: #ef4444; text-transform: uppercase; font-size: 9px; letter-spacing: 1.2px;">—</b>
+        </div>
+      </div>
+    </div>
+    <div id="ble-sub-bars" style="display: flex; flex-direction: column; gap: 5px; min-width: 0;"></div>
+    <div style="display: flex; flex-direction: column; gap: 6px; align-items: stretch;">
+      <div style="font-size: 13px; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; font-weight: 600;">📍 역사 도면 히트맵</div>
+      <canvas id="ble-sub-map" style="width: 100%; height: 150px; background: #04060a; border: 1px solid var(--line); border-radius: 8px;"></canvas>
+      <div style="font-size: 11px; color: var(--muted-2); text-align: center; line-height: 1.5;">원 크기 = 인구 수 · 색 = 밀집도<br>적색일수록 혼잡</div>
+    </div>
+  </div>
+  <style>
+    .ble-sub-bar-row { display: grid; grid-template-columns: 140px 1fr 84px; gap: 10px; align-items: center; font-size: 12px; }
+    .ble-sub-bar-row .nm { color: var(--muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ble-sub-bar-row .bar { position: relative; height: 10px; background: rgba(255,255,255,.05); border-radius: 99px; overflow: hidden; }
+    .ble-sub-bar-row .bar .fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.22,.61,.36,1), background .3s; }
+    .ble-sub-bar-row .stat { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; font-size: 11px; }
+    .ble-sub-bar-row .stat .n { color: var(--fg); }
+    .ble-sub-bar-row .stat .dbm { color: var(--muted-2); font-size: 10px; font-weight: 500; }
+    .ble-sub-bar-row.hottest .nm { color: #fff; font-weight: 700; }
+    .ble-sub-bar-row.hottest .bar { box-shadow: 0 0 14px rgba(239,68,68,.45); }
+  </style>
+  <script>
+    // BLE 인구 밀도 폴링 (지하철 운영자) ─ realbev와 동일 로직, ID 충돌 회피용 sub 접두
+    (function () {
+      const barsEl = document.getElementById('ble-sub-bars');
+      const mapCanvas = document.getElementById('ble-sub-map');
+      if (!barsEl || !mapCanvas) return;
+      const densityColor = (d) => d < 0.25 ? '#7dd3d3' : d < 0.50 ? '#10b981' : d < 0.75 ? '#f59e0b' : '#ef4444';
+      const levelLabel = (lv) => ({ sparse: '한산', moderate: '보통', busy: '분주', crowded: '혼잡' })[lv] || '—';
+      let _latest = null;
+      function drawMap() {
+        if (!_latest) return;
+        const beacons = _latest.beacons, hot = _latest.hottest;
+        const dpr = devicePixelRatio || 1;
+        const W = mapCanvas.clientWidth || 200, H = mapCanvas.clientHeight || 150;
+        mapCanvas.width = W * dpr; mapCanvas.height = H * dpr;
+        const ctx = mapCanvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        ctx.strokeStyle = 'rgba(125,211,211,.12)'; ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]); ctx.strokeRect(8, 8, W - 16, H - 16); ctx.setLineDash([]);
+        beacons.forEach(b => {
+          const x = 12 + b.x * (W - 24), y = 12 + b.y * (H - 24);
+          const r = 6 + Math.sqrt(b.n_devices) * 2.2;
+          const col = densityColor(b.density);
+          const grad = ctx.createRadialGradient(x, y, 0, x, y, r * 1.9);
+          grad.addColorStop(0, col + 'cc'); grad.addColorStop(0.6, col + '44'); grad.addColorStop(1, col + '00');
+          ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(x, y, r * 1.9, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 8;
+          ctx.beginPath(); ctx.arc(x, y, Math.min(r, 9), 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = '#fff'; ctx.font = 'bold 9px ui-monospace, monospace';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(b.n_devices, x, y);
+          ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+        });
+        if (hot) {
+          const sx = 12 + hot.x * (W - 24), sy = 12 + hot.y * (H - 24);
+          const pulse = (Math.sin(Date.now() / 350) + 1) / 2;
+          ctx.strokeStyle = `rgba(239,68,68,${0.55 + pulse * 0.45})`;
+          ctx.lineWidth = 1.8;
+          ctx.beginPath(); ctx.arc(sx, sy, 14 + pulse * 8, 0, Math.PI * 2); ctx.stroke();
+        }
+      }
+      let _raf;
+      function loop() { drawMap(); _raf = requestAnimationFrame(loop); }
+      loop();
+      async function pollBLE() {
+        try {
+          const r = await fetch(window.METROEYES_BACKEND + '/api/v1/ble_state', { cache: 'no-cache' });
+          if (!r.ok) throw new Error(r.status);
+          const j = await r.json();
+          if (!j.beacons) throw new Error('no beacons');
+          _latest = j;
+          document.getElementById('ble-sub-total').textContent = (j.total_devices || 0).toLocaleString();
+          document.getElementById('ble-sub-peak').textContent = (j.peak_factor || 1).toFixed(2) + ' x';
+          const hot = j.hottest;
+          document.getElementById('ble-sub-hot-name').textContent = hot.name + (j.hottest_zone ? ` (${j.hottest_zone})` : '');
+          document.getElementById('ble-sub-hot-n').textContent = hot.n_devices;
+          document.getElementById('ble-sub-hot-avg').textContent = hot.avg_rssi.toFixed(1) + ' dBm';
+          document.getElementById('ble-sub-hot-level').textContent = levelLabel(hot.level);
+          const sorted = [...j.beacons].sort((a, b) => b.density - a.density);
+          barsEl.innerHTML = sorted.map(b => {
+            const pct = (b.density * 100).toFixed(0);
+            const col = densityColor(b.density);
+            const cls = b.id === hot.id ? 'ble-sub-bar-row hottest' : 'ble-sub-bar-row';
+            return `<div class="${cls}" data-id="${b.id}">
+              <span class="nm">${b.name}</span>
+              <span class="bar"><span class="fill" style="width: ${pct}%; background: linear-gradient(90deg, ${col}aa, ${col});"></span></span>
+              <span class="stat"><span class="n">${b.n_devices}</span><span class="dbm">명</span><span class="dbm" style="margin-left: 5px;">${b.avg_rssi.toFixed(0)} dBm</span></span>
+            </div>`;
+          }).join('');
+        } catch (e) {}
+      }
+      pollBLE(); setInterval(pollBLE, 2000);
+    })();
+  </script>
+
   <section class="train-strip">
     <div class="train-strip-head">
       <h2><b>2호선 잠실행 1234편성</b><span style="color: var(--muted)">10량 점유 BEV · 절전 모드 자동</span></h2>
