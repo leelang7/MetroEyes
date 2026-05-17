@@ -354,6 +354,59 @@ body.a11y-on #a11y-toggle { background: #10b981 !important; color: #fff !importa
     </div>
   </div>
 
+  <!-- ─── BLE 자동 위치 인식 (시민용) ─── -->
+  <section id="ble-cit" style="background: linear-gradient(135deg, rgba(125,211,211,.10), rgba(56,189,248,.04)); border: 1px solid rgba(125,211,211,.32); border-radius: 12px; padding: 11px 14px; margin: 0 0 10px; display: flex; gap: 10px; align-items: center;" hidden>
+    <span style="position: relative; width: 9px; height: 9px; flex-shrink: 0;">
+      <span style="position: absolute; inset: 0; border-radius: 50%; background: #7dd3d3; box-shadow: 0 0 10px #7dd3d3; animation: livePulse 1.6s ease-in-out infinite;"></span>
+    </span>
+    <div style="flex: 1; min-width: 0;">
+      <div style="font-size: 9px; color: var(--accent); font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;">📡 BLE 자동 인식</div>
+      <div style="font-size: 14px; color: #fff; font-weight: 700; margin-top: 2px; line-height: 1.2;">당신은 지금 <span id="ble-cit-zone" style="color: var(--accent);">—</span> 근처</div>
+      <div style="font-size: 11px; color: var(--muted-2); margin-top: 2px;">
+        주변 인구 <b id="ble-cit-n" style="color: #fff;">—</b>명 ·
+        밀집도 <b id="ble-cit-level" style="color: #fff; text-transform: uppercase; font-size: 10px; letter-spacing: 1.1px;">—</b>
+      </div>
+    </div>
+    <div id="ble-cit-tip" style="font-size: 10px; color: var(--muted); text-align: right; max-width: 130px; line-height: 1.4;">—</div>
+  </section>
+  <style>
+    @keyframes livePulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.7); } }
+  </style>
+  <script>
+    // BLE 시민 위치 인식 — /api/v1/ble_state 폴링
+    (function () {
+      const sec = document.getElementById('ble-cit');
+      if (!sec) return;
+      const tips = {
+        platform: '여유 칸 분산 권고 활성',
+        gate: '개찰구 통과 중',
+        transfer: '환승 동선 안내 가능',
+        elev: '엘리베이터 대기 — 우선석',
+        exit: '출구 안내 활성',
+        aed: '비상 시 AED 가까움',
+      };
+      const levelLabel = { sparse: '한산', moderate: '보통', busy: '분주', crowded: '혼잡' };
+      const levelColor = { sparse: '#7dd3d3', moderate: '#10b981', busy: '#f59e0b', crowded: '#ef4444' };
+      async function pollBleCit() {
+        try {
+          const r = await fetch(window.METROEYES_BACKEND + '/api/v1/ble_state', { cache: 'no-cache' });
+          if (!r.ok) throw new Error(r.status);
+          const j = await r.json();
+          const hot = j.hottest;
+          if (!hot) return;
+          document.getElementById('ble-cit-zone').textContent = hot.name;
+          document.getElementById('ble-cit-n').textContent = hot.n_devices;
+          const lvEl = document.getElementById('ble-cit-level');
+          lvEl.textContent = levelLabel[hot.level] || '—';
+          lvEl.style.color = levelColor[hot.level] || '#fff';
+          document.getElementById('ble-cit-tip').textContent = tips[hot.zone] || '실시간 BLE 위치';
+          sec.hidden = false;
+        } catch (e) {}
+      }
+      pollBleCit(); setInterval(pollBleCit, 3000);
+    })();
+  </script>
+
   <section class="events-strip" id="events-strip" hidden>
     <div class="events-head">
       <span class="ico">🎫</span>
