@@ -1448,18 +1448,7 @@ function bevToWorld(bx, by) {
   return { x: worldX, z: z2 };
 }
 
-// ─── 영상 클릭 전 BEV 트랙 렌더 차단 ───
-// 사용자가 영상 버튼/웹캠을 명시적으로 클릭해야만 트랙 표시 (자동 fake bev 차단)
-window._bevRenderActive = false;
-function clearAllTracks() {
-  for (const [id, h] of tracks) {
-    if (h && h.mesh) scene.remove(h.mesh);
-  }
-  tracks.clear();
-}
-
 function onTracksUpdate(list) {
-  if (!window._bevRenderActive) return;   // 영상 활성 전엔 BEV 렌더 안 함
   const now = performance.now();
   for (const trk of list) {
     let h = tracks.get(trk.id);
@@ -1996,9 +1985,6 @@ function startVideoFile(vidId) {
   if (!captureLoopRunning) { captureLoopRunning = true; captureLoop(); }
   currentVideoMode = vidId;
   document.querySelectorAll('.vid-btn').forEach(b => b.classList.toggle('active', b.dataset.vid === vidId));
-  // 영상 클릭 → BEV 렌더 활성화 (이전 트랙 정리 후 새 영상 트랙만 표시)
-  clearAllTracks();
-  window._bevRenderActive = true;
 }
 
 document.getElementById('ws-connect').addEventListener('click', () => connect(wsUrlEl.value));
@@ -2008,19 +1994,12 @@ document.getElementById('cam-start').addEventListener('click', () => {
   vidCam.removeAttribute('src'); vidCam.load();
   try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'claim_active' })); } catch {}
   startCam();
-  // 웹캠 시작도 BEV 렌더 활성화
-  clearAllTracks();
-  window._bevRenderActive = true;
   setHomographyOnServer({ homography: null });
   currentVideoMode = 'webcam';
 });
 document.getElementById('cam-stop').addEventListener('click', () => {
   try { if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'release_active' })); } catch {}
   stopCam();
-  // 정지 시 BEV 렌더 끔 + 기존 트랙 정리 (영상 클릭 전 상태로 복귀)
-  window._bevRenderActive = false;
-  clearAllTracks();
-  document.querySelectorAll('.vid-btn').forEach(b => b.classList.remove('active'));
 });
 // 페이지 떠날 때 release
 window.addEventListener('beforeunload', () => {
