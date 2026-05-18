@@ -161,7 +161,8 @@
 (function(){var h=location.hostname,r=location.protocol==='https:'||h.endsWith('github.io')||h==='app.allthatai.kr';window.METROEYES_BACKEND=r?'https://app.allthatai.kr':'http://localhost:8765';window.METROEYES_WS=r?'wss://app.allthatai.kr':'ws://localhost:8765';})();
 </script></head>
 <body>
-  <div class="brand" style="position: relative;">
+  <div class="brand" style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    <img src="../assets/metroeyes_logo_1024.png" alt="MetroEyes" style="width: 92px; height: 92px; border-radius: 18px; box-shadow: 0 8px 24px rgba(125,211,211,.30), 0 0 32px rgba(125,211,211,.18); filter: drop-shadow(0 0 12px rgba(125,211,211,.25));">
     <h1>MetroEyes</h1>
     <div class="tag">2026 Seoul Big Data</div>
     <button id="lang-toggle" style="position: absolute; top: 0; right: 0; padding: 4px 10px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">🇰🇷 KO</button>
