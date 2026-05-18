@@ -229,6 +229,100 @@ window.addEventListener('DOMContentLoaded', applyBusI18n);
 })();
 </script>
 
+  <!-- ─── 24h 양봉 패턴 (출퇴근 피크) — 항상 표시 ─── -->
+  <section id="bimodal-card" style="background: linear-gradient(135deg, rgba(245,158,11,.08), rgba(239,68,68,.04)); border: 1px solid rgba(245,158,11,.30); border-radius: 14px; padding: 14px 18px; margin: 0 0 14px 0; display: grid; grid-template-columns: 240px 1fr 180px; gap: 18px; align-items: center;">
+    <div>
+      <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); font-weight: 700; display: flex; align-items: center; gap: 6px;">
+        📊 24h 양봉 패턴
+        <span style="color: #f59e0b; font-size: 11px; padding: 1px 6px; background: rgba(245,158,11,.10); border-radius: 4px; letter-spacing: .6px; text-transform: none;">출/퇴근 피크</span>
+      </div>
+      <div style="font-size: 12px; color: var(--muted-2); margin-top: 4px; line-height: 1.5;">
+        🌅 출근 08~09시 + 🌆 퇴근 17~19시 두 봉우리 · 새벽 0.25x / 평상 0.65x / 피크 1.35x
+      </div>
+    </div>
+    <canvas id="bimodal-spark" style="width: 100%; height: 76px;"></canvas>
+    <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
+      <div style="font-size: 11px; color: var(--muted);">피크 <b id="bimodal-peak-h" style="color: #ef4444; font-size: 16px; font-variant-numeric: tabular-nums;">—시</b></div>
+      <div style="font-size: 11px; color: var(--muted);">현재 <b id="bimodal-now-h" style="color: var(--accent); font-size: 16px; font-variant-numeric: tabular-nums;">—시</b></div>
+      <div style="font-size: 10px; color: var(--muted-2); font-variant-numeric: tabular-nums;">최대 <b id="bimodal-peak-n" style="color: #fff;">—</b>명/시간</div>
+    </div>
+  </section>
+  <script>
+    (function () {
+      const c = document.getElementById('bimodal-spark');
+      if (!c) return;
+      async function poll() {
+        try {
+          const r = await fetch(window.METROEYES_BACKEND + '/api/v1/ble_24h', { cache: 'no-cache' });
+          if (!r.ok) return;
+          const j = await r.json();
+          const dpr = devicePixelRatio || 1;
+          const W = c.clientWidth || 600, H = c.clientHeight || 76;
+          c.width = W * dpr; c.height = H * dpr;
+          const ctx = c.getContext('2d');
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, W, H);
+          const pad = 8, padB = 14;
+          const max = Math.max(1, ...j.hours.map(h => h.total_devices));
+          const innerW = W - pad * 2, innerH = H - pad - padB;
+          [{from:7,to:9,col:'rgba(125,211,211,.12)'},{from:17,to:19,col:'rgba(245,158,11,.14)'}].forEach(z => {
+            const x0 = pad + (z.from / 23) * innerW;
+            const x1 = pad + (z.to / 23) * innerW;
+            ctx.fillStyle = z.col;
+            ctx.fillRect(x0, pad, x1 - x0, innerH);
+          });
+          ctx.beginPath();
+          j.hours.forEach((h, i) => {
+            const x = pad + (i / 23) * innerW;
+            const y = pad + (1 - h.total_devices / max) * innerH;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          });
+          ctx.lineTo(pad + innerW, pad + innerH); ctx.lineTo(pad, pad + innerH); ctx.closePath();
+          const grad = ctx.createLinearGradient(0, pad, 0, pad + innerH);
+          grad.addColorStop(0, 'rgba(239,68,68,.45)');
+          grad.addColorStop(0.5, 'rgba(245,158,11,.25)');
+          grad.addColorStop(1, 'rgba(125,211,211,.05)');
+          ctx.fillStyle = grad; ctx.fill();
+          ctx.beginPath();
+          j.hours.forEach((h, i) => {
+            const x = pad + (i / 23) * innerW;
+            const y = pad + (1 - h.total_devices / max) * innerH;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.stroke();
+          [8, 18].forEach(hh => {
+            const x = pad + (hh / 23) * innerW;
+            const y = pad + (1 - j.hours[hh].total_devices / max) * innerH;
+            ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = hh === 8 ? '#7dd3d3' : '#f59e0b';
+            ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0;
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 10px ui-monospace, monospace';
+            ctx.fillText(hh + '시 ' + j.hours[hh].total_devices, x - 14, y - 8);
+          });
+          const nh = j.current_hour;
+          const nx = pad + (nh / 23) * innerW;
+          ctx.strokeStyle = 'rgba(255,255,255,.35)';
+          ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+          ctx.beginPath(); ctx.moveTo(nx, pad); ctx.lineTo(nx, pad + innerH); ctx.stroke();
+          ctx.setLineDash([]);
+          const ny = pad + (1 - j.hours[nh].total_devices / max) * innerH;
+          ctx.beginPath(); ctx.arc(nx, ny, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444'; ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0;
+          ctx.fillStyle = 'rgba(139,152,172,.7)';
+          ctx.font = '10px ui-monospace, monospace';
+          [0, 6, 12, 18, 23].forEach(h => {
+            const px = pad + (h / 23) * innerW;
+            ctx.fillText(h + '시', px - 8, H - 2);
+          });
+          document.getElementById('bimodal-peak-h').textContent = j.peak_hour + '시';
+          document.getElementById('bimodal-now-h').textContent = j.current_hour + '시';
+          document.getElementById('bimodal-peak-n').textContent = j.peak_count;
+        } catch (e) {}
+      }
+      poll(); setInterval(poll, 60000);
+    })();
+  </script>
+
   <section class="fusion-strip" id="fusion-strip" style="display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
     <div class="fusion-card dim" id="fc-cv" style="background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;">
       <div style="font-size: 14px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted);">검출 인원 <span style="color: var(--accent); font-size: 13px; padding: 1px 5px; background: rgba(125,211,211,0.10); border-radius: 4px; letter-spacing: 0.6px; text-transform: none;">자체 CV</span></div>
