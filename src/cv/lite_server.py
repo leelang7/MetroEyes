@@ -136,6 +136,14 @@ _BLE_BEACONS = [
 ]
 _last_ble: dict = {}
 
+# 버스 차내 BLE — 3 anchor (앞문/중간/뒷문) 인구 밀도 추정
+_BUS_BLE_ANCHORS = [
+    {"id": "BB-01", "name": "앞문",    "x": 0.10, "y": 0.5, "zone": "front"},
+    {"id": "BB-02", "name": "중간",    "x": 0.50, "y": 0.5, "zone": "mid"},
+    {"id": "BB-03", "name": "뒷문",    "x": 0.90, "y": 0.5, "zone": "rear"},
+]
+_last_bus_ble: dict = {}
+
 # realbev 영상 선택에 따른 fake_bev_loop 시나리오 분기 (실 CV 없을 때 영상별 차별 시뮬)
 # 각 시나리오: target_n(인원 범위), classes(클래스 가중치), spread('train'=호차구조 / 'open'=전체확산 / 'edge'=한쪽몰림 / 'flow'=통로흐름)
 _scene_profiles: dict = {
@@ -1418,6 +1426,59 @@ async def fake_ble_loop():
             await broadcast(json.dumps(_last_ble, ensure_ascii=False))
 
 
+async def fake_bus_ble_loop():
+    """버스 차내 BLE — 3 anchor (앞문/중간/뒷문) 인구 밀도.
+
+    각 anchor가 주변 시민 폰 감지 → (n_devices, avg_rssi) → 구역별 밀집도.
+    출퇴근 피크: 뒷문/중간 만석, 앞문 병목 / 평상시: 균등 분포.
+    """
+    import math, random
+    rng = random.Random(13)
+    phases = {a["id"]: rng.uniform(0, 6.28) for a in _BUS_BLE_ANCHORS}
+    while True:
+        await asyncio.sleep(2.0)
+        now = time.time()
+        h = time.localtime(now).tm_hour
+        if 7 <= h <= 9: peak = 1.25
+        elif 17 <= h <= 19: peak = 1.35
+        elif 10 <= h <= 16: peak = 0.65
+        elif 20 <= h <= 22: peak = 0.50
+        else: peak = 0.25
+        # zone별 기본 가중치 — 피크 시간엔 뒷문/중간 집중
+        zone_w = {"front": 0.6, "mid": 1.1, "rear": 1.0} if peak >= 1.0 else \
+                 {"front": 0.8, "mid": 0.9, "rear": 0.7}
+        anchors = []
+        total = 0
+        for a in _BUS_BLE_ANCHORS:
+            w = zone_w[a["zone"]]
+            osc = 0.85 + 0.30 * math.sin(now * 0.20 + phases[a["id"]])
+            base_n = 12 * w * peak * osc
+            n = max(0, int(rng.gauss(base_n, max(1.0, base_n * 0.18))))
+            density_norm = min(1.0, n / 18.0)
+            avg_rssi = -55 + 6 * density_norm + rng.gauss(0, 1.2)
+            anchors.append({
+                "id": a["id"], "name": a["name"], "zone": a["zone"],
+                "x": a["x"], "y": a["y"],
+                "n_devices": n,
+                "avg_rssi": round(avg_rssi, 1),
+                "density": round(density_norm, 3),
+                "level": "crowded" if density_norm > 0.75 else "busy" if density_norm > 0.50 else "moderate" if density_norm > 0.25 else "sparse",
+            })
+            total += n
+        hot = max(anchors, key=lambda a: a["density"])
+        zone_kr = {"front": "앞문 인근", "mid": "중간 통로", "rear": "뒷문 인근"}
+        _last_bus_ble.clear()
+        _last_bus_ble.update({
+            "type": "bus_ble_state",
+            "ts": now,
+            "peak_factor": round(peak, 2),
+            "total_devices": total,
+            "anchors": anchors,
+            "hottest": hot,
+            "hottest_zone": zone_kr.get(hot["zone"], "—"),
+        })
+
+
 async def fake_bus_bev_loop():
     """버스 차내 BEV 시뮬 — 문 2개 기준 30석 + 기립 공간.
 
@@ -2130,6 +2191,10 @@ async def http_health(path, headers):
         # BLE 비콘 패널 폴링용 — fake_ble_loop 최신 페이로드 (8개 비콘 RSSI)
         body = json.dumps(_last_ble or {"ok": False, "msg": "no data yet"}, ensure_ascii=False).encode("utf-8")
         return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
+    if path_only == "/api/v1/bus_ble_state":
+        # 버스 차내 BLE 3-anchor (앞문/중간/뒷문) 인구 밀도
+        body = json.dumps(_last_bus_ble or {"ok": False, "msg": "no data yet"}, ensure_ascii=False).encode("utf-8")
+        return (200, [("content-type", "application/json")] + CORS_HEADERS, body)
     if path_only == "/api/v1/ble_24h":
         # 24시간 시간대별 BLE 인구 밀도 시뮬 — 양봉 패턴 시각화용 (sparkline)
         # 시간별 peak_factor × 비콘별 기본 가중치 = 그 시간대 예상 인구
@@ -2248,6 +2313,7 @@ async def main():
             asyncio.create_task(fake_bev_loop())
             asyncio.create_task(fake_bus_bev_loop())
             asyncio.create_task(fake_ble_loop())
+            asyncio.create_task(fake_bus_ble_loop())
             asyncio.create_task(fake_impact_seed_loop())
             asyncio.create_task(fake_incident_seed_loop())
 
